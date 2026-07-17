@@ -5,3 +5,7 @@
 /.bin
 /.env
 /.env.*
+
+# Data fixtures and scratch are never part of the server image.
+/fixtures
+/scratchpad
