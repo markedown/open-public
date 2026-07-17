@@ -15,9 +15,9 @@ pub mod ui;
 
 use std::path::Path;
 
-use axum::extract::Path as UrlPath;
-use axum::http::{header, HeaderMap};
-use axum::response::Redirect;
+use axum::extract::{Path as UrlPath, State};
+use axum::http::{header, HeaderMap, StatusCode};
+use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
     middleware,
     routing::{get, post},
@@ -36,6 +36,7 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
     Router::new()
         .route("/", get(pages::home::page))
         .route("/health", get(health))
+        .route("/readyz", get(readyz))
         .route("/version", get(version))
         .route("/data/polls.json", get(pages::data::polls))
         .route("/{country}", get(pages::country::detail))
@@ -186,6 +187,16 @@ fn same_site_path(referer: &str) -> Option<String> {
 /// Liveness probe for load balancers and uptime checks.
 async fn health() -> &'static str {
     "ok"
+}
+
+/// Readiness probe: the database is reachable, so this instance can serve
+/// requests. A blue-green cutover flips traffic to a new color only once its
+/// `/readyz` returns 200, so a half-started instance never receives traffic.
+async fn readyz(State(pool): State<db::Pool>) -> Response {
+    match db::ping(&pool).await {
+        Ok(()) => (StatusCode::OK, "ready").into_response(),
+        Err(_) => (StatusCode::SERVICE_UNAVAILABLE, "not ready").into_response(),
+    }
 }
 
 /// Build provenance, for verifying the running binary against the public build.

@@ -45,3 +45,11 @@ pub async fn connect(database_url: &str) -> Result<Pool> {
         .await?;
     Ok(pool)
 }
+
+/// Readiness check: confirm the database answers a trivial query. The server's
+/// `/readyz` probe uses this to gate a blue-green cutover (traffic flips to a
+/// new instance only once it can actually reach the database).
+pub async fn ping(pool: &Pool) -> Result<()> {
+    sqlx::query("select 1").execute(pool).await?;
+    Ok(())
+}
