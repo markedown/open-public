@@ -169,6 +169,27 @@ poll_votes (
 
 person_aliases ( person_id FK, alias text )
 data_conflicts ( ... )   -- ingest writes discrepancies here instead of overwriting
+
+-- User poll submissions and their uploaded images (added later; see migrations).
+assets (
+  id, sha256 text UNIQUE NOT NULL,   -- hash of the re-encoded bytes; also the URL and filename
+  mime text, width int, height int, byte_size bigint,
+  uploaded_by bigint REFERENCES users NOT NULL,
+  published boolean NOT NULL DEFAULT false,   -- true only once its poll is approved
+  created_at timestamptz
+)
+poll_submissions (
+  id, submitter_id FK users, country_id FK, question text, kind text,
+  question_asset_id FK assets NULL,
+  status text CHECK (status IN ('pending_ai','ai_rejected','pending_admin','approved','rejected')),
+  ai_model, ai_decision, ai_reason text, ai_categories text[], ai_reviewed_at, ai_attempts int,
+  is_violation boolean NOT NULL DEFAULT false,   -- counts toward a ban
+  reviewed_by FK users NULL, admin_note text, reviewed_at,
+  published_poll_id FK polls NULL,               -- the poll created on approval
+  created_at, updated_at
+)
+poll_submission_options ( id, submission_id FK, label text, position int, asset_id FK assets NULL )
+-- users also gains: banned_at timestamptz, ban_reason text  (permanent suspension)
 ```
 
 Full text search: `tsvector` indexes on `people.full_name`, `parties.name`, `statements.text_original`, `news_items.headline`.
@@ -187,6 +208,8 @@ These are product rules, treat them like compiler errors:
 - Verification mails are plain text, contain only the verification link and a one-line explanation, and never any tracking.
 - `poll_votes` rows are never updated or deleted, not even by admins. Corrections to a poll happen by closing it and opening a new one, never by touching votes. No admin write path to `poll_votes` exists in the codebase.
 - Admins (users with `is_admin = true`) can create and edit political content (people, parties, roles, memberships, statements, news, polls), but cannot modify votes.
+- User-submitted polls pass a two-tier gate before they are public: an automated content pre-screen, then an admin approval. Nothing a user wrote or uploaded is visible to anyone else until it clears both. The pre-screen provider is pluggable (a `PollReviewer` trait); with none configured, submissions still flow to the admin queue rather than auto-publishing. Repeated policy violations suspend the account permanently; a suspension never touches cast votes.
+- Uploaded images are never trusted by their declared type: the format is detected from content, decoded under strict size and dimension limits (a decompression-bomb guard), and re-encoded to a normalized raster format that strips all metadata and defeats polyglot files. Only the re-encoded bytes are stored (content-addressed) and served, with `nosniff`, a restrictive `Content-Security-Policy`, and an inline disposition. SVG is rejected. Images stay visible only to their uploader and admins until the poll is approved.
 - Ingest: rate limit at least 1s per host, descriptive User-Agent with contact info, respect robots.txt, no paywalled content. On conflicts between sources, log to `data_conflicts` instead of overwriting.
 
 ## Design
@@ -259,7 +282,7 @@ License: MIT OR Apache-2.0 (dual). Set `license = "MIT OR Apache-2.0"` in every 
 - No social login. Identity is a verified email+password account; plaintext emails are never stored.
 - No plaintext email addresses in the database or in logs.
 - No code path that mutates or deletes cast votes.
-- No user free-text content.
+- No unmoderated user content. User-authored text and uploads (poll proposals and their images) are allowed only through the moderation pipeline: an automated pre-screen, then admin approval. Nothing user-authored is public until it clears both. There is no other user free-text surface.
 - No full news article bodies in the database, ever.
 - No client-side framework and no WASM. Interactivity is HTMX over server-rendered HTML.
 - No CDN dependencies: htmx and any font are vendored/self-hosted.
