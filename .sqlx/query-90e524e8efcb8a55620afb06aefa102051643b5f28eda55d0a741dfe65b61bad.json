@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id from data_conflicts\n        where entity_type = $1\n          and entity_id is not distinct from $2\n          and field = $3\n          and incoming_value is not distinct from $4\n          and resolved_at is null\n        limit 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "90e524e8efcb8a55620afb06aefa102051643b5f28eda55d0a741dfe65b61bad"
+}

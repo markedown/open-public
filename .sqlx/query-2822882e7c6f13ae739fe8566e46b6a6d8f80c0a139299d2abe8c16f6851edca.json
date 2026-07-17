@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into outlets\n            (name, slug, homepage_url, logo_url, logo_license, leaning, summary, country_id)\n        values ($1, $2, $3, $4, $5, $6, $7, $8)\n        on conflict (slug) do update set\n            name = excluded.name,\n            homepage_url = excluded.homepage_url,\n            logo_url = excluded.logo_url,\n            logo_license = excluded.logo_license,\n            leaning = excluded.leaning,\n            summary = excluded.summary,\n            country_id = coalesce(excluded.country_id, outlets.country_id),\n            updated_at = now()\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2822882e7c6f13ae739fe8566e46b6a6d8f80c0a139299d2abe8c16f6851edca"
+}

@@ -1,0 +1,100 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select a.name as alliance_name, a.slug as alliance_slug,\n               mp.id as party_id, mp.name, mp.short_name, mp.slug, mp.color\n        from party_alliances self_pa\n        join alliances a on a.id = self_pa.alliance_id\n        join party_alliances pa on pa.alliance_id = a.id\n        join parties mp on mp.id = pa.party_id\n        where self_pa.party_id = $1 and self_pa.end_date is null\n        order by a.name, mp.short_name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "alliance_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "alliance_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "e8fdbd56ac0457e7844ccf249d4fe195a4fdaa454411024da09cc3661e03b6f2"
+}

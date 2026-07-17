@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from news_item_people where news_item_id = $1 and person_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "965da480a4d9e9a4e51c8c21994db92fd3f62d9b5c70bd565782962aaeedfc17"
+}

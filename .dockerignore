@@ -1,0 +1,7 @@
+# Keep the build context small and reproducible. The stylesheet and binary are
+# built inside the image, and provenance comes from build args, not .git.
+/target
+/.git
+/.bin
+/.env
+/.env.*

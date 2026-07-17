@@ -1,0 +1,137 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id, wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n               ideology_tags, summary, color\n        from parties\n        where country_id = $1\n          and (unaccent(name) ilike unaccent($2)\n               or unaccent(coalesce(short_name, '')) ilike unaccent($2))\n        order by name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "wikidata_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "wikidata_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "founded_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "founded_date"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "dissolved_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "dissolved_date"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "ideology_tags",
+        "type_info": "TextArray",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "ideology_tags"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "summary",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "summary"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      true,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "53e03f6c01d83380feee9b4349f3a72de327eb848fca4da3d73fb9a58fa88aaa"
+}

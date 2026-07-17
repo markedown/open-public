@@ -1,0 +1,629 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "A source-backed platform for political data"
+msgstr "Une plateforme de données politiques adossées à des sources"
+
+msgid "People, parties, roles and polls. Every record references a source."
+msgstr "Personnes, partis, fonctions et sondages. Chaque entrée renvoie à une source."
+
+msgid "Open source · Source-backed political data."
+msgstr "Open source · Données politiques adossées à des sources."
+
+msgid "People"
+msgstr "Personnes"
+
+msgid "people"
+msgstr "personnes"
+
+msgid "people listed"
+msgstr "personnes répertoriées"
+
+msgid "No people found."
+msgstr "Aucune personne trouvée."
+
+msgid "Previous"
+msgstr "Précédent"
+
+msgid "Next"
+msgstr "Suivant"
+
+msgid "Page"
+msgstr "Page"
+
+msgid "Parties"
+msgstr "Partis"
+
+msgid "parties listed"
+msgstr "partis répertoriés"
+
+msgid "No parties found."
+msgstr "Aucun parti trouvé."
+
+msgid "Roles"
+msgstr "Fonctions"
+
+msgid "Party memberships"
+msgstr "Adhésions aux partis"
+
+msgid "Party"
+msgstr "Parti"
+
+msgid "Founded"
+msgstr "Fondé"
+
+msgid "Dissolved"
+msgstr "Dissous"
+
+msgid "Leader"
+msgstr "Dirigeant"
+
+msgid "Alliance"
+msgstr "Alliance"
+
+msgid "Members"
+msgstr "Membres"
+
+msgid "Member"
+msgstr "Membre"
+
+msgid "No members listed."
+msgstr "Aucun membre répertorié."
+
+msgid "Person"
+msgstr "Personne"
+
+msgid "Search"
+msgstr "Recherche"
+
+msgid "Search people and parties..."
+msgstr "Rechercher des personnes et des partis…"
+
+msgid "No results found."
+msgstr "Aucun résultat trouvé."
+
+msgid "results"
+msgstr "résultats"
+
+msgid "Page not found."
+msgstr "Page introuvable."
+
+msgid "Something went wrong. Please try again."
+msgstr "Une erreur s'est produite. Veuillez réessayer."
+
+msgid "Register"
+msgstr "S'inscrire"
+
+msgid "Log in"
+msgstr "Se connecter"
+
+msgid "Log out"
+msgstr "Se déconnecter"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Password"
+msgstr "Mot de passe"
+
+msgid "Already have an account?"
+msgstr "Vous avez déjà un compte ?"
+
+msgid "No account?"
+msgstr "Pas de compte ?"
+
+msgid "Invalid email or password."
+msgstr "E-mail ou mot de passe invalide."
+
+msgid "Internal error. Please try again."
+msgstr "Erreur interne. Veuillez réessayer."
+
+msgid "Back to home"
+msgstr "Retour à l'accueil"
+
+msgid "Structured political information: people, parties, roles, statements and polls. Every fact references a verifiable source."
+msgstr "Informations politiques structurées : personnes, partis, fonctions, déclarations et sondages. Chaque fait renvoie à une source vérifiable."
+
+msgid "Browse profiles, roles, party affiliations and timelines."
+msgstr "Parcourez les profils, les fonctions, les affiliations partisanes et les chronologies."
+
+msgid "Explore party histories, ideologies and current members."
+msgstr "Explorez l'histoire des partis, leurs idéologies et leurs membres actuels."
+
+msgid "Full-text search across people and parties."
+msgstr "Recherche en texte intégral parmi les personnes et les partis."
+
+msgid "Open source. Source-backed political data."
+msgstr "Open source. Données politiques adossées à des sources."
+
+msgid "present"
+msgstr "aujourd'hui"
+
+msgid "Former members"
+msgstr "Anciens membres"
+
+msgid "source"
+msgstr "source"
+
+msgid "Background"
+msgstr "Parcours"
+
+msgid "Education"
+msgstr "Formation"
+
+msgid "Occupation"
+msgstr "Profession"
+
+msgid "Ideology"
+msgstr "Idéologie"
+
+msgid "Religion"
+msgstr "Religion"
+
+msgid "Attributes"
+msgstr "Attributs"
+
+msgid "Institution"
+msgstr "Établissement"
+
+msgid "Degree"
+msgstr "Diplôme"
+
+msgid "Field of study"
+msgstr "Domaine d'études"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Source URL"
+msgstr "URL de la source"
+
+msgid "Add education"
+msgstr "Ajouter une formation"
+
+msgid "Add attribute"
+msgstr "Ajouter un attribut"
+
+msgid "Value"
+msgstr "Valeur"
+
+msgid "Kind"
+msgstr "Type"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Show original"
+msgstr "Afficher l'original"
+
+msgid "Review translations"
+msgstr "Réviser les traductions"
+
+msgid "Each draft translation stays hidden until you review it. Compare it with the original, edit the text if needed, then publish it, or discard the draft."
+msgstr "Chaque brouillon de traduction reste masqué jusqu'à votre révision. Comparez-le à l'original, modifiez le texte si nécessaire, puis publiez-le ou supprimez le brouillon."
+
+msgid "Overview"
+msgstr "Aperçu"
+
+msgid "Capital"
+msgstr "Capitale"
+
+msgid "Presidential government system"
+msgstr "Régime présidentiel"
+
+msgid "Federal presidential republic"
+msgstr "République fédérale présidentielle"
+
+msgid "Federal parliamentary republic"
+msgstr "République parlementaire fédérale"
+
+msgid "Government"
+msgstr "Gouvernement"
+
+msgid "Parliament"
+msgstr "Parlement"
+
+msgid "Congress"
+msgstr "Congrès"
+
+msgid "United States Senate"
+msgstr "Sénat des États-Unis"
+
+msgid "United States House of Representatives"
+msgstr "Chambre des représentants des États-Unis"
+
+msgid "Independent"
+msgstr "Sans étiquette"
+
+msgid "seats"
+msgstr "sièges"
+
+msgid "Coalitions"
+msgstr "Coalitions"
+
+msgid "People, parties, roles and polls."
+msgstr "Personnes, partis, fonctions et sondages."
+
+msgid "People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."
+msgstr "Personnes, partis, élections et sondages. Chaque fait lié à sa source, un jeu de données vérifiable par pays."
+
+msgid "Open political data."
+msgstr "Données politiques ouvertes."
+
+msgid "Polls"
+msgstr "Sondages"
+
+msgid "News"
+msgstr "Actualités"
+
+msgid "References"
+msgstr "Références"
+
+msgid "Photo"
+msgstr "Photo"
+
+msgid "Statements"
+msgstr "Déclarations"
+
+msgid "Statement"
+msgstr "Déclaration"
+
+msgid "Add statement"
+msgstr "Ajouter une déclaration"
+
+msgid "No statements yet."
+msgstr "Aucune déclaration pour le moment."
+
+msgid "paraphrase"
+msgstr "paraphrase"
+
+msgid "Paraphrase in our own words"
+msgstr "Paraphrase dans nos propres mots"
+
+msgid "Add poll"
+msgstr "Ajouter un sondage"
+
+msgid "No polls yet."
+msgstr "Aucun sondage pour le moment."
+
+msgid "Question"
+msgstr "Question"
+
+msgid "Option"
+msgstr "Option"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Add news"
+msgstr "Ajouter une actualité"
+
+msgid "No news yet."
+msgstr "Aucune actualité pour le moment."
+
+msgid "Headline"
+msgstr "Titre"
+
+msgid "Source URL"
+msgstr "URL de la source"
+
+msgid "Outlet"
+msgstr "Média"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Summary"
+msgstr "Résumé"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Integrity"
+msgstr "Intégrité"
+
+msgid "Verify"
+msgstr "Vérifier"
+
+msgid "This fingerprint lets anyone confirm no vote was altered or removed after casting."
+msgstr "Cette empreinte permet à chacun de confirmer qu'aucun vote n'a été modifié ou supprimé après son dépôt."
+
+msgid "Vote"
+msgstr "Voter"
+
+msgid "votes"
+msgstr "votes"
+
+msgid "You have voted."
+msgstr "Vous avez voté."
+
+msgid "Log in to vote."
+msgstr "Connectez-vous pour voter."
+
+msgid "Tap an option to vote."
+msgstr "Touchez une option pour voter."
+
+msgid "Enter a valid email address."
+msgstr "Saisissez une adresse e-mail valide."
+
+msgid "Password must be at least 8 characters."
+msgstr "Le mot de passe doit comporter au moins 8 caractères."
+
+msgid "Please verify your email before logging in."
+msgstr "Veuillez vérifier votre e-mail avant de vous connecter."
+
+msgid "Check your email for a link to verify your account and finish signing up."
+msgstr "Consultez votre boîte mail pour trouver un lien de vérification et finaliser votre inscription."
+
+msgid "Verify your email"
+msgstr "Vérifiez votre e-mail"
+
+msgid "This verification link is invalid or has expired."
+msgstr "Ce lien de vérification est invalide ou a expiré."
+
+msgid "Email verified"
+msgstr "E-mail vérifié"
+
+msgid "Your account is active. You can log in now."
+msgstr "Votre compte est actif. Vous pouvez maintenant vous connecter."
+
+msgid "Confirm your email address to activate your account:"
+msgstr "Confirmez votre adresse e-mail pour activer votre compte :"
+
+msgid "If you did not create an account, ignore this message. The link expires in 24 hours."
+msgstr "Si vous n'avez pas créé de compte, ignorez ce message. Le lien expire dans 24 heures."
+
+msgid "Electoral history"
+msgstr "Historique électoral"
+
+msgid "Elections"
+msgstr "Élections"
+
+msgid "Timeline"
+msgstr "Chronologie"
+
+msgid "Founding"
+msgstr "Fondation"
+
+msgid "Election"
+msgstr "Élection"
+
+msgid "Milestone"
+msgstr "Étape"
+
+msgid "Admin panel"
+msgstr "Administration"
+
+msgid "Curated content is editable and always sourced. Cast votes are immutable and are never editable here."
+msgstr "Le contenu curé est modifiable et toujours sourcé. Les votes exprimés sont immuables et ne sont jamais modifiables ici."
+
+msgid "News and statements are added from a person or party page."
+msgstr "Les actualités et les déclarations s'ajoutent depuis une page de personne ou de parti."
+
+msgid "parties"
+msgstr "partis"
+
+msgid "polls"
+msgstr "sondages"
+
+msgid "Poll type"
+msgstr "Type de sondage"
+
+msgid "Single choice"
+msgstr "Choix unique"
+
+msgid "Yes / No"
+msgstr "Oui / Non"
+
+msgid "Rating scale"
+msgstr "Échelle de notation"
+
+msgid "Vote"
+msgstr "Voter"
+
+msgid "Select one or more options, then vote."
+msgstr "Sélectionnez une ou plusieurs options, puis votez."
+
+msgid "Multiple choice"
+msgstr "Choix multiple"
+
+msgid "Open"
+msgstr "Ouvert"
+
+msgid "Closed"
+msgstr "Clôturé"
+
+msgid "Turnout"
+msgstr "Participation"
+
+msgid "Add option"
+msgstr "Ajouter une option"
+
+msgid "image URL"
+msgstr "URL de l'image"
+
+msgid "Alliances"
+msgstr "Alliances"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "No alliances yet."
+msgstr "Aucune alliance pour le moment."
+
+msgid "See all"
+msgstr "Voir tout"
+
+msgid "Presidential"
+msgstr "Présidentielle"
+
+msgid "Referendum"
+msgstr "Référendum"
+
+msgid "Local"
+msgstr "Locale"
+
+msgid "Parliamentary"
+msgstr "Législative"
+
+msgid "No elections yet."
+msgstr "Aucune élection pour le moment."
+
+msgid "Full results at the source:"
+msgstr "Résultats complets à la source :"
+
+msgid "No events yet."
+msgstr "Aucun événement pour le moment."
+
+msgid "Others"
+msgstr "Autres"
+
+msgid "Vote share"
+msgstr "Part des voix"
+
+msgid "Registered"
+msgstr "Inscrits"
+
+msgid "Votes cast"
+msgstr "Votants"
+
+msgid "Valid votes"
+msgstr "Suffrages exprimés"
+
+msgid "Manage"
+msgstr "Gérer"
+
+msgid "Add sourced content for this entity."
+msgstr "Ajouter du contenu sourcé pour cette entité."
+
+msgid "Vacant"
+msgstr "Vacant"
+
+msgid "Review data conflicts"
+msgstr "Examiner les conflits de données"
+
+msgid "Data conflicts"
+msgstr "Conflits de données"
+
+msgid "A source disagreed with a value we already hold. Nothing was overwritten. Correct the record through the normal editing flow, then mark the conflict resolved."
+msgstr "Une source contredit une valeur que nous détenons déjà. Rien n'a été écrasé. Corrigez l'enregistrement via le flux d'édition habituel, puis marquez le conflit comme résolu."
+
+msgid "No open conflicts."
+msgstr "Aucun conflit ouvert."
+
+msgid "Mark resolved"
+msgstr "Marquer comme résolu"
+
+msgid "Ours"
+msgstr "Notre valeur"
+
+msgid "Incoming"
+msgstr "Nouvelle valeur"
+
+msgid "Outlets"
+msgstr "Médias"
+
+msgid "No outlets yet."
+msgstr "Aucun média pour le moment."
+
+msgid "Left"
+msgstr "Gauche"
+
+msgid "Lean left"
+msgstr "Centre gauche"
+
+msgid "Center"
+msgstr "Centre"
+
+msgid "Lean right"
+msgstr "Centre droit"
+
+msgid "Right"
+msgstr "Droite"
+
+msgid "Unrated"
+msgstr "Non évalué"
+
+msgid "Pagination"
+msgstr "Pagination"
+
+msgid "Review summaries"
+msgstr "Réviser les résumés"
+
+msgid "Each draft summary stays unpublished until you review it. Edit the text if needed, then publish it, or discard the draft."
+msgstr "Chaque brouillon de résumé reste non publié jusqu'à votre révision. Modifiez le texte si nécessaire, puis publiez-le ou supprimez le brouillon."
+
+msgid "No drafts to review."
+msgstr "Aucun brouillon à réviser."
+
+msgid "Publish"
+msgstr "Publier"
+
+msgid "Discard"
+msgstr "Supprimer"
+
+msgid "Add outlet"
+msgstr "Ajouter un média"
+
+msgid "Edit outlet"
+msgstr "Modifier le média"
+
+msgid "Edit"
+msgstr "Modifier"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Homepage"
+msgstr "Site web"
+
+msgid "Logo URL"
+msgstr "URL du logo"
+
+msgid "Logo license"
+msgstr "Licence du logo"
+
+msgid "Political leaning"
+msgstr "Orientation politique"
+
+msgid "Leaning source URL"
+msgstr "URL de la source de l'orientation"
+
+msgid "Edit news"
+msgstr "Modifier l'actualité"
+
+msgid "Relations"
+msgstr "Relations"
+
+msgid "Attach a person or party"
+msgstr "Associer une personne ou un parti"
+
+msgid "Author"
+msgstr "Auteur"
+
+msgid "By"
+msgstr "Par"
+
+msgid "Mentions"
+msgstr "Mentions"
+
+msgid "Read at the source"
+msgstr "Lire à la source"
+
+msgid "Countries"
+msgstr "Pays"
+
+msgid "Semi-presidential republic"
+msgstr "République semi-présidentielle"
+
+msgid "National Assembly"
+msgstr "Assemblée nationale"

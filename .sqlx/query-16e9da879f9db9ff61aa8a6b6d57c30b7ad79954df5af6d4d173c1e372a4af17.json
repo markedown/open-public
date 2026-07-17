@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select e.name as election_name, e.slug as election_slug,\n               e.held_on, r.seats, r.votes\n        from election_results r\n        join elections e on e.id = r.election_id\n        where r.party_id = $1\n        order by e.held_on desc nulls last, e.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "election_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "election_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "held_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "held_on"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "seats",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "election_results",
+            "name": "seats"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "votes",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "election_results",
+            "name": "votes"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "16e9da879f9db9ff61aa8a6b6d57c30b7ad79954df5af6d4d173c1e372a4af17"
+}

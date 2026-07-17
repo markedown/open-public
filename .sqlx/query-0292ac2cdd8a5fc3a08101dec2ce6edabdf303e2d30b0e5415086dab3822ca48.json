@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id, question, slug, kind, media_url, media_license from polls\n        where country_id = $1 and person_id is null and party_id is null\n        order by id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "question",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "media_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "media_url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "media_license",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "media_license"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "0292ac2cdd8a5fc3a08101dec2ce6edabdf303e2d30b0e5415086dab3822ca48"
+}

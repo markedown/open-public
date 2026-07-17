@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select head_seq, head_hash\n        from poll_chains\n        where poll_id = $1 and head_seq > 0\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "head_seq",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_chains",
+            "name": "head_seq"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "head_hash",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "poll_chains",
+            "name": "head_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "f3071ebf943fc76360ba3e2281a721a31217926b36be0f1b2e0b3f2cfb03e2e9"
+}

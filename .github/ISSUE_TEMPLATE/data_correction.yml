@@ -1,0 +1,56 @@
+name: Data correction
+description: A fact about a person or party is wrong. Propose a correction with a better source.
+labels: ["data-correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every fact in Open-Public references a source, so a correction is a *source* question, not an
+        opinion. Please point us to a source at least as trustworthy as the current one. Trust order:
+        official government/election-authority sources > Wikidata > party sites > news.
+  - type: input
+    id: subject
+    attributes:
+      label: Who or what is this about?
+      description: The person or party, and the page where you saw the fact.
+      placeholder: "Ayşe Yılmaz (/kisi/ayse-yilmaz)"
+    validations:
+      required: true
+  - type: dropdown
+    id: fact-type
+    attributes:
+      label: What kind of fact is wrong?
+      options:
+        - Name or spelling
+        - Birth date or birth place
+        - Party membership (which party / dates)
+        - Role or position (title / org / dates)
+        - Photo or license
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What does the site currently say?
+      description: Quote the incorrect value as shown.
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What is the correct value?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source for the correction
+      description: A URL supporting the correct value. Higher-trust sources are preferred.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Anything else that helps us verify the correction.

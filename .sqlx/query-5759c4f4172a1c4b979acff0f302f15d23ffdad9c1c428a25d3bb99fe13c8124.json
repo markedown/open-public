@@ -1,0 +1,71 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.name, p.short_name, p.slug, p.color, count(*) as \"seats!\"\n        from party_memberships m\n        join parties p on p.id = m.party_id\n        where m.end_date is null and p.country_id = $1\n          and exists (\n            select 1 from roles r\n            where r.person_id = m.person_id\n              and r.role_type in ('mp', 'senator', 'representative')\n              and r.end_date is null\n          )\n        group by p.id\n        order by count(*) desc, p.name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "seats!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "5759c4f4172a1c4b979acff0f302f15d23ffdad9c1c428a25d3bb99fe13c8124"
+}

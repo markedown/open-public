@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into party_memberships (person_id, party_id, start_date, end_date, source_id)\n        values ($1, $2, $3, $4, $5)\n        on conflict (person_id, party_id, start_date) do update set\n            end_date  = excluded.end_date,\n            source_id = excluded.source_id\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Date",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a4b194382a1e090ae77e55ac89fd8bc4a1c661e75aa331325bfb34165d7bfb20"
+}

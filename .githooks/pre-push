@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Thorough checks before pushing: formatting, lints, and (when a database is
+# available) the test suite. Mirrors the CI gates.
+# Enable with: git config core.hooksPath .githooks
+set -euo pipefail
+
+command -v cargo >/dev/null 2>&1 || { [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"; }
+command -v cargo >/dev/null 2>&1 || { echo "pre-push: cargo not found on PATH" >&2; exit 1; }
+
+# Queries build from the committed .sqlx cache, so no database is needed to lint.
+export SQLX_OFFLINE=true
+
+echo "pre-push: rustfmt"
+cargo fmt --all --check
+
+echo "pre-push: clippy"
+cargo clippy --workspace --all-targets -- -D warnings
+
+# The db tests use #[sqlx::test] and need a live database. Run them only when
+# DATABASE_URL is set (the dev has a database up); otherwise CI covers them.
+if [ -n "${DATABASE_URL:-}" ]; then
+  echo "pre-push: tests (DATABASE_URL is set)"
+  unset SQLX_OFFLINE
+  cargo test --workspace
+else
+  echo "pre-push: DATABASE_URL not set, skipping db tests (CI runs them)"
+fi
+
+echo "pre-push: ok"

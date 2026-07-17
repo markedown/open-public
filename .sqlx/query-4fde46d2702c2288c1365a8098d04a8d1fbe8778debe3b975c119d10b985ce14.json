@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            insert into data_conflicts\n                (entity_type, entity_id, field, existing_value, incoming_value,\n                 existing_source_id, incoming_source_id)\n            values ($1, $2, $3, $4, $5, $6, $7)\n            returning id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "4fde46d2702c2288c1365a8098d04a8d1fbe8778debe3b975c119d10b985ce14"
+}

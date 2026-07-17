@@ -1,0 +1,71 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as \"votes!\"\n        from polls p\n        left join poll_votes v on v.poll_id = p.id\n        where p.country_id = $1\n           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)\n        group by p.id\n        order by p.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "question",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "closes_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "closes_at"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "votes!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "3dd7b6e42e9c0987487960e57bf6897a6179c732454aa0b4259ed32a86fd7eda"
+}

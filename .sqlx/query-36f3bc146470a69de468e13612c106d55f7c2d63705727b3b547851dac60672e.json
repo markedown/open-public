@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        with consumed as (\n            update email_verifications\n            set consumed_at = now()\n            where code = $1 and consumed_at is null and expires_at > now()\n            returning user_id\n        )\n        update users\n        set verified_at = now()\n        where id = (select user_id from consumed)\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "users",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "36f3bc146470a69de468e13612c106d55f7c2d63705727b3b547851dac60672e"
+}

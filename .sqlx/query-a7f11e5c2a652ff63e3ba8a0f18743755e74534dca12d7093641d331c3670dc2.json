@@ -1,0 +1,117 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select c.id,\n               c.entity_type,\n               case c.entity_type\n                   when 'person' then (select full_name from people where id = c.entity_id)\n                   when 'party'  then (select name from parties where id = c.entity_id)\n                   else null\n               end as \"entity_label\",\n               c.field,\n               c.existing_value,\n               c.incoming_value,\n               es.url as \"existing_source_url\",\n               is2.url as \"incoming_source_url\",\n               c.detected_at\n        from data_conflicts c\n        left join sources es on es.id = c.existing_source_id\n        left join sources is2 on is2.id = c.incoming_source_id\n        where c.resolved_at is null\n        order by c.detected_at desc, c.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "entity_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "entity_type"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "entity_label",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "field",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "field"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "existing_value",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "existing_value"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "incoming_value",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "incoming_value"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "existing_source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "incoming_source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "detected_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "data_conflicts",
+            "name": "detected_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      null,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "a7f11e5c2a652ff63e3ba8a0f18743755e74534dca12d7093641d331c3670dc2"
+}

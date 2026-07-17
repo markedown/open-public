@@ -1,0 +1,95 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select r.org as \"chamber!\", r.role_type as \"role_type!\",\n               p.name, p.short_name, p.slug, p.color, count(*) as \"seats!\"\n        from party_memberships m\n        join parties p on p.id = m.party_id\n        join roles r on r.person_id = m.person_id\n          and r.role_type in ('mp', 'senator', 'representative') and r.end_date is null\n        where m.end_date is null and p.country_id = $1\n        group by r.org, r.role_type, p.id\n        order by count(*) desc, p.name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "chamber!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "org"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "role_type!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "role_type"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "seats!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      true,
+      false,
+      false,
+      true,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "b81a8013e5a10a2aa2fef5dfa09478253d900ee21a5b674dc6d915cb79daa63e"
+}

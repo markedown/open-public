@@ -1,0 +1,37 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into people\n            (wikidata_id, full_name, slug, birth_date, birth_place,\n             photo_url, photo_license, summary, source_id, country_id)\n        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n        on conflict (wikidata_id) do update set\n            full_name     = excluded.full_name,\n            slug          = excluded.slug,\n            birth_date    = excluded.birth_date,\n            birth_place   = excluded.birth_place,\n            photo_url     = excluded.photo_url,\n            photo_license = excluded.photo_license,\n            summary       = excluded.summary,\n            country_id    = coalesce(excluded.country_id, people.country_id),\n            updated_at    = now()\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "8ad67f38ba452cf26f8ee43314482cff0466542f4ea8da7ad6942b11dca5c5ed"
+}

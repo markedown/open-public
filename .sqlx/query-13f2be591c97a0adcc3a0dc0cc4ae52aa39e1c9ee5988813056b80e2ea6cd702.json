@@ -1,0 +1,124 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id, entity_type, entity_id, field, lang, text, origin, source_lang, translated_at\n        from translations where id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "entity_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "entity_type"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "entity_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "entity_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "field",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "field"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "lang",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "lang"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "text",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "text"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "origin",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "origin"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "source_lang",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "source_lang"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "translated_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "translated_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "13f2be591c97a0adcc3a0dc0cc4ae52aa39e1c9ee5988813056b80e2ea6cd702"
+}

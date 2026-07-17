@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"count!\" from people\n        where country_id = $1 and unaccent(full_name) ilike unaccent($2)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "8306bd79b7ba04f5a485047f1dea9d1d4ebcdd14df5ded5b0da8b28da41c41e8"
+}

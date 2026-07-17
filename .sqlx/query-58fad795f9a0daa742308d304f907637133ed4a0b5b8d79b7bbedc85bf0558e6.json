@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into news_item_parties (news_item_id, party_id)\n        select $1, id from parties where slug = $2\n        on conflict do nothing\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "58fad795f9a0daa742308d304f907637133ed4a0b5b8d79b7bbedc85bf0558e6"
+}

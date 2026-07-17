@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select r.org as \"chamber!\", count(*) as \"seats!\"\n        from people pe\n        join roles r on r.person_id = pe.id\n          and r.role_type in ('mp', 'senator', 'representative') and r.end_date is null\n        where pe.country_id = $1\n          and not exists (\n            select 1 from party_memberships m where m.person_id = pe.id and m.end_date is null\n          )\n        group by r.org\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "chamber!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "org"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "seats!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      true,
+      null
+    ]
+  },
+  "hash": "65b70e7fa5aad7e15e7326bf949604ca114fbdacb74305e9734f28cb0005a259"
+}

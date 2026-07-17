@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update elections\n        set electorate = $2, votes_cast = $3, valid_votes = $4\n        where id = $1\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "674c4c9f25b6d7e2a5282aff916e0246d8bd0db3eed737809880da3ff851420d"
+}

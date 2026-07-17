@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update sources set outlet_id = $1 where outlet = $2 and outlet_id is null",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4d5efeef799c201cbc23de3955c4ecafdd6f50fd04ef8efe29e52bd41dedfc8e"
+}

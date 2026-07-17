@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update news_items set our_summary = $2, summary_draft = null where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "072dbc0f7d716584e5e75b33489367f900c7b038bad8d0d4c6d41e0ce157f63f"
+}

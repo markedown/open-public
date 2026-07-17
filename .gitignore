@@ -1,0 +1,23 @@
+# Rust build artifacts
+/target
+
+# Environment: only .env.example is tracked
+.env
+.env.*
+!.env.example
+
+# Local, uncommitted maintainer notes
+CLAUDE.local.md
+
+# Generated Tailwind stylesheet and the downloaded standalone CLI
+/.bin/
+/crates/server/static/app.css
+
+# Editor and OS files
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Tracked on purpose: .sqlx/ holds the offline query cache so CI builds
+# without a live database. Do not add it here.

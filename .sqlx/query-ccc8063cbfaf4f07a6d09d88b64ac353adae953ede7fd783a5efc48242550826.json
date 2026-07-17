@@ -1,0 +1,100 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.name as \"party_name?\", p.short_name as \"party_short_name?\",\n               p.slug as \"party_slug?\", p.color as \"party_color?\", r.label,\n               r.seats, r.votes\n        from election_results r\n        left join parties p on p.id = r.party_id\n        where r.election_id = $1\n        order by r.seats desc nulls last, r.votes desc nulls last,\n                 coalesce(p.name, r.label)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "party_name?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "party_short_name?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_slug?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "party_color?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "label",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "election_results",
+            "name": "label"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "seats",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "election_results",
+            "name": "seats"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "votes",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "election_results",
+            "name": "votes"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "ccc8063cbfaf4f07a6d09d88b64ac353adae953ede7fd783a5efc48242550826"
+}

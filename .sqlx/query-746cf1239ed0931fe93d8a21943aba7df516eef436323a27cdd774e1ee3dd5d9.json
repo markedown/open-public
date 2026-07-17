@@ -1,0 +1,74 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select n.id, n.headline, s.url as \"url!\", s.outlet,\n               n.summary_draft as \"summary_draft!\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        where n.summary_draft is not null\n        order by s.published_at desc nulls last, n.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "headline",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "headline"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "outlet",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "outlet"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "summary_draft!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "summary_draft"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "746cf1239ed0931fe93d8a21943aba7df516eef436323a27cdd774e1ee3dd5d9"
+}

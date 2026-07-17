@@ -1,0 +1,29 @@
+Data license: CC0 1.0 Universal (Public Domain Dedication)
+==========================================================
+
+The database contents served and published by Open-Public are dedicated to the
+public domain under the Creative Commons CC0 1.0 Universal Public Domain
+Dedication. This covers the curated political dataset (people, parties, roles,
+memberships, coalitions, statements, news) and the poll results (aggregates and
+anonymized vote records).
+
+To the extent possible under law, the maintainers of Open-Public have waived all
+copyright and related or neighboring rights, including sui generis database
+rights, to these contents. You may copy, modify, distribute, and use them,
+including for commercial purposes, without asking permission and without
+attribution.
+
+  Full legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+  Plain summary:   https://creativecommons.org/publicdomain/zero/1.0/
+
+Scope and notes
+---------------
+
+- This CC0 dedication applies to the DATA only. The source code is licensed
+  separately under MIT OR Apache-2.0 (see LICENSE-MIT and LICENSE-APACHE).
+
+- Individual facts are drawn from public sources (for example Wikidata, which is
+  itself CC0, and official government and election authorities). Facts are not
+  copyrightable; CC0 here removes any remaining rights in this project's
+  selection, structure, and our own-words text, and makes the published data
+  dumps freely reusable and independently verifiable.

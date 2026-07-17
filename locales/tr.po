@@ -1,0 +1,641 @@
+# Turkish translations for Open-Public.
+# Message ids are the English source strings; fill msgstr with the Turkish text.
+# Leave msgstr empty to fall back to the English source.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: tr\n"
+
+msgid "A source-backed platform for political data"
+msgstr "Kaynaklara dayalı siyasi veri platformu"
+
+msgid "People, parties, roles and polls. Every record references a source."
+msgstr "Kişiler, partiler, roller ve anketler. Her kayıt bir kaynağa dayanır."
+
+msgid "Open source · Source-backed political data."
+msgstr "Açık kaynak · Kaynaklara dayalı siyasi veri."
+
+msgid "People"
+msgstr "Kişiler"
+
+# Count unit: a noun after a numeral stays singular in Turkish ("611 kişi"),
+# unlike the "People" label used for the nav and section headings.
+msgid "people"
+msgstr "kişi"
+
+msgid "people listed"
+msgstr "kişi listelendi"
+
+msgid "No people found."
+msgstr "Kişi bulunamadı."
+
+msgid "Previous"
+msgstr "Önceki"
+
+msgid "Next"
+msgstr "Sonraki"
+
+msgid "Page"
+msgstr "Sayfa"
+
+msgid "Parties"
+msgstr "Partiler"
+
+msgid "parties listed"
+msgstr "parti listelendi"
+
+msgid "No parties found."
+msgstr "Parti bulunamadı."
+
+msgid "Roles"
+msgstr "Görevler"
+
+msgid "Party memberships"
+msgstr "Parti üyelikleri"
+
+msgid "Party"
+msgstr "Parti"
+
+msgid "Founded"
+msgstr "Kuruluş"
+
+msgid "Dissolved"
+msgstr "Kapanış"
+
+msgid "Leader"
+msgstr "Genel başkan"
+
+msgid "Alliance"
+msgstr "İttifak"
+
+msgid "Members"
+msgstr "Üyeler"
+
+msgid "Member"
+msgstr "Üye"
+
+msgid "No members listed."
+msgstr "Üye listelenmemiş."
+
+msgid "Person"
+msgstr "Kişi"
+
+msgid "Search"
+msgstr "Ara"
+
+msgid "Search people and parties..."
+msgstr "Kişi ve partilerde ara..."
+
+msgid "No results found."
+msgstr "Sonuç bulunamadı."
+
+msgid "results"
+msgstr "sonuç"
+
+msgid "Page not found."
+msgstr "Sayfa bulunamadı."
+
+msgid "Something went wrong. Please try again."
+msgstr "Bir şeyler ters gitti. Lütfen tekrar deneyin."
+
+msgid "Register"
+msgstr "Kayıt ol"
+
+msgid "Log in"
+msgstr "Giriş yap"
+
+msgid "Log out"
+msgstr "Çıkış yap"
+
+msgid "Email"
+msgstr "E-posta"
+
+msgid "Password"
+msgstr "Parola"
+
+msgid "Already have an account?"
+msgstr "Zaten bir hesabın var mı?"
+
+msgid "No account?"
+msgstr "Hesabın yok mu?"
+
+msgid "Invalid email or password."
+msgstr "Geçersiz e-posta veya parola."
+
+msgid "Internal error. Please try again."
+msgstr "Dahili hata. Lütfen tekrar deneyin."
+
+msgid "Back to home"
+msgstr "Ana sayfaya dön"
+
+msgid "Structured political information: people, parties, roles, statements and polls. Every fact references a verifiable source."
+msgstr "Yapılandırılmış siyasi bilgi: kişiler, partiler, roller, beyanlar ve anketler. Her olgu doğrulanabilir bir kaynağa dayanır."
+
+msgid "Browse profiles, roles, party affiliations and timelines."
+msgstr "Profillere, görevlere, parti üyeliklerine ve zaman çizelgelerine göz atın."
+
+msgid "Explore party histories, ideologies and current members."
+msgstr "Parti tarihçelerini, ideolojilerini ve mevcut üyelerini keşfedin."
+
+msgid "Full-text search across people and parties."
+msgstr "Kişi ve partilerde tam metin arama."
+
+msgid "Open source. Source-backed political data."
+msgstr "Açık kaynak. Kaynağa dayalı siyasi veri."
+
+msgid "present"
+msgstr "günümüz"
+
+msgid "Former members"
+msgstr "Eski üyeler"
+
+msgid "source"
+msgstr "kaynak"
+
+msgid "Background"
+msgstr "Özgeçmiş"
+
+msgid "Education"
+msgstr "Eğitim"
+
+msgid "Occupation"
+msgstr "Meslek"
+
+msgid "Ideology"
+msgstr "İdeoloji"
+
+msgid "Religion"
+msgstr "Din"
+
+msgid "Attributes"
+msgstr "Nitelikler"
+
+msgid "Institution"
+msgstr "Kurum"
+
+msgid "Degree"
+msgstr "Derece"
+
+msgid "Field of study"
+msgstr "Çalışma alanı"
+
+msgid "Start date"
+msgstr "Başlangıç tarihi"
+
+msgid "End date"
+msgstr "Bitiş tarihi"
+
+msgid "Source URL"
+msgstr "Kaynak adresi"
+
+msgid "Add education"
+msgstr "Eğitim ekle"
+
+msgid "Add attribute"
+msgstr "Nitelik ekle"
+
+msgid "Value"
+msgstr "Değer"
+
+msgid "Kind"
+msgstr "Tür"
+
+msgid "Delete"
+msgstr "Sil"
+
+msgid "Show original"
+msgstr "Özgün metni göster"
+
+msgid "Review translations"
+msgstr "Çevirileri incele"
+
+msgid "Each draft translation stays hidden until you review it. Compare it with the original, edit the text if needed, then publish it, or discard the draft."
+msgstr "Her çeviri taslağı siz inceleyene kadar gizli kalır. Özgün metinle karşılaştırın, gerekirse metni düzenleyin, sonra yayımlayın ya da taslağı silin."
+
+msgid "Overview"
+msgstr "Genel bakış"
+
+msgid "Capital"
+msgstr "Başkent"
+
+# Government-type vocabulary. Stored on each country in the source language
+# (English) and translated here, so a country's form of government reads in the
+# viewer's language rather than in whatever language it was entered.
+msgid "Presidential government system"
+msgstr "Cumhurbaşkanlığı hükümet sistemi"
+
+msgid "Federal presidential republic"
+msgstr "Federal başkanlık cumhuriyeti"
+
+msgid "Federal parliamentary republic"
+msgstr "Federal parlamenter cumhuriyet"
+
+msgid "Government"
+msgstr "Yönetim"
+
+msgid "Parliament"
+msgstr "Meclis"
+
+# A country's own name for its legislature, when it is not a generic parliament.
+msgid "Congress"
+msgstr "Kongre"
+
+# Chamber names, for a legislature with more than one chamber.
+msgid "United States Senate"
+msgstr "ABD Senatosu"
+
+msgid "United States House of Representatives"
+msgstr "ABD Temsilciler Meclisi"
+
+msgid "Independent"
+msgstr "Bağımsız"
+
+msgid "seats"
+msgstr "sandalye"
+
+msgid "Coalitions"
+msgstr "İttifaklar"
+
+msgid "People, parties, roles and polls."
+msgstr "Kişiler, partiler, roller ve anketler."
+
+msgid "People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."
+msgstr "Kişiler, partiler, seçimler ve anketler. Her olgu kaynağına bağlı, ülke başına doğrulanabilir tek veri kümesi."
+
+msgid "Open political data."
+msgstr "Açık siyasi veri."
+
+msgid "Polls"
+msgstr "Anketler"
+
+msgid "News"
+msgstr "Haberler"
+
+msgid "References"
+msgstr "Referanslar"
+
+msgid "Photo"
+msgstr "Fotoğraf"
+
+msgid "Statements"
+msgstr "Beyanlar"
+
+msgid "Statement"
+msgstr "Beyan"
+
+msgid "Add statement"
+msgstr "Beyan ekle"
+
+msgid "No statements yet."
+msgstr "Henüz beyan yok."
+
+msgid "paraphrase"
+msgstr "yorumlama"
+
+msgid "Paraphrase in our own words"
+msgstr "Kendi sözlerimizle yorumlama"
+
+msgid "Add poll"
+msgstr "Anket ekle"
+
+msgid "No polls yet."
+msgstr "Henüz anket yok."
+
+msgid "Question"
+msgstr "Soru"
+
+msgid "Option"
+msgstr "Seçenek"
+
+msgid "Options"
+msgstr "Seçenekler"
+
+msgid "Add news"
+msgstr "Haber ekle"
+
+msgid "No news yet."
+msgstr "Henüz haber yok."
+
+msgid "Headline"
+msgstr "Başlık"
+
+msgid "Source URL"
+msgstr "Kaynak bağlantısı"
+
+msgid "Outlet"
+msgstr "Yayın organı"
+
+msgid "Date"
+msgstr "Tarih"
+
+msgid "Summary"
+msgstr "Özet"
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Integrity"
+msgstr "Bütünlük"
+
+msgid "Verify"
+msgstr "Doğrula"
+
+msgid "This fingerprint lets anyone confirm no vote was altered or removed after casting."
+msgstr "Bu parmak izi, hiçbir oyun kullanıldıktan sonra değiştirilmediğini veya silinmediğini herkesin doğrulamasını sağlar."
+
+msgid "Vote"
+msgstr "Oy ver"
+
+msgid "votes"
+msgstr "oy"
+
+msgid "You have voted."
+msgstr "Oyunu kullandın."
+
+msgid "Log in to vote."
+msgstr "Oy vermek için giriş yap."
+
+msgid "Tap an option to vote."
+msgstr "Oy vermek için bir seçeneğe dokun."
+
+msgid "Enter a valid email address."
+msgstr "Geçerli bir e-posta adresi gir."
+
+msgid "Password must be at least 8 characters."
+msgstr "Parola en az 8 karakter olmalı."
+
+msgid "Please verify your email before logging in."
+msgstr "Giriş yapmadan önce lütfen e-postanı doğrula."
+
+msgid "Check your email for a link to verify your account and finish signing up."
+msgstr "Kaydını tamamlamak için hesabını doğrulayan bağlantıyı e-postanda bulabilirsin."
+
+msgid "Verify your email"
+msgstr "E-postanı doğrula"
+
+msgid "This verification link is invalid or has expired."
+msgstr "Bu doğrulama bağlantısı geçersiz veya süresi dolmuş."
+
+msgid "Email verified"
+msgstr "E-posta doğrulandı"
+
+msgid "Your account is active. You can log in now."
+msgstr "Hesabın etkin. Artık giriş yapabilirsin."
+
+msgid "Confirm your email address to activate your account:"
+msgstr "Hesabını etkinleştirmek için e-posta adresini doğrula:"
+
+msgid "If you did not create an account, ignore this message. The link expires in 24 hours."
+msgstr "Bir hesap oluşturmadıysan bu mesajı yoksay. Bağlantı 24 saat içinde geçerliliğini yitirir."
+
+msgid "Electoral history"
+msgstr "Seçim geçmişi"
+
+msgid "Elections"
+msgstr "Seçimler"
+
+msgid "Timeline"
+msgstr "Tarihçe"
+
+msgid "Founding"
+msgstr "Kuruluş"
+
+msgid "Election"
+msgstr "Seçim"
+
+msgid "Milestone"
+msgstr "Dönüm noktası"
+
+msgid "Admin panel"
+msgstr "Yönetim paneli"
+
+msgid "Curated content is editable and always sourced. Cast votes are immutable and are never editable here."
+msgstr "Düzenlenen içerik her zaman kaynaklıdır. Kullanılan oylar değişmezdir ve burada düzenlenemez."
+
+msgid "News and statements are added from a person or party page."
+msgstr "Haber ve beyanlar bir kişi ya da parti sayfasından eklenir."
+
+msgid "parties"
+msgstr "parti"
+
+msgid "polls"
+msgstr "anket"
+
+msgid "Poll type"
+msgstr "Anket türü"
+
+msgid "Single choice"
+msgstr "Tek seçim"
+
+msgid "Yes / No"
+msgstr "Evet / Hayır"
+
+msgid "Rating scale"
+msgstr "Derecelendirme"
+
+msgid "Vote"
+msgstr "Oy ver"
+
+msgid "Select one or more options, then vote."
+msgstr "Bir veya daha fazla seçenek işaretleyip oy ver."
+
+msgid "Multiple choice"
+msgstr "Çoklu seçim"
+
+msgid "Open"
+msgstr "Açık"
+
+msgid "Closed"
+msgstr "Kapalı"
+
+msgid "Turnout"
+msgstr "Katılım"
+
+msgid "Add option"
+msgstr "Seçenek ekle"
+
+msgid "image URL"
+msgstr "görsel URL"
+
+msgid "Alliances"
+msgstr "İttifaklar"
+
+msgid "Active"
+msgstr "Aktif"
+
+msgid "Inactive"
+msgstr "Pasif"
+
+msgid "No alliances yet."
+msgstr "Henüz ittifak yok."
+
+msgid "See all"
+msgstr "Tümünü gör"
+
+msgid "Presidential"
+msgstr "Cumhurbaşkanlığı"
+
+msgid "Referendum"
+msgstr "Halkoylaması"
+
+msgid "Local"
+msgstr "Yerel"
+
+msgid "Parliamentary"
+msgstr "Milletvekili"
+
+msgid "No elections yet."
+msgstr "Henüz seçim yok."
+
+msgid "Full results at the source:"
+msgstr "Tüm sonuçlar kaynakta:"
+
+msgid "No events yet."
+msgstr "Henüz olay yok."
+
+msgid "Others"
+msgstr "Diğerleri"
+
+msgid "Vote share"
+msgstr "Oy oranı"
+
+msgid "Registered"
+msgstr "Seçmen"
+
+msgid "Votes cast"
+msgstr "Kullanılan oy"
+
+msgid "Valid votes"
+msgstr "Geçerli oy"
+
+msgid "Manage"
+msgstr "Yönet"
+
+msgid "Add sourced content for this entity."
+msgstr "Bu kayıt için kaynaklı içerik ekle."
+
+msgid "Vacant"
+msgstr "Boş"
+
+msgid "Review data conflicts"
+msgstr "Veri çelişkilerini incele"
+
+msgid "Data conflicts"
+msgstr "Veri çelişkileri"
+
+msgid "A source disagreed with a value we already hold. Nothing was overwritten. Correct the record through the normal editing flow, then mark the conflict resolved."
+msgstr "Bir kaynak, elimizdeki bir değerle çelişti. Hiçbir şeyin üzerine yazılmadı. Kaydı normal düzenleme akışıyla düzeltin, sonra çelişkiyi çözüldü olarak işaretleyin."
+
+msgid "No open conflicts."
+msgstr "Açık çelişki yok."
+
+msgid "Mark resolved"
+msgstr "Çözüldü işaretle"
+
+msgid "Ours"
+msgstr "Bizde"
+
+msgid "Incoming"
+msgstr "Gelen"
+
+msgid "Outlets"
+msgstr "Yayın organları"
+
+msgid "No outlets yet."
+msgstr "Henüz yayın organı yok."
+
+msgid "Left"
+msgstr "Sol"
+
+msgid "Lean left"
+msgstr "Merkez sol"
+
+msgid "Center"
+msgstr "Merkez"
+
+msgid "Lean right"
+msgstr "Merkez sağ"
+
+msgid "Right"
+msgstr "Sağ"
+
+msgid "Unrated"
+msgstr "Değerlendirilmemiş"
+
+msgid "Pagination"
+msgstr "Sayfalama"
+
+msgid "Review summaries"
+msgstr "Özetleri incele"
+
+msgid "Each draft summary stays unpublished until you review it. Edit the text if needed, then publish it, or discard the draft."
+msgstr "Her özet taslağı, siz inceleyene kadar yayımlanmaz. Gerekirse metni düzenleyin, ardından yayımlayın ya da taslağı iptal edin."
+
+msgid "No drafts to review."
+msgstr "İncelenecek taslak yok."
+
+msgid "Publish"
+msgstr "Yayımla"
+
+msgid "Discard"
+msgstr "İptal et"
+
+msgid "Add outlet"
+msgstr "Yayın organı ekle"
+
+msgid "Edit outlet"
+msgstr "Yayın organını düzenle"
+
+msgid "Edit"
+msgstr "Düzenle"
+
+msgid "Name"
+msgstr "Ad"
+
+msgid "Slug"
+msgstr "Kısa ad"
+
+msgid "Homepage"
+msgstr "Ana sayfa"
+
+msgid "Logo URL"
+msgstr "Logo bağlantısı"
+
+msgid "Logo license"
+msgstr "Logo lisansı"
+
+msgid "Political leaning"
+msgstr "Siyasi eğilim"
+
+msgid "Leaning source URL"
+msgstr "Eğilim kaynağı bağlantısı"
+
+msgid "Edit news"
+msgstr "Haberi düzenle"
+
+msgid "Relations"
+msgstr "İlişkiler"
+
+msgid "Attach a person or party"
+msgstr "Kişi veya parti ekle"
+
+msgid "Author"
+msgstr "Yazar"
+
+msgid "By"
+msgstr "Yazan"
+
+msgid "Mentions"
+msgstr "Bağlantılar"
+
+msgid "Read at the source"
+msgstr "Kaynakta oku"
+
+msgid "Countries"
+msgstr "Ülkeler"
+
+msgid "Semi-presidential republic"
+msgstr "Yarı başkanlık cumhuriyeti"
+
+msgid "National Assembly"
+msgstr "Ulusal Meclis"

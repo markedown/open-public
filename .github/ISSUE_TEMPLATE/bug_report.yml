@@ -1,0 +1,38 @@
+name: Bug report
+description: Report something that is broken or behaves incorrectly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. For incorrect *data* about a person or
+        party, use the "Data correction" template instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: How can a maintainer reproduce this?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Affected page or URL
+      description: The path where you saw the problem, if applicable.
+      placeholder: /kisi/ayse-yilmaz
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, and anything else relevant. For server-side issues, include logs if you have them.

@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"count!\"\n        from party_memberships m\n        where m.party_id = $1 and m.end_date is null\n          and exists (\n            select 1 from roles r\n            where r.person_id = m.person_id and r.role_type = 'mp' and r.end_date is null\n          )\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "ba2bd5e933a9ccab0803cb26e9e28c20dcbe6aec2b6e844b1442fb376e5858fc"
+}

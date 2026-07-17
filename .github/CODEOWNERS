@@ -1,0 +1,5 @@
+# Changes to the database schema and to CI/workflow configuration require owner review.
+# See CLAUDE.md (CI/CD): migrations and workflows are owner-reviewed.
+
+/migrations/   @markedown
+/.github/      @markedown

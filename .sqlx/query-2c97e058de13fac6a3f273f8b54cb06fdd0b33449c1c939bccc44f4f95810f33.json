@@ -1,0 +1,37 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into parties\n            (wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n             ideology_tags, summary, source_id, country_id)\n        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n        on conflict (wikidata_id) do update set\n            name           = excluded.name,\n            short_name     = excluded.short_name,\n            slug           = excluded.slug,\n            founded_date   = excluded.founded_date,\n            dissolved_date = excluded.dissolved_date,\n            ideology_tags  = excluded.ideology_tags,\n            summary        = excluded.summary,\n            country_id     = coalesce(excluded.country_id, parties.country_id),\n            updated_at     = now()\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Date",
+        "TextArray",
+        "Text",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2c97e058de13fac6a3f273f8b54cb06fdd0b33449c1c939bccc44f4f95810f33"
+}

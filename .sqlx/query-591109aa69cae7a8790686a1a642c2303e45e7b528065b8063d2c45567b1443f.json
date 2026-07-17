@@ -1,0 +1,89 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.id, p.question, p.slug, p.kind, p.media_url, p.media_license\n        from polls p\n        where p.slug = $1 and (\n              p.country_id = $2\n              or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $2)\n              or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $2))\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "question",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "media_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "media_url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "media_license",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "media_license"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "591109aa69cae7a8790686a1a642c2303e45e7b528065b8063d2c45567b1443f"
+}

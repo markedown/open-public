@@ -1,0 +1,112 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.name as \"party_name!\", p.short_name as \"party_short_name\",\n               p.slug as \"party_slug!\", p.color as \"party_color\",\n               m.start_date, m.end_date,\n               s.id as \"source_id!\", s.url as \"source_url!\"\n        from party_memberships m\n        join parties p on p.id = m.party_id\n        join sources s on s.id = m.source_id\n        where m.person_id = $1\n        order by m.start_date desc nulls last\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "party_name!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "party_short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "party_color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "start_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "party_memberships",
+            "name": "start_date"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "end_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "party_memberships",
+            "name": "end_date"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "source_id!",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "source_url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "9e6d4dbab7971a4d411aa184214981ca617c25863cb8e0506f2bd6c8db56dd56"
+}

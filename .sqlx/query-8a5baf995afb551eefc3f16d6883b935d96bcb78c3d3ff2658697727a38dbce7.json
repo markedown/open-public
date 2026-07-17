@@ -1,0 +1,112 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select r.role_type, r.title, r.org, r.district,\n               r.start_date, r.end_date,\n               s.id as \"source_id!\", s.url as \"source_url!\"\n        from roles r\n        join sources s on s.id = r.source_id\n        where r.person_id = $1\n        order by r.start_date desc nulls last\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "role_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "role_type"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "org",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "org"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "district",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "district"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "start_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "start_date"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "end_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "end_date"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "source_id!",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "source_url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "8a5baf995afb551eefc3f16d6883b935d96bcb78c3d3ff2658697727a38dbce7"
+}

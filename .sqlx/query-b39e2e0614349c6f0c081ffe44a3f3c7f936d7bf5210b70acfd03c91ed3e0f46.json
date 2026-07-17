@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select s.url from sources s join elections e on e.source_id = s.id where e.id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b39e2e0614349c6f0c081ffe44a3f3c7f936d7bf5210b70acfd03c91ed3e0f46"
+}

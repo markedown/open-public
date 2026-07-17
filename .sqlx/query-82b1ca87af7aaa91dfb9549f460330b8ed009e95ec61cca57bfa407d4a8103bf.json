@@ -1,0 +1,67 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select coalesce(ntr.text, a.name) as \"name!\", a.slug, a.founded_date, a.dissolved_date,\n               (select count(*) from party_alliances pa\n                where pa.alliance_id = a.id and pa.end_date is null) as \"member_count!\"\n        from alliances a\n        left join translations ntr on ntr.entity_type = 'alliance' and ntr.entity_id = a.id\n            and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'\n        where a.country_id = $1\n        order by a.dissolved_date is not null, a.founded_date desc nulls last, a.name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "founded_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "founded_date"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "dissolved_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "dissolved_date"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "member_count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null,
+      false,
+      true,
+      true,
+      null
+    ]
+  },
+  "hash": "82b1ca87af7aaa91dfb9549f460330b8ed009e95ec61cca57bfa407d4a8103bf"
+}

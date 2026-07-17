@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id, name, slug, summary, founded_date, dissolved_date\n        from alliances where slug = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "summary",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "summary"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "founded_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "founded_date"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "dissolved_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "dissolved_date"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "05c9678265d7ae95545f740b1305ed5bce551b64cc160dc5e64466f5360d4193"
+}

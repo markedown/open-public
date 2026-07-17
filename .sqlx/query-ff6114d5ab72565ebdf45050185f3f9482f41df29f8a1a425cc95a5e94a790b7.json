@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"count!\"\n        from people pe\n        where pe.country_id = $1\n          and exists (\n            select 1 from roles r\n            where r.person_id = pe.id\n              and r.role_type in ('mp', 'senator', 'representative')\n              and r.end_date is null\n          )\n          and not exists (\n            select 1 from party_memberships m\n            where m.person_id = pe.id and m.end_date is null\n          )\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "ff6114d5ab72565ebdf45050185f3f9482f41df29f8a1a425cc95a5e94a790b7"
+}

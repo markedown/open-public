@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Tailwind scans the maud templates (Rust source) for class names. */
+@source "../src/**/*.rs";
+
+/* Self-hosted fonts only (no CDN, for privacy). All three cover Turkish
+   (İ ı ğ ş ç ö ü). Public Sans is the UI/body face; Petrona is the display
+   serif for the wordmark and headings; IBM Plex Mono marks verifiable figures
+   (record counts, citation chits). */
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/static/fonts/PublicSans.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Petrona";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/static/fonts/Petrona.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/static/fonts/IBMPlexMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+}
+
+@theme {
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Petrona", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Neutral chrome: a warm paper/ink scale. Saturated color is data only and
+     never appears here. */
+  --color-paper: oklch(97% 0.012 75);
+  --color-paper-raised: oklch(99% 0.008 75);
+  --color-ink: oklch(22% 0.02 60);
+  --color-ink-muted: oklch(45% 0.02 60);
+  --color-hairline: oklch(80% 0.015 70);
+  --color-hairline-light: oklch(88% 0.01 70);
+
+  /* The single interface accent: links, focus, and the record-card corner
+     tick. Never mapped to a party. */
+  --color-accent: #33527a;
+  --color-accent-tint: oklch(94% 0.02 250);
+}

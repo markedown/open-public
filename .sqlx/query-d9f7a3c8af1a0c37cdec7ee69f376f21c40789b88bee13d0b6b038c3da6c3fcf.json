@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select sum(er.seats)::bigint as \"total\"\n        from elections e\n        join election_results er on er.election_id = e.id\n        where e.country_id = $1 and e.kind = 'parliamentary'\n        group by e.id, e.held_on\n        order by e.held_on desc nulls last\n        limit 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "total",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "d9f7a3c8af1a0c37cdec7ee69f376f21c40789b88bee13d0b6b038c3da6c3fcf"
+}

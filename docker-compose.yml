@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: open-public-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: open_public
+      POSTGRES_PASSWORD: open_public
+      POSTGRES_DB: open_public
+      # Pin the classic data path so the named volume mounts predictably.
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      # Host port is configurable (POSTGRES_PORT) to avoid local collisions.
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U open_public -d open_public"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:

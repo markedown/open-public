@@ -1,0 +1,32 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into person_attributes (person_id, kind, value, value_wikidata_id, source_id)\n        values ($1, $2, $3, $4, $5)\n        on conflict (person_id, kind, value) do update set\n            value_wikidata_id = excluded.value_wikidata_id,\n            source_id = excluded.source_id\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "person_attributes",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "201641a8c3da71a7cc6baa8b09be7e0f4b310ed8a396a73a5aeabad998b42571"
+}

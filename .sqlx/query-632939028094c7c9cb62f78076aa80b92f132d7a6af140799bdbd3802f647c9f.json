@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            insert into poll_votes (poll_id, option_id, user_id)\n            select $1, $2, $3\n            where exists (select 1 from poll_options where id = $2 and poll_id = $1)\n            on conflict (poll_id, user_id, option_id) do nothing\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "632939028094c7c9cb62f78076aa80b92f132d7a6af140799bdbd3802f647c9f"
+}

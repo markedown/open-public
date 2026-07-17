@@ -1,0 +1,120 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select o.id as \"id!\", o.name as \"name!\", o.slug as \"slug!\",\n               o.homepage_url, o.logo_url, o.logo_license, o.leaning, o.summary,\n               (select count(*) from news_items n\n                join sources s on s.id = n.source_id\n                where s.outlet_id = o.id) as \"article_count!\"\n        from outlets o\n        where o.slug = $1 and o.country_id = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "homepage_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "homepage_url"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "logo_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "logo_url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "logo_license",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "logo_license"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "leaning",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "leaning"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "summary",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "outlets",
+            "name": "summary"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "article_count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      null
+    ]
+  },
+  "hash": "3cfe534b9b2d3c49eb2f705a7a554c8ab13d744739afaa757a3fa8dc1e7158b4"
+}

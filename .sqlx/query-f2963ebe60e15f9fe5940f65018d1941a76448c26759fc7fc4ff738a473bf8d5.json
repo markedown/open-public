@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into translations\n            (entity_type, entity_id, field, lang, text, origin, status, source_lang, translated_at)\n        values ($1, $2, $3, $4, $5, $6, $7, $8, now())\n        on conflict (entity_type, entity_id, field, lang) do update set\n            text          = excluded.text,\n            origin        = excluded.origin,\n            status        = excluded.status,\n            source_lang   = excluded.source_lang,\n            translated_at = now(),\n            reviewed_by   = null,\n            reviewed_at   = null\n        returning id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "f2963ebe60e15f9fe5940f65018d1941a76448c26759fc7fc4ff738a473bf8d5"
+}

@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into election_results (election_id, party_id, seats, votes, source_id)\n        values ($1, $2, $3, $4, $5)\n        on conflict (election_id, party_id) do update set\n            seats = excluded.seats,\n            votes = excluded.votes,\n            source_id = excluded.source_id\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int4",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ee35b31824c0cf2bbe09933681834adbcba8940c1024a0deb87b674ca9734124"
+}

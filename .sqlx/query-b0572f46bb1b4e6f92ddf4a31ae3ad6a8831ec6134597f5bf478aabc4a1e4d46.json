@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update translations set text = $2, translated_at = now() where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "b0572f46bb1b4e6f92ddf4a31ae3ad6a8831ec6134597f5bf478aabc4a1e4d46"
+}

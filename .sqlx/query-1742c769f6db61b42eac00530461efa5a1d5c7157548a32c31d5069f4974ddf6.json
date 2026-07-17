@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select e.kind, e.title, e.happened_on, s.url as source_url\n        from events e\n        join sources s on s.id = e.source_id\n        where e.person_id = $1\n        order by e.happened_on desc nulls last, e.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "events",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "events",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "happened_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "events",
+            "name": "happened_on"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "1742c769f6db61b42eac00530461efa5a1d5c7157548a32c31d5069f4974ddf6"
+}

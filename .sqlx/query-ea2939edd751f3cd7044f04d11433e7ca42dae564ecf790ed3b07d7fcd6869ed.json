@@ -1,0 +1,54 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select entity_id, field, text from translations\n        where entity_type = $1 and entity_id = any($2) and lang = $3 and status = 'published'\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "entity_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "entity_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "field",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "field"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "text",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "translations",
+            "name": "text"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8Array",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "ea2939edd751f3cd7044f04d11433e7ca42dae564ecf790ed3b07d7fcd6869ed"
+}

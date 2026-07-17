@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select st.id, st.text_original, st.is_paraphrase, st.stated_at,\n               s.url as \"url!\", s.outlet\n        from statements st\n        join sources s on s.id = st.source_id\n        where st.party_id = $1\n        order by st.stated_at desc nulls last, st.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "statements",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "text_original",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "statements",
+            "name": "text_original"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "is_paraphrase",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "statements",
+            "name": "is_paraphrase"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "stated_at",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "statements",
+            "name": "stated_at"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "outlet",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "outlet"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "1c8a93f57b082f9913272eaa22da00809d9ebdc1dff59acd9417d9f2d21f59b5"
+}

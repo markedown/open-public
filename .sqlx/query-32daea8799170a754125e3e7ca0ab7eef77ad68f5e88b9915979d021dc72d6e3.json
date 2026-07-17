@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select n.headline, n.our_summary, n.author, s.url as \"url!\", s.outlet\n        from news_items n join sources s on s.id = n.source_id\n        where n.id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "headline",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "headline"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "our_summary",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "our_summary"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "author",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "author"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "outlet",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "outlet"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "32daea8799170a754125e3e7ca0ab7eef77ad68f5e88b9915979d021dc72d6e3"
+}

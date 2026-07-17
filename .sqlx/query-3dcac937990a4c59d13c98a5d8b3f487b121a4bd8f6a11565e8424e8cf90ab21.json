@@ -1,0 +1,65 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select\n          (select count(*) from people where country_id = $1) as \"people!\",\n          (select count(*) from parties where country_id = $1) as \"parties!\",\n          (select count(*) from alliances where country_id = $1) as \"alliances!\",\n          (select count(*) from elections where country_id = $1) as \"elections!\",\n          (select count(*) from news_items n where\n             exists (select 1 from news_item_people x join people pe on pe.id = x.person_id\n                     where x.news_item_id = n.id and pe.country_id = $1)\n             or exists (select 1 from news_item_parties y join parties pa on pa.id = y.party_id\n                        where y.news_item_id = n.id and pa.country_id = $1)) as \"news!\",\n          (select count(*) from polls p where p.country_id = $1\n             or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n             or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)) as \"polls!\",\n          (select count(*) from events where country_id = $1) as \"events!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "people!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "parties!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "alliances!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "elections!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "news!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "polls!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "events!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "3dcac937990a4c59d13c98a5d8b3f487b121a4bd8f6a11565e8424e8cf90ab21"
+}
