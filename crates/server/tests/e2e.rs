@@ -3057,3 +3057,317 @@ async fn admin_can_reject_as_a_violation(pool: db::Pool) {
     assert!(sub.is_violation);
     assert_eq!(sub.admin_note.as_deref(), Some("off topic"));
 }
+
+/// A non-alpha image, encoded as PNG for upload; the pipeline re-encodes it to
+/// JPEG (no transparency to preserve), so it exercises the JPEG serving branch.
+fn rgb_png() -> Vec<u8> {
+    let img = image::RgbImage::from_pixel(5, 5, image::Rgb([30, 60, 90]));
+    let mut buf = Vec::new();
+    image::DynamicImage::ImageRgb8(img)
+        .write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png)
+        .unwrap();
+    buf
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn store_upload_validates_writes_and_dedups(pool: db::Pool) {
+    seed(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "store@x.test").await;
+    // A fresh, unique directory so the write path is actually taken.
+    let dir = std::env::temp_dir().join(format!("op-store-{uid}"));
+    let _ = std::fs::remove_dir_all(&dir);
+
+    // Empty and oversized uploads are rejected before any work.
+    assert!(matches!(
+        server::media::store_upload(&pool, &dir, uid, vec![]).await,
+        Err(server::media::AssetError::Rejected(_))
+    ));
+    assert!(matches!(
+        server::media::store_upload(&pool, &dir, uid, vec![0u8; 6 * 1024 * 1024]).await,
+        Err(server::media::AssetError::Rejected(_))
+    ));
+
+    // A valid image is stored and written to disk.
+    let asset = server::media::store_upload(&pool, &dir, uid, tiny_png())
+        .await
+        .unwrap();
+    let path = dir.join(&asset.sha256[0..2]).join(&asset.sha256);
+    assert!(path.exists());
+
+    // Re-uploading the same bytes reuses the row and skips the write.
+    let again = server::media::store_upload(&pool, &dir, uid, tiny_png())
+        .await
+        .unwrap();
+    assert_eq!(asset.id, again.id);
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn serving_handles_missing_files_and_jpeg(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "srv@x.test").await;
+
+    // A row that exists but whose file is absent serves as not found.
+    let ghost = "f".repeat(64);
+    db::assets::insert(
+        &pool,
+        &db::assets::NewAsset {
+            sha256: &ghost,
+            mime: "image/png",
+            width: 1,
+            height: 1,
+            byte_size: 1,
+            uploaded_by: uid,
+        },
+    )
+    .await
+    .unwrap();
+    db::assets::mark_published(&pool, {
+        db::assets::get_by_sha(&pool, &ghost)
+            .await
+            .unwrap()
+            .unwrap()
+            .id
+    })
+    .await
+    .unwrap();
+    assert_eq!(
+        get(&app, &format!("/media/{ghost}")).await.status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // Upload a JPEG-bound image and approve it, then serve it (jpeg branch).
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "jpeg please".into()),
+            Part::Text("kind", "single".into()),
+            Part::File("question_image", "p.png", "image/png", rgb_png()),
+            Part::Text("option", "A".into()),
+            Part::Text("option", "B".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let (sha, mime): (String, String) = sqlx::query_as(
+        "select sha256, mime from assets where mime = 'image/jpeg' order by id desc limit 1",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(mime, "image/jpeg");
+    let sid: i64 = sqlx::query_scalar("select id from poll_submissions where submitter_id = $1")
+        .bind(uid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    db::submissions::record_ai_allow(&pool, sid, "t", None, &[])
+        .await
+        .unwrap();
+    db::submissions::approve(&pool, sid, uid).await.unwrap();
+    let resp = get(&app, &format!("/media/{sha}")).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(resp.headers().get("content-type").unwrap(), "image/jpeg");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_review_loop_runs_a_pass(pool: db::Pool) {
+    use std::time::Duration;
+    seed(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "loop@x.test").await;
+    let cid = country_id(&pool).await;
+    let sid = make_pending_ai(&pool, cid, uid, "loop me").await;
+
+    // Run the background loop briefly; it should screen the pending submission.
+    let _ = tokio::time::timeout(
+        Duration::from_millis(300),
+        server::reviewer::run(
+            pool.clone(),
+            server::reviewer::DeferReviewer,
+            Duration::from_millis(5),
+        ),
+    )
+    .await;
+    assert_eq!(sub_status(&pool, sid).await, "pending_admin");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn three_ai_rejections_ban_through_the_engine(pool: db::Pool) {
+    use server::reviewer::{process_pending, Decision};
+    seed(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "banai@x.test").await;
+    let cid = country_id(&pool).await;
+    for i in 0..3 {
+        make_pending_ai(&pool, cid, uid, &format!("bad {i}")).await;
+    }
+    // One sweep rejects all three; the third crosses the ban threshold.
+    process_pending(
+        &pool,
+        &StubReviewer {
+            decision: Decision::Reject,
+            fail: false,
+        },
+        20,
+    )
+    .await
+    .unwrap();
+    assert!(db::users::get_by_id(&pool, uid)
+        .await
+        .unwrap()
+        .unwrap()
+        .banned_at
+        .is_some());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn submission_state_transitions_are_no_ops_when_out_of_state(pool: db::Pool) {
+    seed(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "noop@x.test").await;
+    let cid = country_id(&pool).await;
+
+    // record_ai_reject a second time is a no-op (already handled).
+    let a = make_pending_ai(&pool, cid, uid, "one").await;
+    assert!(!db::submissions::record_ai_reject(&pool, a, "m", None, &[])
+        .await
+        .unwrap());
+    assert!(!db::submissions::record_ai_reject(&pool, a, "m", None, &[])
+        .await
+        .unwrap());
+
+    // reject on a submission that is not awaiting an admin is a no-op.
+    let b = make_pending_ai(&pool, cid, uid, "two").await;
+    assert!(!db::submissions::reject(&pool, b, uid, None, false)
+        .await
+        .unwrap());
+    // approve on the same (still pending_ai) is a no-op too.
+    assert!(db::submissions::approve(&pool, b, uid)
+        .await
+        .unwrap()
+        .is_none());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn my_submissions_shows_each_state(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "states@x.test").await;
+    let cid = country_id(&pool).await;
+
+    // An option row fragment is available for the form (HTMX add-option).
+    let req = Request::builder()
+        .uri(format!("/{COUNTRY}/polls/submit/row"))
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    // Approved (links to the poll), AI-rejected (shows a reason), and
+    // admin-rejected (shows a note).
+    let approved = make_pending_ai(&pool, cid, uid, "APPROVED_Q").await;
+    db::submissions::record_ai_allow(&pool, approved, "t", None, &[])
+        .await
+        .unwrap();
+    db::submissions::approve(&pool, approved, uid)
+        .await
+        .unwrap();
+
+    let ai_rej = make_pending_ai(&pool, cid, uid, "AIREJECT_Q").await;
+    db::submissions::record_ai_reject(&pool, ai_rej, "t", Some("AI_REASON_TEXT"), &[])
+        .await
+        .unwrap();
+
+    let admin_rej = make_pending_ai(&pool, cid, uid, "ADMINREJECT_Q").await;
+    db::submissions::record_ai_allow(&pool, admin_rej, "t", None, &[])
+        .await
+        .unwrap();
+    db::submissions::reject(&pool, admin_rej, uid, Some("ADMIN_NOTE_TEXT"), false)
+        .await
+        .unwrap();
+
+    let req = Request::builder()
+        .uri("/submissions")
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(body.contains("APPROVED_Q"));
+    assert!(body.contains(&format!("/{COUNTRY}/polls"))); // published poll link
+    assert!(body.contains("AI_REASON_TEXT"));
+    assert!(body.contains("ADMIN_NOTE_TEXT"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn submission_exercises_optional_fields_and_branches(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "branch@x.test").await;
+
+    // A valid submission that also carries: an unknown kind (coerced to single),
+    // an unknown field (drained), an empty question image (no file chosen), an
+    // option with an image, and an option with an empty image field.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Cover the branches?".into()),
+            Part::Text("kind", "not-a-kind".into()),
+            Part::Text("bogus", "ignored".into()),
+            Part::File("question_image", "", "application/octet-stream", vec![]),
+            Part::Text("option", "A".into()),
+            Part::File("option_image", "a.png", "image/png", tiny_png()),
+            Part::Text("option", "B".into()),
+            Part::File("option_image", "", "application/octet-stream", vec![]),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    // The kind was coerced and one option carries an image.
+    let (kind,): (String,) =
+        sqlx::query_as("select kind from poll_submissions order by id desc limit 1")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(kind, "single");
+    let with_img: i64 = sqlx::query_scalar(
+        "select count(*) from poll_submission_options where asset_id is not null",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(with_img, 1);
+
+    // Submitting to a country that does not exist is a 404.
+    let resp = post_multipart(
+        &app,
+        "/no-such-country/polls/submit",
+        &[
+            Part::Text("question", "Q".into()),
+            Part::Text("option", "A".into()),
+            Part::Text("option", "B".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+
+    // A malformed multipart body is reported back on the form, not a crash.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/{COUNTRY}/polls/submit"))
+        .header("content-type", "multipart/form-data; boundary=ZZ")
+        .header("cookie", &cookie)
+        .body(Body::from(
+            "--ZZ\r\nContent-Disposition: form-data; name=\"question\"",
+        ))
+        .unwrap();
+    let code = app.clone().oneshot(req).await.unwrap().status();
+    assert!(code == StatusCode::OK || code == StatusCode::SEE_OTHER);
+    let _ = uid;
+}
