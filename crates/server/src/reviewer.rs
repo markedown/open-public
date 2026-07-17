@@ -322,4 +322,84 @@ mod tests {
         assert!(msg.contains("1. A"));
         assert!(msg.contains("2. B"));
     }
+
+    #[test]
+    fn the_defer_reviewer_allows_and_names_itself() {
+        assert_eq!(DeferReviewer.model(), "none");
+    }
+
+    fn sample_request() -> ReviewRequest {
+        ReviewRequest {
+            country: "Testland".to_string(),
+            question: "Q?".to_string(),
+            options: vec!["A".to_string(), "B".to_string()],
+            kind: "single".to_string(),
+        }
+    }
+
+    /// Start a one-request mock chat-completions endpoint returning `body`, and
+    /// give back its base URL. Uses axum, already a dependency.
+    async fn mock_api(status: u16, body: serde_json::Value) -> String {
+        use axum::routing::post;
+        let app = axum::Router::new().route(
+            "/chat/completions",
+            post(move || async move {
+                (
+                    axum::http::StatusCode::from_u16(status).unwrap(),
+                    axum::Json(body),
+                )
+            }),
+        );
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        tokio::spawn(async move {
+            let _ = axum::serve(listener, app).await;
+        });
+        format!("http://{addr}")
+    }
+
+    fn reviewer_for(base: &str) -> DeepSeekReviewer {
+        DeepSeekReviewer::new(&ReviewConfig {
+            api_key: "test-key".to_string(),
+            model: "test-model".to_string(),
+            base_url: base.to_string(),
+        })
+        .unwrap()
+    }
+
+    #[tokio::test]
+    async fn deepseek_reviewer_calls_the_api_and_parses_a_verdict() {
+        let base = mock_api(
+            200,
+            serde_json::json!({
+                "choices": [{"message": {"content":
+                    "{\"decision\":\"reject\",\"categories\":[\"spam\"],\"reason\":\"advert\"}"}}]
+            }),
+        )
+        .await;
+        let reviewer = reviewer_for(&base);
+        assert_eq!(reviewer.model(), "test-model");
+        let v = reviewer.review(&sample_request()).await.unwrap();
+        assert_eq!(v.decision, Decision::Reject);
+        assert_eq!(v.categories, vec!["spam"]);
+    }
+
+    #[tokio::test]
+    async fn deepseek_reviewer_errors_on_a_bad_status() {
+        let base = mock_api(500, serde_json::json!({"error": "boom"})).await;
+        assert!(reviewer_for(&base).review(&sample_request()).await.is_err());
+    }
+
+    #[tokio::test]
+    async fn deepseek_reviewer_errors_when_the_reply_has_no_content() {
+        let base = mock_api(200, serde_json::json!({"choices": []})).await;
+        assert!(reviewer_for(&base).review(&sample_request()).await.is_err());
+    }
+
+    #[tokio::test]
+    async fn deepseek_reviewer_errors_when_unreachable() {
+        // Nothing is listening on this port, so the request fails to connect.
+        let reviewer = reviewer_for("http://127.0.0.1:1");
+        assert!(reviewer.review(&sample_request()).await.is_err());
+    }
 }

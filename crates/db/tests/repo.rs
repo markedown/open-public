@@ -2013,3 +2013,92 @@ async fn a_plain_admin_rejection_is_not_a_violation(pool: sqlx::PgPool) {
     assert_eq!(sub.status, "rejected");
     assert!(!sub.is_violation);
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn approve_handles_empty_slug_collision_and_option_images(pool: sqlx::PgPool) {
+    let (country_id, user_id) = seed_submitter(&pool).await;
+    let asset = db::assets::insert(
+        &pool,
+        &db::assets::NewAsset {
+            sha256: "opt-image-sha",
+            mime: "image/png",
+            width: 1,
+            height: 1,
+            byte_size: 1,
+            uploaded_by: user_id,
+        },
+    )
+    .await
+    .unwrap();
+
+    // A question that slugifies to nothing, with an option carrying an image.
+    let s1 = db::submissions::create(
+        &pool,
+        &db::submissions::NewSubmission {
+            submitter_id: user_id,
+            country_id,
+            question: "???",
+            kind: "single",
+            question_asset_id: None,
+        },
+        &[
+            db::submissions::NewSubmissionOption {
+                label: "A".into(),
+                asset_id: Some(asset.id),
+            },
+            db::submissions::NewSubmissionOption {
+                label: "B".into(),
+                asset_id: None,
+            },
+        ],
+    )
+    .await
+    .unwrap();
+    db::submissions::record_ai_allow(&pool, s1, "m", None, &[])
+        .await
+        .unwrap();
+    let slug1 = db::submissions::approve(&pool, s1, user_id)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(slug1, "poll"); // empty slug falls back
+    assert!(
+        db::assets::get_by_sha(&pool, "opt-image-sha")
+            .await
+            .unwrap()
+            .unwrap()
+            .published
+    ); // the option image was published
+
+    // A second empty-slug question collides and gets a numeric suffix.
+    let s2 = db::submissions::create(
+        &pool,
+        &db::submissions::NewSubmission {
+            submitter_id: user_id,
+            country_id,
+            question: "!!!",
+            kind: "single",
+            question_asset_id: None,
+        },
+        &[
+            db::submissions::NewSubmissionOption {
+                label: "A".into(),
+                asset_id: None,
+            },
+            db::submissions::NewSubmissionOption {
+                label: "B".into(),
+                asset_id: None,
+            },
+        ],
+    )
+    .await
+    .unwrap();
+    db::submissions::record_ai_allow(&pool, s2, "m", None, &[])
+        .await
+        .unwrap();
+    let slug2 = db::submissions::approve(&pool, s2, user_id)
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(slug2, "poll-2");
+}

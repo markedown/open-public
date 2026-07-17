@@ -283,4 +283,24 @@ mod tests {
         let p = asset_path(FsPath::new("/data"), "abcdef0000");
         assert_eq!(p, PathBuf::from("/data/ab/abcdef0000"));
     }
+
+    #[test]
+    fn rejects_a_recognized_but_unsupported_format() {
+        // A GIF is a real image format the platform does not accept.
+        let mut gif = b"GIF89a".to_vec();
+        gif.extend_from_slice(&[0u8; 32]);
+        assert!(matches!(process(gif), Err(AssetError::Rejected(_))));
+    }
+
+    #[test]
+    fn oversized_images_are_downscaled() {
+        let wide = image::RgbImage::from_pixel(1700, 8, image::Rgb([1, 2, 3]));
+        let mut buf = Vec::new();
+        image::DynamicImage::ImageRgb8(wide)
+            .write_to(&mut Cursor::new(&mut buf), ImageFormat::Png)
+            .unwrap();
+        let p = process(buf).unwrap();
+        assert!(p.width <= OUTPUT_MAX_DIM as i32);
+        assert!(p.width < 1700); // it really was scaled down
+    }
 }
