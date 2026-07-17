@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update poll_submissions\n        set status = 'rejected', is_violation = $2, admin_note = $3,\n            reviewed_by = $4, reviewed_at = now(), updated_at = now()\n        where id = $1 and status = 'pending_admin'\n        returning submitter_id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "submitter_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "submitter_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Bool",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "a97031ecb80cd65b0bcbda7ab6cbb6256ab578a5a070e98ff8446036f8bb1b4a"
+}

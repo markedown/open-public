@@ -324,6 +324,8 @@ fn router(pool: db::Pool) -> Router {
         secret: Arc::new(SECRET.to_vec()),
         mailer,
         cookie_secure: false,
+        // Content-addressed, so a shared temp dir across tests is safe.
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
     };
     server::app(state, Path::new("static"))
 }
@@ -2496,4 +2498,349 @@ async fn readyz_is_ok_when_the_database_is_reachable(pool: db::Pool) {
     let resp = get(&app, "/readyz").await;
     assert_eq!(resp.status(), StatusCode::OK);
     assert_eq!(body_string(resp).await, "ready");
+}
+
+// --- User-submitted polls: submission, moderation, uploads, and bans ---
+
+/// A verified, non-admin user with a live session. Returns (id, cookie header).
+async fn user_cookie(pool: &db::Pool, email: &str) -> (i64, String) {
+    let email_hash = server::auth::hash_email(email, SECRET).unwrap();
+    let pw = server::auth::hash_password("pw123456").unwrap();
+    let uid = db::users::insert(pool, &email_hash, &pw).await.unwrap();
+    db::users::mark_verified(pool, uid).await.unwrap();
+    let token = format!("tok-{uid}");
+    db::sessions::create(
+        pool,
+        uid,
+        &server::auth::hash_token(&token),
+        chrono::Utc::now() + chrono::Duration::hours(1),
+    )
+    .await
+    .unwrap();
+    (uid, format!("op_session={token}"))
+}
+
+async fn country_id(pool: &db::Pool) -> i64 {
+    sqlx::query_scalar("select id from countries where slug = $1")
+        .bind(COUNTRY)
+        .fetch_one(pool)
+        .await
+        .unwrap()
+}
+
+/// A part of a multipart/form-data body.
+enum Part {
+    Text(&'static str, String),
+    File(&'static str, &'static str, &'static str, Vec<u8>),
+}
+
+fn multipart(boundary: &str, parts: &[Part]) -> Vec<u8> {
+    let mut b = Vec::new();
+    for p in parts {
+        b.extend_from_slice(format!("--{boundary}\r\n").as_bytes());
+        match p {
+            Part::Text(name, val) => {
+                b.extend_from_slice(
+                    format!("Content-Disposition: form-data; name=\"{name}\"\r\n\r\n").as_bytes(),
+                );
+                b.extend_from_slice(val.as_bytes());
+            }
+            Part::File(name, filename, ctype, bytes) => {
+                b.extend_from_slice(
+                    format!("Content-Disposition: form-data; name=\"{name}\"; filename=\"{filename}\"\r\nContent-Type: {ctype}\r\n\r\n").as_bytes(),
+                );
+                b.extend_from_slice(bytes);
+            }
+        }
+        b.extend_from_slice(b"\r\n");
+    }
+    b.extend_from_slice(format!("--{boundary}--\r\n").as_bytes());
+    b
+}
+
+async fn post_multipart(app: &Router, uri: &str, parts: &[Part], cookie: &str) -> Response {
+    let boundary = "OPBOUNDARYtest";
+    let body = multipart(boundary, parts);
+    let req = Request::builder()
+        .method("POST")
+        .uri(uri)
+        .header(
+            "content-type",
+            format!("multipart/form-data; boundary={boundary}"),
+        )
+        .header("cookie", cookie)
+        .body(Body::from(body))
+        .expect("request");
+    app.clone().oneshot(req).await.expect("response")
+}
+
+/// A small, valid PNG built with the image crate, to exercise the real upload
+/// decode and re-encode path.
+fn tiny_png() -> Vec<u8> {
+    let img = image::RgbaImage::from_pixel(4, 4, image::Rgba([10, 120, 200, 255]));
+    let mut buf = Vec::new();
+    image::DynamicImage::ImageRgba8(img)
+        .write_to(&mut std::io::Cursor::new(&mut buf), image::ImageFormat::Png)
+        .unwrap();
+    buf
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn submission_lands_pending_and_shows_for_the_author(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_uid, cookie) = user_cookie(&pool, "u@x.test").await;
+
+    // The form is available to a signed-in user.
+    let req = Request::builder()
+        .uri(format!("/{COUNTRY}/polls/submit"))
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    let resp = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+
+    // Submit a text-only poll.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Which colour is best?".into()),
+            Part::Text("kind", "single".into()),
+            Part::Text("option", "Red".into()),
+            Part::Text("option", "Blue".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    // It is recorded, pending the automated screen, not yet a poll.
+    let (status, question): (String, String) =
+        sqlx::query_as("select status, question from poll_submissions order by id desc limit 1")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(status, "pending_ai");
+    assert_eq!(question, "Which colour is best?");
+    let polls: i64 = sqlx::query_scalar("select count(*) from polls where question = $1")
+        .bind("Which colour is best?")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(polls, 0);
+
+    // The author sees it on their submissions page.
+    let req = Request::builder()
+        .uri("/submissions")
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(body.contains("Which colour is best?"));
+
+    // Anonymous visitors cannot reach the form or the submissions page.
+    assert!(get(&app, &format!("/{COUNTRY}/polls/submit"))
+        .await
+        .status()
+        .is_redirection());
+    assert!(get(&app, "/submissions").await.status().is_redirection());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn admin_approval_creates_a_community_poll(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let admin = admin_cookie(&pool).await;
+    let (uid, _cookie) = user_cookie(&pool, "author@x.test").await;
+    let cid = country_id(&pool).await;
+
+    let sid = db::submissions::create(
+        &pool,
+        &db::submissions::NewSubmission {
+            submitter_id: uid,
+            country_id: cid,
+            question: "Approve me please?",
+            kind: "single",
+            question_asset_id: None,
+        },
+        &[
+            db::submissions::NewSubmissionOption {
+                label: "Yes".into(),
+                asset_id: None,
+            },
+            db::submissions::NewSubmissionOption {
+                label: "No".into(),
+                asset_id: None,
+            },
+        ],
+    )
+    .await
+    .unwrap();
+    // Move it past the automated screen into the admin queue.
+    db::submissions::record_ai_allow(&pool, sid, "test", None, &[])
+        .await
+        .unwrap();
+
+    // The queue shows it (and non-admins get a 404 for the admin area).
+    assert_eq!(
+        get(&app, "/admin/submissions").await.status(),
+        StatusCode::NOT_FOUND
+    );
+    let req = Request::builder()
+        .uri("/admin/submissions")
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(body.contains("Approve me please?"));
+
+    // Approve it.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/admin/submissions/{sid}/approve"))
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // A community poll now exists and the submission is marked approved.
+    let created_by: String = sqlx::query_scalar("select created_by from polls where question = $1")
+        .bind("Approve me please?")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(created_by, "community");
+    let sub = db::submissions::get(&pool, sid).await.unwrap().unwrap();
+    assert_eq!(sub.status, "approved");
+    assert!(sub.published_poll_id.is_some());
+
+    let body = body_string(get(&app, &format!("/{COUNTRY}/polls")).await).await;
+    assert!(body.contains("Approve me please?"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_ban_invalidates_the_session_and_blocks_relogin(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "ban@x.test").await;
+
+    // Works before the ban.
+    let req = Request::builder()
+        .uri("/submissions")
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    sqlx::query("update users set banned_at = now() where id = $1")
+        .bind(uid)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    // The live session no longer resolves.
+    let req = Request::builder()
+        .uri("/submissions")
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    assert!(app
+        .clone()
+        .oneshot(req)
+        .await
+        .unwrap()
+        .status()
+        .is_redirection());
+
+    // Re-login is refused (the form is re-rendered, not a redirect to home).
+    let resp = post_form(&app, "/login", "email=ban%40x.test&password=pw123456", None).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert!(resp
+        .headers()
+        .get_all("set-cookie")
+        .iter()
+        .all(|c| !c.to_str().unwrap().contains("op_session=tok")));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn uploaded_images_are_hidden_until_approved_and_hardened(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "up@x.test").await;
+
+    // Submit a poll with a question image.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Pick one".into()),
+            Part::Text("kind", "single".into()),
+            Part::File("question_image", "q.png", "image/png", tiny_png()),
+            Part::Text("option", "A".into()),
+            Part::Text("option", "B".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    let (sha, published): (String, bool) =
+        sqlx::query_as("select sha256, published from assets order by id desc limit 1")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert!(!published);
+
+    // Pending: invisible to anonymous visitors, visible to the uploader.
+    assert_eq!(
+        get(&app, &format!("/media/{sha}")).await.status(),
+        StatusCode::NOT_FOUND
+    );
+    let req = Request::builder()
+        .uri(format!("/media/{sha}"))
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    let resp = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(
+        resp.headers().get("x-content-type-options").unwrap(),
+        "nosniff"
+    );
+    assert!(resp.headers().get("content-security-policy").is_some());
+    assert!(resp
+        .headers()
+        .get("content-type")
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .starts_with("image/"));
+
+    // A path traversal or non-hex name is a plain 404.
+    assert_eq!(
+        get(&app, "/media/..%2f..%2fetc%2fpasswd").await.status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // Approve, and the image becomes public.
+    let sid: i64 = sqlx::query_scalar("select id from poll_submissions where submitter_id = $1")
+        .bind(uid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    db::submissions::record_ai_allow(&pool, sid, "test", None, &[])
+        .await
+        .unwrap();
+    db::submissions::approve(&pool, sid, uid).await.unwrap();
+    assert_eq!(
+        get(&app, &format!("/media/{sha}")).await.status(),
+        StatusCode::OK
+    );
 }

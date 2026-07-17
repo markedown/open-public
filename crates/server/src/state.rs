@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use axum::extract::FromRef;
@@ -13,6 +14,8 @@ pub struct AppState {
     pub secret: Arc<Vec<u8>>,
     pub mailer: Mailer,
     pub cookie_secure: bool,
+    /// Directory holding re-encoded uploaded images, served under `/media`.
+    pub asset_dir: Arc<PathBuf>,
 }
 
 impl FromRef<AppState> for Pool {

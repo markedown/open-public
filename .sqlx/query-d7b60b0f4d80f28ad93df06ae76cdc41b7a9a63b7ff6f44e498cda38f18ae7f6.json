@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select label from poll_submission_options where submission_id = $1 order by position",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "label",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submission_options",
+            "name": "label"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "d7b60b0f4d80f28ad93df06ae76cdc41b7a9a63b7ff6f44e498cda38f18ae7f6"
+}

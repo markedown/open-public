@@ -13,6 +13,9 @@ CLAUDE.local.md
 /.bin/
 /crates/server/static/app.css
 
+# Uploaded image assets (ASSET_DIR default); runtime data, never committed
+/data/
+
 # Editor and OS files
 .DS_Store
 *.swp

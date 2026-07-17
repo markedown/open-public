@@ -9,13 +9,15 @@ pub mod error;
 pub mod fmt;
 pub mod i18n;
 pub mod mail;
+pub mod media;
 pub mod pages;
+pub mod reviewer;
 pub mod state;
 pub mod ui;
 
 use std::path::Path;
 
-use axum::extract::{Path as UrlPath, State};
+use axum::extract::{DefaultBodyLimit, Path as UrlPath, State};
 use axum::http::{header, HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
@@ -55,14 +57,35 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}/outlet/{slug}", get(pages::outlets::detail))
         .route("/search", get(pages::search::page))
         .route("/{country}/polls", get(pages::polls::list))
+        .route(
+            "/{country}/polls/submit",
+            get(pages::submit::form)
+                .post(pages::submit::create)
+                .layer(DefaultBodyLimit::max(media::MAX_UPLOAD_BODY)),
+        )
+        .route(
+            "/{country}/polls/submit/row",
+            get(pages::submit::option_row),
+        )
         .route("/{country}/poll/{slug}", get(pages::poll::detail))
         .route("/{country}/poll/{slug}/vote", post(pages::poll::vote))
         .route("/{country}/poll/{slug}/chain", get(pages::poll::chain))
+        .route("/submissions", get(pages::submit::mine))
+        .route("/media/{sha}", get(media::serve))
         .route(
             "/register",
             get(pages::auth::register_form).post(pages::auth::register_submit),
         )
         .route("/admin", get(pages::admin::index))
+        .route("/admin/submissions", get(pages::admin::submissions))
+        .route(
+            "/admin/submissions/{id}/approve",
+            post(pages::admin::submission_approve),
+        )
+        .route(
+            "/admin/submissions/{id}/reject",
+            post(pages::admin::submission_reject),
+        )
         .route("/admin/summaries", get(pages::admin::summaries))
         .route(
             "/admin/summaries/{id}/publish",

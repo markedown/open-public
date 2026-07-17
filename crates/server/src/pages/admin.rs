@@ -37,6 +37,7 @@ pub async fn index(
     let open_conflicts = db::conflicts::count_open(&pool).await?;
     let pending_drafts = db::news::pending_draft_count(&pool).await?;
     let pending_translations = db::translations::pending_count(&pool).await?;
+    let pending_submissions = db::submissions::pending_admin_count(&pool).await?;
 
     let content = html! {
         section class="max-w-2xl" {
@@ -50,6 +51,7 @@ pub async fn index(
             // Review queues, always shown so they stay discoverable even at zero.
             div class="mt-6 space-y-2" {
                 @for (label, href, count) in [
+                    (i18n::t("Review poll submissions"), "/admin/submissions", pending_submissions),
                     (i18n::t("Review summaries"), "/admin/summaries", pending_drafts),
                     (i18n::t("Review translations"), "/admin/translations", pending_translations),
                     (i18n::t("Review data conflicts"), "/admin/conflicts", open_conflicts),
@@ -1494,6 +1496,142 @@ pub async fn poll_create(
     .map_err(map_service_err)?;
 
     Ok(Redirect::to(&format!("/{}/poll/{}", country, slug)).into_response())
+}
+
+/// The poll-submission review queue: proposals the automated screen has passed,
+/// awaiting a human. The admin approves (creating a real poll) or rejects, and a
+/// rejection may be marked a policy violation, which counts toward a ban.
+pub async fn submissions(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+) -> Result<Markup, PageError> {
+    require_admin(&session)?;
+    let subs = db::submissions::pending_admin(&pool).await?;
+    let mut rows = Vec::with_capacity(subs.len());
+    for s in subs {
+        let opts = db::submissions::options(&pool, s.id).await?;
+        rows.push((s, opts));
+    }
+
+    let content = html! {
+        section class="max-w-3xl" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+                "← " (i18n::t("Admin panel"))
+            }
+            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+                (i18n::t("Review poll submissions"))
+            }
+            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                (i18n::t("Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."))
+            }
+
+            @if rows.is_empty() {
+                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                    (i18n::t("No submissions to review."))
+                }
+            } @else {
+                ul class="mt-6 space-y-4" {
+                    @for (s, opts) in &rows {
+                        li class="border border-hairline p-4" {
+                            div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted" {
+                                span class="font-bold text-ink" { (s.country_name) }
+                                span { (s.kind) }
+                            }
+                            h2 class="mt-1 text-sm font-medium text-ink" { (s.question) }
+                            @if let Some(ref sha) = s.question_sha {
+                                img src={"/media/" (sha)} alt="" loading="lazy"
+                                    class="mt-2 max-h-40 border border-hairline object-contain";
+                            }
+                            @if let Some(ref reason) = s.ai_reason {
+                                p class="mt-2 text-xs text-ink-muted" {
+                                    span class="font-bold uppercase tracking-wide" { (i18n::t("Automated note")) } ": " (reason)
+                                }
+                            }
+                            @if let Some(cats) = s.ai_categories.as_ref().filter(|c| !c.is_empty()) {
+                                p class="mt-1 font-mono text-[11px] text-ink-muted" { (cats.join(", ")) }
+                            }
+                            ul class="mt-3 space-y-1.5" {
+                                @for o in opts {
+                                    li class="flex items-center gap-2 text-sm text-ink" {
+                                        @if let Some(ref sha) = o.asset_sha {
+                                            img src={"/media/" (sha)} alt="" loading="lazy"
+                                                class="h-9 w-9 border border-hairline object-cover";
+                                        }
+                                        span { (o.label) }
+                                    }
+                                }
+                            }
+
+                            div class="mt-4 flex flex-wrap items-start gap-3 border-t border-hairline-light pt-3" {
+                                form method="post" action={"/admin/submissions/" (s.id) "/approve"} {
+                                    button type="submit"
+                                        class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                                        (i18n::t("Approve"))
+                                    }
+                                }
+                                form method="post" action={"/admin/submissions/" (s.id) "/reject"}
+                                     class="flex flex-1 flex-col gap-2" {
+                                    input type="text" name="note" placeholder=(i18n::t("Reason (optional)"))
+                                        class="w-full border border-hairline bg-paper px-2 py-1.5 text-sm text-ink";
+                                    label class="flex items-center gap-2 text-xs text-ink-muted" {
+                                        input type="checkbox" name="violation" value="on";
+                                        (i18n::t("Policy violation (counts toward a ban)"))
+                                    }
+                                    button type="submit"
+                                        class="self-start border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                        (i18n::t("Reject"))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Review poll submissions")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// Approve a submission: create the poll and return to the queue.
+pub async fn submission_approve(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    let admin_id = session.as_ref().map(|s| s.user_id).unwrap_or_default();
+    db::submissions::approve(&pool, id, admin_id).await?;
+    Ok(Redirect::to("/admin/submissions"))
+}
+
+/// The reject form: an optional reason and whether it is a policy violation.
+#[derive(Deserialize)]
+pub struct RejectForm {
+    note: Option<String>,
+    violation: Option<String>,
+}
+
+/// Reject a submission (optionally marking a violation) and return to the queue.
+pub async fn submission_reject(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+    Form(form): Form<RejectForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    let admin_id = session.as_ref().map(|s| s.user_id).unwrap_or_default();
+    let note = form
+        .note
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty());
+    db::submissions::reject(&pool, id, admin_id, note, form.violation.is_some()).await?;
+    Ok(Redirect::to("/admin/submissions"))
 }
 
 #[cfg(test)]

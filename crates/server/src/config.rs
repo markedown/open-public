@@ -34,6 +34,19 @@ pub struct Config {
     pub mail_transport: MailTransport,
     /// Envelope sender for verification mail (`MAIL_FROM`).
     pub mail_from: String,
+    /// Directory for re-encoded uploaded images (`ASSET_DIR`, default `./data/assets`).
+    pub asset_dir: PathBuf,
+    /// Automated poll-review provider. `None` when no key is set, in which case
+    /// submissions are deferred to the admin queue instead of auto-screened.
+    pub review: Option<ReviewConfig>,
+}
+
+/// Settings for the automated poll reviewer (an OpenAI-compatible chat API).
+#[derive(Clone)]
+pub struct ReviewConfig {
+    pub api_key: String,
+    pub model: String,
+    pub base_url: String,
 }
 
 impl Config {
@@ -76,6 +89,24 @@ impl Config {
         let mail_transport = mail_transport(&get)?;
         let mail_from = get("MAIL_FROM").unwrap_or_else(|| "noreply@localhost".to_string());
 
+        let asset_dir = match get("ASSET_DIR") {
+            Some(dir) if !dir.trim().is_empty() => PathBuf::from(dir),
+            _ => PathBuf::from("./data/assets"),
+        };
+
+        // The reviewer is configured only when an API key is present. Without one
+        // the server still runs; submissions simply wait for an admin.
+        let review = get("DEEPSEEK_API_KEY")
+            .filter(|k| !k.trim().is_empty())
+            .map(|api_key| ReviewConfig {
+                api_key,
+                model: get("DEEPSEEK_MODEL").unwrap_or_else(|| "deepseek-chat".to_string()),
+                base_url: get("DEEPSEEK_BASE_URL")
+                    .unwrap_or_else(|| "https://api.deepseek.com".to_string())
+                    .trim_end_matches('/')
+                    .to_string(),
+            });
+
         Ok(Self {
             site_addr,
             static_dir,
@@ -85,6 +116,8 @@ impl Config {
             cookie_secure,
             mail_transport,
             mail_from,
+            asset_dir,
+            review,
         })
     }
 }
@@ -136,6 +169,37 @@ mod tests {
         assert!(!cfg.cookie_secure);
         assert!(matches!(cfg.mail_transport, MailTransport::Console));
         assert_eq!(cfg.mail_from, "noreply@localhost");
+    }
+
+    #[test]
+    fn asset_dir_defaults_and_overrides() {
+        let cfg =
+            Config::from_source(source(&[("DATABASE_URL", "x"), ("APP_SECRET", "s")])).unwrap();
+        assert_eq!(cfg.asset_dir, std::path::PathBuf::from("./data/assets"));
+        let cfg = Config::from_source(source(&[
+            ("DATABASE_URL", "x"),
+            ("APP_SECRET", "s"),
+            ("ASSET_DIR", "/srv/assets"),
+        ]))
+        .unwrap();
+        assert_eq!(cfg.asset_dir, std::path::PathBuf::from("/srv/assets"));
+    }
+
+    #[test]
+    fn review_is_configured_only_with_a_key() {
+        let cfg =
+            Config::from_source(source(&[("DATABASE_URL", "x"), ("APP_SECRET", "s")])).unwrap();
+        assert!(cfg.review.is_none());
+        let cfg = Config::from_source(source(&[
+            ("DATABASE_URL", "x"),
+            ("APP_SECRET", "s"),
+            ("DEEPSEEK_API_KEY", "sk-test"),
+            ("DEEPSEEK_BASE_URL", "https://api.deepseek.com/"),
+        ]))
+        .unwrap();
+        let review = cfg.review.expect("review configured");
+        assert_eq!(review.model, "deepseek-chat"); // default model
+        assert_eq!(review.base_url, "https://api.deepseek.com"); // trailing slash trimmed
     }
 
     #[test]

@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update poll_submissions\n        set status = 'pending_admin', ai_decision = 'allow', ai_model = $2,\n            ai_reason = $3, ai_categories = $4, ai_reviewed_at = now(), updated_at = now()\n        where id = $1 and status = 'pending_ai'\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text",
+        "TextArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4a480fb7b2713a0b646062a38bc512e442c79b91be10458fde89c59c79e6779f"
+}

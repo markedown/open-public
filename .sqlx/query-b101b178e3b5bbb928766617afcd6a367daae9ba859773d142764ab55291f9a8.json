@@ -1,0 +1,208 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select s.id, s.submitter_id, s.country_id,\n               c.slug as country_slug, c.name as country_name,\n               s.question, s.kind, qa.sha256 as \"question_sha?\",\n               s.status, s.ai_decision, s.ai_reason, s.ai_categories,\n               s.is_violation, s.admin_note, s.published_poll_id, s.created_at\n        from poll_submissions s\n        join countries c on c.id = s.country_id\n        left join assets qa on qa.id = s.question_asset_id\n        where s.submitter_id = $1\n        order by s.created_at desc, s.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "submitter_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "submitter_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "country_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "country_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "country_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "country_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "question",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "question_sha?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "assets",
+            "name": "sha256"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "status",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "ai_decision",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "ai_decision"
+          }
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "ai_reason",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "ai_reason"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "ai_categories",
+        "type_info": "TextArray",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "ai_categories"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "is_violation",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "is_violation"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "admin_note",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "admin_note"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
+        "name": "published_poll_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "published_poll_id"
+          }
+        }
+      },
+      {
+        "ordinal": 15,
+        "name": "created_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "created_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "b101b178e3b5bbb928766617afcd6a367daae9ba859773d142764ab55291f9a8"
+}
