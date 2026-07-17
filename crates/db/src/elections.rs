@@ -53,6 +53,8 @@ pub struct PartyHistoryEntry {
     pub held_on: Option<NaiveDate>,
     pub seats: Option<i32>,
     pub votes: Option<i64>,
+    /// The election's valid-vote total, so a vote share can be computed.
+    pub valid_votes: Option<i64>,
 }
 
 /// Insert an election. Returns its id.
@@ -259,7 +261,7 @@ pub async fn history_for_party(pool: &Pool, party_id: i64) -> Result<Vec<PartyHi
         PartyHistoryEntry,
         r#"
         select e.name as election_name, e.slug as election_slug,
-               e.held_on, r.seats, r.votes
+               e.held_on, r.seats, r.votes, e.valid_votes
         from election_results r
         join elections e on e.id = r.election_id
         where r.party_id = $1

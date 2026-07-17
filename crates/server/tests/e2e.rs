@@ -4071,3 +4071,29 @@ async fn vote_share_bars_order_by_votes_not_seats(pool: db::Pool) {
         "the higher-vote contestant must sort above the seated low-vote one"
     );
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn party_page_shows_a_support_chart(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/ch", None, Some("hch"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar("insert into countries (name, slug, source_id) values ('Chartland','chartland',$1) returning id")
+        .bind(src).fetch_one(&pool).await.unwrap();
+    let pid: i64 = sqlx::query_scalar("insert into parties (name, short_name, slug, color, source_id, country_id) values ('Chart Party','CP','cp','#123456',$1,$2) returning id")
+        .bind(src).bind(cid).fetch_one(&pool).await.unwrap();
+    for (slug, held, votes, valid) in [
+        ("e1", "2020-01-01", 1000_i64, 5000_i64),
+        ("e2", "2024-01-01", 1500_i64, 5000_i64),
+    ] {
+        let eid: i64 = sqlx::query_scalar("insert into elections (country_id, name, slug, held_on, kind, source_id, valid_votes) values ($1,$2,$3,$4,'general',$5,$6) returning id")
+            .bind(cid).bind(format!("Election {slug}")).bind(slug).bind(chrono::NaiveDate::parse_from_str(held, "%Y-%m-%d").unwrap()).bind(src).bind(valid)
+            .fetch_one(&pool).await.unwrap();
+        sqlx::query("insert into election_results (election_id, party_id, votes, source_id) values ($1,$2,$3,$4)")
+            .bind(eid).bind(pid).bind(votes).bind(src).execute(&pool).await.unwrap();
+    }
+    let app = router(pool.clone());
+    let body = body_string(get(&app, "/chartland/parties/cp").await).await;
+    // The support chart is inline SVG whose bars carry the party colour.
+    assert!(body.contains("<svg"));
+    assert!(body.contains("fill=\"#123456\""));
+}

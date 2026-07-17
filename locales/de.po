@@ -693,3 +693,6 @@ msgstr "Ablehnen"
 
 msgid "This account has been suspended."
 msgstr "Dieses Konto wurde gesperrt."
+
+msgid "Support over time"
+msgstr "Unterstützung im Zeitverlauf"

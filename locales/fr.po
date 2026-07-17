@@ -693,3 +693,6 @@ msgstr "Rejeter"
 
 msgid "This account has been suspended."
 msgstr "Ce compte a été suspendu."
+
+msgid "Support over time"
+msgstr "Soutien au fil du temps"

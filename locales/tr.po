@@ -705,3 +705,6 @@ msgstr "Reddet"
 
 msgid "This account has been suspended."
 msgstr "Bu hesap askıya alındı."
+
+msgid "Support over time"
+msgstr "Zaman içinde destek"
