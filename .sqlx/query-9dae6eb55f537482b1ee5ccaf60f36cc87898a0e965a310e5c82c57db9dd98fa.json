@@ -1,22 +1,33 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.name as party_name, p.short_name as party_short_name,\n               p.slug as party_slug, p.color as party_color\n        from party_alliances pa\n        join parties p on p.id = pa.party_id\n        where pa.alliance_id = $1 and pa.end_date is null\n        order by p.name\n        ",
+  "query": "\n        select a.name as alliance_name, a.slug as alliance_slug,\n               p.short_name, p.slug as party_slug, p.color\n        from alliances a\n        join party_alliances pa on pa.alliance_id = a.id\n        join parties p on p.id = pa.party_id\n        where a.country_id = $1\n        order by a.name collate \"name_sort\", p.short_name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "party_name",
+        "name": "alliance_name",
         "type_info": "Text",
         "origin": {
           "Table": {
-            "table": "parties",
+            "table": "alliances",
             "name": "name"
           }
         }
       },
       {
         "ordinal": 1,
-        "name": "party_short_name",
+        "name": "alliance_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "short_name",
         "type_info": "Text",
         "origin": {
           "Table": {
@@ -26,7 +37,7 @@
         }
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "party_slug",
         "type_info": "Text",
         "origin": {
@@ -37,8 +48,8 @@
         }
       },
       {
-        "ordinal": 3,
-        "name": "party_color",
+        "ordinal": 4,
+        "name": "color",
         "type_info": "Text",
         "origin": {
           "Table": {
@@ -55,10 +66,11 @@
     },
     "nullable": [
       false,
+      false,
       true,
       false,
       true
     ]
   },
-  "hash": "f3b99ed6dd54398942adef6409197b42620ad92376705591a3969f5acaba67a9"
+  "hash": "9dae6eb55f537482b1ee5ccaf60f36cc87898a0e965a310e5c82c57db9dd98fa"
 }

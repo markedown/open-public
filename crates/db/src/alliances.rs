@@ -108,7 +108,7 @@ pub async fn members(pool: &Pool, alliance_id: i64) -> Result<Vec<AllianceMember
         from party_alliances pa
         join parties p on p.id = pa.party_id
         where pa.alliance_id = $1 and pa.end_date is null
-        order by p.name
+        order by p.name collate "name_sort"
         "#,
         alliance_id,
     )

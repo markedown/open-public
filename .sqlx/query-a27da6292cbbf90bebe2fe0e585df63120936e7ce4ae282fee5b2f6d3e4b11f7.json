@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select n.id, n.headline, n.our_summary, s.url as \"url!\", s.outlet, s.published_at,\n          coalesce(\n            (select array_agg(p.slug || E'\\t' || p.full_name order by p.full_name)\n             from news_item_people nip join people p on p.id = nip.person_id\n             where nip.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"people!: Vec<String>\",\n          coalesce(\n            (select array_agg(\n               pt.slug || E'\\t' || coalesce(pt.short_name, pt.name) || E'\\t' || coalesce(pt.color, '')\n               order by pt.name)\n             from news_item_parties nap join parties pt on pt.id = nap.party_id\n             where nap.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"parties!: Vec<String>\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        where s.outlet_id = $1\n        order by s.published_at desc nulls last, n.id desc\n        limit $2 offset $3\n        ",
+  "query": "\n        select n.id, n.headline, n.our_summary, s.url as \"url!\", s.outlet, s.published_at,\n          coalesce(\n            (select array_agg(p.slug || E'\\t' || p.full_name order by p.full_name collate \"name_sort\")\n             from news_item_people nip join people p on p.id = nip.person_id\n             where nip.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"people!: Vec<String>\",\n          coalesce(\n            (select array_agg(\n               pt.slug || E'\\t' || coalesce(pt.short_name, pt.name) || E'\\t' || coalesce(pt.color, '')\n               order by pt.name collate \"name_sort\")\n             from news_item_parties nap join parties pt on pt.id = nap.party_id\n             where nap.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"parties!: Vec<String>\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        where s.outlet_id = $1\n        order by s.published_at desc nulls last, n.id desc\n        limit $2 offset $3\n        ",
   "describe": {
     "columns": [
       {
@@ -100,5 +100,5 @@
       null
     ]
   },
-  "hash": "a6bd3f2d4089a9370c42d8c4f33ecfb4bae26426b2d823ff8f310ff4524ab291"
+  "hash": "a27da6292cbbf90bebe2fe0e585df63120936e7ce4ae282fee5b2f6d3e4b11f7"
 }

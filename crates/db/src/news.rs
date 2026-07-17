@@ -119,7 +119,7 @@ pub async fn recent(pool: &Pool, country_id: i64, lang: &str, limit: i64) -> Res
           coalesce(htr.text, n.headline) as "headline!", n.our_summary,
           s.url as "url!", s.outlet, s.published_at,
           coalesce(
-            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name)
+            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name collate "name_sort")
              from news_item_people nip join people p on p.id = nip.person_id
              where nip.news_item_id = n.id),
             '{}'::text[]
@@ -127,7 +127,7 @@ pub async fn recent(pool: &Pool, country_id: i64, lang: &str, limit: i64) -> Res
           coalesce(
             (select array_agg(
                pt.slug || E'\t' || coalesce(pt.short_name, pt.name) || E'\t' || coalesce(pt.color, '')
-               order by pt.name)
+               order by pt.name collate "name_sort")
              from news_item_parties nap join parties pt on pt.id = nap.party_id
              where nap.news_item_id = n.id),
             '{}'::text[]
@@ -208,7 +208,7 @@ pub async fn for_outlet(
         r#"
         select n.id, n.headline, n.our_summary, s.url as "url!", s.outlet, s.published_at,
           coalesce(
-            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name)
+            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name collate "name_sort")
              from news_item_people nip join people p on p.id = nip.person_id
              where nip.news_item_id = n.id),
             '{}'::text[]
@@ -216,7 +216,7 @@ pub async fn for_outlet(
           coalesce(
             (select array_agg(
                pt.slug || E'\t' || coalesce(pt.short_name, pt.name) || E'\t' || coalesce(pt.color, '')
-               order by pt.name)
+               order by pt.name collate "name_sort")
              from news_item_parties nap join parties pt on pt.id = nap.party_id
              where nap.news_item_id = n.id),
             '{}'::text[]
@@ -437,7 +437,7 @@ pub async fn get_detail(pool: &Pool, id: i64) -> Result<Option<NewsDetail>> {
         select n.headline, n.our_summary, n.author, s.url as "url!", s.published_at,
                o.name as "outlet_name?", o.slug as "outlet_slug?", o.logo_url as "outlet_logo?",
           coalesce(
-            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name)
+            (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name collate "name_sort")
              from news_item_people nip join people p on p.id = nip.person_id
              where nip.news_item_id = n.id),
             '{}'::text[]
@@ -445,7 +445,7 @@ pub async fn get_detail(pool: &Pool, id: i64) -> Result<Option<NewsDetail>> {
           coalesce(
             (select array_agg(
                pt.slug || E'\t' || coalesce(pt.short_name, pt.name) || E'\t' || coalesce(pt.color, '')
-               order by pt.name)
+               order by pt.name collate "name_sort")
              from news_item_parties nap join parties pt on pt.id = nap.party_id
              where nap.news_item_id = n.id),
             '{}'::text[]
@@ -524,7 +524,7 @@ pub async fn get_edit(pool: &Pool, id: i64) -> Result<Option<NewsEdit>> {
         r#"
         select p.id as "id!", p.full_name as "name!", p.slug as "slug!"
         from news_item_people nip join people p on p.id = nip.person_id
-        where nip.news_item_id = $1 order by p.full_name
+        where nip.news_item_id = $1 order by p.full_name collate "name_sort"
         "#,
         id,
     )
@@ -535,7 +535,7 @@ pub async fn get_edit(pool: &Pool, id: i64) -> Result<Option<NewsEdit>> {
         r#"
         select pt.id as "id!", pt.name as "name!", pt.slug as "slug!"
         from news_item_parties nap join parties pt on pt.id = nap.party_id
-        where nap.news_item_id = $1 order by pt.name
+        where nap.news_item_id = $1 order by pt.name collate "name_sort"
         "#,
         id,
     )

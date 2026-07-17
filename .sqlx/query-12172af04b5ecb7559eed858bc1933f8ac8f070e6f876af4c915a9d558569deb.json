@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select full_name, slug\n        from people\n        where fts @@ to_tsquery('simple', $1)\n        order by full_name\n        limit $2\n        ",
+  "query": "\n        select full_name, slug\n        from people\n        where fts @@ to_tsquery('simple', $1)\n        order by full_name collate \"name_sort\"\n        limit $2\n        ",
   "describe": {
     "columns": [
       {
@@ -37,5 +37,5 @@
       false
     ]
   },
-  "hash": "337927b2bb35e94b006c7041bd1cc8c58110680d692f50d41ba205bebc7d35e9"
+  "hash": "12172af04b5ecb7559eed858bc1933f8ac8f070e6f876af4c915a9d558569deb"
 }

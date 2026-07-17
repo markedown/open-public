@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select id, wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n               ideology_tags, summary, color\n        from parties\n        where country_id = $1\n          and (unaccent(name) ilike unaccent($2)\n               or unaccent(coalesce(short_name, '')) ilike unaccent($2))\n        order by name\n        ",
+  "query": "\n        select id, wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n               ideology_tags, summary, color\n        from parties\n        where country_id = $1\n          and (unaccent(name) ilike unaccent($2)\n               or unaccent(coalesce(short_name, '')) ilike unaccent($2))\n        order by name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -133,5 +133,5 @@
       true
     ]
   },
-  "hash": "53e03f6c01d83380feee9b4349f3a72de327eb848fca4da3d73fb9a58fa88aaa"
+  "hash": "7a6c5179159f418e3ae5ac50022370cfd9cbe33c9edd3412467a950ee7076e63"
 }

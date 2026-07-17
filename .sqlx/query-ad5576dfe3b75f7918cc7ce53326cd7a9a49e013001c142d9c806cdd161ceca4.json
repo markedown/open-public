@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select o.name, o.slug, o.logo_url, o.leaning,\n               (select count(*) from news_items n\n                join sources s on s.id = n.source_id\n                where s.outlet_id = o.id) as \"article_count!\"\n        from outlets o\n        where o.country_id = $1\n        order by o.name\n        ",
+  "query": "\n        select o.name, o.slug, o.logo_url, o.leaning,\n               (select count(*) from news_items n\n                join sources s on s.id = n.source_id\n                where s.outlet_id = o.id) as \"article_count!\"\n        from outlets o\n        where o.country_id = $1\n        order by o.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -67,5 +67,5 @@
       null
     ]
   },
-  "hash": "d72dbd4eb2a5478df140679062c701ccc6080d42aa49580c5bded5f113f3d2d5"
+  "hash": "ad5576dfe3b75f7918cc7ce53326cd7a9a49e013001c142d9c806cdd161ceca4"
 }

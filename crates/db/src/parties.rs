@@ -87,7 +87,7 @@ pub async fn list(pool: &Pool, country_id: i64) -> Result<Vec<Party>> {
                ideology_tags, summary, color
         from parties
         where country_id = $1
-        order by name
+        order by name collate "name_sort"
         "#,
         country_id,
     )
@@ -125,7 +125,7 @@ pub async fn list_filtered(pool: &Pool, country_id: i64, query: &str) -> Result<
         where country_id = $1
           and (unaccent(name) ilike unaccent($2)
                or unaccent(coalesce(short_name, '')) ilike unaccent($2))
-        order by name
+        order by name collate "name_sort"
         "#,
         country_id,
         pattern,
@@ -258,7 +258,7 @@ pub async fn alliance_members(pool: &Pool, party_id: i64) -> Result<Vec<Alliance
         join party_alliances pa on pa.alliance_id = a.id
         join parties mp on mp.id = pa.party_id
         where self_pa.party_id = $1 and self_pa.end_date is null
-        order by a.name, mp.short_name
+        order by a.name collate "name_sort", mp.short_name collate "name_sort"
         "#,
         party_id,
     )

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select n.headline, n.our_summary, n.author, s.url as \"url!\", s.published_at,\n               o.name as \"outlet_name?\", o.slug as \"outlet_slug?\", o.logo_url as \"outlet_logo?\",\n          coalesce(\n            (select array_agg(p.slug || E'\\t' || p.full_name order by p.full_name)\n             from news_item_people nip join people p on p.id = nip.person_id\n             where nip.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"people!: Vec<String>\",\n          coalesce(\n            (select array_agg(\n               pt.slug || E'\\t' || coalesce(pt.short_name, pt.name) || E'\\t' || coalesce(pt.color, '')\n               order by pt.name)\n             from news_item_parties nap join parties pt on pt.id = nap.party_id\n             where nap.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"parties!: Vec<String>\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        left join outlets o on o.id = s.outlet_id\n        where n.id = $1\n        ",
+  "query": "\n        select n.headline, n.our_summary, n.author, s.url as \"url!\", s.published_at,\n               o.name as \"outlet_name?\", o.slug as \"outlet_slug?\", o.logo_url as \"outlet_logo?\",\n          coalesce(\n            (select array_agg(p.slug || E'\\t' || p.full_name order by p.full_name collate \"name_sort\")\n             from news_item_people nip join people p on p.id = nip.person_id\n             where nip.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"people!: Vec<String>\",\n          coalesce(\n            (select array_agg(\n               pt.slug || E'\\t' || coalesce(pt.short_name, pt.name) || E'\\t' || coalesce(pt.color, '')\n               order by pt.name collate \"name_sort\")\n             from news_item_parties nap join parties pt on pt.id = nap.party_id\n             where nap.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"parties!: Vec<String>\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        left join outlets o on o.id = s.outlet_id\n        where n.id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -122,5 +122,5 @@
       null
     ]
   },
-  "hash": "fd82ee3f2d447f605e0ac355773f268620ab5aa34e472613db0b8cd6cad0ee57"
+  "hash": "a72301e1dace96897a4a40d2f6532304e4a4caacbafd4ac94b7173375e30cb8d"
 }

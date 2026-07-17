@@ -50,7 +50,7 @@ pub async fn list(pool: &Pool) -> Result<Vec<CountryCard>> {
         r#"
         select c.id, c.name, c.slug, c.capital, c.government_type, c.flag_url
         from countries c
-        order by c.name
+        order by c.name collate "name_sort"
         "#,
     )
     .fetch_all(pool)
@@ -331,7 +331,7 @@ pub async fn alliance_parties(pool: &Pool, country_id: i64) -> Result<Vec<Allian
         join party_alliances pa on pa.alliance_id = a.id
         join parties p on p.id = pa.party_id
         where a.country_id = $1
-        order by a.name, p.short_name
+        order by a.name collate "name_sort", p.short_name collate "name_sort"
         "#,
         country_id,
     )

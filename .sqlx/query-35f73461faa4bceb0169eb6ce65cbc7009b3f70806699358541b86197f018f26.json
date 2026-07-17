@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select c.id, c.name, c.slug, c.capital, c.government_type, c.flag_url\n        from countries c\n        order by c.name\n        ",
+  "query": "\n        select c.id, c.name, c.slug, c.capital, c.government_type, c.flag_url\n        from countries c\n        order by c.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -82,5 +82,5 @@
       true
     ]
   },
-  "hash": "65970aa8337d6ce5898248d7d9be0cb31dfa83cf79efd41e615b48d6cc5088e6"
+  "hash": "35f73461faa4bceb0169eb6ce65cbc7009b3f70806699358541b86197f018f26"
 }

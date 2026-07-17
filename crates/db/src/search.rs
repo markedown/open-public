@@ -15,7 +15,7 @@ pub async fn search(pool: &Pool, query: &str, limit: i64) -> Result<Vec<SearchHi
         select full_name, slug
         from people
         where fts @@ to_tsquery('simple', $1)
-        order by full_name
+        order by full_name collate "name_sort"
         limit $2
         "#,
         ts,
@@ -29,7 +29,7 @@ pub async fn search(pool: &Pool, query: &str, limit: i64) -> Result<Vec<SearchHi
         select name, slug
         from parties
         where fts @@ to_tsquery('simple', $1)
-        order by name
+        order by name collate "name_sort"
         limit $2
         "#,
         ts,
