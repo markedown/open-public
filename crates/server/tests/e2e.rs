@@ -2844,3 +2844,216 @@ async fn uploaded_images_are_hidden_until_approved_and_hardened(pool: db::Pool) 
         StatusCode::OK
     );
 }
+
+/// A reviewer stub so the screening engine can be driven without a network call.
+struct StubReviewer {
+    decision: server::reviewer::Decision,
+    fail: bool,
+}
+
+impl server::reviewer::PollReviewer for StubReviewer {
+    fn model(&self) -> &str {
+        "stub"
+    }
+    async fn review(
+        &self,
+        _req: &server::reviewer::ReviewRequest,
+    ) -> anyhow::Result<server::reviewer::ReviewVerdict> {
+        if self.fail {
+            anyhow::bail!("reviewer unavailable");
+        }
+        Ok(server::reviewer::ReviewVerdict {
+            decision: self.decision.clone(),
+            reason: Some("stub reason".into()),
+            categories: vec!["test".into()],
+        })
+    }
+}
+
+async fn make_pending_ai(pool: &db::Pool, cid: i64, uid: i64, q: &str) -> i64 {
+    db::submissions::create(
+        pool,
+        &db::submissions::NewSubmission {
+            submitter_id: uid,
+            country_id: cid,
+            question: q,
+            kind: "single",
+            question_asset_id: None,
+        },
+        &[
+            db::submissions::NewSubmissionOption {
+                label: "A".into(),
+                asset_id: None,
+            },
+            db::submissions::NewSubmissionOption {
+                label: "B".into(),
+                asset_id: None,
+            },
+        ],
+    )
+    .await
+    .unwrap()
+}
+
+async fn sub_status(pool: &db::Pool, id: i64) -> String {
+    db::submissions::get(pool, id)
+        .await
+        .unwrap()
+        .unwrap()
+        .status
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_screen_allows_rejects_and_defers(pool: db::Pool) {
+    use server::reviewer::{process_pending, Decision, DeferReviewer};
+    seed(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "screen@x.test").await;
+    let cid = country_id(&pool).await;
+
+    // Allow routes to the admin queue.
+    let a = make_pending_ai(&pool, cid, uid, "allow me").await;
+    process_pending(
+        &pool,
+        &StubReviewer {
+            decision: Decision::Allow,
+            fail: false,
+        },
+        20,
+    )
+    .await
+    .unwrap();
+    assert_eq!(sub_status(&pool, a).await, "pending_admin");
+
+    // Reject hard-rejects and records a violation.
+    let r = make_pending_ai(&pool, cid, uid, "reject me").await;
+    process_pending(
+        &pool,
+        &StubReviewer {
+            decision: Decision::Reject,
+            fail: false,
+        },
+        20,
+    )
+    .await
+    .unwrap();
+    let sub = db::submissions::get(&pool, r).await.unwrap().unwrap();
+    assert_eq!(sub.status, "ai_rejected");
+    assert!(sub.is_violation);
+
+    // Repeated reviewer failures eventually defer to the admin queue.
+    let d = make_pending_ai(&pool, cid, uid, "defer me").await;
+    for _ in 0..3 {
+        process_pending(
+            &pool,
+            &StubReviewer {
+                decision: Decision::Allow,
+                fail: true,
+            },
+            20,
+        )
+        .await
+        .unwrap();
+    }
+    assert_eq!(sub_status(&pool, d).await, "pending_admin");
+
+    // With no provider configured, the defer reviewer sends work to admins.
+    let n = make_pending_ai(&pool, cid, uid, "no provider").await;
+    process_pending(&pool, &DeferReviewer, 20).await.unwrap();
+    assert_eq!(sub_status(&pool, n).await, "pending_admin");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn submission_validation_rejects_bad_input(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_uid, cookie) = user_cookie(&pool, "bad@x.test").await;
+    let count = |pool: db::Pool| async move {
+        sqlx::query_scalar::<_, i64>("select count(*) from poll_submissions")
+            .fetch_one(&pool)
+            .await
+            .unwrap()
+    };
+
+    // Fewer than two options: the form is re-rendered (200), nothing stored.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Only one option?".into()),
+            Part::Text("kind", "single".into()),
+            Part::Text("option", "Alone".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(count(pool.clone()).await, 0);
+
+    // A file that is not a real image is rejected and the form comes back.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Has a bad image".into()),
+            Part::Text("kind", "single".into()),
+            Part::File(
+                "question_image",
+                "x.png",
+                "image/png",
+                b"this is not an image".to_vec(),
+            ),
+            Part::Text("option", "A".into()),
+            Part::Text("option", "B".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(count(pool.clone()).await, 0);
+
+    // An empty question is rejected too.
+    let resp = post_multipart(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "   ".into()),
+            Part::Text("kind", "single".into()),
+            Part::Text("option", "A".into()),
+            Part::Text("option", "B".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(count(pool).await, 0);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn admin_can_reject_as_a_violation(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let admin = admin_cookie(&pool).await;
+    let (uid, _c) = user_cookie(&pool, "rej@x.test").await;
+    let cid = country_id(&pool).await;
+    let sid = make_pending_ai(&pool, cid, uid, "reject this one").await;
+    db::submissions::record_ai_allow(&pool, sid, "test", None, &[])
+        .await
+        .unwrap();
+
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/admin/submissions/{sid}/reject"))
+        .header("cookie", &admin)
+        .header("content-type", "application/x-www-form-urlencoded")
+        .body(Body::from("note=off+topic&violation=on"))
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::SEE_OTHER
+    );
+
+    let sub = db::submissions::get(&pool, sid).await.unwrap().unwrap();
+    assert_eq!(sub.status, "rejected");
+    assert!(sub.is_violation);
+    assert_eq!(sub.admin_note.as_deref(), Some("off topic"));
+}
