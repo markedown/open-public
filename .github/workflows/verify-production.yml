@@ -1,0 +1,80 @@
+name: Verify production
+
+# Continuously and independently prove that production serves an attested release
+# build. This runs on GitHub's infrastructure (not the operator's server), so its
+# results are an operator-independent public record: it reads what production
+# reports at /version, then verifies that digest was produced by this repo's
+# public release workflow. Any drift is a loud, public failure.
+#
+# Set the repository variable PRODUCTION_URL (e.g. https://open-public.com) to
+# enable it. Until then the job skips, so it is safe to land before go-live.
+
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly, offset to avoid the top of the hour
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: production runs an attested release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read /version from production
+        id: ver
+        run: |
+          url="${{ vars.PRODUCTION_URL }}"
+          if [ -z "$url" ]; then
+            echo "PRODUCTION_URL is not set; nothing to verify yet (skipping)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          json=$(curl -fsS --max-time 20 "$url/version")
+          echo "reported: $json"
+          echo "digest=$(echo "$json" | jq -r '.image_digest // empty')" >> "$GITHUB_OUTPUT"
+          echo "commit=$(echo "$json" | jq -r '.commit // empty')" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the reported digest is an attested release build
+        if: steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGEST: ${{ steps.ver.outputs.digest }}
+          COMMIT: ${{ steps.ver.outputs.commit }}
+        run: |
+          if [ -z "$DIGEST" ]; then
+            echo "::error::production /version reports no image_digest; cannot verify what is running."
+            exit 1
+          fi
+          echo "Verifying ghcr.io/${{ github.repository }}@$DIGEST (commit $COMMIT)"
+          # Confirms the running digest carries SLSA build provenance produced by
+          # THIS repo's release workflow (recorded in the public Rekor log).
+          gh attestation verify "oci://ghcr.io/${{ github.repository }}@$DIGEST" \
+            --repo "${{ github.repository }}" \
+            --signer-workflow "${{ github.repository }}/.github/workflows/release.yml"
+          {
+            echo "## Production verified"
+            echo ""
+            echo "- URL: ${{ vars.PRODUCTION_URL }}"
+            echo "- Commit: \`$COMMIT\`"
+            echo "- Digest: \`$DIGEST\`"
+            echo ""
+            echo "This digest is an attested build of the above commit, produced by \`.github/workflows/release.yml\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open an issue if verification failed
+        if: failure() && steps.ver.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create verification --repo "${{ github.repository }}" \
+            --color B60205 --description "Production verification failures" 2>/dev/null || true
+          # Avoid duplicate issues: only open one if none is currently open.
+          if [ "$(gh issue list --repo "${{ github.repository }}" --state open --label verification --json number --jq 'length')" = "0" ]; then
+            gh issue create --repo "${{ github.repository }}" --label verification \
+              --title "Production verification failed" \
+              --body "The production site did not report a digest that verifies as an attested release build (run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). This means production may not be running released code."
+          fi

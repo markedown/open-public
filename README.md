@@ -7,12 +7,12 @@
 
 <p align="center">
   <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/markedown/open-public/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/markedown/open-public/actions/workflows/verify-production.yml"><img alt="Production verified" src="https://github.com/markedown/open-public/actions/workflows/verify-production.yml/badge.svg"></a>
   <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="Coverage: at least 92%" src="https://img.shields.io/badge/coverage-%E2%89%A592%25-brightgreen.svg"></a>
   <a href="#license"><img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg"></a>
   <a href="#license"><img alt="Data: CC0-1.0" src="https://img.shields.io/badge/data-CC0--1.0-blue.svg"></a>
   <img alt="Rust: stable" src="https://img.shields.io/badge/rust-stable-orange.svg">
   <img alt="PostgreSQL 18" src="https://img.shields.io/badge/PostgreSQL-18-336791.svg">
-  <img alt="No JavaScript framework" src="https://img.shields.io/badge/JS%20framework-none-informational.svg">
 </p>
 
 **open-public** is an open, source-backed record of public political life: who holds office, the
@@ -53,13 +53,41 @@ Full detail is in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
   offline metadata is committed so CI builds without a live database.
 - **Ingestion:** the `ingest` crate holds standalone import binaries, idempotent by upserting on
   external IDs. Importers are added per data source; none ship in this repository yet.
-- **Verifiable builds:** each release publishes a build-provenance attestation binding the source
-  commit to the image digest; `GET /version` reports the running commit and digest, and `GET /health`
-  is a liveness probe.
+- **Verifiable deployment:** each release is an attested build, production is pinned to and
+  continuously verified against those attested digests, and `GET /version` reports the running commit
+  and digest (`GET /health` is liveness, `GET /readyz` readiness). See
+  [Verifiable deployment](#verifiable-deployment) below.
 
 The database schema lives in [`migrations/`](./migrations), the design system in
 [`DESIGN.md`](./DESIGN.md), architecture and request flow in [`ARCHITECTURE.md`](./ARCHITECTURE.md),
 and contribution conventions in [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md).
+
+## Verifiable deployment
+
+Production runs only released, attested code, and anyone can check it independently.
+
+1. **Attested builds.** Each release (a `v*` tag) is built by a public GitHub Actions workflow that
+   pushes the image to GHCR and attaches a [SLSA](https://slsa.dev) build-provenance attestation,
+   recorded in the public [Rekor](https://docs.sigstore.dev/logs/overview/) transparency log. Anyone
+   can confirm which commit and which public workflow produced a given digest:
+
+   ```
+   gh attestation verify oci://ghcr.io/markedown/open-public@<digest> --repo markedown/open-public
+   ```
+
+2. **Digest-pinned deploys.** Production pulls the image by digest, never a mutable tag, and refuses
+   any image that is not an attested release build. The running digest, commit, and build time are
+   reported at `GET /version`.
+
+3. **Continuous public verification.** A scheduled workflow, [`verify-production.yml`](./.github/workflows/verify-production.yml),
+   runs on GitHub's infrastructure (independent of the host), reads `/version`, and verifies the
+   reported digest is an attested release build. Any drift is a public, failing check.
+
+What this proves, and what it does not: it proves every production image is publicly attested and
+reproducible from source, that production is pinned to and continuously checked against those digests,
+and that an independent public job confirms the running digest. It does not, on its own, defeat a
+malicious host that forges `/version`; that would require hardware remote attestation, which is out of
+scope and is never claimed.
 
 ## Quickstart
 
