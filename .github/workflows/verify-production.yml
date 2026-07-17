@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: read
+  issues: write # the failure path opens a tracking issue
 
 jobs:
   verify:
