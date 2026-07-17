@@ -107,7 +107,7 @@ pub async fn detail(
     let source = db::elections::source_url(&pool, election.id).await?;
 
     let content = html! {
-        article class="max-w-2xl" {
+        article class="mx-auto max-w-2xl" {
             (ui::breadcrumb::breadcrumbs(&[
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: Some(format!("/{}/elections", country.slug)) },

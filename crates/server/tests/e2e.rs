@@ -4034,3 +4034,40 @@ async fn assorted_render_branches(pool: db::Pool) {
         StatusCode::OK
     );
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn vote_share_bars_order_by_votes_not_seats(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/vo", None, Some("hvo"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar("insert into countries (name, slug, source_id) values ('Ordland','ordland',$1) returning id")
+        .bind(src).fetch_one(&pool).await.unwrap();
+    let eid: i64 = sqlx::query_scalar(
+        "insert into elections (country_id, name, slug, held_on, kind, source_id, valid_votes) \
+         values ($1,'Ord Election','ord-election','2024-01-01','general',$2,1000) returning id",
+    )
+    .bind(cid)
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    // A threshold-exempt contestant with one seat but few votes, and a bigger
+    // contestant that won no seats.
+    sqlx::query("insert into election_results (election_id, party_id, seats, votes, source_id, label) values ($1, null, 1, 100, $2, 'AAALOW')")
+        .bind(eid).bind(src).execute(&pool).await.unwrap();
+    sqlx::query("insert into election_results (election_id, party_id, seats, votes, source_id, label) values ($1, null, null, 500, $2, 'ZZZHIGH')")
+        .bind(eid).bind(src).execute(&pool).await.unwrap();
+
+    let app = router(pool.clone());
+    let req = Request::builder()
+        .uri("/ordland/election/ord-election")
+        .header("accept-language", "en")
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    let tail = &body[body.find("Vote share").expect("vote share section")..];
+    assert!(
+        tail.find("ZZZHIGH").unwrap() < tail.find("AAALOW").unwrap(),
+        "the higher-vote contestant must sort above the seated low-vote one"
+    );
+}
