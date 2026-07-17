@@ -4,6 +4,87 @@ use crate::fmt;
 use crate::i18n;
 use crate::ui;
 
+/// A compact vote label: a share of the valid vote when known, else a short
+/// vote count ("6.1M", "812k").
+fn history_label(e: &db::elections::PartyHistoryEntry) -> String {
+    let v = e.votes.unwrap_or(0);
+    match e.valid_votes.filter(|vv| *vv > 0) {
+        Some(vv) => {
+            let tenths = v * 1000 / vv;
+            format!("{}.{}%", tenths / 10, tenths % 10)
+        }
+        None if v >= 1_000_000 => format!("{}.{}M", v / 1_000_000, (v % 1_000_000) / 100_000),
+        None if v >= 1_000 => format!("{}k", v / 1_000),
+        None => v.to_string(),
+    }
+}
+
+/// A party's support across elections as a small bar chart, oldest to newest.
+/// Bar height tracks the party's vote count (always recorded, unlike seats), and
+/// each bar is labelled with the election year and its vote share (or count).
+/// Rendered as inline SVG, so it needs no client script; the bars carry the
+/// party's own colour, the one place colour is allowed to be data.
+pub fn party_history_chart(
+    entries: &[db::elections::PartyHistoryEntry],
+    color: Option<&str>,
+) -> Markup {
+    let mut points: Vec<&db::elections::PartyHistoryEntry> =
+        entries.iter().filter(|e| e.votes.is_some()).collect();
+    // A trend needs at least two data points; history arrives newest-first.
+    if points.len() < 2 {
+        return html! {};
+    }
+    points.reverse();
+    let max = points
+        .iter()
+        .filter_map(|e| e.votes)
+        .max()
+        .unwrap_or(1)
+        .max(1);
+    let color = color.unwrap_or("#33527a");
+
+    let slot = 72.0_f64;
+    let bar_w = 42.0_f64;
+    let chart_h = 96.0_f64;
+    let width = slot * points.len() as f64;
+    let height = chart_h + 30.0;
+
+    html! {
+        section class="mb-12" {
+            h2 class="mb-4 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
+                (i18n::t("Support over time"))
+            }
+            div class="overflow-x-auto" {
+                svg viewBox={"0 0 " (width) " " (height)}
+                    class="h-40 w-full min-w-[260px]" preserveAspectRatio="xMidYMax meet"
+                    role="img" aria-label=(i18n::t("Support over time")) {
+                    line x1="0" y1=(chart_h) x2=(width) y2=(chart_h)
+                         class="text-hairline" stroke="currentColor" stroke-width="1" {}
+                    @for (i, e) in points.iter().enumerate() {
+                        @let v = e.votes.unwrap_or(0);
+                        // Leave headroom at the top so the tallest bar's value
+                        // label is not clipped by the chart's upper edge.
+                        @let h = (v as f64 / max as f64) * (chart_h - 20.0);
+                        @let x = i as f64 * slot + (slot - bar_w) / 2.0;
+                        @let y = chart_h - h;
+                        rect x=(x) y=(y) width=(bar_w) height=(h) fill=(color) {}
+                        text x=(x + bar_w / 2.0) y=(y - 5.0) text-anchor="middle"
+                             class="text-ink" fill="currentColor"
+                             style="font:600 12px ui-monospace,monospace" {
+                            (history_label(e))
+                        }
+                        text x=(x + bar_w / 2.0) y=(chart_h + 20.0) text-anchor="middle"
+                             class="text-ink-muted" fill="currentColor"
+                             style="font:12px ui-monospace,monospace" {
+                            @if let Some(d) = e.held_on { (d.format("%Y")) } @else { "" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /// A party's electoral history: seats (and votes, when known) across elections.
 pub fn party_history(entries: &[db::elections::PartyHistoryEntry]) -> Markup {
     if entries.is_empty() {

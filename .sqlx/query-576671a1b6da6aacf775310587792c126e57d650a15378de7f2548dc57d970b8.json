@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.name as election_name, e.slug as election_slug,\n               e.held_on, r.seats, r.votes\n        from election_results r\n        join elections e on e.id = r.election_id\n        where r.party_id = $1\n        order by e.held_on desc nulls last, e.id desc\n        ",
+  "query": "\n        select e.name as election_name, e.slug as election_slug,\n               e.held_on, r.seats, r.votes, e.valid_votes\n        from election_results r\n        join elections e on e.id = r.election_id\n        where r.party_id = $1\n        order by e.held_on desc nulls last, e.id desc\n        ",
   "describe": {
     "columns": [
       {
@@ -57,6 +57,17 @@
             "name": "votes"
           }
         }
+      },
+      {
+        "ordinal": 5,
+        "name": "valid_votes",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "valid_votes"
+          }
+        }
       }
     ],
     "parameters": {
@@ -69,8 +80,9 @@
       false,
       true,
       true,
+      true,
       true
     ]
   },
-  "hash": "16e9da879f9db9ff61aa8a6b6d57c30b7ad79954df5af6d4d173c1e372a4af17"
+  "hash": "576671a1b6da6aacf775310587792c126e57d650a15378de7f2548dc57d970b8"
 }
