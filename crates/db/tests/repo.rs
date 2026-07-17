@@ -2102,3 +2102,225 @@ async fn approve_handles_empty_slug_collision_and_option_images(pool: sqlx::PgPo
         .unwrap();
     assert_eq!(slug2, "poll-2");
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn db_reachable_branches_batch(pool: sqlx::PgPool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/c", None, Some("h"))
+        .await
+        .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland','testland',$1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let person_id = db::people::upsert_person(&pool, &sample_person(src))
+        .await
+        .unwrap();
+    let party_id: i64 = sqlx::query_scalar(
+        "insert into parties (name, short_name, slug, source_id, country_id) values ('Test Partisi','TP','test-partisi',$1,$2) returning id",
+    )
+    .bind(src)
+    .bind(country_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    // polls: count / list_all / full_for_person / a missing slug
+    db::polls::create(
+        &pool,
+        &db::polls::NewPoll {
+            question: "Person poll?",
+            slug: "person-poll",
+            kind: "single",
+            media_url: None,
+            media_license: None,
+            country_id: None,
+            person_id: Some(person_id),
+            party_id: None,
+            options: &[
+                db::polls::NewOption {
+                    label: "A",
+                    media_url: None,
+                },
+                db::polls::NewOption {
+                    label: "B",
+                    media_url: None,
+                },
+            ],
+        },
+    )
+    .await
+    .unwrap();
+    assert!(db::polls::count(&pool).await.unwrap() >= 1);
+    assert!(!db::polls::list_all(&pool).await.unwrap().is_empty());
+    assert_eq!(
+        db::polls::full_for_person(&pool, person_id)
+            .await
+            .unwrap()
+            .len(),
+        1
+    );
+    assert!(db::polls::get_by_slug(&pool, "no-such-poll")
+        .await
+        .unwrap()
+        .is_none());
+
+    // parties: count / list_filtered / leader (needs a leader role + membership)
+    assert!(db::parties::count(&pool, country_id).await.unwrap() >= 1);
+    let _ = db::parties::list_filtered(&pool, country_id, "Test")
+        .await
+        .unwrap();
+    sqlx::query("insert into roles (person_id, role_type, title, org, start_date, source_id) values ($1,'party_leader','Leader','Test Partisi','2020-01-01',$2)")
+        .bind(person_id).bind(src).execute(&pool).await.unwrap();
+    sqlx::query("insert into party_memberships (person_id, party_id, start_date, source_id) values ($1,$2,'2020-01-01',$3)")
+        .bind(person_id).bind(party_id).bind(src).execute(&pool).await.unwrap();
+    assert!(db::parties::leader(&pool, party_id)
+        .await
+        .unwrap()
+        .is_some());
+
+    // people: education + attribute upsert then delete
+    let edu = db::people::upsert_education(
+        &pool,
+        person_id,
+        "Test Uni",
+        None,
+        Some("BSc"),
+        Some("CS"),
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    let attr = db::people::upsert_attribute(&pool, person_id, "occupation", "engineer", None, src)
+        .await
+        .unwrap();
+    assert_eq!(
+        db::people::education(&pool, person_id).await.unwrap().len(),
+        1
+    );
+    assert_eq!(
+        db::people::attributes(&pool, person_id)
+            .await
+            .unwrap()
+            .len(),
+        1
+    );
+    db::people::delete_education(&pool, edu).await.unwrap();
+    db::people::delete_attribute(&pool, attr).await.unwrap();
+    assert!(db::people::education(&pool, person_id)
+        .await
+        .unwrap()
+        .is_empty());
+
+    // sessions: purge expired
+    let uid = db::users::insert(&pool, "hash-purge", "pw").await.unwrap();
+    db::sessions::create(
+        &pool,
+        uid,
+        "expired-hash",
+        chrono::Utc::now() - chrono::Duration::hours(1),
+    )
+    .await
+    .unwrap();
+    db::sessions::purge_expired(&pool).await.unwrap();
+
+    // translations::original for every registered entity/field plus the fallback
+    for (et, f) in [
+        ("person", "summary"),
+        ("party", "summary"),
+        ("country", "summary"),
+        ("statement", "text_original"),
+        ("news_item", "headline"),
+        ("news_item", "our_summary"),
+        ("poll", "question"),
+        ("poll_option", "label"),
+        ("topic", "name"),
+        ("election", "name"),
+        ("election", "description"),
+        ("alliance", "name"),
+        ("alliance", "summary"),
+        ("outlet", "summary"),
+        ("person_attribute", "value"),
+        ("person_education", "institution"),
+        ("person_education", "degree"),
+        ("person_education", "field"),
+        ("unregistered", "field"),
+    ] {
+        let _ = db::translations::original(&pool, et, 1, f).await.unwrap();
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn service_and_search_reachable_branches(pool: sqlx::PgPool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/s", None, Some("h"))
+        .await
+        .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland','testland',$1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let _ = country_id;
+    let _person = db::people::upsert_person(&pool, &sample_person(src))
+        .await
+        .unwrap();
+    sqlx::query("insert into parties (name, short_name, slug, source_id, country_id) values ('Test Partisi','TP','test-partisi',$1,$2)")
+        .bind(src).bind(country_id).execute(&pool).await.unwrap();
+
+    // service::statements validation: missing url, and both person and party.
+    use db::service::statements::{create as create_statement, CreateStatement};
+    assert!(create_statement(
+        &pool,
+        CreateStatement {
+            person_slug: Some("ayse-yilmaz".into()),
+            party_slug: None,
+            text: "Said a thing".into(),
+            is_paraphrase: false,
+            stated_on: None,
+            url: "".into(),
+            outlet: None,
+        },
+    )
+    .await
+    .is_err());
+    assert!(create_statement(
+        &pool,
+        CreateStatement {
+            person_slug: Some("ayse-yilmaz".into()),
+            party_slug: Some("test-partisi".into()),
+            text: "Said a thing".into(),
+            is_paraphrase: false,
+            stated_on: None,
+            url: "https://ex.test/x".into(),
+            outlet: None,
+        },
+    )
+    .await
+    .is_err());
+
+    // Full-text search returns a party hit (party mapping branch).
+    let hits = db::search::search(&pool, "Test", 10).await.unwrap();
+    assert!(hits.iter().any(|h| h.slug == "test-partisi"));
+
+    // service::polls slug generation: empty slug falls back, then collides.
+    use db::service::polls::{create as create_poll, CreatePoll};
+    let mk = |q: &str| CreatePoll {
+        country_slug: Some("testland".into()),
+        person_slug: None,
+        party_slug: None,
+        question: q.to_string(),
+        kind: "single".into(),
+        media_url: None,
+        media_license: None,
+        options: vec!["A".into(), "B".into()],
+        option_media: vec![],
+    };
+    assert_eq!(create_poll(&pool, mk("???")).await.unwrap(), "poll");
+    assert_eq!(create_poll(&pool, mk("!!!")).await.unwrap(), "poll-2");
+}
