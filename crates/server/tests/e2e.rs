@@ -2489,3 +2489,11 @@ async fn total_votes(pool: &db::Pool) -> i64 {
         .map(|o| o.votes)
         .sum()
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn readyz_is_ok_when_the_database_is_reachable(pool: db::Pool) {
+    let app = router(pool.clone());
+    let resp = get(&app, "/readyz").await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(body_string(resp).await, "ready");
+}
