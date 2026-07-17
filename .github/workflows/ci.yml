@@ -131,4 +131,4 @@ jobs:
       # the pinned stable toolchain has no per-line coverage-exclusion. Raising
       # the gate further would require either that or nightly-only tooling.
       - name: Coverage
-        run: cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 96
+        run: cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 97.5

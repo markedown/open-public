@@ -3542,3 +3542,495 @@ async fn empty_states_admin_views_and_search(pool: db::Pool) {
     // The people list (pagination controls in their single-page state).
     assert_eq!(get(&app, "/tr/people").await.status(), StatusCode::OK);
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn rich_country_detail_renders_seats_chambers_alliances(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cid = country_id(&pool).await;
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/r", None, Some("hr"))
+        .await
+        .unwrap();
+
+    // A second party and a senator in a different chamber, so the legislature is
+    // bicameral (one composition bar per chamber).
+    let party2: i64 = sqlx::query_scalar("insert into parties (name, short_name, slug, color, source_id, country_id) values ('Beta','BET','beta','#227744',$1,$2) returning id")
+        .bind(src).bind(cid).fetch_one(&pool).await.unwrap();
+    let sen = db::people::upsert_person(
+        &pool,
+        &NewPerson {
+            wikidata_id: Some("Q200".to_string()),
+            full_name: "Gamma Senator".to_string(),
+            slug: "gamma-senator".to_string(),
+            birth_date: None,
+            birth_place: None,
+            photo_url: None,
+            photo_license: None,
+            summary: None,
+            source_id: src,
+            country_id: Some(cid),
+        },
+    )
+    .await
+    .unwrap();
+    db::people::upsert_role(
+        &pool,
+        sen,
+        "senator",
+        Some("Senator"),
+        Some("Test Senato"),
+        None,
+        NaiveDate::from_ymd_opt(2023, 1, 1),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    db::people::upsert_membership(
+        &pool,
+        sen,
+        party2,
+        NaiveDate::from_ymd_opt(2023, 1, 1),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+
+    // A party leader (seed already creates the alliance the party belongs to).
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug='ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    db::people::upsert_role(
+        &pool,
+        ayse,
+        "party_leader",
+        Some("Genel Baskan"),
+        Some("Test Partisi"),
+        None,
+        NaiveDate::from_ymd_opt(2021, 1, 1),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    // A named legislature and government type, so the chamber and government
+    // labels render through the controlled-vocabulary path.
+    sqlx::query("update countries set legislature_name='Meclis', government_type='Parliamentary republic' where slug='tr'")
+        .execute(&pool).await.unwrap();
+
+    for uri in [
+        "/tr",
+        "/tr/parties",
+        "/tr/parties/test-partisi",
+        "/tr/alliances",
+        "/tr/alliance/test-ittifaki",
+        "/tr/people/ayse-yilmaz",
+    ] {
+        assert_eq!(get(&app, uri).await.status(), StatusCode::OK, "{uri}");
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn people_list_paginates(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/p", None, Some("hp"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar("insert into countries (name, slug, source_id) values ('Popland','popland',$1) returning id")
+        .bind(src).fetch_one(&pool).await.unwrap();
+    // 51 people so the list spans two pages (PAGE_SIZE is 50).
+    for i in 0..51 {
+        db::people::upsert_person(
+            &pool,
+            &NewPerson {
+                wikidata_id: Some(format!("QP{i}")),
+                full_name: format!("Person {i:03}"),
+                slug: format!("person-{i:03}"),
+                birth_date: None,
+                birth_place: None,
+                photo_url: None,
+                photo_license: None,
+                summary: None,
+                source_id: src,
+                country_id: Some(cid),
+            },
+        )
+        .await
+        .unwrap();
+    }
+    let app = router(pool.clone());
+    // Page 1 (Next active, Previous disabled) and page 2 (Previous active).
+    assert_eq!(
+        get(&app, "/popland/people?page=1").await.status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        get(&app, "/popland/people?page=2").await.status(),
+        StatusCode::OK
+    );
+    // A search with no match shows the empty state.
+    assert_eq!(
+        get(&app, "/popland/people?q=zzznobody").await.status(),
+        StatusCode::OK
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn admin_news_statement_and_review_crud(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let admin = admin_cookie(&pool).await;
+    let cid = country_id(&pool).await;
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug='ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // An outlet appears on the admin hub.
+    db::outlets::upsert(
+        &pool,
+        &db::outlets::NewOutlet {
+            name: "Test Outlet",
+            slug: "test-outlet",
+            homepage_url: None,
+            logo_url: None,
+            logo_license: None,
+            leaning: None,
+            summary: None,
+            country_id: Some(cid),
+        },
+    )
+    .await
+    .unwrap();
+    let hub = Request::builder()
+        .uri("/admin")
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(hub).await.unwrap()).await;
+    assert!(body.contains("Test Outlet"));
+
+    // Empty review queues render their empty state.
+    for uri in ["/admin/summaries", "/admin/translations"] {
+        let req = Request::builder()
+            .uri(uri)
+            .header("cookie", &admin)
+            .body(Body::empty())
+            .unwrap();
+        assert_eq!(
+            app.clone().oneshot(req).await.unwrap().status(),
+            StatusCode::OK
+        );
+    }
+
+    // Create news attributed to a person (news requires an entity link).
+    assert_eq!(
+        post_form(
+            &app,
+            "/admin/news",
+            "country=tr&headline=Person+News&url=https%3A%2F%2Fn.test%2F1&person=ayse-yilmaz",
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+    let nid: i64 = sqlx::query_scalar("select id from news_items order by id desc limit 1")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Edit page, relation search (empty and with results), link and unlink.
+    for uri in [
+        format!("/admin/news/{nid}/edit"),
+        format!("/admin/news/{nid}/search?q="),
+        format!("/admin/news/{nid}/search?q=Ayse"),
+    ] {
+        let req = Request::builder()
+            .uri(&uri)
+            .header("cookie", &admin)
+            .body(Body::empty())
+            .unwrap();
+        assert_eq!(
+            app.clone().oneshot(req).await.unwrap().status(),
+            StatusCode::OK,
+            "{uri}"
+        );
+    }
+    assert_eq!(
+        post_form(
+            &app,
+            &format!("/admin/news/{nid}/link"),
+            "kind=party&slug=test-partisi",
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug='test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        post_form(
+            &app,
+            &format!("/admin/news/{nid}/unlink"),
+            &format!("kind=party&id={party_id}"),
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // Statement create attributed to a person (redirects to the person page).
+    assert_eq!(
+        post_form(
+            &app,
+            "/admin/statement",
+            "country=tr&person=ayse-yilmaz&text=Said+a+thing&url=https%3A%2F%2Fs.test%2F1",
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // Translation draft discard.
+    let tid = db::translations::upsert(
+        &pool,
+        &db::translations::NewTranslation {
+            entity_type: "person",
+            entity_id: ayse,
+            field: "summary",
+            lang: "de",
+            text: "Eine Zusammenfassung.",
+            origin: "machine",
+            status: "draft",
+            source_lang: Some("en"),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        post_form(
+            &app,
+            &format!("/admin/translations/{tid}/discard"),
+            "",
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // Summary draft discard.
+    sqlx::query("update news_items set summary_draft = 'A draft summary.' where id = $1")
+        .bind(nid)
+        .execute(&pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        post_form(
+            &app,
+            &format!("/admin/summaries/{nid}/discard"),
+            "",
+            Some(&admin)
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn published_translations_localize_content(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/t", None, Some("ht"))
+        .await
+        .unwrap();
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug='ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    let up = |et: &'static str, id: i64, field: &'static str, text: &'static str| {
+        let pool = pool.clone();
+        async move {
+            db::translations::upsert(
+                &pool,
+                &db::translations::NewTranslation {
+                    entity_type: et,
+                    entity_id: id,
+                    field,
+                    lang: "de",
+                    text,
+                    origin: "machine",
+                    status: "published",
+                    source_lang: Some("tr"),
+                },
+            )
+            .await
+            .unwrap();
+        }
+    };
+
+    // Poll question + option label translations, rendered on the party page.
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug='party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let opt_id: i64 = sqlx::query_scalar(
+        "select id from poll_options where poll_id=$1 order by position limit 1",
+    )
+    .bind(poll_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    up("poll", poll_id, "question", "Wie finden Sie das?").await;
+    up("poll_option", opt_id, "label", "SEHR_GUT").await;
+
+    // Education (institution, degree, field) and an attribute translation.
+    let edu = db::people::upsert_education(
+        &pool,
+        ayse,
+        "Uni Test",
+        None,
+        Some("BSc"),
+        Some("CS"),
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    up("person_education", edu, "institution", "UNI_UEBERSETZT").await;
+    up("person_education", edu, "degree", "Bachelor").await;
+    up("person_education", edu, "field", "Informatik").await;
+    let attr = db::people::upsert_attribute(&pool, ayse, "occupation", "engineer", None, src)
+        .await
+        .unwrap();
+    up("person_attribute", attr, "value", "INGENIEUR").await;
+
+    // Rendered in German, the overlays appear.
+    let party = Request::builder()
+        .uri("/tr/parties/test-partisi")
+        .header("accept-language", "de")
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(party).await.unwrap()).await;
+    assert!(body.contains("SEHR_GUT"), "poll option localized");
+
+    let person = Request::builder()
+        .uri("/tr/people/ayse-yilmaz")
+        .header("accept-language", "de")
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(person).await.unwrap()).await;
+    assert!(body.contains("UNI_UEBERSETZT"), "education localized");
+    assert!(body.contains("INGENIEUR"), "attribute localized");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn an_election_with_many_results_shows_an_others_row(pool: db::Pool) {
+    seed(&pool).await;
+    let cid = country_id(&pool).await;
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/el", None, Some("hel"))
+        .await
+        .unwrap();
+    let eid: i64 = sqlx::query_scalar(
+        "insert into elections (country_id, name, slug, held_on, kind, source_id, valid_votes) \
+         values ($1,'Big Election','big-election','2024-01-01','general',$2,1000000) returning id",
+    )
+    .bind(cid)
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    // Eight label-only contestants, so the top six show and the rest aggregate.
+    for i in 0..8 {
+        sqlx::query("insert into election_results (election_id, party_id, votes, source_id, label) values ($1, null, $2, $3, $4)")
+            .bind(eid)
+            .bind(100_000_i64 - (i as i64) * 5_000)
+            .bind(src)
+            .bind(format!("Contestant {i}"))
+            .execute(&pool)
+            .await
+            .unwrap();
+    }
+    let app = router(pool.clone());
+    // The country overview renders the election box (limit six, "Others" row).
+    let body = body_string(get(&app, "/tr").await).await;
+    assert!(body.contains("Big Election"));
+    // The dedicated election page renders every contestant (no cap).
+    assert_eq!(
+        get(&app, "/tr/election/big-election").await.status(),
+        StatusCode::OK
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn assorted_render_branches(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cid = country_id(&pool).await;
+
+    // government_type + legislature set, rendered in English (t_dyn identity path).
+    sqlx::query("update countries set government_type='Parliamentary republic', legislature_name='Grand Assembly' where slug='tr'")
+        .execute(&pool).await.unwrap();
+    let req = Request::builder()
+        .uri("/tr")
+        .header("accept-language", "en")
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    // A dissolved alliance shows the "Inactive" marker.
+    sqlx::query("update alliances set dissolved_date='2020-01-01' where slug='test-ittifaki'")
+        .execute(&pool)
+        .await
+        .unwrap();
+    assert_eq!(get(&app, "/tr/alliances").await.status(), StatusCode::OK);
+
+    // A people search that matches (query carried into the controls).
+    assert_eq!(get(&app, "/tr/people?q=Ay").await.status(), StatusCode::OK);
+
+    // The poll page for a signed-in non-voter (the "tap to vote" prompt).
+    let (_uid, cookie) = user_cookie(&pool, "voter@x.test").await;
+    let req = Request::builder()
+        .uri("/tr/poll/party-poll")
+        .header("cookie", &cookie)
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    // An outlet with no news shows its empty state.
+    db::outlets::upsert(
+        &pool,
+        &db::outlets::NewOutlet {
+            name: "Lonely Outlet",
+            slug: "lonely-outlet",
+            homepage_url: None,
+            logo_url: None,
+            logo_license: None,
+            leaning: None,
+            summary: None,
+            country_id: Some(cid),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        get(&app, "/tr/outlet/lonely-outlet").await.status(),
+        StatusCode::OK
+    );
+}
