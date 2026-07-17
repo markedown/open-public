@@ -74,7 +74,7 @@ fn submit_page(
     // At least three rows to start; keep any the submitter had typed.
     let rows = option_labels.len().max(3);
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("Propose a poll"))
             }
@@ -328,7 +328,7 @@ pub async fn mine(
 ) -> Result<Markup, PageError> {
     let subs = db::submissions::for_submitter(&state.pool, session.user_id).await?;
     let content = html! {
-        section class="max-w-2xl" {
+        section class="mx-auto max-w-2xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("My submissions"))
             }

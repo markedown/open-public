@@ -226,7 +226,13 @@ fn vote_share_list(
     country: &str,
     limit: Option<usize>,
 ) -> Markup {
-    let voted: Vec<&db::elections::ResultRow> = rows.iter().filter(|r| r.votes.is_some()).collect();
+    // Order the vote-share bars by vote count, not by the seat-first order the
+    // rows arrive in. A threshold-exempt party can hold a seat on a tiny vote
+    // while a larger party wins none (for example a party just under an
+    // electoral threshold), so seat order would misrank the vote-share bars.
+    let mut voted: Vec<&db::elections::ResultRow> =
+        rows.iter().filter(|r| r.votes.is_some()).collect();
+    voted.sort_by_key(|r| std::cmp::Reverse(r.votes));
     let (shown, others): (&[&db::elections::ResultRow], i64) = match limit {
         Some(n) if voted.len() > n => {
             (&voted[..n], voted[n..].iter().filter_map(|r| r.votes).sum())

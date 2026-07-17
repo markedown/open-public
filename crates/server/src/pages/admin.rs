@@ -40,7 +40,7 @@ pub async fn index(
     let pending_submissions = db::submissions::pending_admin_count(&pool).await?;
 
     let content = html! {
-        section class="max-w-2xl" {
+        section class="mx-auto max-w-2xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("Admin panel"))
             }
@@ -137,7 +137,7 @@ pub async fn summaries(
     let drafts = db::news::pending_drafts(&pool).await?;
 
     let content = html! {
-        section class="max-w-3xl" {
+        section class="mx-auto max-w-3xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
@@ -246,7 +246,7 @@ pub async fn translations(
     }
 
     let content = html! {
-        section class="max-w-3xl" {
+        section class="mx-auto max-w-3xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
@@ -353,7 +353,7 @@ pub async fn conflicts(
     let items = db::conflicts::list_open(&pool).await?;
 
     let content = html! {
-        section class="max-w-3xl" {
+        section class="mx-auto max-w-3xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
@@ -456,7 +456,7 @@ pub struct CountryQuery {
 fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) -> Markup {
     let add = |what: &str| format!("/admin/{what}/new?country={country}&{kind}={slug}");
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (name)
             }
@@ -539,7 +539,7 @@ fn person_manage_page(
         }
     };
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (name)
             }
@@ -767,7 +767,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
         i18n::t("Add outlet")
     };
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
@@ -934,7 +934,7 @@ pub async fn news_edit(
     };
 
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
@@ -1033,7 +1033,7 @@ pub async fn news_relation_search(
         Ok(list.into_response())
     } else {
         Ok(ui::layout::document(Some(i18n::t("Search")), true, true, html! {
-            section class="max-w-xl" {
+            section class="mx-auto max-w-xl" {
                 a href={"/admin/news/" (id) "/edit"} class="text-xs text-ink-muted hover:text-accent" {
                     "← " (i18n::t("Edit news"))
                 }
@@ -1126,7 +1126,7 @@ pub async fn news_form(
     let country = q.country.unwrap_or_default();
 
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("Add news"))
             }
@@ -1233,7 +1233,7 @@ pub async fn statement_form(
     let country = q.country.unwrap_or_default();
 
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("Add statement"))
             }
@@ -1331,7 +1331,7 @@ pub async fn poll_form(
     let country = q.country.unwrap_or_default();
 
     let content = html! {
-        section class="max-w-xl" {
+        section class="mx-auto max-w-xl" {
             h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
                 (i18n::t("Add poll"))
             }
@@ -1514,7 +1514,7 @@ pub async fn submissions(
     }
 
     let content = html! {
-        section class="max-w-3xl" {
+        section class="mx-auto max-w-3xl" {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
