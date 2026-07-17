@@ -1782,3 +1782,63 @@ async fn person_enrichment_upsert_read_and_idempotency(pool: sqlx::PgPool) {
         .unwrap()
         .is_empty());
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn people_list_uses_icu_name_collation(pool: sqlx::PgPool) {
+    // Under byte/C collation the diacritic-initial names ("Ç", "Ö") sort after
+    // "Z"; an ICU collation orders them alphabetically. The list query pins the
+    // ICU collation, so the order is correct regardless of the database default.
+    let source_id =
+        db::sources::insert_source(&pool, "manual", "https://example.test/a", None, Some("h1"))
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland', 'testland', $1) returning id",
+    )
+    .bind(source_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    let person = |wd: &str, name: &str, slug: &str| NewPerson {
+        wikidata_id: Some(wd.to_string()),
+        full_name: name.to_string(),
+        slug: slug.to_string(),
+        birth_date: None,
+        birth_place: None,
+        photo_url: None,
+        photo_license: None,
+        summary: None,
+        source_id,
+        country_id: Some(country_id),
+    };
+    // Inserted in deliberately non-alphabetical order.
+    for (wd, name, slug) in [
+        ("Q1", "Zebra Yıldız", "zebra-yildiz"),
+        ("Q2", "Çınar Demir", "cinar-demir"),
+        ("Q3", "Ali Veli", "ali-veli"),
+        ("Q4", "Öztürk Kaya", "ozturk-kaya"),
+    ] {
+        db::people::upsert_person(&pool, &person(wd, name, slug))
+            .await
+            .unwrap();
+    }
+
+    let names: Vec<String> = db::people::list(&pool, country_id, 100, 0)
+        .await
+        .unwrap()
+        .into_iter()
+        .map(|p| p.full_name)
+        .collect();
+
+    assert_eq!(
+        names,
+        vec![
+            "Ali Veli".to_string(),
+            "Çınar Demir".to_string(),
+            "Öztürk Kaya".to_string(),
+            "Zebra Yıldız".to_string(),
+        ],
+        "people list must sort in ICU (locale-aware) order, not by byte value"
+    );
+}

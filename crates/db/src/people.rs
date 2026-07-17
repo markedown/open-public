@@ -93,7 +93,7 @@ pub async fn list(pool: &Pool, country_id: i64, limit: i64, offset: i64) -> Resu
                photo_url, photo_license, summary
         from people
         where country_id = $1
-        order by full_name
+        order by full_name collate "name_sort"
         limit $2 offset $3
         "#,
         country_id,
@@ -138,7 +138,7 @@ pub async fn list_filtered(
                photo_url, photo_license, summary
         from people
         where country_id = $1 and unaccent(full_name) ilike unaccent($2)
-        order by full_name
+        order by full_name collate "name_sort"
         limit $3 offset $4
         "#,
         country_id,

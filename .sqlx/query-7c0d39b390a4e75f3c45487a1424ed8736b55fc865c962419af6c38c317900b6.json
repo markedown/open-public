@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select id, wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n               ideology_tags, summary, color\n        from parties\n        where country_id = $1\n        order by name\n        ",
+  "query": "\n        select id, wikidata_id, name, short_name, slug, founded_date, dissolved_date,\n               ideology_tags, summary, color\n        from parties\n        where country_id = $1\n        order by name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -132,5 +132,5 @@
       true
     ]
   },
-  "hash": "1be00b42977c4c7d937276f2beafdb5a551e4dcdbaa023f414442276775247c2"
+  "hash": "7c0d39b390a4e75f3c45487a1424ed8736b55fc865c962419af6c38c317900b6"
 }

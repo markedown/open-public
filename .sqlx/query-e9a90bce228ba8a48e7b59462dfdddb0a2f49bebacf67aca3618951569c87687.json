@@ -1,33 +1,22 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select a.name as alliance_name, a.slug as alliance_slug,\n               p.short_name, p.slug as party_slug, p.color\n        from alliances a\n        join party_alliances pa on pa.alliance_id = a.id\n        join parties p on p.id = pa.party_id\n        where a.country_id = $1\n        order by a.name, p.short_name\n        ",
+  "query": "\n        select p.name as party_name, p.short_name as party_short_name,\n               p.slug as party_slug, p.color as party_color\n        from party_alliances pa\n        join parties p on p.id = pa.party_id\n        where pa.alliance_id = $1 and pa.end_date is null\n        order by p.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "alliance_name",
+        "name": "party_name",
         "type_info": "Text",
         "origin": {
           "Table": {
-            "table": "alliances",
+            "table": "parties",
             "name": "name"
           }
         }
       },
       {
         "ordinal": 1,
-        "name": "alliance_slug",
-        "type_info": "Text",
-        "origin": {
-          "Table": {
-            "table": "alliances",
-            "name": "slug"
-          }
-        }
-      },
-      {
-        "ordinal": 2,
-        "name": "short_name",
+        "name": "party_short_name",
         "type_info": "Text",
         "origin": {
           "Table": {
@@ -37,7 +26,7 @@
         }
       },
       {
-        "ordinal": 3,
+        "ordinal": 2,
         "name": "party_slug",
         "type_info": "Text",
         "origin": {
@@ -48,8 +37,8 @@
         }
       },
       {
-        "ordinal": 4,
-        "name": "color",
+        "ordinal": 3,
+        "name": "party_color",
         "type_info": "Text",
         "origin": {
           "Table": {
@@ -66,11 +55,10 @@
     },
     "nullable": [
       false,
-      false,
       true,
       false,
       true
     ]
   },
-  "hash": "189a1385b25a716923ec32dddc51e2a7beae13f11c8a4b0e6ea7cc91bb85bf4a"
+  "hash": "e9a90bce228ba8a48e7b59462dfdddb0a2f49bebacf67aca3618951569c87687"
 }

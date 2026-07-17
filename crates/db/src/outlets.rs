@@ -152,7 +152,7 @@ pub async fn list(pool: &Pool, country_id: i64) -> Result<Vec<OutletCard>> {
                 where s.outlet_id = o.id) as "article_count!"
         from outlets o
         where o.country_id = $1
-        order by o.name
+        order by o.name collate "name_sort"
         "#,
         country_id,
     )

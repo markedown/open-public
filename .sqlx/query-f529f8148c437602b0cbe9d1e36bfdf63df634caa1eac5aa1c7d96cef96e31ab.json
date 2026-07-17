@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select id, wikidata_id, full_name, slug, birth_date, birth_place,\n               photo_url, photo_license, summary\n        from people\n        where country_id = $1 and unaccent(full_name) ilike unaccent($2)\n        order by full_name\n        limit $3 offset $4\n        ",
+  "query": "\n        select id, wikidata_id, full_name, slug, birth_date, birth_place,\n               photo_url, photo_license, summary\n        from people\n        where country_id = $1 and unaccent(full_name) ilike unaccent($2)\n        order by full_name collate \"name_sort\"\n        limit $3 offset $4\n        ",
   "describe": {
     "columns": [
       {
@@ -123,5 +123,5 @@
       true
     ]
   },
-  "hash": "a9be982430519e44774856756d82374633dd00454f6b1808b8b09001c008fa9a"
+  "hash": "f529f8148c437602b0cbe9d1e36bfdf63df634caa1eac5aa1c7d96cef96e31ab"
 }

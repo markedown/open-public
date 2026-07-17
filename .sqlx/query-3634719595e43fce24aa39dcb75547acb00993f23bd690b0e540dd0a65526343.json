@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.id as \"id!\", p.full_name as \"name!\", p.slug as \"slug!\"\n        from news_item_people nip join people p on p.id = nip.person_id\n        where nip.news_item_id = $1 order by p.full_name\n        ",
+  "query": "\n        select pt.id as \"id!\", pt.name as \"name!\", pt.slug as \"slug!\"\n        from news_item_parties nap join parties pt on pt.id = nap.party_id\n        where nap.news_item_id = $1 order by pt.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -9,7 +9,7 @@
         "type_info": "Int8",
         "origin": {
           "Table": {
-            "table": "people",
+            "table": "parties",
             "name": "id"
           }
         }
@@ -20,8 +20,8 @@
         "type_info": "Text",
         "origin": {
           "Table": {
-            "table": "people",
-            "name": "full_name"
+            "table": "parties",
+            "name": "name"
           }
         }
       },
@@ -31,7 +31,7 @@
         "type_info": "Text",
         "origin": {
           "Table": {
-            "table": "people",
+            "table": "parties",
             "name": "slug"
           }
         }
@@ -48,5 +48,5 @@
       false
     ]
   },
-  "hash": "947c186b6972426accd089f1ec674ef1415e2c60b49da3d6186810bdf1b7d012"
+  "hash": "3634719595e43fce24aa39dcb75547acb00993f23bd690b0e540dd0a65526343"
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select a.name as alliance_name, a.slug as alliance_slug,\n               mp.id as party_id, mp.name, mp.short_name, mp.slug, mp.color\n        from party_alliances self_pa\n        join alliances a on a.id = self_pa.alliance_id\n        join party_alliances pa on pa.alliance_id = a.id\n        join parties mp on mp.id = pa.party_id\n        where self_pa.party_id = $1 and self_pa.end_date is null\n        order by a.name, mp.short_name\n        ",
+  "query": "\n        select a.name as alliance_name, a.slug as alliance_slug,\n               mp.id as party_id, mp.name, mp.short_name, mp.slug, mp.color\n        from party_alliances self_pa\n        join alliances a on a.id = self_pa.alliance_id\n        join party_alliances pa on pa.alliance_id = a.id\n        join parties mp on mp.id = pa.party_id\n        where self_pa.party_id = $1 and self_pa.end_date is null\n        order by a.name collate \"name_sort\", mp.short_name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -96,5 +96,5 @@
       true
     ]
   },
-  "hash": "e8fdbd56ac0457e7844ccf249d4fe195a4fdaa454411024da09cc3661e03b6f2"
+  "hash": "9782ca9abb382c74fd9fb04b50b5a6bf21d6897135b6bdf1ca2c290ab3485ce6"
 }
