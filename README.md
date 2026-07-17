@@ -83,11 +83,11 @@ Production runs only released, attested code, and anyone can check it independen
    runs on GitHub's infrastructure (independent of the host), reads `/version`, and verifies the
    reported digest is an attested release build. Any drift is a public, failing check.
 
-What this proves, and what it does not: it proves every production image is publicly attested and
-reproducible from source, that production is pinned to and continuously checked against those digests,
-and that an independent public job confirms the running digest. It does not, on its own, defeat a
-malicious host that forges `/version`; that would require hardware remote attestation, which is out of
-scope and is never claimed.
+What this proves, and what it does not: it proves every production image is publicly attested to the
+source commit and public workflow that built it, that production is pinned to and continuously checked
+against those attested digests, and that an independent public job confirms the running digest. It
+does not, on its own, defeat a malicious host that forges `/version`; that would require hardware
+remote attestation, which is out of scope and is never claimed.
 
 ## Quickstart
 
