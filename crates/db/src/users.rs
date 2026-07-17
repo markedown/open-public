@@ -9,6 +9,8 @@ pub struct User {
     pub email_hash: String,
     pub is_admin: bool,
     pub verified_at: Option<DateTime<Utc>>,
+    /// Set when the account is permanently suspended; login is then refused.
+    pub banned_at: Option<DateTime<Utc>>,
 }
 
 /// Create a new unverified user, keyed on email_hash.
@@ -34,7 +36,7 @@ pub async fn insert(pool: &Pool, email_hash: &str, password_hash: &str) -> Resul
 pub async fn get_by_email_hash(pool: &Pool, email_hash: &str) -> Result<Option<User>> {
     let user = sqlx::query_as!(
         User,
-        r#"select id, email_hash, is_admin, verified_at from users where email_hash = $1"#,
+        r#"select id, email_hash, is_admin, verified_at, banned_at from users where email_hash = $1"#,
         email_hash,
     )
     .fetch_optional(pool)
@@ -46,7 +48,7 @@ pub async fn get_by_email_hash(pool: &Pool, email_hash: &str) -> Result<Option<U
 pub async fn get_by_id(pool: &Pool, user_id: i64) -> Result<Option<User>> {
     let user = sqlx::query_as!(
         User,
-        r#"select id, email_hash, is_admin, verified_at from users where id = $1"#,
+        r#"select id, email_hash, is_admin, verified_at, banned_at from users where id = $1"#,
         user_id,
     )
     .fetch_optional(pool)

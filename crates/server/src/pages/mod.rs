@@ -16,3 +16,4 @@ pub mod person;
 pub mod poll;
 pub mod polls;
 pub mod search;
+pub mod submit;

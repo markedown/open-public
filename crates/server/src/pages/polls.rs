@@ -31,12 +31,20 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Polls").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Polls"))
+            header class="mb-8 flex flex-wrap items-end justify-between gap-3 border-b-2 border-accent pb-4" {
+                div {
+                    h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
+                        (i18n::t("Polls"))
+                    }
+                    p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                        span class="font-mono" { (polls.len()) } " " (i18n::t("Polls"))
+                    }
                 }
-                p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (polls.len()) } " " (i18n::t("Polls"))
+                // Signed-in visitors can propose a poll; it is reviewed before
+                // it appears. Anonymous visitors are pointed to sign in.
+                a href=(if session.is_some() { format!("/{}/polls/submit", country.slug) } else { "/login".to_string() })
+                  class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                    (i18n::t("Propose a poll"))
                 }
             }
 

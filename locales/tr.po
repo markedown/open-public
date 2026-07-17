@@ -639,3 +639,69 @@ msgstr "Yarı başkanlık cumhuriyeti"
 
 msgid "National Assembly"
 msgstr "Ulusal Meclis"
+
+msgid "Propose a poll"
+msgstr "Anket öner"
+
+msgid "Your poll is checked automatically and then by an editor before it appears. Keep it neutral and on topic."
+msgstr "Anketiniz görünmeden önce otomatik olarak ve ardından bir editör tarafından denetlenir. Tarafsız ve konuyla ilgili tutun."
+
+msgid "Question image (optional)"
+msgstr "Soru görseli (isteğe bağlı)"
+
+msgid "PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."
+msgstr "PNG, JPEG veya WebP, en fazla 5 MB. Görseller yüklenirken yeniden kodlanır."
+
+msgid "Submit for review"
+msgstr "İncelemeye gönder"
+
+msgid "My submissions"
+msgstr "Gönderilerim"
+
+msgid "Every poll you propose is listed here with its current state."
+msgstr "Önerdiğiniz her anket, mevcut durumuyla birlikte burada listelenir."
+
+msgid "You have not proposed any polls yet."
+msgstr "Henüz bir anket önermediniz."
+
+msgid "View published poll"
+msgstr "Yayınlanan anketi gör"
+
+msgid "Reason"
+msgstr "Gerekçe"
+
+msgid "Under review"
+msgstr "İncelemede"
+
+msgid "Published"
+msgstr "Yayında"
+
+msgid "Not accepted"
+msgstr "Kabul edilmedi"
+
+msgid "Review poll submissions"
+msgstr "Anket gönderilerini incele"
+
+msgid "Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."
+msgstr "Her öneri otomatik olarak tarandı ve sizi bekliyor. Onaylamak anketi oluşturur. Bir reddi yalnızca gerçek politika ihlalleri için ihlal olarak işaretleyin; tekrarlanan ihlaller hesabı askıya alır."
+
+msgid "No submissions to review."
+msgstr "İncelenecek gönderi yok."
+
+msgid "Automated note"
+msgstr "Otomatik not"
+
+msgid "Approve"
+msgstr "Onayla"
+
+msgid "Reason (optional)"
+msgstr "Gerekçe (isteğe bağlı)"
+
+msgid "Policy violation (counts toward a ban)"
+msgstr "Politika ihlali (yasaklamaya doğru sayılır)"
+
+msgid "Reject"
+msgstr "Reddet"
+
+msgid "This account has been suspended."
+msgstr "Bu hesap askıya alındı."

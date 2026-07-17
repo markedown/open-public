@@ -627,3 +627,69 @@ msgstr "République semi-présidentielle"
 
 msgid "National Assembly"
 msgstr "Assemblée nationale"
+
+msgid "Propose a poll"
+msgstr "Proposer un sondage"
+
+msgid "Your poll is checked automatically and then by an editor before it appears. Keep it neutral and on topic."
+msgstr "Votre sondage est vérifié automatiquement puis par un éditeur avant d'apparaître. Restez neutre et dans le sujet."
+
+msgid "Question image (optional)"
+msgstr "Image de la question (facultative)"
+
+msgid "PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."
+msgstr "PNG, JPEG ou WebP, jusqu'à 5 Mo. Les images sont ré-encodées au téléversement."
+
+msgid "Submit for review"
+msgstr "Soumettre pour examen"
+
+msgid "My submissions"
+msgstr "Mes soumissions"
+
+msgid "Every poll you propose is listed here with its current state."
+msgstr "Chaque sondage que vous proposez est listé ici avec son état actuel."
+
+msgid "You have not proposed any polls yet."
+msgstr "Vous n'avez encore proposé aucun sondage."
+
+msgid "View published poll"
+msgstr "Voir le sondage publié"
+
+msgid "Reason"
+msgstr "Motif"
+
+msgid "Under review"
+msgstr "En cours d'examen"
+
+msgid "Published"
+msgstr "Publié"
+
+msgid "Not accepted"
+msgstr "Non accepté"
+
+msgid "Review poll submissions"
+msgstr "Examiner les sondages soumis"
+
+msgid "Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."
+msgstr "Chaque proposition a été filtrée automatiquement et vous attend. L'approbation crée le sondage. Ne marquez un rejet comme infraction que pour de véritables manquements aux règles ; les infractions répétées suspendent le compte."
+
+msgid "No submissions to review."
+msgstr "Aucune soumission à examiner."
+
+msgid "Automated note"
+msgstr "Note automatique"
+
+msgid "Approve"
+msgstr "Approuver"
+
+msgid "Reason (optional)"
+msgstr "Motif (facultatif)"
+
+msgid "Policy violation (counts toward a ban)"
+msgstr "Infraction aux règles (compte pour un bannissement)"
+
+msgid "Reject"
+msgstr "Rejeter"
+
+msgid "This account has been suspended."
+msgstr "Ce compte a été suspendu."

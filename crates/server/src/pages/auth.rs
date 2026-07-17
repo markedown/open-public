@@ -140,6 +140,14 @@ pub async fn login_submit(
         ))));
     }
 
+    // A suspended account cannot sign back in. Its live sessions are already
+    // invalidated at the session lookup, so this closes the re-login path too.
+    if user.banned_at.is_some() {
+        return Err(login_page(Some(i18n::t(
+            "This account has been suspended.",
+        ))));
+    }
+
     let token = auth::start_session(&state.pool, user.id)
         .await
         .map_err(|_| login_page(Some(i18n::t("Something went wrong. Please try again."))))?;

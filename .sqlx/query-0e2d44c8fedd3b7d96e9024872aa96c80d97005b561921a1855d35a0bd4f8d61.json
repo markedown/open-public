@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update poll_submissions\n        set status = 'ai_rejected', ai_decision = 'reject', ai_model = $2,\n            ai_reason = $3, ai_categories = $4, is_violation = true,\n            ai_reviewed_at = now(), updated_at = now()\n        where id = $1 and status = 'pending_ai'\n        returning submitter_id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "submitter_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submissions",
+            "name": "submitter_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "0e2d44c8fedd3b7d96e9024872aa96c80d97005b561921a1855d35a0bd4f8d61"
+}

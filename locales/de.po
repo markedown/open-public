@@ -627,3 +627,69 @@ msgstr "Semipräsidentielle Republik"
 
 msgid "National Assembly"
 msgstr "Nationalversammlung"
+
+msgid "Propose a poll"
+msgstr "Umfrage vorschlagen"
+
+msgid "Your poll is checked automatically and then by an editor before it appears. Keep it neutral and on topic."
+msgstr "Ihre Umfrage wird automatisch und danach von einer Redaktion geprüft, bevor sie erscheint. Bleiben Sie neutral und beim Thema."
+
+msgid "Question image (optional)"
+msgstr "Fragebild (optional)"
+
+msgid "PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."
+msgstr "PNG, JPEG oder WebP, bis zu 5 MB. Bilder werden beim Hochladen neu kodiert."
+
+msgid "Submit for review"
+msgstr "Zur Prüfung einreichen"
+
+msgid "My submissions"
+msgstr "Meine Einreichungen"
+
+msgid "Every poll you propose is listed here with its current state."
+msgstr "Jede von Ihnen vorgeschlagene Umfrage wird hier mit ihrem aktuellen Status aufgeführt."
+
+msgid "You have not proposed any polls yet."
+msgstr "Sie haben noch keine Umfragen vorgeschlagen."
+
+msgid "View published poll"
+msgstr "Veröffentlichte Umfrage ansehen"
+
+msgid "Reason"
+msgstr "Grund"
+
+msgid "Under review"
+msgstr "In Prüfung"
+
+msgid "Published"
+msgstr "Veröffentlicht"
+
+msgid "Not accepted"
+msgstr "Nicht angenommen"
+
+msgid "Review poll submissions"
+msgstr "Umfrage-Einreichungen prüfen"
+
+msgid "Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."
+msgstr "Jeder Vorschlag wurde automatisch geprüft und wartet auf Sie. Beim Genehmigen wird die Umfrage erstellt. Markieren Sie eine Ablehnung nur bei echten Richtlinienverstößen als Verstoß; wiederholte Verstöße sperren das Konto."
+
+msgid "No submissions to review."
+msgstr "Keine Einreichungen zu prüfen."
+
+msgid "Automated note"
+msgstr "Automatischer Hinweis"
+
+msgid "Approve"
+msgstr "Genehmigen"
+
+msgid "Reason (optional)"
+msgstr "Grund (optional)"
+
+msgid "Policy violation (counts toward a ban)"
+msgstr "Richtlinienverstoß (zählt zu einer Sperre)"
+
+msgid "Reject"
+msgstr "Ablehnen"
+
+msgid "This account has been suspended."
+msgstr "Dieses Konto wurde gesperrt."

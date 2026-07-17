@@ -9,12 +9,17 @@ license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 # Web
-axum = "0.8.9"
+axum = { version = "0.8.9", features = ["multipart"] }
 axum-extra = { version = "0.12.6", features = ["cookie"] }
-tokio = { version = "1.52.3", features = ["rt-multi-thread", "macros", "net", "signal"] }
+tokio = { version = "1.52.3", features = ["rt-multi-thread", "macros", "net", "signal", "time", "fs"] }
 tower = "0.5.3"
 tower-http = { version = "0.7.0", features = ["fs", "trace"] }
 maud = { version = "0.27.0", features = ["axum"] }
+
+# Outbound HTTP (the automated poll reviewer) and image processing (uploads are
+# decoded and re-encoded to strip metadata and defeat polyglot files).
+reqwest = { version = "0.12.28", default-features = false, features = ["rustls-tls", "json"] }
+image = { version = "0.25.9", default-features = false, features = ["png", "jpeg", "webp"] }
 
 # Data
 sqlx = { version = "0.9.0", features = ["runtime-tokio", "tls-rustls-ring", "postgres", "chrono"] }

@@ -4,6 +4,7 @@
 use sqlx::postgres::{PgPool, PgPoolOptions};
 
 pub mod alliances;
+pub mod assets;
 pub mod conflicts;
 pub mod country;
 pub mod elections;
@@ -20,6 +21,7 @@ pub mod service;
 pub mod sessions;
 pub mod sources;
 pub mod statements;
+pub mod submissions;
 pub mod translations;
 pub mod users;
 

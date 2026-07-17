@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select id, email_hash, is_admin, verified_at from users where id = $1",
+  "query": "select id, email_hash, is_admin, verified_at, banned_at from users where email_hash = $1",
   "describe": {
     "columns": [
       {
@@ -46,19 +46,31 @@
             "name": "verified_at"
           }
         }
+      },
+      {
+        "ordinal": 4,
+        "name": "banned_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "users",
+            "name": "banned_at"
+          }
+        }
       }
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Text"
       ]
     },
     "nullable": [
       false,
       false,
       false,
+      true,
       true
     ]
   },
-  "hash": "4684874f86ac0576da34122b8369872d71e4c1bacc41aa13d4b43def4067d845"
+  "hash": "6340a4a13317b62c318551b6de408fa80325fa3b3934cb5c921aa038ff31c658"
 }

@@ -69,6 +69,9 @@ pub fn document(
                                 }
                             }
                             @if logged_in {
+                                a href="/submissions" class="text-ink-muted transition-colors hover:text-accent" {
+                                    (i18n::t("My submissions"))
+                                }
                                 form method="post" action="/logout" {
                                     button type="submit"
                                         class="border border-ink bg-paper px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {

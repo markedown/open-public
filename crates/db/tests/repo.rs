@@ -1842,3 +1842,174 @@ async fn people_list_uses_icu_name_collation(pool: sqlx::PgPool) {
         "people list must sort in ICU (locale-aware) order, not by byte value"
     );
 }
+
+// --- Poll submissions, assets, and the ban rule ---
+
+/// Seed a source, a country, and a user; return their ids.
+async fn seed_submitter(pool: &sqlx::PgPool) -> (i64, i64) {
+    let source_id =
+        db::sources::insert_source(pool, "manual", "https://example.test/s", None, Some("h"))
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland', 'testland', $1) returning id",
+    )
+    .bind(source_id)
+    .fetch_one(pool)
+    .await
+    .unwrap();
+    let user_id = db::users::insert(pool, "hash-submitter", "pw")
+        .await
+        .unwrap();
+    (country_id, user_id)
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn assets_dedup_on_content_hash(pool: sqlx::PgPool) {
+    let (_c, user_id) = seed_submitter(&pool).await;
+    let a = db::assets::insert(
+        &pool,
+        &db::assets::NewAsset {
+            sha256: "abc123",
+            mime: "image/png",
+            width: 4,
+            height: 4,
+            byte_size: 100,
+            uploaded_by: user_id,
+        },
+    )
+    .await
+    .unwrap();
+    // Same bytes: same row, not a duplicate.
+    let again = db::assets::insert(
+        &pool,
+        &db::assets::NewAsset {
+            sha256: "abc123",
+            mime: "image/png",
+            width: 4,
+            height: 4,
+            byte_size: 100,
+            uploaded_by: user_id,
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(a.id, again.id);
+    assert!(!a.published);
+
+    db::assets::mark_published(&pool, a.id).await.unwrap();
+    let fetched = db::assets::get_by_sha(&pool, "abc123")
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(fetched.published);
+}
+
+async fn make_pending(pool: &sqlx::PgPool, country_id: i64, user_id: i64, q: &str) -> i64 {
+    db::submissions::create(
+        pool,
+        &db::submissions::NewSubmission {
+            submitter_id: user_id,
+            country_id,
+            question: q,
+            kind: "single",
+            question_asset_id: None,
+        },
+        &[
+            db::submissions::NewSubmissionOption {
+                label: "A".into(),
+                asset_id: None,
+            },
+            db::submissions::NewSubmissionOption {
+                label: "B".into(),
+                asset_id: None,
+            },
+        ],
+    )
+    .await
+    .unwrap()
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn three_violations_suspend_the_account(pool: sqlx::PgPool) {
+    let (country_id, user_id) = seed_submitter(&pool).await;
+
+    // The first two automated rejections are violations but do not ban.
+    for i in 0..2 {
+        let id = make_pending(&pool, country_id, user_id, &format!("bad {i}")).await;
+        let banned =
+            db::submissions::record_ai_reject(&pool, id, "m", Some("nope"), &["hate".into()])
+                .await
+                .unwrap();
+        assert!(!banned, "should not ban before the threshold");
+    }
+    assert!(db::users::get_by_id(&pool, user_id)
+        .await
+        .unwrap()
+        .unwrap()
+        .banned_at
+        .is_none());
+
+    // The third crosses the threshold and suspends the account.
+    let id = make_pending(&pool, country_id, user_id, "bad 3").await;
+    let banned = db::submissions::record_ai_reject(&pool, id, "m", Some("nope"), &[])
+        .await
+        .unwrap();
+    assert!(banned);
+    assert!(db::users::get_by_id(&pool, user_id)
+        .await
+        .unwrap()
+        .unwrap()
+        .banned_at
+        .is_some());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn allow_moves_to_admin_queue_and_approve_creates_a_poll(pool: sqlx::PgPool) {
+    let (country_id, user_id) = seed_submitter(&pool).await;
+    let id = make_pending(&pool, country_id, user_id, "Country question?").await;
+
+    // Automated allow routes it to the admin queue.
+    db::submissions::record_ai_allow(&pool, id, "m", None, &[])
+        .await
+        .unwrap();
+    assert_eq!(
+        db::submissions::pending_admin_count(&pool).await.unwrap(),
+        1
+    );
+
+    // Approve, creating a poll; a second approve is a no-op (no duplicate).
+    let slug = db::submissions::approve(&pool, id, user_id)
+        .await
+        .unwrap()
+        .expect("a slug");
+    assert!(db::submissions::approve(&pool, id, user_id)
+        .await
+        .unwrap()
+        .is_none());
+
+    let poll = db::polls::get_by_slug(&pool, &slug).await.unwrap().unwrap();
+    assert_eq!(poll.question, "Country question?");
+    assert_eq!(poll.options.len(), 2);
+    assert_eq!(
+        db::submissions::pending_admin_count(&pool).await.unwrap(),
+        0
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_plain_admin_rejection_is_not_a_violation(pool: sqlx::PgPool) {
+    let (country_id, user_id) = seed_submitter(&pool).await;
+    let id = make_pending(&pool, country_id, user_id, "meh").await;
+    db::submissions::record_ai_allow(&pool, id, "m", None, &[])
+        .await
+        .unwrap();
+    // Declined without marking a violation: no strike, no ban path.
+    let banned = db::submissions::reject(&pool, id, user_id, Some("off topic"), false)
+        .await
+        .unwrap();
+    assert!(!banned);
+    let sub = db::submissions::get(&pool, id).await.unwrap().unwrap();
+    assert_eq!(sub.status, "rejected");
+    assert!(!sub.is_violation);
+}

@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update users\n        set banned_at = now(), ban_reason = 'repeated poll-submission policy violations'\n        where id = $1 and banned_at is null\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "5e025d6b5dd804d809918278b2baed43ac8a2bc71616608dfba931728a4075a1"
+}

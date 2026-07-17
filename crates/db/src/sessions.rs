@@ -29,14 +29,15 @@ pub async fn create(
     Ok(id)
 }
 
-/// Look up a session by token hash. Returns None if expired.
+/// Look up a session by token hash. Returns None if expired, or if the account
+/// has been suspended (a ban invalidates every live session at once).
 pub async fn get_by_token_hash(pool: &Pool, token_hash: &str) -> Result<Option<Session>> {
     Ok(sqlx::query!(
         r#"
         select s.id, s.user_id, s.expires_at, u.is_admin as "is_admin!"
         from sessions s
         join users u on u.id = s.user_id
-        where s.token_hash = $1 and s.expires_at > now()
+        where s.token_hash = $1 and s.expires_at > now() and u.banned_at is null
         "#,
         token_hash,
     )

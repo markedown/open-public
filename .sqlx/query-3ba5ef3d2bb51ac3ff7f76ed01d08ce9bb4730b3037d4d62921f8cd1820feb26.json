@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select o.label, o.asset_id, a.sha256 as \"sha?\"\n        from poll_submission_options o\n        left join assets a on a.id = o.asset_id\n        where o.submission_id = $1 order by o.position\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "label",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_submission_options",
+            "name": "label"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "asset_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_submission_options",
+            "name": "asset_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "sha?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "assets",
+            "name": "sha256"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "3ba5ef3d2bb51ac3ff7f76ed01d08ce9bb4730b3037d4d62921f8cd1820feb26"
+}
