@@ -3371,3 +3371,174 @@ async fn submission_exercises_optional_fields_and_branches(pool: db::Pool) {
     assert!(code == StatusCode::OK || code == StatusCode::SEE_OTHER);
     let _ = uid;
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_rich_country_renders_in_german_and_french(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/s", None, Some("h"))
+        .await
+        .unwrap();
+    sqlx::query(
+        "insert into countries (name, slug, source_id, capital, government_type, founded_date, summary, legislature_name) \
+         values ('Richland','richland',$1,'Capital City','Federal republic','1900-01-01','A country summary.','National Assembly')",
+    )
+    .bind(src)
+    .execute(&pool)
+    .await
+    .unwrap();
+    let app = router(pool.clone());
+    for lang in ["de", "fr", "tr"] {
+        for uri in ["/", "/richland"] {
+            let req = Request::builder()
+                .uri(uri)
+                .header("accept-language", lang)
+                .body(Body::empty())
+                .unwrap();
+            assert_eq!(
+                app.clone().oneshot(req).await.unwrap().status(),
+                StatusCode::OK,
+                "{lang} {uri}"
+            );
+        }
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn admin_person_enrichment_and_submissions_queue(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let admin = admin_cookie(&pool).await;
+    let cid = country_id(&pool).await;
+
+    // The submissions queue renders empty first.
+    let req = Request::builder()
+        .uri("/admin/submissions")
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    assert_eq!(
+        app.clone().oneshot(req).await.unwrap().status(),
+        StatusCode::OK
+    );
+
+    // Add education and an attribute through the admin forms.
+    assert_eq!(
+        post_form(
+            &app,
+            "/admin/person/ayse-yilmaz/education",
+            "country=tr&institution=Test+Uni&degree=BSc&field=CS&source_url=https%3A%2F%2Fex.test%2Fe",
+            Some(&admin),
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+    assert_eq!(
+        post_form(
+            &app,
+            "/admin/person/ayse-yilmaz/attribute",
+            "country=tr&kind=occupation&value=engineer&source_url=https%3A%2F%2Fex.test%2Fa",
+            Some(&admin),
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // The manage page now renders the education and attribute rows.
+    let req = Request::builder()
+        .uri("/admin/person/ayse-yilmaz?country=tr")
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(body.contains("Test Uni"));
+    assert!(body.contains("engineer"));
+
+    // Delete the attribute.
+    let aid: i64 = sqlx::query_scalar("select id from person_attributes where value = 'engineer'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        post_form(
+            &app,
+            &format!("/admin/person/ayse-yilmaz/attribute/{aid}/delete?country=tr"),
+            "",
+            Some(&admin),
+        )
+        .await
+        .status(),
+        StatusCode::SEE_OTHER
+    );
+
+    // The submissions queue with a screened item shows its note and categories.
+    let (uid, _c) = user_cookie(&pool, "queue@x.test").await;
+    let sid = make_pending_ai(&pool, cid, uid, "Queue me please").await;
+    db::submissions::record_ai_allow(&pool, sid, "m", Some("reads fine"), &["politics".into()])
+        .await
+        .unwrap();
+    let req = Request::builder()
+        .uri("/admin/submissions")
+        .header("cookie", &admin)
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(body.contains("Queue me please"));
+    assert!(body.contains("reads fine"));
+    assert!(body.contains("politics"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn empty_states_admin_views_and_search(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let admin = admin_cookie(&pool).await;
+
+    // A country with no data: every list renders its empty state.
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/e", None, Some("he"))
+        .await
+        .unwrap();
+    sqlx::query(
+        "insert into countries (name, slug, source_id) values ('Emptyland','emptyland',$1)",
+    )
+    .bind(src)
+    .execute(&pool)
+    .await
+    .unwrap();
+    for uri in [
+        "/emptyland",
+        "/emptyland/people",
+        "/emptyland/parties",
+        "/emptyland/alliances",
+        "/emptyland/elections",
+        "/emptyland/outlets",
+        "/emptyland/polls",
+    ] {
+        assert_eq!(get(&app, uri).await.status(), StatusCode::OK, "{uri}");
+    }
+
+    // Search: a query with no match, and one that matches the seeded party.
+    assert_eq!(
+        get(&app, "/search?q=zzznomatchhere").await.status(),
+        StatusCode::OK
+    );
+    let hit = body_string(get(&app, "/search?q=Test").await).await;
+    assert!(hit.contains("/parties/") || hit.contains("test-partisi"));
+
+    // Admin viewing entity pages: the per-entity add buttons and empty previews.
+    for uri in ["/tr/people/ayse-yilmaz", "/tr/parties/test-partisi"] {
+        let req = Request::builder()
+            .uri(uri)
+            .header("cookie", &admin)
+            .body(Body::empty())
+            .unwrap();
+        assert_eq!(
+            app.clone().oneshot(req).await.unwrap().status(),
+            StatusCode::OK,
+            "{uri}"
+        );
+    }
+
+    // The people list (pagination controls in their single-page state).
+    assert_eq!(get(&app, "/tr/people").await.status(), StatusCode::OK);
+}

@@ -124,5 +124,11 @@ jobs:
         run: sqlx migrate run
       # Binary entrypoints (main.rs) bind sockets and serve; they are not
       # unit-testable and are excluded from the coverage gate.
+      #
+      # The gate is set to the reachable maximum. The lines below it are
+      # defensive error paths (a database or filesystem failure, a "cannot
+      # happen" guard) that no test can execute without failure injection, and
+      # the pinned stable toolchain has no per-line coverage-exclusion. Raising
+      # the gate further would require either that or nightly-only tooling.
       - name: Coverage
-        run: cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 92
+        run: cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 96

@@ -172,6 +172,18 @@ mod tests {
     }
 
     #[test]
+    fn static_dir_override_and_dev_secret_warning() {
+        // The dev-default secret path emits a warning; a STATIC_DIR is honored.
+        let cfg = Config::from_source(source(&[
+            ("DATABASE_URL", "x"),
+            ("APP_SECRET", "dev-only-change-me"),
+            ("STATIC_DIR", "/custom/static"),
+        ]))
+        .unwrap();
+        assert_eq!(cfg.static_dir, std::path::PathBuf::from("/custom/static"));
+    }
+
+    #[test]
     fn asset_dir_defaults_and_overrides() {
         let cfg =
             Config::from_source(source(&[("DATABASE_URL", "x"), ("APP_SECRET", "s")])).unwrap();

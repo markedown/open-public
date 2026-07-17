@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/markedown/open-public/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/markedown/open-public/actions/workflows/verify-production.yml"><img alt="Production verified" src="https://github.com/markedown/open-public/actions/workflows/verify-production.yml/badge.svg"></a>
-  <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="Coverage: at least 92%" src="https://img.shields.io/badge/coverage-%E2%89%A592%25-brightgreen.svg"></a>
+  <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="Coverage: at least 96%" src="https://img.shields.io/badge/coverage-%E2%89%A596%25-brightgreen.svg"></a>
   <a href="#license"><img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg"></a>
   <a href="#license"><img alt="Data: CC0-1.0" src="https://img.shields.io/badge/data-CC0--1.0-blue.svg"></a>
   <img alt="Rust: stable" src="https://img.shields.io/badge/rust-stable-orange.svg">
