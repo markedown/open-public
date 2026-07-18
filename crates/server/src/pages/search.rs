@@ -37,7 +37,7 @@ pub async fn page(
 
     let content = html! {
         section {
-            h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                 (i18n::t("Search"))
             }
 
@@ -48,7 +48,7 @@ pub async fn page(
                         name="q"
                         value=(query_str)
                         placeholder=(i18n::t("Search people and parties..."))
-                        class="flex-1 border border-hairline bg-paper-raised px-4 py-2.5 text-sm text-ink placeholder-ink-muted transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                        class="flex-1 rounded-lg border border-hairline bg-paper-raised px-4 py-2.5 text-sm text-ink placeholder-ink-muted transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         autofocus
                         hx-get="/search"
                         hx-trigger="keyup changed delay:250ms"
@@ -57,7 +57,7 @@ pub async fn page(
                         hx-include="[name='q']";
                     button
                         type="submit"
-                        class="inline-flex items-center gap-1.5 border border-ink bg-ink px-4 py-2.5 text-sm font-medium text-paper transition-colors hover:border-accent hover:bg-accent" {
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                         svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
                             circle cx="11" cy="11" r="8" {}
                             path d="M21 21l-4.35-4.35" {}
@@ -79,14 +79,14 @@ pub async fn page(
                         p class="mb-4 font-mono text-xs text-ink-muted" {
                             (format!("{} {}", hits.len(), i18n::t("results")))
                         }
-                        ul class="divide-y divide-hairline-light border border-ink" {
+                        ul class="op-card divide-y divide-hairline-light" {
                             @for hit in &hits {
                                 @let (href, label) = match hit.kind {
                                     domain::models::SearchKind::Person => (format!("/{}/people/{}", country_slug, hit.slug), i18n::t("Person")),
                                     domain::models::SearchKind::Party => (format!("/{}/parties/{}", country_slug, hit.slug), i18n::t("Party")),
                                 };
                                 li class="group" {
-                                    a href=(href) class="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-paper-raised" {
+                                    a href=(href) class="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-paper-sunken" {
                                         span class="w-14 shrink-0 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted" {
                                             (label)
                                         }

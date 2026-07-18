@@ -990,9 +990,11 @@ async fn country_page_renders(pool: db::Pool) {
     assert!(body.contains("Test Secimi 2024")); // elections section
     assert!(body.contains("Seçimler")); // elections heading
     assert!(body.contains("Katılım")); // turnout figure (vote totals are set)
-    assert!(body.contains("Cumhuriyet ilan edildi")); // timeline event
-    assert!(body.contains("Tarihçe")); // timeline heading
-    assert!(body.contains("/tr/history")); // timeline preview links to the full page
+                                       // The full timeline is no longer rendered inline: the country page opens
+                                       // compact and reaches the history on its own page through a chip.
+    assert!(!body.contains("Cumhuriyet ilan edildi")); // timeline events live on /history now
+    assert!(body.contains("Tarihçe")); // the history navigation chip
+    assert!(body.contains("/tr/history")); // the chip links to the full history page
     assert!(body.contains("Ulke gidisati?")); // country-level poll surfaced here
 }
 
@@ -1141,7 +1143,7 @@ async fn news_detail_shows_outlet_author_and_chips(pool: db::Pool) {
     assert!(detail.contains("Tarafsiz ozet.")); // our summary
     assert!(detail.contains("https://tg.test/a")); // read at the source
                                                    // The mentioned person is a bordered chip, not glued plain text.
-    assert!(detail.contains("border border-ink"));
+    assert!(detail.contains("rounded-md border border-hairline"));
     assert!(detail.contains("/tr/people/ayse-yilmaz"));
     assert!(detail.contains("/tr/parties/test-partisi"));
 
@@ -1933,6 +1935,28 @@ async fn polls_index_groups_open_and_closed(pool: db::Pool) {
     assert!(body.contains("Açık")); // the open group (seed polls have no close time)
     assert!(body.contains("Kapalı")); // the closed group
     assert!(body.contains("Bitti mi?")); // the closed poll
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn polls_index_search_filters_by_question(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+
+    // Unfiltered, both the country-level poll and the party poll show.
+    let all = body_string(get(&app, "/tr/polls").await).await;
+    assert!(all.contains("Ulke gidisati?"));
+    assert!(all.contains("Nasil buluyorsunuz?"));
+
+    // A query narrows the list to matching questions only. Matching is accent-
+    // and case-insensitive, like the people and party search.
+    let hit = body_string(get(&app, "/tr/polls?q=ULKE").await).await;
+    assert!(hit.contains("Ulke gidisati?")); // matches, case-insensitively
+    assert!(!hit.contains("Nasil buluyorsunuz?")); // does not mention "ulke"
+
+    // A query that matches nothing leaves the list empty.
+    let miss = body_string(get(&app, "/tr/polls?q=zzzznomatch").await).await;
+    assert!(!miss.contains("Ulke gidisati?"));
+    assert!(!miss.contains("Nasil buluyorsunuz?"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

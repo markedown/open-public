@@ -34,22 +34,22 @@ pub async fn detail(
                 Crumb { label: name.to_string(), href: None },
             ]))
 
-            header class={"mb-12 border-[1.5px] border-ink bg-paper-raised p-6 sm:p-8 " (ui::CORNER_TICK)} {
+            header class="op-card mb-8 p-6 sm:p-8" {
                 div class="flex flex-wrap items-center gap-3" {
                     span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
                         (i18n::t("Alliance"))
                     }
                     @if alliance.dissolved_date.is_none() {
-                        span class="border border-accent px-1.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
+                        span class="rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
                             (i18n::t("Active"))
                         }
                     } @else {
-                        span class="border border-hairline px-1.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                        span class="rounded-full border border-hairline px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
                             (i18n::t("Inactive"))
                         }
                     }
                 }
-                h1 class="mt-1 font-serif text-4xl font-semibold tracking-tight text-ink sm:text-[44px]" {
+                h1 class="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                     (name)
                 }
                 @if alliance.founded_date.is_some() || alliance.dissolved_date.is_some() {
@@ -73,7 +73,7 @@ pub async fn detail(
             }
 
             @if let Some(text) = summary {
-                div class="mb-12" {
+                div class="mb-8 max-w-prose" {
                     (ui::translated::prose(
                         text,
                         loc.is_translated("summary").then_some(alliance.summary.as_deref()).flatten(),
@@ -82,12 +82,12 @@ pub async fn detail(
             }
 
             @if !members.is_empty() {
-                section class="mb-12" {
-                    h2 class="mb-5 flex items-baseline gap-2 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        (i18n::t("Parties"))
-                        span class="font-mono text-ink-muted" { (members.len()) }
-                    }
-                    ul class="grid gap-x-10 sm:grid-cols-2" {
+                section class="mb-8" {
+                    (ui::section_header(
+                        i18n::t("Parties"),
+                        Some(html! { span class="font-mono text-xs text-ink-muted" { (members.len()) } }),
+                    ))
+                    ul class="op-card grid gap-x-10 px-5 sm:grid-cols-2" {
                         @for m in &members {
                             li class="flex items-center gap-3 border-b border-hairline-light py-2.5" {
                                 @if let Some(ref sn) = m.party_short_name {

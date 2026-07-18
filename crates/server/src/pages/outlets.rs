@@ -26,18 +26,15 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Outlets").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Outlets"))
-                }
-                p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (outlets.len()) } " " (i18n::t("Outlets"))
-                }
-            }
+            (ui::page_header(
+                i18n::t("Outlets"),
+                Some(html! { span class="font-mono" { (outlets.len()) } " " (i18n::t("Outlets")) }),
+                None,
+            ))
             @if outlets.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No outlets yet.")) }
             } @else {
-                ul class="space-y-2" {
+                ul class="grid gap-3 sm:grid-cols-2" {
                     @for o in &outlets {
                         li { (ui::outlet::card(o, &country.slug)) }
                     }
@@ -92,13 +89,13 @@ pub async fn detail(
                 Crumb { label: i18n::t("Outlets").to_string(), href: Some(format!("/{}/outlets", country.slug)) },
                 Crumb { label: outlet.name.clone(), href: None },
             ]))
-            header class={"mb-8 border-[1.5px] border-ink bg-paper-raised p-6 sm:p-8 " (ui::CORNER_TICK)} {
+            header class="op-card mb-8 p-6 sm:p-8" {
                 div class="flex items-center gap-4" {
                     @if let Some(ref logo) = outlet.logo_url {
                         img src=(logo) alt=(&outlet.name) loading="lazy"
-                            class="h-12 w-12 shrink-0 border border-hairline object-contain";
+                            class="h-12 w-12 shrink-0 rounded-lg border border-hairline object-contain";
                     }
-                    h1 class="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl" {
+                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                         (outlet.name)
                     }
                 }
@@ -123,10 +120,10 @@ pub async fn detail(
                 }
             }
 
-            h2 class="mb-5 flex items-baseline gap-2 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                (i18n::t("News"))
-                span class="font-mono text-ink-muted" { (outlet.article_count) }
-            }
+            (ui::section_header(
+                i18n::t("News"),
+                Some(html! { span class="font-mono text-xs text-ink-muted" { (outlet.article_count) } }),
+            ))
             @if articles.is_empty() {
                 p class="py-10 text-center text-sm text-ink-muted" { (i18n::t("No news yet.")) }
             } @else {

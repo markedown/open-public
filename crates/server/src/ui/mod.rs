@@ -72,14 +72,3 @@ pub fn initials(name: &str) -> String {
         .and_then(|w| w.chars().next());
     first.into_iter().chain(last).collect()
 }
-
-/// The "record card" corner tick: two 14px accent brackets at the top-left and
-/// bottom-right, sitting 1px outside the card's own border. The element it is
-/// applied to becomes `relative`. Reserved for hero-level cards (Home country
-/// cards, the Country/Party header block, the poll card) so it stays a
-/// signature rather than decoration.
-pub const CORNER_TICK: &str = "relative \
-    before:absolute before:-left-px before:-top-px before:h-3.5 before:w-3.5 \
-    before:border-l-2 before:border-t-2 before:border-accent before:content-[''] \
-    after:absolute after:-bottom-px after:-right-px after:h-3.5 after:w-3.5 \
-    after:border-b-2 after:border-r-2 after:border-accent after:content-['']";
