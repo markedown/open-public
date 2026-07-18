@@ -708,3 +708,21 @@ msgstr "Bu hesap askıya alındı."
 
 msgid "Support over time"
 msgstr "Zaman içinde destek"
+
+msgid "Seats"
+msgstr "Sandalye"
+
+msgid "Question image URL"
+msgstr "Soru görseli URL'si"
+
+msgid "Image license"
+msgstr "Görsel lisansı"
+
+msgid "A question is required."
+msgstr "Bir soru gerekli."
+
+msgid "A poll needs at least two options."
+msgstr "Bir anket en az iki seçenek gerektirir."
+
+msgid "The upload could not be read. Please try again."
+msgstr "Yükleme okunamadı. Lütfen tekrar deneyin."
