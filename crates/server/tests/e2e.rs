@@ -2149,6 +2149,90 @@ async fn poll_marks_the_voter_own_choice(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn following_a_country_feeds_its_elections_and_polls(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_user, cookie) = verified_user(&pool, "countryfan@x.test", "cf-token").await;
+
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    post_form(
+        &app,
+        &format!("/follow/country/{country_id}"),
+        "next=/tr",
+        Some(&cookie),
+    )
+    .await;
+
+    let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(feed.contains("Test Secimi 2024")); // the country's election
+    assert!(feed.contains("Ulke gidisati?")); // a country-level poll
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (user, cookie) = verified_user(&pool, "newsfan@x.test", "nf-token").await;
+
+    // Following a topic with no activity yields the "nothing new" state, not the
+    // first-run invitation.
+    let topic_id: i64 = sqlx::query_scalar(
+        "insert into topics (name, slug) values ('Quiet', 'quiet') returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    db::follows::follow(&pool, user, "topic", topic_id)
+        .await
+        .unwrap();
+    let quiet = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(quiet.contains("Nothing new"));
+
+    // A news item mentioning a followed person appears in the feed.
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src: i64 = sqlx::query_scalar(
+        "insert into sources (kind, url, fetched_at) values ('news_rss', 'https://n.test/1', now()) returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let news_id: i64 = sqlx::query_scalar(
+        "insert into news_items (source_id, headline) values ($1, 'Followed person makes news') returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    sqlx::query("insert into news_item_people (news_item_id, person_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(person_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    // Follow over HTMX: the response is the updated button, not a redirect.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/follow/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie)
+        .header("hx-request", "true")
+        .body(Body::from("next=/tr/people/ayse-yilmaz"))
+        .unwrap();
+    let button = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(button.contains("Following")); // the toggled-on button came back
+    assert!(button.contains("/follow/person/")); // and it is the toggle form
+
+    let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(feed.contains("Followed person makes news"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn detail_pages_reject_another_countrys_slug(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
