@@ -2233,6 +2233,98 @@ async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn bio_review_queue_approves_and_discards(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // Pin English so the assertions read in one language.
+    let cookie = format!("{}; lang=en", admin_cookie(&pool).await);
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Empty to begin with.
+    let empty = body_string(get_cookie(&app, "/admin/bios", &cookie).await).await;
+    assert!(empty.contains("No drafts to review."));
+
+    // Give the party an existing summary and a Wikidata id so the queue shows
+    // the "replaces" line and the source link.
+    sqlx::query("update parties set summary = 'Old summary.', wikidata_id = 'Q9999' where id = $1")
+        .bind(party_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    // A staged draft appears in the queue but not on the public page.
+    db::parties::set_summary_draft(&pool, party_id, "A neutral draft summary.")
+        .await
+        .unwrap();
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        1
+    );
+    let queue = body_string(get_cookie(&app, "/admin/bios", &cookie).await).await;
+    assert!(queue.contains("A neutral draft summary."));
+    assert!(queue.contains("/tr/parties/test-partisi"));
+    assert!(queue.contains("Replaces")); // it names the summary being replaced
+    assert!(queue.contains("Q9999")); // and links the Wikidata source
+    let public = body_string(get(&app, "/tr/parties/test-partisi").await).await;
+    assert!(!public.contains("A neutral draft summary.")); // draft is not public
+
+    // Approving (as edited) promotes it to the public summary and clears the draft.
+    post_form(
+        &app,
+        &format!("/admin/bios/{party_id}/publish"),
+        "summary=An+edited+neutral+summary.",
+        Some(&cookie),
+    )
+    .await;
+    let party = db::parties::get_by_slug(&pool, "test-partisi")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.summary.as_deref(), Some("An edited neutral summary."));
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+
+    // Discarding a later draft leaves the public summary untouched.
+    db::parties::set_summary_draft(&pool, party_id, "Another draft.")
+        .await
+        .unwrap();
+    post_form(
+        &app,
+        &format!("/admin/bios/{party_id}/discard"),
+        "",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+    let party = db::parties::get_by_slug(&pool, "test-partisi")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.summary.as_deref(), Some("An edited neutral summary."));
+
+    // A non-admin cannot reach the queue.
+    let (_u, ucookie) = verified_user(&pool, "notadmin@x.test", "na-token").await;
+    assert!(!get_cookie(&app, "/admin/bios", &ucookie)
+        .await
+        .status()
+        .is_success());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn detail_pages_reject_another_countrys_slug(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
