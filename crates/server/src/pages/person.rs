@@ -41,6 +41,19 @@ pub async fn detail(
     let manage_href =
         is_admin.then(|| format!("/admin/person/{}?country={}", person.slug, country.slug));
 
+    // A signed-in visitor can follow this person to surface it in their feed.
+    let follow_state = match &session {
+        Some(s) => {
+            if db::follows::is_following(&pool, s.user_id, "person", person.id).await? {
+                ui::follow::FollowState::Following
+            } else {
+                ui::follow::FollowState::NotFollowing
+            }
+        }
+        None => ui::follow::FollowState::Anonymous,
+    };
+    let follow_next = format!("/{}/people/{}", country.slug, person.slug);
+
     let current_party = memberships.iter().find(|m| m.end_date.is_none());
     let current_role = roles
         .iter()
@@ -106,10 +119,13 @@ pub async fn detail(
                             }
                         }
                     }
-                    @if let Some(ref href) = manage_href {
-                        a href=(href)
-                          class="mt-5 inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
-                            (i18n::t("Manage"))
+                    div class="mt-5 flex flex-wrap items-center gap-2" {
+                        (ui::follow::button("person", person.id, follow_state, &follow_next))
+                        @if let Some(ref href) = manage_href {
+                            a href=(href)
+                              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                                (i18n::t("Manage"))
+                            }
                         }
                     }
                 }

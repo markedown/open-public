@@ -714,3 +714,36 @@ msgstr "Un sondage nécessite au moins deux options."
 
 msgid "The upload could not be read. Please try again."
 msgstr "Le fichier n'a pas pu être lu. Veuillez réessayer."
+
+msgid "Feed"
+msgstr "Fil"
+
+msgid "Follow"
+msgstr "Suivre"
+
+msgid "Following"
+msgstr "Suivi"
+
+msgid "Log in to follow"
+msgstr "Connectez-vous pour suivre"
+
+msgid "followed"
+msgstr "suivis"
+
+msgid "Explore"
+msgstr "Explorer"
+
+msgid "Poll"
+msgstr "Sondage"
+
+msgid "Your pick"
+msgstr "Votre choix"
+
+msgid "the leading answer"
+msgstr "la réponse en tête"
+
+msgid "Nothing new from what you follow yet."
+msgstr "Rien de nouveau pour l'instant de ce que vous suivez."
+
+msgid "Follow people, parties and countries to see new polls, news and elections here."
+msgstr "Suivez des personnes, des partis et des pays pour voir ici les nouveaux sondages, actualités et élections."

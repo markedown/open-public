@@ -714,3 +714,36 @@ msgstr "Eine Umfrage benötigt mindestens zwei Optionen."
 
 msgid "The upload could not be read. Please try again."
 msgstr "Der Upload konnte nicht gelesen werden. Bitte versuchen Sie es erneut."
+
+msgid "Feed"
+msgstr "Feed"
+
+msgid "Follow"
+msgstr "Folgen"
+
+msgid "Following"
+msgstr "Folge ich"
+
+msgid "Log in to follow"
+msgstr "Zum Folgen anmelden"
+
+msgid "followed"
+msgstr "gefolgt"
+
+msgid "Explore"
+msgstr "Entdecken"
+
+msgid "Poll"
+msgstr "Umfrage"
+
+msgid "Your pick"
+msgstr "Ihre Wahl"
+
+msgid "the leading answer"
+msgstr "die führende Antwort"
+
+msgid "Nothing new from what you follow yet."
+msgstr "Noch nichts Neues von dem, dem Sie folgen."
+
+msgid "Follow people, parties and countries to see new polls, news and elections here."
+msgstr "Folgen Sie Personen, Parteien und Ländern, um hier neue Umfragen, Nachrichten und Wahlen zu sehen."

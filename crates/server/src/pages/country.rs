@@ -46,6 +46,18 @@ pub async fn detail(
         .is_some_and(|s| s.is_admin)
         .then(|| format!("/admin/poll/new?country={}", country.slug));
 
+    let follow_state = match &session {
+        Some(s) => {
+            if db::follows::is_following(&pool, s.user_id, "country", country.id).await? {
+                ui::follow::FollowState::Following
+            } else {
+                ui::follow::FollowState::NotFollowing
+            }
+        }
+        None => ui::follow::FollowState::Anonymous,
+    };
+    let follow_next = format!("/{}", country.slug);
+
     let total_seats: i64 = seats.iter().map(|s| s.seats).sum::<i64>() + independents;
     // A legislature with more than one chamber (a senate and a house) is shown
     // as one composition bar per chamber; a unicameral one keeps the single
@@ -90,14 +102,17 @@ pub async fn detail(
             // Identity, key facts and the in-country navigation, all in one
             // compact hero card so the page opens short.
             header class="op-card mb-6 p-6 sm:p-7" {
-                div class="flex items-center gap-4" {
-                    @if let Some(ref flag) = country.flag_url {
-                        img src=(flag) alt="" loading="lazy"
-                            class="h-10 w-auto shrink-0 rounded-md border border-hairline";
+                div class="flex items-start justify-between gap-4" {
+                    div class="flex items-center gap-4" {
+                        @if let Some(ref flag) = country.flag_url {
+                            img src=(flag) alt="" loading="lazy"
+                                class="h-10 w-auto shrink-0 rounded-md border border-hairline";
+                        }
+                        h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
+                            (country.name)
+                        }
                     }
-                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
-                        (country.name)
-                    }
+                    (ui::follow::button("country", country.id, follow_state, &follow_next))
                 }
                 div class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[13px] text-ink-muted" {
                     @if let Some(ref c) = country.capital {

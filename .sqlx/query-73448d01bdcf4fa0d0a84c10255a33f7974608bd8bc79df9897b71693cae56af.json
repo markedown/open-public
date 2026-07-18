@@ -1,0 +1,29 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select entity_id from follows where user_id = $1 and entity_type = $2",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "entity_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "follows",
+            "name": "entity_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "73448d01bdcf4fa0d0a84c10255a33f7974608bd8bc79df9897b71693cae56af"
+}

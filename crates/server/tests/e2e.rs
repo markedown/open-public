@@ -358,6 +358,32 @@ async fn get(app: &Router, uri: &str) -> Response {
     app.clone().oneshot(req).await.expect("response")
 }
 
+async fn get_cookie(app: &Router, uri: &str, cookie: &str) -> Response {
+    let req = Request::builder()
+        .uri(uri)
+        .header("cookie", cookie)
+        .body(Body::empty())
+        .expect("request");
+    app.clone().oneshot(req).await.expect("response")
+}
+
+/// A verified (non-admin) user with a session; returns (user_id, cookie header).
+/// The cookie also pins the English locale so assertions read in one language.
+async fn verified_user(pool: &db::Pool, email: &str, token: &str) -> (i64, String) {
+    let email_hash = server::auth::hash_email(email, SECRET).unwrap();
+    let user = db::users::insert(pool, &email_hash, "pw").await.unwrap();
+    db::users::mark_verified(pool, user).await.unwrap();
+    db::sessions::create(
+        pool,
+        user,
+        &server::auth::hash_token(token),
+        chrono::Utc::now() + chrono::Duration::hours(1),
+    )
+    .await
+    .unwrap();
+    (user, format!("op_session={token}; lang=en"))
+}
+
 async fn post_form(app: &Router, uri: &str, form: &str, cookie: Option<&str>) -> Response {
     let mut builder = Request::builder()
         .method("POST")
@@ -2033,6 +2059,177 @@ async fn polls_index_search_filters_by_question(pool: db::Pool) {
     let miss = body_string(get(&app, "/tr/polls?q=zzzznomatch").await).await;
     assert!(!miss.contains("Ulke gidisati?"));
     assert!(!miss.contains("Nasil buluyorsunuz?"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn anonymous_feed_redirects_to_login(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+    let resp = get(&app, "/feed").await;
+    assert!(resp.status().is_redirection());
+    assert_eq!(resp.headers().get("location").unwrap(), "/login");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn following_a_party_builds_the_feed(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (user, cookie) = verified_user(&pool, "follower@x.test", "follow-token").await;
+
+    // The feed starts empty and invites the visitor to follow things.
+    let empty = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(empty.contains("Follow people")); // empty-state copy (English)
+
+    // Follow the seeded party. The toggle records the follow and, without JS,
+    // redirects back to the page it was posted from.
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let resp = post_form(
+        &app,
+        &format!("/follow/party/{party_id}"),
+        "next=/tr/parties/test-partisi",
+        Some(&cookie),
+    )
+    .await;
+    assert!(resp.status().is_redirection());
+    assert!(db::follows::is_following(&pool, user, "party", party_id)
+        .await
+        .unwrap());
+
+    // The party has a poll, so that poll now shows in the feed.
+    let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(feed.contains("Nasil buluyorsunuz?")); // the followed party's poll
+
+    // Posting the toggle again unfollows.
+    post_form(
+        &app,
+        &format!("/follow/party/{party_id}"),
+        "next=/tr/parties/test-partisi",
+        Some(&cookie),
+    )
+    .await;
+    assert!(!db::follows::is_following(&pool, user, "party", party_id)
+        .await
+        .unwrap());
+
+    // An unknown entity kind is a plain 404.
+    assert_eq!(
+        post_form(&app, "/follow/banana/1", "next=/", Some(&cookie))
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn poll_marks_the_voter_own_choice(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (user, cookie) = verified_user(&pool, "voter2@x.test", "vote-token").await;
+
+    let poll = db::polls::get_by_slug(&pool, "party-poll")
+        .await
+        .unwrap()
+        .unwrap();
+    db::polls::cast_vote(&pool, poll.id, poll.options[0].id, user)
+        .await
+        .unwrap();
+
+    // The poll page shows the personal layer: the voter's own pick, named.
+    let page = body_string(get_cookie(&app, "/tr/poll/party-poll", &cookie).await).await;
+    assert!(page.contains("Your pick"));
+    assert!(page.contains(&poll.options[0].label));
+
+    // A visitor who has not voted sees no personal layer.
+    let (_other, other_cookie) = verified_user(&pool, "nonvoter@x.test", "other-token").await;
+    let other = body_string(get_cookie(&app, "/tr/poll/party-poll", &other_cookie).await).await;
+    assert!(!other.contains("Your pick"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn following_a_country_feeds_its_elections_and_polls(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_user, cookie) = verified_user(&pool, "countryfan@x.test", "cf-token").await;
+
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    post_form(
+        &app,
+        &format!("/follow/country/{country_id}"),
+        "next=/tr",
+        Some(&cookie),
+    )
+    .await;
+
+    let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(feed.contains("Test Secimi 2024")); // the country's election
+    assert!(feed.contains("Ulke gidisati?")); // a country-level poll
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (user, cookie) = verified_user(&pool, "newsfan@x.test", "nf-token").await;
+
+    // Following a topic with no activity yields the "nothing new" state, not the
+    // first-run invitation.
+    let topic_id: i64 = sqlx::query_scalar(
+        "insert into topics (name, slug) values ('Quiet', 'quiet') returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    db::follows::follow(&pool, user, "topic", topic_id)
+        .await
+        .unwrap();
+    let quiet = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(quiet.contains("Nothing new"));
+
+    // A news item mentioning a followed person appears in the feed.
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src: i64 = sqlx::query_scalar(
+        "insert into sources (kind, url, fetched_at) values ('news_rss', 'https://n.test/1', now()) returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let news_id: i64 = sqlx::query_scalar(
+        "insert into news_items (source_id, headline) values ($1, 'Followed person makes news') returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    sqlx::query("insert into news_item_people (news_item_id, person_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(person_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    // Follow over HTMX: the response is the updated button, not a redirect.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/follow/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie)
+        .header("hx-request", "true")
+        .body(Body::from("next=/tr/people/ayse-yilmaz"))
+        .unwrap();
+    let button = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(button.contains("Following")); // the toggled-on button came back
+    assert!(button.contains("/follow/person/")); // and it is the toggle form
+
+    let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(feed.contains("Followed person makes news"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

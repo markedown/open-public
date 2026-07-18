@@ -28,6 +28,10 @@ pub async fn detail(
     crate::content::localize_poll(&state.pool, &mut poll).await?;
 
     let viewer = viewer_for(&state, session.as_ref(), poll.id).await?;
+    let voted = match session.as_ref() {
+        Some(s) => db::polls::voted_options(&state.pool, poll.id, s.user_id).await?,
+        None => Vec::new(),
+    };
     let chain = db::polls::chain_head(&state.pool, poll.id).await?;
 
     Ok(ui::layout::document(
@@ -41,7 +45,7 @@ pub async fn detail(
                     Crumb { label: i18n::t("Polls").to_string(), href: Some(format!("/{}/polls", country_model.slug)) },
                     Crumb { label: poll.question.clone(), href: None },
                 ]))
-                (ui::poll_widget::poll_widget(&poll, viewer, &country_model.slug))
+                (ui::poll_widget::poll_widget(&poll, viewer, &country_model.slug, &voted))
 
                 @if let Some(ref head) = chain {
                     div class="mt-8" {
@@ -130,7 +134,8 @@ pub async fn vote(
             .ok_or(PageError::NotFound)?;
         crate::content::localize_poll(&state.pool, &mut poll).await?;
         let viewer = viewer_for(&state, Some(&session), poll.id).await?;
-        Ok(ui::poll_widget::poll_widget(&poll, viewer, &country).into_response())
+        let voted = db::polls::voted_options(&state.pool, poll.id, session.user_id).await?;
+        Ok(ui::poll_widget::poll_widget(&poll, viewer, &country, &voted).into_response())
     } else {
         Ok(Redirect::to(&format!("/{}/poll/{}", country, slug)).into_response())
     }

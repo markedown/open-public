@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into follows (user_id, entity_type, entity_id) values ($1, $2, $3)\n         on conflict (user_id, entity_type, entity_id) do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "bc4196d9222ba3dc019f101b8ebfe86120a6c826fbe8c8e704ac548d5995a338"
+}

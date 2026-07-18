@@ -41,6 +41,18 @@ pub async fn detail(
     let manage_href =
         is_admin.then(|| format!("/admin/party/{}?country={}", party.slug, country_model.slug));
 
+    let follow_state = match &session {
+        Some(s) => {
+            if db::follows::is_following(&pool, s.user_id, "party", party.id).await? {
+                ui::follow::FollowState::Following
+            } else {
+                ui::follow::FollowState::NotFollowing
+            }
+        }
+        None => ui::follow::FollowState::Anonymous,
+    };
+    let follow_next = format!("/{}/parties/{}", country_model.slug, party.slug);
+
     let current_members: Vec<_> = members.iter().filter(|m| m.end_date.is_none()).collect();
     let former_members: Vec<_> = members.iter().filter(|m| m.end_date.is_some()).collect();
 
@@ -116,10 +128,13 @@ pub async fn detail(
                     }
                 }
 
-                @if let Some(ref href) = manage_href {
-                    a href=(href)
-                      class="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
-                        (i18n::t("Manage"))
+                div class="mt-6 flex flex-wrap items-center gap-2" {
+                    (ui::follow::button("party", party.id, follow_state, &follow_next))
+                    @if let Some(ref href) = manage_href {
+                        a href=(href)
+                          class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                            (i18n::t("Manage"))
+                        }
                     }
                 }
             }

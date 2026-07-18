@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select distinct on (n.id) n.id, n.headline, s.published_at, co.slug as \"country_slug!\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        join (\n            select nip.news_item_id, pe.country_id\n            from news_item_people nip join people pe on pe.id = nip.person_id\n            where nip.person_id = any($1)\n            union\n            select nipp.news_item_id, pt.country_id\n            from news_item_parties nipp join parties pt on pt.id = nipp.party_id\n            where nipp.party_id = any($2)\n        ) m on m.news_item_id = n.id\n        join countries co on co.id = m.country_id\n        order by n.id, s.published_at desc nulls last\n        limit $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "headline",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "headline"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "published_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "published_at"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "country_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8Array",
+        "Int8Array",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "322b5902fe688cbfc1fc223a3a1b9a0b4929731a05369fc60aff7c5d98b3cc71"
+}

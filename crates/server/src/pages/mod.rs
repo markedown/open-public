@@ -5,6 +5,8 @@ pub mod auth;
 pub mod country;
 pub mod data;
 pub mod elections;
+pub mod feed;
+pub mod follow;
 pub mod history;
 pub mod home;
 pub mod news;

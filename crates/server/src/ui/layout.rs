@@ -67,6 +67,9 @@ pub fn document(
                                 }
                             }
                             @if logged_in {
+                                a href="/feed" class="text-ink-muted transition-colors hover:text-accent" {
+                                    (i18n::t("Feed"))
+                                }
                                 a href="/submissions" class="text-ink-muted transition-colors hover:text-accent" {
                                     (i18n::t("My submissions"))
                                 }

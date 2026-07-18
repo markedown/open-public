@@ -1,0 +1,63 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.question, p.slug,\n               coalesce(pc.slug, ptc.slug, pec.slug) as country_slug,\n               p.opens_at\n        from polls p\n        left join countries pc on pc.id = p.country_id\n        left join parties pt on pt.id = p.party_id\n        left join countries ptc on ptc.id = pt.country_id\n        left join people pe on pe.id = p.person_id\n        left join countries pec on pec.id = pe.country_id\n        where p.country_id = any($1) or p.party_id = any($2)\n           or p.person_id = any($3) or p.topic_id = any($4)\n        order by p.opens_at desc nulls last, p.id desc\n        limit $5\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "question",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "country_slug",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "opens_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "opens_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8Array",
+        "Int8Array",
+        "Int8Array",
+        "Int8Array",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null,
+      true
+    ]
+  },
+  "hash": "bf6ffb8d894d64f8cb0f1550e0e72a97dc666f1cb474f26acc409de31ffd40ff"
+}
