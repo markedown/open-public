@@ -326,6 +326,26 @@ fn router(pool: db::Pool) -> Router {
         cookie_secure: false,
         // Content-addressed, so a shared temp dir across tests is safe.
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+    };
+    server::app(state, Path::new("static"))
+}
+
+/// Build the router with a home-page notice set, for the notice test.
+fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: Some(Arc::from(notice)),
     };
     server::app(state, Path::new("static"))
 }
@@ -4096,4 +4116,15 @@ async fn party_page_shows_a_support_chart(pool: db::Pool) {
     // The support chart is inline SVG whose bars carry the party colour.
     assert!(body.contains("<svg"));
     assert!(body.contains("fill=\"#123456\""));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn home_shows_the_site_notice_when_configured(pool: db::Pool) {
+    let plain = router(pool.clone());
+    assert!(!body_string(get(&plain, "/").await)
+        .await
+        .contains("WIP_NOTICE_MARKER"));
+    let app = router_with_notice(pool.clone(), "WIP_NOTICE_MARKER work in progress");
+    let body = body_string(get(&app, "/").await).await;
+    assert!(body.contains("WIP_NOTICE_MARKER"));
 }

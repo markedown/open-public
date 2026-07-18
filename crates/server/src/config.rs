@@ -36,6 +36,9 @@ pub struct Config {
     pub mail_from: String,
     /// Directory for re-encoded uploaded images (`ASSET_DIR`, default `./data/assets`).
     pub asset_dir: PathBuf,
+    /// An optional site notice shown on the home page (`SITE_NOTICE`). Used in
+    /// production to flag that the data is still a rough work in progress.
+    pub site_notice: Option<String>,
     /// Automated poll-review provider. `None` when no key is set, in which case
     /// submissions are deferred to the admin queue instead of auto-screened.
     pub review: Option<ReviewConfig>,
@@ -94,6 +97,10 @@ impl Config {
             _ => PathBuf::from("./data/assets"),
         };
 
+        let site_notice = get("SITE_NOTICE")
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty());
+
         // The reviewer is configured only when an API key is present. Without one
         // the server still runs; submissions simply wait for an admin.
         let review = get("DEEPSEEK_API_KEY")
@@ -117,6 +124,7 @@ impl Config {
             mail_transport,
             mail_from,
             asset_dir,
+            site_notice,
             review,
         })
     }
