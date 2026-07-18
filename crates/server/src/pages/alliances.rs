@@ -1,5 +1,6 @@
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use maud::{html, Markup};
+use serde::Deserialize;
 
 use crate::auth::AuthSession;
 use crate::error::PageError;
@@ -8,17 +9,27 @@ use crate::i18n;
 use crate::ui;
 use crate::ui::breadcrumb::Crumb;
 
+#[derive(Deserialize)]
+pub struct Params {
+    q: Option<String>,
+}
+
 /// The alliances (coalitions) index for a country: active ones first, each with
 /// its member count and lifespan.
 pub async fn list(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
     Path(country): Path<String>,
+    Query(params): Query<Params>,
 ) -> Result<Markup, PageError> {
     let country = db::country::get_by_slug(&pool, &country)
         .await?
         .ok_or(PageError::NotFound)?;
-    let alliances = db::alliances::list_for_country(&pool, country.id, i18n::lang_code()).await?;
+    let query = params.q.unwrap_or_default();
+    let mut alliances =
+        db::alliances::list_for_country(&pool, country.id, i18n::lang_code()).await?;
+    alliances.retain(|a| ui::search::matches(&a.name, &query));
+    let list_url = format!("/{}/alliances", country.slug);
 
     let content = html! {
         section {
@@ -26,17 +37,18 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Alliances").to_string(), href: None },
             ]))
-            (ui::page_header(
-                i18n::t("Alliances"),
-                Some(html! { span class="font-mono" { (alliances.len()) } " " (i18n::t("Alliances")) }),
-                None,
-            ))
+            (ui::page_header(i18n::t("Alliances"), None, None))
+            (ui::search::bar(&list_url, "#alliances-results", &query))
 
-            @if alliances.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No alliances yet.")) }
-            } @else {
-                ul class="grid gap-3 sm:grid-cols-2" {
-                    @for a in &alliances {
+            div id="alliances-results" {
+                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                    span class="font-mono" { (alliances.len()) } " " (i18n::t("Alliances"))
+                }
+                @if alliances.is_empty() {
+                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No alliances yet.")) }
+                } @else {
+                    ul class="grid gap-3 sm:grid-cols-2" {
+                        @for a in &alliances {
                         li {
                             a href={"/" (country.slug) "/alliance/" (a.slug)}
                               class="op-card op-card-link block px-4 py-3.5" {
@@ -64,6 +76,7 @@ pub async fn list(
                     }
                 }
             }
+        }
         }
     };
 

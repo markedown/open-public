@@ -1,0 +1,124 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select e.id, e.name, e.slug, e.held_on, e.kind, e.description,\n               e.electorate, e.votes_cast, e.valid_votes\n        from elections e\n        join elections cur on cur.id = $1\n        where e.country_id = cur.country_id\n          and e.id <> cur.id\n          and e.held_on is not null and cur.held_on is not null\n          and e.held_on < cur.held_on\n          and e.kind is not distinct from cur.kind\n        order by e.held_on desc, e.id desc\n        limit 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "held_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "held_on"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "description",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "description"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "electorate",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "electorate"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "votes_cast",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "votes_cast"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "valid_votes",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "valid_votes"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "b0179e6655371274e09d4851058e329818fdf2687fb768aef06e63940aa72c05"
+}

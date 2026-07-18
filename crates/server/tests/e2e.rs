@@ -1253,6 +1253,78 @@ async fn elections_index_and_detail_render(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn election_detail_compares_with_the_previous_election(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let party: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src: i64 = sqlx::query_scalar("select id from sources limit 1")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // An earlier parliamentary election where the same party polled higher
+    // (5.0M of 8.0M valid = 62.5%). The seeded 2024 election has it at 4.0M of
+    // 7.9M valid = 50.6%, a 11.9-point drop.
+    let earlier = db::elections::create(
+        &pool,
+        &db::elections::NewElection {
+            country_id,
+            name: "Test Secimi 2019",
+            slug: "test-secimi-2019",
+            held_on: NaiveDate::from_ymd_opt(2019, 6, 23),
+            kind: Some("parliamentary"),
+            source_id: src,
+        },
+    )
+    .await
+    .unwrap();
+    db::elections::add_result(&pool, earlier, party, Some(150), Some(5_000_000), src)
+        .await
+        .unwrap();
+    db::elections::set_turnout(
+        &pool,
+        earlier,
+        Some(9_000_000),
+        Some(8_100_000),
+        Some(8_000_000),
+    )
+    .await
+    .unwrap();
+
+    // The 2024 detail page names the previous election and shows the downward
+    // swing figure.
+    let detail = body_string(get(&app, "/tr/election/test-secimi-2024").await).await;
+    assert!(detail.contains("Test Secimi 2019")); // the "previous" legend
+    assert!(detail.contains("▼11.9")); // the swing figure (62.5% -> 50.6%)
+
+    // The earlier election has no predecessor, so it names no previous election
+    // and shows no swing figure (the later 2024 election is not a "previous").
+    let earlier_detail = body_string(get(&app, "/tr/election/test-secimi-2019").await).await;
+    assert!(!earlier_detail.contains("Test Secimi 2024"));
+    assert!(!earlier_detail.contains("▼11.9"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn elections_index_search_filters_by_name(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+
+    // A matching query keeps the election; a non-matching one drops it.
+    let hit = body_string(get(&app, "/tr/elections?q=secimi").await).await;
+    assert!(hit.contains("/tr/election/test-secimi-2024"));
+    let miss = body_string(get(&app, "/tr/elections?q=zzzznomatch").await).await;
+    assert!(!miss.contains("/tr/election/test-secimi-2024"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn label_election_renders_on_country_page(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());

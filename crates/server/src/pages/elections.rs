@@ -1,5 +1,6 @@
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use maud::{html, Markup};
+use serde::Deserialize;
 
 use crate::auth::AuthSession;
 use crate::error::PageError;
@@ -7,6 +8,11 @@ use crate::fmt;
 use crate::i18n;
 use crate::ui;
 use crate::ui::breadcrumb::Crumb;
+
+#[derive(Deserialize)]
+pub struct Params {
+    q: Option<String>,
+}
 
 /// A localized label for an election kind.
 fn kind_label(kind: Option<&str>) -> &'static str {
@@ -24,11 +30,16 @@ pub async fn list(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
     Path(country): Path<String>,
+    Query(params): Query<Params>,
 ) -> Result<Markup, PageError> {
     let country = db::country::get_by_slug(&pool, &country)
         .await?
         .ok_or(PageError::NotFound)?;
-    let elections = db::elections::list_for_country(&pool, country.id, i18n::lang_code()).await?;
+    let query = params.q.unwrap_or_default();
+    let mut elections =
+        db::elections::list_for_country(&pool, country.id, i18n::lang_code()).await?;
+    elections.retain(|e| ui::search::matches(&e.name, &query));
+    let list_url = format!("/{}/elections", country.slug);
 
     let content = html! {
         section {
@@ -36,28 +47,30 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: None },
             ]))
-            (ui::page_header(
-                i18n::t("Elections"),
-                Some(html! { span class="font-mono" { (elections.len()) } " " (i18n::t("Elections")) }),
-                None,
-            ))
+            (ui::page_header(i18n::t("Elections"), None, None))
+            (ui::search::bar(&list_url, "#elections-results", &query))
 
-            @if elections.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No elections yet.")) }
-            } @else {
-                ul class="grid gap-3 sm:grid-cols-2" {
-                    @for e in &elections {
-                        li {
-                            a href={"/" (country.slug) "/election/" (e.slug)}
-                              class="op-card op-card-link block px-4 py-3.5" {
-                                div class="flex items-baseline justify-between gap-3" {
-                                    span class="text-sm font-medium text-ink" { (e.name) }
-                                    @if let Some(d) = e.held_on {
-                                        span class="shrink-0 font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+            div id="elections-results" {
+                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                    span class="font-mono" { (elections.len()) } " " (i18n::t("Elections"))
+                }
+                @if elections.is_empty() {
+                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No elections yet.")) }
+                } @else {
+                    ul class="grid gap-3 sm:grid-cols-2" {
+                        @for e in &elections {
+                            li {
+                                a href={"/" (country.slug) "/election/" (e.slug)}
+                                  class="op-card op-card-link block px-4 py-3.5" {
+                                    div class="flex items-baseline justify-between gap-3" {
+                                        span class="text-sm font-medium text-ink" { (e.name) }
+                                        @if let Some(d) = e.held_on {
+                                            span class="shrink-0 font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+                                        }
                                     }
-                                }
-                                span class="mt-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
-                                    (kind_label(e.kind.as_deref()))
+                                    span class="mt-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
+                                        (kind_label(e.kind.as_deref()))
+                                    }
                                 }
                             }
                         }
@@ -101,6 +114,10 @@ pub async fn detail(
         d.clone_from(t);
     }
     let rows = db::elections::results(&pool, election.id).await?;
+    // The previous comparable election (same kind, held earlier) powers the
+    // "last time" ghost bars and swing figures; for a runoff it is the first
+    // round.
+    let prev = db::elections::previous_comparable(&pool, election.id).await?;
     let source = db::elections::source_url(&pool, election.id).await?;
 
     let content = html! {
@@ -110,7 +127,7 @@ pub async fn detail(
                 Crumb { label: i18n::t("Elections").to_string(), href: Some(format!("/{}/elections", country.slug)) },
                 Crumb { label: election.name.clone(), href: None },
             ]))
-            (ui::election::election_detail(&election, &rows, &country.slug))
+            (ui::election::election_detail(&election, &rows, prev.as_ref(), &country.slug))
 
             @if let Some(url) = source {
                 p class="mt-4" {

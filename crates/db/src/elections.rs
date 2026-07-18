@@ -207,6 +207,44 @@ pub async fn list_for_country(pool: &Pool, country_id: i64, lang: &str) -> Resul
     Ok(rows)
 }
 
+/// The most recent earlier election of the same kind in the same country, with
+/// its results, for a "previous result" comparison. Because a presidential
+/// runoff and its first round are both presidential and days apart, this returns
+/// the first round for a runoff, and the prior cycle for a first round; likewise
+/// a parliamentary election's previous parliamentary election. Returns None when
+/// there is no comparable predecessor (or either election lacks a date).
+pub async fn previous_comparable(
+    pool: &Pool,
+    election_id: i64,
+) -> Result<Option<(Election, Vec<ResultRow>)>> {
+    let prev = sqlx::query_as!(
+        Election,
+        r#"
+        select e.id, e.name, e.slug, e.held_on, e.kind, e.description,
+               e.electorate, e.votes_cast, e.valid_votes
+        from elections e
+        join elections cur on cur.id = $1
+        where e.country_id = cur.country_id
+          and e.id <> cur.id
+          and e.held_on is not null and cur.held_on is not null
+          and e.held_on < cur.held_on
+          and e.kind is not distinct from cur.kind
+        order by e.held_on desc, e.id desc
+        limit 1
+        "#,
+        election_id,
+    )
+    .fetch_optional(pool)
+    .await?;
+    match prev {
+        Some(e) => {
+            let rows = results(pool, e.id).await?;
+            Ok(Some((e, rows)))
+        }
+        None => Ok(None),
+    }
+}
+
 /// The results of an election, most seats (then votes) first. Each row is a
 /// party or a plain label.
 pub async fn results(pool: &Pool, election_id: i64) -> Result<Vec<ResultRow>> {
