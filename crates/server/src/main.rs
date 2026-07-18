@@ -53,6 +53,7 @@ async fn main() -> anyhow::Result<()> {
         mailer,
         cookie_secure: config.cookie_secure,
         asset_dir: Arc::new(config.asset_dir),
+        site_notice: config.site_notice.map(Arc::from),
     };
 
     let router = server::app(state, &config.static_dir);

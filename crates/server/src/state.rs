@@ -16,6 +16,8 @@ pub struct AppState {
     pub cookie_secure: bool,
     /// Directory holding re-encoded uploaded images, served under `/media`.
     pub asset_dir: Arc<PathBuf>,
+    /// Optional home-page notice (a work-in-progress flag for production).
+    pub site_notice: Option<Arc<str>>,
 }
 
 impl FromRef<AppState> for Pool {

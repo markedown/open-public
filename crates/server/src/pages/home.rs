@@ -4,20 +4,27 @@ use maud::{html, Markup};
 use crate::auth::AuthSession;
 use crate::error::PageError;
 use crate::i18n::{self, SITE_NAME};
+use crate::state::AppState;
 use crate::ui;
 
 pub async fn page(
-    State(pool): State<db::Pool>,
+    State(state): State<AppState>,
     session: Option<AuthSession>,
 ) -> Result<Markup, PageError> {
     // The country overview is featured here rather than in the navbar; the
     // navbar gains a "Countries" link only once more than one country exists.
     // Headline figures are per country (in each card), not a global sum, since
     // the platform is a set of independent per-country datasets.
-    let countries = db::country::list(&pool).await?;
+    let countries = db::country::list(&state.pool).await?;
 
     let content = html! {
         section class="py-14 sm:py-20" {
+            // A quiet work-in-progress notice, shown only when configured.
+            @if let Some(ref notice) = state.site_notice {
+                p class="mb-8 max-w-prose border-l-2 border-accent bg-paper-raised px-4 py-2.5 text-sm text-ink-muted" {
+                    (notice.as_ref())
+                }
+            }
             div class="max-w-3xl" {
                 h1 class="font-serif text-6xl font-semibold tracking-tight text-ink" {
                     (SITE_NAME)
