@@ -1305,6 +1305,10 @@ async fn election_detail_compares_with_the_previous_election(pool: db::Pool) {
     assert!(detail.contains("Test Secimi 2019")); // the "previous" legend
     assert!(detail.contains("▼11.9")); // the swing figure (62.5% -> 50.6%)
 
+    // The compact election card on the country page carries the same comparison.
+    let country = body_string(get(&app, "/tr").await).await;
+    assert!(country.contains("▼11.9"));
+
     // The earlier election has no predecessor, so it names no previous election
     // and shows no swing figure (the later 2024 election is not a "previous").
     let earlier_detail = body_string(get(&app, "/tr/election/test-secimi-2019").await).await;
