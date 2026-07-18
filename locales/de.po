@@ -756,3 +756,6 @@ msgstr "Ersetzt"
 
 msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
 msgstr "Jede vorgeschlagene Zusammenfassung bleibt unveröffentlicht, bis Sie sie prüfen. Bearbeiten Sie den Text bei Bedarf, genehmigen Sie ihn dann oder verwerfen Sie den Entwurf."
+
+msgid "A public register of political data."
+msgstr "Ein öffentliches Register politischer Daten."

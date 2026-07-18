@@ -756,3 +756,6 @@ msgstr "Remplace"
 
 msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
 msgstr "Chaque résumé proposé reste non publié jusqu'à ce que vous le révisiez. Modifiez le texte si nécessaire, puis approuvez-le ou supprimez le brouillon."
+
+msgid "A public register of political data."
+msgstr "Un registre public de données politiques."
