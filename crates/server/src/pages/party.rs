@@ -210,7 +210,7 @@ pub async fn detail(
 
             (ui::news::news_section(&news, &country_model.slug, None))
 
-            (ui::poll_widget::poll_previews(&polls, &country_model.slug, None))
+            (ui::poll_widget::poll_previews(&polls, &country_model.slug, None, None, None))
 
             (ui::references::references(party.wikidata_id.as_deref(), None))
         }

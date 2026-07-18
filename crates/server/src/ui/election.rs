@@ -50,11 +50,9 @@ pub fn party_history_chart(
     let height = chart_h + 30.0;
 
     html! {
-        section class="mb-12" {
-            h2 class="mb-4 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                (i18n::t("Support over time"))
-            }
-            div class="overflow-x-auto" {
+        section class="mb-8" {
+            (ui::section_header(i18n::t("Support over time"), None))
+            div class="op-card overflow-x-auto p-5" {
                 svg viewBox={"0 0 " (width) " " (height)}
                     class="h-40 w-full min-w-[260px]" preserveAspectRatio="xMidYMax meet"
                     role="img" aria-label=(i18n::t("Support over time")) {
@@ -67,7 +65,7 @@ pub fn party_history_chart(
                         @let h = (v as f64 / max as f64) * (chart_h - 20.0);
                         @let x = i as f64 * slot + (slot - bar_w) / 2.0;
                         @let y = chart_h - h;
-                        rect x=(x) y=(y) width=(bar_w) height=(h) fill=(color) {}
+                        rect x=(x) y=(y) width=(bar_w) height=(h) rx="3" fill=(color) {}
                         text x=(x + bar_w / 2.0) y=(y - 5.0) text-anchor="middle"
                              class="text-ink" fill="currentColor"
                              style="font:600 12px ui-monospace,monospace" {
@@ -91,13 +89,11 @@ pub fn party_history(entries: &[db::elections::PartyHistoryEntry]) -> Markup {
         return html! {};
     }
     html! {
-        section class="mb-12" {
-            h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                (i18n::t("Electoral history"))
-            }
-            ul class="space-y-0" {
+        section class="mb-8" {
+            (ui::section_header(i18n::t("Electoral history"), None))
+            ul class="op-card divide-y divide-hairline-light px-5" {
                 @for e in entries {
-                    li class="flex items-baseline justify-between gap-3 border-b border-hairline-light py-2.5" {
+                    li class="flex items-baseline justify-between gap-3 py-2.5" {
                         span class="text-sm font-medium text-ink" {
                             (e.election_name)
                             @if let Some(d) = e.held_on {
@@ -128,15 +124,12 @@ pub fn country_elections(
         return html! {};
     }
     html! {
-        section class="mb-12" {
-            div class="mb-5 flex items-center justify-between gap-3 border-b-2 border-accent pb-2" {
-                h2 class="text-xs font-bold uppercase tracking-widest text-ink" { (i18n::t("Elections")) }
-                a href={"/" (country) "/elections"}
-                  class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
-                    (i18n::t("See all"))
-                }
-            }
-            div class="space-y-4" {
+        section class="mb-8" {
+            (ui::section_header(
+                i18n::t("Elections"),
+                Some(ui::see_all_link(&format!("/{country}/elections"))),
+            ))
+            div class="grid gap-4 sm:grid-cols-2" {
                 @for (election, rows) in elections {
                     (election_box(election, rows, country, true, Some(6)))
                 }
@@ -157,7 +150,7 @@ pub fn election_box(
     limit: Option<usize>,
 ) -> Markup {
     html! {
-        div class="border-[1.5px] border-ink p-4" {
+        div class="op-card p-5" {
             div class="flex flex-wrap items-baseline justify-between gap-2" {
                 @if linked {
                     a href={"/" (country) "/election/" (election.slug)}
@@ -201,8 +194,8 @@ pub fn election_detail(
 ) -> Markup {
     let total_seats: i32 = rows.iter().filter_map(|r| r.seats).sum();
     html! {
-        header class={"mb-8 border-[1.5px] border-ink bg-paper-raised p-6 sm:p-8 " (ui::CORNER_TICK)} {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl" { (election.name) }
+        header class="op-card mb-8 p-6 sm:p-8" {
+            h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" { (election.name) }
             @if let Some(d) = election.held_on {
                 p class="mt-1 font-mono text-sm text-ink-muted" { (fmt::date(Some(d))) }
             }
@@ -213,7 +206,7 @@ pub fn election_detail(
 
         @if total_seats > 0 {
             section class="mb-8" {
-                h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                h2 class="mb-3 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                     (i18n::t("Seats")) " " span class="font-mono" { (total_seats) }
                 }
                 (seat_bar(rows))
@@ -225,7 +218,7 @@ pub fn election_detail(
 
         @if let Some(valid) = election.valid_votes.filter(|v| *v > 0) {
             section class="mb-8" {
-                h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                h2 class="mb-3 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                     (i18n::t("Vote share"))
                 }
                 (vote_share_list(rows, valid, country, None))
@@ -256,10 +249,10 @@ fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
 /// A proportional seat-composition bar from the per-party seat counts.
 fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
     html! {
-        div class="flex h-6 w-full overflow-hidden border-[1.5px] border-ink" {
+        div class="flex h-6 w-full overflow-hidden rounded-md border border-hairline" {
             @for r in rows {
                 @if let Some(s) = r.seats.filter(|s| *s > 0) {
-                    div class="h-full border-r-[1.5px] border-r-paper last:border-r-0"
+                    div class="h-full border-r border-r-paper-raised last:border-r-0"
                         style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or("#171717"))}
                         title={(r.party_name.as_deref().unwrap_or("")) " · " (s)} {}
                 }
@@ -293,7 +286,7 @@ fn turnout_stats(election: &db::elections::Election) -> Markup {
 /// One labelled statistic card (a mono figure over an uppercase caption).
 fn stat_card(label: &str, value: String) -> Markup {
     html! {
-        div class="border border-hairline p-3" {
+        div class="op-card p-3" {
             div class="font-mono text-lg font-semibold text-ink" { (value) }
             div class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-ink-muted" { (label) }
         }
@@ -335,8 +328,8 @@ fn vote_share_list(
                     } @else if let Some(lbl) = r.label.as_deref() {
                         span class="w-28 shrink-0 truncate text-xs font-medium text-ink" { (lbl) }
                     }
-                    span class="relative h-4 grow overflow-hidden border border-hairline-light" {
-                        span class="absolute inset-y-0 left-0"
+                    span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
+                        span class="absolute inset-y-0 left-0 rounded"
                              style={"width:" (tenths as f64 / 10.0) "%;background-color:" (color)} {}
                     }
                     span class="w-12 shrink-0 text-right font-mono text-xs text-ink" { (fmt_pct(tenths)) }
@@ -346,8 +339,8 @@ fn vote_share_list(
                 @let tenths = others * 1000 / valid;
                 div class="flex items-center gap-2" {
                     span class="w-14 shrink-0 truncate text-xs text-ink-muted sm:w-28" { (i18n::t("Others")) }
-                    span class="relative h-4 grow overflow-hidden border border-hairline-light" {
-                        span class="absolute inset-y-0 left-0 bg-hairline"
+                    span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
+                        span class="absolute inset-y-0 left-0 rounded bg-hairline"
                              style={"width:" (tenths as f64 / 10.0) "%"} {}
                     }
                     span class="w-12 shrink-0 text-right font-mono text-xs text-ink-muted" { (fmt_pct(tenths)) }

@@ -26,9 +26,9 @@ pub fn composition(
     html! {
         // Proportional flex segments fill the bar exactly; integer width
         // percentages truncated small parties to 0 and left a gap.
-        div class="mb-4 flex h-7 w-full overflow-hidden border-[1.5px] border-ink" {
+        div class="mb-4 flex h-7 w-full overflow-hidden rounded-md border border-hairline" {
             @for s in seats {
-                div class="h-full border-r-[1.5px] border-r-paper last:border-r-0"
+                div class="h-full border-r border-r-paper-raised last:border-r-0"
                     style={"flex:" (s.seats) " 0 0; background-color:" (s.color.as_deref().unwrap_or("#171717"))}
                     title={(s.name) " · " (s.seats)} {}
             }
@@ -46,7 +46,7 @@ pub fn composition(
         div class="flex flex-wrap gap-x-5 gap-y-2" {
             @for s in seats {
                 a href={"/" (country_slug) "/parties/" (s.slug)} class="flex items-center gap-2 text-sm transition-opacity hover:opacity-80" {
-                    span class="h-3 w-3 shrink-0 border border-ink"
+                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline"
                         style={"background-color:" (s.color.as_deref().unwrap_or("#171717"))} {}
                     span class="font-mono text-xs font-semibold text-ink" {
                         (s.short_name.as_deref().unwrap_or(&s.name))
@@ -56,7 +56,7 @@ pub fn composition(
             }
             @if independents > 0 {
                 span class="flex items-center gap-2 text-sm" {
-                    span class="h-3 w-3 shrink-0 border border-ink"
+                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline"
                         style={"background-color:" (INDEPENDENT_COLOR)} {}
                     span class="font-mono text-xs font-semibold text-ink" { (i18n::t("Independent")) }
                     span class="font-mono text-xs text-ink-muted" { (independents) }
@@ -64,7 +64,7 @@ pub fn composition(
             }
             @if let Some(v) = vacant {
                 span class="flex items-center gap-2 text-sm" {
-                    span class="h-3 w-3 shrink-0 border border-ink" style=(VACANT_FILL) {}
+                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline" style=(VACANT_FILL) {}
                     span class="font-mono text-xs font-semibold text-ink" { (i18n::t("Vacant")) }
                     span class="font-mono text-xs text-ink-muted" { (v) }
                 }

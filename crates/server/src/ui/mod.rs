@@ -1,3 +1,7 @@
+use maud::{html, Markup};
+
+use crate::i18n;
+
 pub mod background;
 pub mod badge;
 pub mod breadcrumb;
@@ -16,6 +20,29 @@ pub mod seat_bar;
 pub mod statement;
 pub mod timeline_entry;
 pub mod translated;
+
+/// A section heading in the dashboard idiom: a small uppercase label with an
+/// optional right-aligned action (a "see all" link, an admin add link). Kept in
+/// one place so every section on every page reads the same.
+pub fn section_header(title: &str, action: Option<Markup>) -> Markup {
+    html! {
+        div class="mb-4 flex items-baseline justify-between gap-3" {
+            h2 class="text-[13px] font-bold uppercase tracking-wider text-ink-muted" { (title) }
+            @if let Some(a) = action { (a) }
+        }
+    }
+}
+
+/// The standard "see all →" link for a section header, pointing at a fuller
+/// index page.
+pub fn see_all_link(href: &str) -> Markup {
+    html! {
+        a href=(href)
+          class="shrink-0 text-[12px] font-semibold text-accent transition-colors hover:underline" {
+            (i18n::t("See all")) " →"
+        }
+    }
+}
 
 /// Up to two initials from a name's first and last word, for the initials
 /// square shown on person rows.

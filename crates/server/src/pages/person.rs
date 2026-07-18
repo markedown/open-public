@@ -166,7 +166,7 @@ pub async fn detail(
 
             (ui::news::news_section(&news, &country.slug, None))
 
-            (ui::poll_widget::poll_previews(&polls, &country.slug, None))
+            (ui::poll_widget::poll_previews(&polls, &country.slug, None, None, None))
 
             (ui::references::references(person.wikidata_id.as_deref(), person.photo_license.as_deref()))
         }

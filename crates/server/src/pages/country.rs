@@ -33,7 +33,6 @@ pub async fn detail(
         elections.push((e, rows));
     }
 
-    let events = db::events::for_country(&pool, country.id).await?;
     let mut polls = db::polls::full_for_country(&pool, country.id).await?;
     crate::content::localize_polls(&pool, &mut polls).await?;
     let loc = crate::content::Localized::load(&pool, "country", country.id).await?;
@@ -69,56 +68,60 @@ pub async fn detail(
         }
     }
 
+    // Entry points into this country's data. A section whose list would be empty
+    // is omitted, so a newly added country shows only what it actually has. The
+    // full history (Timeline) lives on its own page and is reached from here,
+    // not rendered inline on the country page.
+    let chips = [
+        (i18n::t("People"), "people", counts.people),
+        (i18n::t("Parties"), "parties", counts.parties),
+        (i18n::t("Alliances"), "alliances", counts.alliances),
+        (i18n::t("Elections"), "elections", counts.elections),
+        (i18n::t("News"), "news", counts.news),
+        (i18n::t("Polls"), "polls", counts.polls),
+        (i18n::t("Timeline"), "history", counts.events),
+    ];
+
     let content = html! {
         article {
-            // Header block: a hero record card.
-            header class={"mb-6 border-[1.5px] border-ink bg-paper-raised p-6 sm:p-8 " (ui::CORNER_TICK)} {
+            // Identity, key facts and the in-country navigation, all in one
+            // compact hero card so the page opens short.
+            header class="op-card mb-6 p-6 sm:p-7" {
                 div class="flex items-center gap-4" {
                     @if let Some(ref flag) = country.flag_url {
                         img src=(flag) alt="" loading="lazy"
-                            class="h-9 w-auto shrink-0 border border-hairline";
+                            class="h-10 w-auto shrink-0 rounded-md border border-hairline";
                     }
-                    h1 class="font-serif text-4xl font-semibold tracking-tight text-ink sm:text-[44px]" {
+                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                         (country.name)
                     }
                 }
-                div class="mt-4 flex flex-wrap gap-x-8 gap-y-1 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                div class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[13px] text-ink-muted" {
                     @if let Some(ref c) = country.capital {
-                        span { (i18n::t("Capital")) ": " span class="text-ink" { (c) } }
+                        span { (i18n::t("Capital")) ": " span class="font-medium text-ink" { (c) } }
                     }
                     @if let Some(ref g) = country.government_type {
-                        span { span class="text-ink" { (i18n::t_dyn(g)) } }
+                        span class="font-medium text-ink" { (i18n::t_dyn(g)) }
                     }
                     @if let Some(fd) = country.founded_date {
                         span { (i18n::t("Founded")) " " span class="font-mono text-ink" { (fmt::date(Some(fd))) } }
                     }
                 }
-            }
-
-            // Entry points into this country's data. A section whose list would
-            // be empty is omitted, so a newly added country shows only what it
-            // actually has.
-            div class="mb-12 flex flex-wrap gap-2.5" {
-                @for (label, path, n) in [
-                    (i18n::t("People"), "people", counts.people),
-                    (i18n::t("Parties"), "parties", counts.parties),
-                    (i18n::t("Alliances"), "alliances", counts.alliances),
-                    (i18n::t("Elections"), "elections", counts.elections),
-                    (i18n::t("News"), "news", counts.news),
-                    (i18n::t("Polls"), "polls", counts.polls),
-                    (i18n::t("Timeline"), "history", counts.events),
-                ] {
-                    @if n > 0 {
-                        a href={"/" (country.slug) "/" (path)}
-                          class="border border-ink px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent" {
-                            (label)
+                div class="mt-5 flex flex-wrap gap-2" {
+                    @for (label, path, n) in chips {
+                        @if n > 0 {
+                            a href={"/" (country.slug) "/" (path)}
+                              class="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-paper px-3.5 py-1.5 text-[13px] font-medium text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                                (label)
+                                span class="font-mono text-[11px] opacity-70" { (n) }
+                            }
                         }
                     }
                 }
             }
 
             @if let Some(text) = summary {
-                div class="mb-12" {
+                div class="mb-8 max-w-prose" {
                     (ui::translated::prose(
                         text,
                         loc.is_translated("summary").then_some(country.summary.as_deref()).flatten(),
@@ -127,16 +130,24 @@ pub async fn detail(
             }
 
             // Country-level polls sit right under the general information, before
-            // the institutional detail: participation is a primary draw.
-            (ui::poll_widget::poll_previews(&polls, &country.slug, add_poll.as_deref()))
+            // the institutional detail: participation is a primary draw. Only the
+            // two most recent are shown; the rest are one link away.
+            (ui::poll_widget::poll_previews(
+                &polls,
+                &country.slug,
+                Some(2),
+                (counts.polls > 2).then_some(format!("/{}/polls", country.slug)).as_deref(),
+                add_poll.as_deref(),
+            ))
 
-            // Ruling team.
+            // Ruling team, with a link to the full roster of people.
             @if !government.is_empty() {
-                section class="mb-12" {
-                    h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        (i18n::t("Government"))
-                    }
-                    ul class="grid gap-x-10 sm:grid-cols-2" {
+                section class="mb-8" {
+                    (ui::section_header(
+                        i18n::t("Government"),
+                        (counts.people > 0).then(|| ui::see_all_link(&format!("/{}/people", country.slug))),
+                    ))
+                    ul class="op-card grid gap-x-10 px-5 sm:grid-cols-2" {
                         @for m in &government {
                             li class="flex items-baseline justify-between gap-3 border-b border-hairline-light py-2.5" {
                                 a href={"/" (country.slug) "/people/" (m.person_slug)}
@@ -156,18 +167,19 @@ pub async fn detail(
             // headed by the chamber's name. Unicameral: a single combined bar
             // headed by the legislature's name, with the vacant-seats reading.
             @if bicameral {
-                section class="mb-12" {
-                    h2 class="mb-5 flex items-baseline gap-2 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        @match country.legislature_name.as_deref() {
-                            Some(name) => (i18n::t_dyn(name)),
-                            None => (i18n::t("Parliament")),
-                        }
-                    }
+                section class="mb-8" {
+                    (ui::section_header(
+                        match country.legislature_name.as_deref() {
+                            Some(name) => i18n::t_dyn(name),
+                            None => i18n::t("Parliament"),
+                        },
+                        None,
+                    ))
                     @for ch in &chambers {
-                        div class="mb-8 last:mb-0" {
-                            h3 class="mb-3 flex items-baseline gap-2 text-xs font-bold uppercase tracking-wide text-ink" {
+                        div class="mb-6 last:mb-0" {
+                            h3 class="mb-3 flex items-baseline gap-2 text-[13px] font-semibold text-ink" {
                                 (i18n::t_dyn(&ch.chamber))
-                                span class="font-mono font-medium text-ink-muted" {
+                                span class="font-mono text-xs font-medium text-ink-muted" {
                                     (ch.total) " " (i18n::t("seats"))
                                 }
                             }
@@ -176,39 +188,36 @@ pub async fn detail(
                     }
                 }
             } @else if !seats.is_empty() {
-                section class="mb-12" {
-                    h2 class="mb-5 flex items-baseline gap-2 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        @match country.legislature_name.as_deref() {
-                            Some(name) => (i18n::t_dyn(name)),
-                            None => (i18n::t("Parliament")),
-                        }
-                        span class="font-mono text-ink-muted" {
-                            @if let (Some(c), Some(_)) = (chamber_size, vacant) {
-                                (total_seats) " / " (c) " " (i18n::t("seats"))
-                            } @else {
-                                (total_seats) " " (i18n::t("seats"))
+                section class="mb-8" {
+                    (ui::section_header(
+                        match country.legislature_name.as_deref() {
+                            Some(name) => i18n::t_dyn(name),
+                            None => i18n::t("Parliament"),
+                        },
+                        Some(html! {
+                            span class="shrink-0 font-mono text-xs text-ink-muted" {
+                                @if let (Some(c), Some(_)) = (chamber_size, vacant) {
+                                    (total_seats) " / " (c) " " (i18n::t("seats"))
+                                } @else {
+                                    (total_seats) " " (i18n::t("seats"))
+                                }
                             }
-                        }
-                    }
+                        }),
+                    ))
                     (ui::seat_bar::composition(&seats, independents, vacant, &country.slug))
                 }
             }
 
             // Coalitions.
             @if !alliances.is_empty() {
-                section class="mb-12" {
-                    div class="mb-5 flex items-center justify-between gap-3 border-b-2 border-accent pb-2" {
-                        h2 class="text-xs font-bold uppercase tracking-widest text-ink" {
-                            (i18n::t("Coalitions"))
-                        }
-                        a href={"/" (country.slug) "/alliances"}
-                          class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
-                            (i18n::t("See all"))
-                        }
-                    }
+                section class="mb-8" {
+                    (ui::section_header(
+                        i18n::t("Coalitions"),
+                        Some(ui::see_all_link(&format!("/{}/alliances", country.slug))),
+                    ))
                     div class="grid gap-4 sm:grid-cols-3" {
                         @for (name, alliance_slug, parties) in &alliances {
-                            div class="border-[1.5px] border-ink p-4" {
+                            div class="op-card p-4" {
                                 a href={"/" (country.slug) "/alliance/" (alliance_slug)}
                                   class="mb-3 block text-sm font-semibold text-ink transition-colors hover:text-accent" {
                                     (name)
@@ -229,9 +238,6 @@ pub async fn detail(
             }
 
             (ui::election::country_elections(&elections, &country.slug))
-
-            // A short preview; the full history has its own page.
-            (ui::event::timeline(&events[..events.len().min(4)], Some(&format!("/{}/history", country.slug))))
         }
     };
 
