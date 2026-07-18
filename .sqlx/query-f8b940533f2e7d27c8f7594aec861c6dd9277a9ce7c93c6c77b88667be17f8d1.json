@@ -1,0 +1,65 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            select e.name, e.slug, co.slug as \"country_slug!\", e.held_on\n            from elections e join countries co on co.id = e.country_id\n            where e.country_id = any($1)\n            order by e.held_on desc nulls last, e.id desc\n            limit $2\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "country_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "held_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "held_on"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8Array",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "f8b940533f2e7d27c8f7594aec861c6dd9277a9ce7c93c6c77b88667be17f8d1"
+}

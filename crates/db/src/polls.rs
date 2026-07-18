@@ -100,6 +100,19 @@ pub async fn has_voted(pool: &Pool, poll_id: i64, user_id: i64) -> Result<bool> 
     Ok(voted)
 }
 
+/// The option ids this user voted for in a poll (several only for multi-select),
+/// so the poll can mark the voter's own choice.
+pub async fn voted_options(pool: &Pool, poll_id: i64, user_id: i64) -> Result<Vec<i64>> {
+    let ids = sqlx::query_scalar!(
+        "select option_id from poll_votes where poll_id = $1 and user_id = $2",
+        poll_id,
+        user_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(ids)
+}
+
 /// Record a single-choice vote. The first vote per user per poll wins; later
 /// attempts are ignored (votes are never updated). The chain trigger enforces
 /// the one-vote rule for non-multi polls; the unique constraint is the backstop.

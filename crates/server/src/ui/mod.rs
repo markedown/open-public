@@ -9,6 +9,7 @@ pub mod button;
 pub mod citation;
 pub mod election;
 pub mod event;
+pub mod follow;
 pub mod layout;
 pub mod news;
 pub mod outlet;

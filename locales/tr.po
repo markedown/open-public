@@ -726,3 +726,36 @@ msgstr "Bir anket en az iki seçenek gerektirir."
 
 msgid "The upload could not be read. Please try again."
 msgstr "Yükleme okunamadı. Lütfen tekrar deneyin."
+
+msgid "Feed"
+msgstr "Akış"
+
+msgid "Follow"
+msgstr "Takip et"
+
+msgid "Following"
+msgstr "Takip ediliyor"
+
+msgid "Log in to follow"
+msgstr "Takip etmek için giriş yapın"
+
+msgid "followed"
+msgstr "takip edilen"
+
+msgid "Explore"
+msgstr "Keşfet"
+
+msgid "Poll"
+msgstr "Anket"
+
+msgid "Your pick"
+msgstr "Seçiminiz"
+
+msgid "the leading answer"
+msgstr "önde gelen yanıt"
+
+msgid "Nothing new from what you follow yet."
+msgstr "Takip ettiklerinizden henüz yeni bir şey yok."
+
+msgid "Follow people, parties and countries to see new polls, news and elections here."
+msgstr "Yeni anketleri, haberleri ve seçimleri burada görmek için kişileri, partileri ve ülkeleri takip edin."

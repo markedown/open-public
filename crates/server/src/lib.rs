@@ -71,6 +71,11 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}/poll/{slug}/vote", post(pages::poll::vote))
         .route("/{country}/poll/{slug}/chain", get(pages::poll::chain))
         .route("/submissions", get(pages::submit::mine))
+        .route("/feed", get(pages::feed::page))
+        .route(
+            "/follow/{entity_type}/{entity_id}",
+            post(pages::follow::toggle),
+        )
         .route("/media/{sha}", get(media::serve))
         .route(
             "/register",
