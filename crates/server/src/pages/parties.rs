@@ -34,11 +34,7 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Parties").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Parties"))
-                }
-            }
+            (ui::page_header(i18n::t("Parties"), None, None))
             (ui::search::bar(&list_url, "#parties-results", &query))
 
             div id="parties-results" {
@@ -49,7 +45,7 @@ pub async fn list(
             @if parties.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No parties found.")) }
             } @else {
-                ul class="divide-y divide-hairline-light" {
+                ul class="op-card divide-y divide-hairline-light px-4" {
                     @for p in &parties {
                         li {
                             a href={"/" (country.slug) "/parties/" (p.slug)}

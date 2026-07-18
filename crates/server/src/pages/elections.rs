@@ -36,23 +36,20 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Elections"))
-                }
-                p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (elections.len()) } " " (i18n::t("Elections"))
-                }
-            }
+            (ui::page_header(
+                i18n::t("Elections"),
+                Some(html! { span class="font-mono" { (elections.len()) } " " (i18n::t("Elections")) }),
+                None,
+            ))
 
             @if elections.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No elections yet.")) }
             } @else {
-                ul class="space-y-2.5" {
+                ul class="grid gap-3 sm:grid-cols-2" {
                     @for e in &elections {
                         li {
                             a href={"/" (country.slug) "/election/" (e.slug)}
-                              class="block border border-hairline px-4 py-3 transition-colors hover:border-ink" {
+                              class="op-card op-card-link block px-4 py-3.5" {
                                 div class="flex items-baseline justify-between gap-3" {
                                     span class="text-sm font-medium text-ink" { (e.name) }
                                     @if let Some(d) = e.held_on {

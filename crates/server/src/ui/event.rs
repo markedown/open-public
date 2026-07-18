@@ -13,16 +13,8 @@ pub fn timeline(events: &[db::events::Event], see_all: Option<&str>) -> Markup {
         return html! {};
     }
     html! {
-        section class="mb-12" {
-            div class="mb-5 flex items-center justify-between gap-3 border-b-2 border-accent pb-2" {
-                h2 class="text-xs font-bold uppercase tracking-widest text-ink" { (i18n::t("Timeline")) }
-                @if let Some(href) = see_all {
-                    a href=(href)
-                      class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
-                        (i18n::t("See all"))
-                    }
-                }
-            }
+        section class="mb-8" {
+            (ui::section_header(i18n::t("Timeline"), see_all.map(ui::see_all_link)))
             (entries(events))
         }
     }

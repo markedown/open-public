@@ -44,6 +44,23 @@ pub fn see_all_link(href: &str) -> Markup {
     }
 }
 
+/// A page title block for an index page: a large title, an optional meta line
+/// (usually a count), and an optional right-aligned action (an add/propose
+/// button). Kept in one place so every index page opens the same way.
+pub fn page_header(title: &str, meta: Option<Markup>, action: Option<Markup>) -> Markup {
+    html! {
+        header class="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-hairline pb-5" {
+            div {
+                h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" { (title) }
+                @if let Some(m) = meta {
+                    p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" { (m) }
+                }
+            }
+            @if let Some(a) = action { (a) }
+        }
+    }
+}
+
 /// Up to two initials from a name's first and last word, for the initials
 /// square shown on person rows.
 pub fn initials(name: &str) -> String {

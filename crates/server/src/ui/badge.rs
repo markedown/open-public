@@ -9,13 +9,13 @@ pub fn party_chip(label: &str, color: Option<&str>) -> Markup {
     // ellipsis if an abbreviation is unexpectedly long. leading matches the
     // height so the text centers vertically.
     const BASE: &str =
-        "inline-block h-5 w-16 truncate border border-ink px-1 text-center align-middle font-mono text-[10px] font-semibold uppercase leading-5 tracking-wide";
+        "inline-block h-5 w-16 truncate rounded px-1 text-center align-middle font-mono text-[10px] font-semibold uppercase leading-5 tracking-wide";
     match color {
         Some(c) => html! {
             span class={(BASE) " " (text_on(c))} style={"background-color:" (c)} { (label) }
         },
         None => html! {
-            span class={(BASE) " bg-paper-raised text-ink"} { (label) }
+            span class={(BASE) " border border-hairline bg-paper-raised text-ink"} { (label) }
         },
     }
 }
