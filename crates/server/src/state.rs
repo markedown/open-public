@@ -18,6 +18,8 @@ pub struct AppState {
     pub asset_dir: Arc<PathBuf>,
     /// Optional home-page notice (a work-in-progress flag for production).
     pub site_notice: Option<Arc<str>>,
+    /// When true, the whole site is gated behind a single "coming soon" page.
+    pub construction: bool,
 }
 
 impl FromRef<AppState> for Pool {

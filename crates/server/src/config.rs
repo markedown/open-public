@@ -39,6 +39,10 @@ pub struct Config {
     /// An optional site notice shown on the home page (`SITE_NOTICE`). Used in
     /// production to flag that the data is still a rough work in progress.
     pub site_notice: Option<String>,
+    /// When true (`CONSTRUCTION_MODE`), the whole platform is gated behind a
+    /// single "coming soon" page; only the health, readiness and version
+    /// endpoints stay live. Used to keep production dark before launch.
+    pub construction: bool,
     /// Automated poll-review provider. `None` when no key is set, in which case
     /// submissions are deferred to the admin queue instead of auto-screened.
     pub review: Option<ReviewConfig>,
@@ -101,6 +105,10 @@ impl Config {
             .map(|s| s.trim().to_string())
             .filter(|s| !s.is_empty());
 
+        let construction = get("CONSTRUCTION_MODE")
+            .map(|v| matches!(v.trim(), "1" | "true" | "yes" | "on"))
+            .unwrap_or(false);
+
         // The reviewer is configured only when an API key is present. Without one
         // the server still runs; submissions simply wait for an admin.
         let review = get("DEEPSEEK_API_KEY")
@@ -125,6 +133,7 @@ impl Config {
             mail_from,
             asset_dir,
             site_notice,
+            construction,
             review,
         })
     }

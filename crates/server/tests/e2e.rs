@@ -327,6 +327,7 @@ fn router(pool: db::Pool) -> Router {
         // Content-addressed, so a shared temp dir across tests is safe.
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: None,
+        construction: false,
     };
     server::app(state, Path::new("static"))
 }
@@ -346,6 +347,27 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
         cookie_secure: false,
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: Some(Arc::from(notice)),
+        construction: false,
+    };
+    server::app(state, Path::new("static"))
+}
+
+/// Build the router in construction mode, gating the whole site.
+fn router_construction(pool: db::Pool) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: true,
     };
     server::app(state, Path::new("static"))
 }
@@ -4516,4 +4538,34 @@ async fn home_shows_the_site_notice_when_configured(pool: db::Pool) {
     let app = router_with_notice(pool.clone(), "WIP_NOTICE_MARKER work in progress");
     let body = body_string(get(&app, "/").await).await;
     assert!(body.contains("WIP_NOTICE_MARKER"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn construction_mode_gates_the_whole_site(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_construction(pool);
+
+    // Every content path returns only the coming-soon page; no real data leaks.
+    for path in [
+        "/",
+        "/tr",
+        "/tr/parties/test-partisi",
+        "/feed",
+        "/search",
+        "/admin",
+    ] {
+        let resp = get(&app, path).await;
+        assert_eq!(resp.status(), StatusCode::OK, "path {path}");
+        let body = body_string(resp).await;
+        assert!(body.contains("Under"), "coming-soon at {path}");
+        assert!(body.contains("open-public"));
+        assert!(!body.contains("Test Partisi"), "no content leak at {path}");
+    }
+
+    // Operational endpoints stay live so deploys and monitoring still work.
+    assert_eq!(get(&app, "/health").await.status(), StatusCode::OK);
+    assert_eq!(get(&app, "/readyz").await.status(), StatusCode::OK);
+    assert!(body_string(get(&app, "/version").await)
+        .await
+        .contains("commit"));
 }
