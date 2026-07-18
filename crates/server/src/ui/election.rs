@@ -1,8 +1,35 @@
+use std::collections::HashMap;
+
 use maud::{html, Markup};
 
 use crate::fmt;
 use crate::i18n;
 use crate::ui;
+
+/// A previous election's vote shares keyed by party slug (or, for label
+/// contests like presidential candidates, by label), in tenths of a percent.
+/// Used to draw a faint "last time" ghost behind each current bar and a swing.
+type PrevShares = HashMap<String, i64>;
+
+/// Build the comparison shares from a previous election and its rows. Empty when
+/// there is no previous election or it has no valid-vote total to divide by.
+fn prev_shares(
+    prev: Option<&(db::elections::Election, Vec<db::elections::ResultRow>)>,
+) -> PrevShares {
+    let mut map = PrevShares::new();
+    if let Some((e, rows)) = prev {
+        if let Some(valid) = e.valid_votes.filter(|v| *v > 0) {
+            for r in rows {
+                if let (Some(v), Some(key)) =
+                    (r.votes, r.party_slug.clone().or_else(|| r.label.clone()))
+                {
+                    map.insert(key, v * 1000 / valid);
+                }
+            }
+        }
+    }
+    map
+}
 
 /// A compact vote label: a share of the valid vote when known, else a short
 /// vote count ("6.1M", "812k").
@@ -172,7 +199,7 @@ pub fn election_box(
             (seat_chips(rows, country))
 
             @if let Some(valid) = election.valid_votes.filter(|v| *v > 0) {
-                div class="mt-4" { (vote_share_list(rows, valid, country, limit)) }
+                div class="mt-4" { (vote_share_list(rows, valid, country, limit, &PrevShares::new())) }
             }
 
             @if let (Some(cast), Some(elect)) = (election.votes_cast, election.electorate.filter(|e| *e > 0)) {
@@ -186,13 +213,19 @@ pub fn election_box(
 }
 
 /// One election's full detail: a seat-composition bar (seat contests), turnout
-/// statistic cards, and the complete contestant vote-share list.
+/// statistic cards, and the complete contestant vote-share list. When a previous
+/// comparable election is supplied, each vote-share bar carries a faint ghost of
+/// that election's share and a swing figure (for a runoff, the ghost is the first
+/// round).
 pub fn election_detail(
     election: &db::elections::Election,
     rows: &[db::elections::ResultRow],
+    prev: Option<&(db::elections::Election, Vec<db::elections::ResultRow>)>,
     country: &str,
 ) -> Markup {
     let total_seats: i32 = rows.iter().filter_map(|r| r.seats).sum();
+    let prev_map = prev_shares(prev);
+    let prev_name = prev.map(|(e, _)| e.name.as_str());
     html! {
         header class="op-card mb-8 p-6 sm:p-8" {
             h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" { (election.name) }
@@ -221,7 +254,16 @@ pub fn election_detail(
                 h2 class="mb-3 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                     (i18n::t("Vote share"))
                 }
-                (vote_share_list(rows, valid, country, None))
+                @if !prev_map.is_empty() {
+                    // A faint bar behind each result marks the previous election's
+                    // share, so the swing is visible at a glance.
+                    div class="mb-3 flex items-center gap-2 text-[11px] text-ink-muted" {
+                        span class="inline-block h-2.5 w-4 shrink-0 rounded-sm bg-ink-muted/25" {}
+                        (i18n::t("Previous"))
+                        @if let Some(n) = prev_name { " · " (n) }
+                    }
+                }
+                (vote_share_list(rows, valid, country, None, &prev_map))
             }
         }
     }
@@ -294,11 +336,14 @@ fn stat_card(label: &str, value: String) -> Markup {
 }
 
 /// The vote-share bars, most first, capped by `limit` with an "others" row.
+/// When `prev` holds a share for a row (keyed by party slug or label), the bar
+/// carries a faint ghost of that previous share and a swing figure.
 fn vote_share_list(
     rows: &[db::elections::ResultRow],
     valid: i64,
     country: &str,
     limit: Option<usize>,
+    prev: &PrevShares,
 ) -> Markup {
     // Order the vote-share bars by vote count, not by the seat-first order the
     // rows arrive in. A threshold-exempt party can hold a seat on a tiny vote
@@ -313,12 +358,22 @@ fn vote_share_list(
         }
         _ => (&voted[..], 0),
     };
+    // Reserve the swing column only when at least one shown row has a previous
+    // share, so plain lists keep their tighter layout.
+    let has_swing = shown.iter().any(|r| {
+        r.party_slug
+            .as_deref()
+            .or(r.label.as_deref())
+            .is_some_and(|k| prev.contains_key(k))
+    });
     html! {
         div class="space-y-1.5" {
             @for r in shown {
                 @let votes = r.votes.unwrap_or(0);
                 @let tenths = votes * 1000 / valid;
                 @let color = r.party_color.as_deref().unwrap_or("#33527a");
+                @let prev_tenths = r.party_slug.as_deref().or(r.label.as_deref())
+                    .and_then(|k| prev.get(k).copied());
                 div class="flex items-center gap-2" {
                     @if let (Some(sn), Some(slug)) = (r.party_short_name.as_deref(), r.party_slug.as_deref()) {
                         a href={"/" (country) "/parties/" (slug)}
@@ -329,10 +384,28 @@ fn vote_share_list(
                         span class="w-28 shrink-0 truncate text-xs font-medium text-ink" { (lbl) }
                     }
                     span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
+                        // The previous share sits behind the current one, so when
+                        // the party lost ground its faint ghost tail shows past the
+                        // current bar.
+                        @if let Some(pt) = prev_tenths {
+                            span class="absolute inset-y-0 left-0 rounded opacity-25"
+                                 style={"width:" (pt as f64 / 10.0) "%;background-color:" (color)} {}
+                        }
                         span class="absolute inset-y-0 left-0 rounded"
                              style={"width:" (tenths as f64 / 10.0) "%;background-color:" (color)} {}
+                        // A tick at the previous share marks "last time" even when
+                        // the party gained and the current bar covers the ghost.
+                        @if let Some(pt) = prev_tenths {
+                            span class="absolute inset-y-0 w-px bg-ink/45"
+                                 style={"left:" (pt as f64 / 10.0) "%"} {}
+                        }
                     }
                     span class="w-12 shrink-0 text-right font-mono text-xs text-ink" { (fmt_pct(tenths)) }
+                    @if has_swing {
+                        span class="w-12 shrink-0 text-right font-mono text-[11px]" {
+                            @if let Some(pt) = prev_tenths { (swing(tenths - pt)) }
+                        }
+                    }
                 }
             }
             @if others > 0 {
@@ -344,9 +417,24 @@ fn vote_share_list(
                              style={"width:" (tenths as f64 / 10.0) "%"} {}
                     }
                     span class="w-12 shrink-0 text-right font-mono text-xs text-ink-muted" { (fmt_pct(tenths)) }
+                    @if has_swing { span class="w-12 shrink-0" {} }
                 }
             }
         }
+    }
+}
+
+/// A swing figure between two shares in tenths of a percent, as an up/down
+/// triangle and a one-decimal magnitude ("▲2.6", "▼1.3", "±0.0"). Kept
+/// monochrome so it never reads as a party colour; direction carries the sign.
+fn swing(delta: i64) -> Markup {
+    let (glyph, mag) = match delta {
+        d if d > 0 => ("▲", d),
+        d if d < 0 => ("▼", -d),
+        _ => ("±", 0),
+    };
+    html! {
+        span class="text-ink-muted" { (glyph) (mag / 10) "." (mag % 10) }
     }
 }
 

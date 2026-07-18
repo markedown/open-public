@@ -2,6 +2,15 @@ use maud::{html, Markup};
 
 use crate::i18n;
 
+/// Case- and accent-insensitive substring match, for filtering short lists
+/// (elections, alliances) in the handler where a dedicated SQL query is not
+/// worth it. Both sides fold through the slug transliterator, so matching reads
+/// the same as the people and party search (accent- and case-insensitive).
+pub fn matches(name: &str, query: &str) -> bool {
+    let q = query.trim();
+    q.is_empty() || domain::slug::slugify(name).contains(&domain::slug::slugify(q))
+}
+
 /// A search box that filters a list in place. `action` is the list page's own
 /// URL and `target` is the CSS id selector (e.g. `#people-results`) of the
 /// container to replace. Typing re-queries the page via HTMX and swaps that same
