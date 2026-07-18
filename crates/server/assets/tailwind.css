@@ -3,10 +3,42 @@
 /* Tailwind scans the maud templates (Rust source) for class names. */
 @source "../src/**/*.rs";
 
-/* Self-hosted fonts only (no CDN, for privacy). Both cover Turkish (İ ı ğ ş ç
-   ö ü). IBM Plex Mono is the display and identity face (wordmark, headings,
-   labels, figures, source chits): the platform reads as a precise public
-   register. Public Sans carries running prose (summaries, questions). */
+/* Self-hosted fonts only (no CDN, for privacy). All cover Turkish (İ ı ğ ş ç ö
+   ü). Archivo (heavy) is the display voice: a grotesque with the squared,
+   civic-signage character of official notices. Public Sans carries running
+   prose; IBM Plex Mono marks data (seat counts, shares, dates, source chits). */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latinext-700.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latin-800.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latinext-800.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
 @font-face {
   font-family: "Public Sans";
   font-style: normal;
@@ -30,57 +62,37 @@
 }
 
 @theme {
+  --font-display: "Archivo", "Public Sans", ui-sans-serif, sans-serif;
   --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  /* No serif: the wordmark and headings are monospace. */
-  --font-serif: "IBM Plex Mono", ui-monospace, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: "Archivo", ui-sans-serif, sans-serif;
 
-  /* The Open Register palette: strict monochrome. Colour is DATA only (party
-     badges, seat bars, charts), never chrome. A whisper-warm neutral paper so
-     it reads like an archival record rather than a screen. */
-  --color-paper: oklch(97.6% 0.003 85);         /* archival off-white */
-  --color-paper-raised: oklch(99.2% 0.002 85);  /* a shade lighter for records */
-  --color-paper-sunken: oklch(94.3% 0.004 85);  /* tracks, insets */
-  --color-ink: oklch(22% 0.006 60);             /* near-black, faintly warm */
-  --color-ink-muted: oklch(45% 0.005 60);       /* secondary text */
-  --color-ink-faint: oklch(62% 0.004 60);       /* tertiary, meta */
-  --color-hairline: oklch(86% 0.004 80);        /* structural rules */
-  --color-hairline-light: oklch(90.5% 0.004 80);
-  --color-hairline-strong: oklch(72% 0.004 80); /* emphasis rules */
+  /* Quiet chrome, loud data. The interface is a near-neutral document tone so
+     that the one place colour appears, the seat compositions of real chambers,
+     carries all the signal. Colour is data; the chrome has no hue of its own.
+     Light only for launch. */
+  --color-paper: oklch(96.6% 0.003 250);        /* document off-white */
+  --color-paper-raised: oklch(99% 0.0015 250);  /* records */
+  --color-paper-sunken: oklch(93.2% 0.004 250); /* tracks, insets */
+  --color-ink: oklch(21% 0.012 260);            /* near-black, faint cool */
+  --color-ink-muted: oklch(44% 0.009 260);      /* secondary */
+  --color-ink-faint: oklch(60% 0.006 260);      /* meta */
+  --color-hairline: oklch(87% 0.004 255);       /* structure */
+  --color-hairline-light: oklch(91% 0.004 255);
+  --color-hairline-strong: oklch(72% 0.006 258);/* emphasis rules */
 
-  /* Bridge: existing components reference an "accent" for links and actions.
-     Map it to ink so the whole interface reads monochrome (emphasis is weight
-     and inversion, never a hue) as each page is rebuilt onto the register. */
-  --color-accent: oklch(22% 0.006 60);
-  --color-accent-strong: oklch(12% 0.006 60);
-  --color-accent-tint: oklch(94.3% 0.004 85);
+  /* Bridge: pages not yet rebuilt reference an accent; map it to ink so the
+     interface stays monochrome (emphasis is weight and inversion, never a hue)
+     until each page moves onto the new language. */
+  --color-accent: oklch(21% 0.012 260);
+  --color-accent-strong: oklch(12% 0.012 260);
+  --color-accent-tint: oklch(93.2% 0.004 250);
 
-  /* Sharp, instrument-like: no rounded card language, no soft depth. */
   --radius-card: 0px;
-}
-
-/* Dark mode: the register, inverted. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-paper: oklch(15.5% 0.004 70);
-    --color-paper-raised: oklch(18.5% 0.004 70);
-    --color-paper-sunken: oklch(21% 0.004 70);
-    --color-ink: oklch(92% 0.004 85);
-    --color-ink-muted: oklch(67% 0.004 75);
-    --color-ink-faint: oklch(52% 0.004 70);
-    --color-hairline: oklch(31% 0.005 70);
-    --color-hairline-light: oklch(26% 0.005 70);
-    --color-hairline-strong: oklch(44% 0.005 70);
-    --color-accent: oklch(92% 0.004 85);
-    --color-accent-strong: oklch(99% 0.002 85);
-    --color-accent-tint: oklch(21% 0.004 70);
-  }
 }
 
 /* The register's surfaces and marks. */
 @layer components {
-  /* A record: a hairline-bordered block, sharp, flat. The base unit of the
-     register. Kept named `op-card` so pages adopt it without churn. */
   .op-card {
     background: var(--color-paper-raised);
     border: 1px solid var(--color-hairline);
@@ -90,9 +102,8 @@
   }
   .op-card-link:hover {
     border-color: var(--color-ink);
-    background: var(--color-paper-raised);
   }
-  /* The solid ink block: the platform's mark and its emphasis primitive. */
+  /* The solid ink block: an emphasis primitive (inverted chips, marks). */
   .op-block {
     background: var(--color-ink);
     color: var(--color-paper);

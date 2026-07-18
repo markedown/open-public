@@ -759,3 +759,6 @@ msgstr "Jede vorgeschlagene Zusammenfassung bleibt unveröffentlicht, bis Sie si
 
 msgid "A public register of political data."
 msgstr "Ein öffentliches Register politischer Daten."
+
+msgid "Every chamber, at a glance."
+msgstr "Jede Kammer auf einen Blick."

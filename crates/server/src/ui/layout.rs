@@ -32,11 +32,9 @@ pub fn document(
             body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased" {
                 header class="sticky top-0 z-20 border-b border-hairline-strong bg-paper" {
                     nav class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" {
-                        a href="/" class="inline-flex shrink-0 items-center gap-2.5" {
-                            span class="op-block h-5 w-5 shrink-0" {}
-                            span class="font-mono text-[17px] font-semibold tracking-tight text-ink" {
-                                (SITE_NAME)
-                            }
+                        a href="/" class="inline-flex shrink-0 items-center" {
+                            img src="/static/brand/wordmark.svg" alt=(SITE_NAME)
+                                class="h-[18px] w-auto";
                         }
                         div class="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wide sm:gap-5" {
                             // Language switcher: a native dropdown (no JavaScript).

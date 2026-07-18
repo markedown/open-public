@@ -759,3 +759,6 @@ msgstr "Chaque résumé proposé reste non publié jusqu'à ce que vous le révi
 
 msgid "A public register of political data."
 msgstr "Un registre public de données politiques."
+
+msgid "Every chamber, at a glance."
+msgstr "Chaque chambre, en un coup d'œil."

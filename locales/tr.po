@@ -771,3 +771,6 @@ msgstr "Her önerilen özet, siz inceleyene kadar yayınlanmaz. Gerekirse metni 
 
 msgid "A public register of political data."
 msgstr "Siyasi verilerin açık bir kaydı."
+
+msgid "Every chamber, at a glance."
+msgstr "Her meclis, tek bakışta."
