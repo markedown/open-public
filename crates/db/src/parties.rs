@@ -266,3 +266,80 @@ pub async fn alliance_members(pool: &Pool, party_id: i64) -> Result<Vec<Alliance
     .await?;
     Ok(rows)
 }
+
+/// One pending summary draft awaiting admin review.
+pub struct SummaryDraft {
+    pub id: i64,
+    pub name: String,
+    pub slug: String,
+    pub country_slug: String,
+    /// The proposed summary.
+    pub draft: String,
+    /// The current published summary this would replace, if any.
+    pub current: Option<String>,
+    /// The party's Wikidata id, used to source the summary on approval.
+    pub wikidata_id: Option<String>,
+}
+
+/// Stage a proposed summary for review without touching the public one.
+pub async fn set_summary_draft(pool: &Pool, id: i64, draft: &str) -> Result<()> {
+    sqlx::query!(
+        "update parties set summary_draft = $2 where id = $1",
+        id,
+        draft,
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+/// How many parties have a summary draft awaiting review.
+pub async fn count_pending_summary_drafts(pool: &Pool) -> Result<i64> {
+    let n = sqlx::query_scalar!(
+        r#"select count(*) as "count!" from parties where summary_draft is not null"#,
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(n)
+}
+
+/// Parties with a summary draft awaiting review, with their current summary.
+pub async fn pending_summary_drafts(pool: &Pool) -> Result<Vec<SummaryDraft>> {
+    let rows = sqlx::query_as!(
+        SummaryDraft,
+        r#"
+        select p.id, p.name, p.slug, c.slug as "country_slug!",
+               p.summary_draft as "draft!", p.summary as "current", p.wikidata_id
+        from parties p join countries c on c.id = p.country_id
+        where p.summary_draft is not null
+        order by p.name collate "name_sort"
+        "#,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// Publish a reviewed summary (`text`, as the admin may have edited it) as the
+/// party's public summary and clear the draft. The party's existing source is
+/// kept: the summary is derived from that already sourced record.
+pub async fn publish_summary_draft(pool: &Pool, id: i64, text: &str) -> Result<()> {
+    sqlx::query!(
+        "update parties
+         set summary = $2, summary_draft = null, updated_at = now()
+         where id = $1 and summary_draft is not null",
+        id,
+        text,
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+/// Discard a summary draft, leaving the public summary untouched.
+pub async fn discard_summary_draft(pool: &Pool, id: i64) -> Result<()> {
+    sqlx::query!("update parties set summary_draft = null where id = $1", id,)
+        .execute(pool)
+        .await?;
+    Ok(())
+}

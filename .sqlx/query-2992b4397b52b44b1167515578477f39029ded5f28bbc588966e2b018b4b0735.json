@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update parties\n         set summary = $2, summary_draft = null, updated_at = now()\n         where id = $1 and summary_draft is not null",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "2992b4397b52b44b1167515578477f39029ded5f28bbc588966e2b018b4b0735"
+}

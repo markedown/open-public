@@ -38,6 +38,7 @@ pub async fn index(
     let pending_drafts = db::news::pending_draft_count(&pool).await?;
     let pending_translations = db::translations::pending_count(&pool).await?;
     let pending_submissions = db::submissions::pending_admin_count(&pool).await?;
+    let pending_bios = db::parties::count_pending_summary_drafts(&pool).await?;
 
     let content = html! {
         section class="mx-auto max-w-2xl" {
@@ -53,6 +54,7 @@ pub async fn index(
                 @for (label, href, count) in [
                     (i18n::t("Review poll submissions"), "/admin/submissions", pending_submissions),
                     (i18n::t("Review summaries"), "/admin/summaries", pending_drafts),
+                    (i18n::t("Review biographies"), "/admin/bios", pending_bios),
                     (i18n::t("Review translations"), "/admin/translations", pending_translations),
                     (i18n::t("Review data conflicts"), "/admin/conflicts", open_conflicts),
                 ] {
@@ -227,6 +229,114 @@ pub async fn summary_discard(
     require_admin(&session)?;
     db::news::discard_draft(&pool, id).await?;
     Ok(Redirect::to("/admin/summaries"))
+}
+
+/// The biography review queue: proposed party summaries (for example from an
+/// offline drafting pass over the structured data) awaiting an editor. The
+/// editor may edit the text before approving it as the party's public summary,
+/// or discard the draft. Readers only ever see approved summaries.
+pub async fn bios(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+) -> Result<Markup, PageError> {
+    require_admin(&session)?;
+    let drafts = db::parties::pending_summary_drafts(&pool).await?;
+
+    let content = html! {
+        section class="mx-auto max-w-3xl" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+                "← " (i18n::t("Admin panel"))
+            }
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
+                (i18n::t("Review biographies"))
+            }
+            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                (i18n::t("Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."))
+            }
+
+            @if drafts.is_empty() {
+                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                    (i18n::t("No drafts to review."))
+                }
+            } @else {
+                ul class="mt-6 space-y-4" {
+                    @for d in &drafts {
+                        li class="op-card p-4" {
+                            div class="flex items-baseline justify-between gap-3" {
+                                a href={"/" (d.country_slug) "/parties/" (d.slug)}
+                                  class="text-sm font-semibold text-ink transition-colors hover:text-accent" {
+                                    (d.name)
+                                }
+                                @if let Some(ref qid) = d.wikidata_id {
+                                    a href={"https://www.wikidata.org/wiki/" (qid)} target="_blank" rel="noopener noreferrer"
+                                      class="shrink-0 font-mono text-[10px] uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
+                                        "Wikidata ↗"
+                                    }
+                                }
+                            }
+                            @if let Some(ref cur) = d.current {
+                                p class="mt-1 text-xs text-ink-muted" {
+                                    (i18n::t("Replaces")) ": " (cur)
+                                }
+                            }
+                            form method="post" action={"/admin/bios/" (d.id) "/publish"}
+                                 class="mt-3 flex flex-col gap-2" {
+                                textarea name="summary" rows="4"
+                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
+                                    (d.draft)
+                                }
+                                div class="flex gap-2" {
+                                    button type="submit"
+                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                                        (i18n::t("Approve"))
+                                    }
+                                    button type="submit" formaction={"/admin/bios/" (d.id) "/discard"}
+                                      formnovalidate
+                                      class="rounded-lg border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                        (i18n::t("Discard"))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Review biographies")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// Approve a reviewed party summary (as edited); an empty text discards instead.
+pub async fn bio_publish(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+    Form(form): Form<SummaryForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    let text = form.summary.trim();
+    if text.is_empty() {
+        db::parties::discard_summary_draft(&pool, id).await?;
+    } else {
+        db::parties::publish_summary_draft(&pool, id, text).await?;
+    }
+    Ok(Redirect::to("/admin/bios"))
+}
+
+/// Discard a party summary draft, leaving the public summary untouched.
+pub async fn bio_discard(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    db::parties::discard_summary_draft(&pool, id).await?;
+    Ok(Redirect::to("/admin/bios"))
 }
 
 /// The translation review queue: draft translations shown against their source

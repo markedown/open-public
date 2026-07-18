@@ -759,3 +759,12 @@ msgstr "Takip ettiklerinizden henüz yeni bir şey yok."
 
 msgid "Follow people, parties and countries to see new polls, news and elections here."
 msgstr "Yeni anketleri, haberleri ve seçimleri burada görmek için kişileri, partileri ve ülkeleri takip edin."
+
+msgid "Review biographies"
+msgstr "Biyografileri incele"
+
+msgid "Replaces"
+msgstr "Yerine geçer"
+
+msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
+msgstr "Her önerilen özet, siz inceleyene kadar yayınlanmaz. Gerekirse metni düzenleyin, ardından onaylayın veya taslağı silin."

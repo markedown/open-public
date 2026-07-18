@@ -1,0 +1,98 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.id, p.name, p.slug, c.slug as \"country_slug!\",\n               p.summary_draft as \"draft!\", p.summary as \"current\", p.wikidata_id\n        from parties p join countries c on c.id = p.country_id\n        where p.summary_draft is not null\n        order by p.name collate \"name_sort\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "country_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "draft!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "summary_draft"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "current",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "summary"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "wikidata_id",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "wikidata_id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "45f3354a830e991918e94c4902031782cf6b99be6d9f9ec1f85ca84f9cdab5be"
+}

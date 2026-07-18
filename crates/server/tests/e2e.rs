@@ -327,6 +327,7 @@ fn router(pool: db::Pool) -> Router {
         // Content-addressed, so a shared temp dir across tests is safe.
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: None,
+        construction: false,
     };
     server::app(state, Path::new("static"))
 }
@@ -346,6 +347,27 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
         cookie_secure: false,
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: Some(Arc::from(notice)),
+        construction: false,
+    };
+    server::app(state, Path::new("static"))
+}
+
+/// Build the router in construction mode, gating the whole site.
+fn router_construction(pool: db::Pool) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: true,
     };
     server::app(state, Path::new("static"))
 }
@@ -2230,6 +2252,98 @@ async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
 
     let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
     assert!(feed.contains("Followed person makes news"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn bio_review_queue_approves_and_discards(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // Pin English so the assertions read in one language.
+    let cookie = format!("{}; lang=en", admin_cookie(&pool).await);
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Empty to begin with.
+    let empty = body_string(get_cookie(&app, "/admin/bios", &cookie).await).await;
+    assert!(empty.contains("No drafts to review."));
+
+    // Give the party an existing summary and a Wikidata id so the queue shows
+    // the "replaces" line and the source link.
+    sqlx::query("update parties set summary = 'Old summary.', wikidata_id = 'Q9999' where id = $1")
+        .bind(party_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    // A staged draft appears in the queue but not on the public page.
+    db::parties::set_summary_draft(&pool, party_id, "A neutral draft summary.")
+        .await
+        .unwrap();
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        1
+    );
+    let queue = body_string(get_cookie(&app, "/admin/bios", &cookie).await).await;
+    assert!(queue.contains("A neutral draft summary."));
+    assert!(queue.contains("/tr/parties/test-partisi"));
+    assert!(queue.contains("Replaces")); // it names the summary being replaced
+    assert!(queue.contains("Q9999")); // and links the Wikidata source
+    let public = body_string(get(&app, "/tr/parties/test-partisi").await).await;
+    assert!(!public.contains("A neutral draft summary.")); // draft is not public
+
+    // Approving (as edited) promotes it to the public summary and clears the draft.
+    post_form(
+        &app,
+        &format!("/admin/bios/{party_id}/publish"),
+        "summary=An+edited+neutral+summary.",
+        Some(&cookie),
+    )
+    .await;
+    let party = db::parties::get_by_slug(&pool, "test-partisi")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.summary.as_deref(), Some("An edited neutral summary."));
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+
+    // Discarding a later draft leaves the public summary untouched.
+    db::parties::set_summary_draft(&pool, party_id, "Another draft.")
+        .await
+        .unwrap();
+    post_form(
+        &app,
+        &format!("/admin/bios/{party_id}/discard"),
+        "",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(
+        db::parties::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+    let party = db::parties::get_by_slug(&pool, "test-partisi")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.summary.as_deref(), Some("An edited neutral summary."));
+
+    // A non-admin cannot reach the queue.
+    let (_u, ucookie) = verified_user(&pool, "notadmin@x.test", "na-token").await;
+    assert!(!get_cookie(&app, "/admin/bios", &ucookie)
+        .await
+        .status()
+        .is_success());
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -4424,4 +4538,34 @@ async fn home_shows_the_site_notice_when_configured(pool: db::Pool) {
     let app = router_with_notice(pool.clone(), "WIP_NOTICE_MARKER work in progress");
     let body = body_string(get(&app, "/").await).await;
     assert!(body.contains("WIP_NOTICE_MARKER"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn construction_mode_gates_the_whole_site(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_construction(pool);
+
+    // Every content path returns only the coming-soon page; no real data leaks.
+    for path in [
+        "/",
+        "/tr",
+        "/tr/parties/test-partisi",
+        "/feed",
+        "/search",
+        "/admin",
+    ] {
+        let resp = get(&app, path).await;
+        assert_eq!(resp.status(), StatusCode::OK, "path {path}");
+        let body = body_string(resp).await;
+        assert!(body.contains("Under"), "coming-soon at {path}");
+        assert!(body.contains("open-public"));
+        assert!(!body.contains("Test Partisi"), "no content leak at {path}");
+    }
+
+    // Operational endpoints stay live so deploys and monitoring still work.
+    assert_eq!(get(&app, "/health").await.status(), StatusCode::OK);
+    assert_eq!(get(&app, "/readyz").await.status(), StatusCode::OK);
+    assert!(body_string(get(&app, "/version").await)
+        .await
+        .contains("commit"));
 }

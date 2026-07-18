@@ -35,6 +35,17 @@ use state::AppState;
 
 /// Build the application router. `static_dir` is served under `/static`.
 pub fn app(state: AppState, static_dir: &Path) -> Router {
+    // Construction mode gates the whole platform behind a single coming-soon
+    // page; only the operational endpoints stay live so deploys and monitoring
+    // still work. Nothing else about the site is reachable.
+    if state.construction {
+        return Router::new()
+            .route("/health", get(health))
+            .route("/readyz", get(readyz))
+            .route("/version", get(version))
+            .fallback(coming_soon)
+            .with_state(state);
+    }
     Router::new()
         .route("/", get(pages::home::page))
         .route("/health", get(health))
@@ -100,6 +111,9 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
             "/admin/summaries/{id}/discard",
             post(pages::admin::summary_discard),
         )
+        .route("/admin/bios", get(pages::admin::bios))
+        .route("/admin/bios/{id}/publish", post(pages::admin::bio_publish))
+        .route("/admin/bios/{id}/discard", post(pages::admin::bio_discard))
         .route("/admin/translations", get(pages::admin::translations))
         .route(
             "/admin/translations/{id}/publish",
@@ -216,6 +230,58 @@ fn same_site_path(referer: &str) -> Option<String> {
 async fn health() -> &'static str {
     "ok"
 }
+
+/// The whole public surface while construction mode is on: a single, static,
+/// self-contained coming-soon page (no external assets, so it renders even with
+/// nothing else served). Monochrome and monospace, the platform's own voice, not
+/// a stock placeholder.
+async fn coming_soon() -> Response {
+    (
+        [(header::CONTENT_TYPE, "text/html; charset=utf-8")],
+        COMING_SOON_HTML,
+    )
+        .into_response()
+}
+
+const COMING_SOON_HTML: &str = r#"<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>open-public</title>
+<style>
+:root{--paper:#f5f5f3;--ink:#141414;--muted:#6a6a68;--rule:#dcdcda;--block:#141414}
+@media (prefers-color-scheme:dark){:root{--paper:#0b0b0b;--ink:#ededeb;--muted:#86867f;--rule:#232322;--block:#ededeb}}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font:400 15px/1.55 ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;display:flex;align-items:center;justify-content:center;padding:6vw;-webkit-font-smoothing:antialiased}
+main{width:100%;max-width:640px}
+.rule{height:1px;background:var(--rule)}
+.top{display:flex;align-items:center;gap:.7rem;padding-bottom:1.1rem}
+.block{width:20px;height:20px;background:var(--block);flex:none}
+.word{font-weight:600;font-size:clamp(19px,5vw,24px);letter-spacing:-.02em}
+.body{padding:2.6rem 0}
+.status{font-size:clamp(30px,9vw,56px);font-weight:600;letter-spacing:-.03em;line-height:1.02}
+.cursor{display:inline-block;width:.5em;height:.92em;background:var(--ink);vertical-align:-.06em;margin-left:.14em;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.desc{margin-top:1.5rem;max-width:48ch;color:var(--muted);font-size:14px}
+.foot{display:flex;justify-content:space-between;gap:1rem;padding-top:1.1rem;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><span class="block"></span><span class="word">open-public</span></div>
+  <div class="rule"></div>
+  <div class="body">
+    <div class="status">Under<br>construction<span class="cursor"></span></div>
+    <p class="desc">An open, source-backed record of political data and public participation. Still being assembled. Back soon.</p>
+  </div>
+  <div class="rule"></div>
+  <div class="foot"><span>Open political data</span><span>Coming soon</span></div>
+</main>
+</body>
+</html>
+"#;
 
 /// Readiness probe: the database is reachable, so this instance can serve
 /// requests. A blue-green cutover flips traffic to a new color only once its

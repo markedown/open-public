@@ -747,3 +747,12 @@ msgstr "Noch nichts Neues von dem, dem Sie folgen."
 
 msgid "Follow people, parties and countries to see new polls, news and elections here."
 msgstr "Folgen Sie Personen, Parteien und Ländern, um hier neue Umfragen, Nachrichten und Wahlen zu sehen."
+
+msgid "Review biographies"
+msgstr "Biografien prüfen"
+
+msgid "Replaces"
+msgstr "Ersetzt"
+
+msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
+msgstr "Jede vorgeschlagene Zusammenfassung bleibt unveröffentlicht, bis Sie sie prüfen. Bearbeiten Sie den Text bei Bedarf, genehmigen Sie ihn dann oder verwerfen Sie den Entwurf."
