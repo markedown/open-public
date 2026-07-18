@@ -696,3 +696,21 @@ msgstr "Ce compte a été suspendu."
 
 msgid "Support over time"
 msgstr "Soutien au fil du temps"
+
+msgid "Seats"
+msgstr "Sièges"
+
+msgid "Question image URL"
+msgstr "URL de l'image de la question"
+
+msgid "Image license"
+msgstr "Licence de l'image"
+
+msgid "A question is required."
+msgstr "Une question est requise."
+
+msgid "A poll needs at least two options."
+msgstr "Un sondage nécessite au moins deux options."
+
+msgid "The upload could not be read. Please try again."
+msgstr "Le fichier n'a pas pu être lu. Veuillez réessayer."

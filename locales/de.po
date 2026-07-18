@@ -696,3 +696,21 @@ msgstr "Dieses Konto wurde gesperrt."
 
 msgid "Support over time"
 msgstr "Unterstützung im Zeitverlauf"
+
+msgid "Seats"
+msgstr "Sitze"
+
+msgid "Question image URL"
+msgstr "Bild-URL der Frage"
+
+msgid "Image license"
+msgstr "Bildlizenz"
+
+msgid "A question is required."
+msgstr "Eine Frage ist erforderlich."
+
+msgid "A poll needs at least two options."
+msgstr "Eine Umfrage benötigt mindestens zwei Optionen."
+
+msgid "The upload could not be read. Please try again."
+msgstr "Der Upload konnte nicht gelesen werden. Bitte versuchen Sie es erneut."
