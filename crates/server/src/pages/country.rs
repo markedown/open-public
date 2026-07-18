@@ -30,7 +30,10 @@ pub async fn detail(
     let mut elections = Vec::new();
     for e in election_list.into_iter().take(2) {
         let rows = db::elections::results(&pool, e.id).await?;
-        elections.push((e, rows));
+        // The previous comparable election powers the "last time" ghost bars in
+        // the compact result cards, as on the full election page.
+        let prev = db::elections::previous_comparable(&pool, e.id).await?;
+        elections.push((e, rows, prev));
     }
 
     let mut polls = db::polls::full_for_country(&pool, country.id).await?;

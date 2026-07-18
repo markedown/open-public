@@ -142,9 +142,15 @@ pub fn party_history(entries: &[db::elections::PartyHistoryEntry]) -> Markup {
 }
 
 /// A country's elections as a section with a "see all" link. Each election is
-/// one result box; the heading links to the elections index.
+/// one result box carrying its previous-election comparison; the heading links
+/// to the elections index.
+#[allow(clippy::type_complexity)]
 pub fn country_elections(
-    elections: &[(db::elections::Election, Vec<db::elections::ResultRow>)],
+    elections: &[(
+        db::elections::Election,
+        Vec<db::elections::ResultRow>,
+        Option<(db::elections::Election, Vec<db::elections::ResultRow>)>,
+    )],
     country: &str,
 ) -> Markup {
     if elections.is_empty() {
@@ -157,8 +163,8 @@ pub fn country_elections(
                 Some(ui::see_all_link(&format!("/{country}/elections"))),
             ))
             div class="grid gap-4 sm:grid-cols-2" {
-                @for (election, rows) in elections {
-                    (election_box(election, rows, country, true, Some(6)))
+                @for (election, rows, prev) in elections {
+                    (election_box(election, rows, prev.as_ref(), country, true, Some(6)))
                 }
             }
         }
@@ -167,15 +173,18 @@ pub fn country_elections(
 
 /// One election's compact result box for the country overview: name/date,
 /// description, party seat chips, the top vote-share bars (capped by `limit`
-/// with an "others" aggregate), and a turnout line. When `linked`, the title
+/// with an "others" aggregate) with a "last time" ghost when a previous
+/// comparable election is supplied, and a turnout line. When `linked`, the title
 /// links to the election's own page.
 pub fn election_box(
     election: &db::elections::Election,
     rows: &[db::elections::ResultRow],
+    prev: Option<&(db::elections::Election, Vec<db::elections::ResultRow>)>,
     country: &str,
     linked: bool,
     limit: Option<usize>,
 ) -> Markup {
+    let prev_map = prev_shares(prev);
     html! {
         div class="op-card p-5" {
             div class="flex flex-wrap items-baseline justify-between gap-2" {
@@ -199,7 +208,20 @@ pub fn election_box(
             (seat_chips(rows, country))
 
             @if let Some(valid) = election.valid_votes.filter(|v| *v > 0) {
-                div class="mt-4" { (vote_share_list(rows, valid, country, limit, &PrevShares::new())) }
+                div class="mt-4" {
+                    // A compact "last time" legend, naming the compared election
+                    // by year so the ghost bars and swing figures read clearly.
+                    @if !prev_map.is_empty() {
+                        div class="mb-2 flex items-center gap-1.5 text-[10px] text-ink-muted" {
+                            span class="inline-block h-2 w-3 shrink-0 rounded-sm bg-ink-muted/25" {}
+                            (i18n::t("Previous"))
+                            @if let Some((e, _)) = prev {
+                                @if let Some(d) = e.held_on { " · " (d.format("%Y")) }
+                            }
+                        }
+                    }
+                    (vote_share_list(rows, valid, country, limit, &prev_map))
+                }
             }
 
             @if let (Some(cast), Some(elect)) = (election.votes_cast, election.electorate.filter(|e| *e > 0)) {
