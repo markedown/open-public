@@ -55,20 +55,20 @@ pub async fn detail(
                 Crumb { label: person.full_name.clone(), href: None },
             ]))
             // Identity block: a hero record card.
-            header class={"mb-12 flex flex-col gap-6 border-[1.5px] border-ink bg-paper-raised p-6 sm:flex-row sm:items-start sm:p-8 " (ui::CORNER_TICK)} {
+            header class="op-card mb-8 flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:p-8" {
                 @if let Some(ref photo) = person.photo_url {
                     img src=(photo) alt=(&person.full_name)
-                        class="h-24 w-24 shrink-0 border border-hairline object-cover"
+                        class="h-24 w-24 shrink-0 rounded-xl border border-hairline object-cover"
                         loading="lazy";
                 } @else {
-                    div class="flex h-24 w-24 shrink-0 items-center justify-center border border-ink bg-paper-raised" {
+                    div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-hairline bg-paper-sunken" {
                         span class="font-mono text-2xl font-semibold tracking-tight text-ink-muted" {
                             (ui::initials(&person.full_name))
                         }
                     }
                 }
                 div class="min-w-0" {
-                    h1 class="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl" {
+                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                         (person.full_name)
                     }
                     div class="mt-3 flex flex-wrap items-center gap-2" {
@@ -108,7 +108,7 @@ pub async fn detail(
                     }
                     @if let Some(ref href) = manage_href {
                         a href=(href)
-                          class="mt-5 inline-flex items-center gap-1.5 border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                          class="mt-5 inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
                             (i18n::t("Manage"))
                         }
                     }
@@ -116,7 +116,7 @@ pub async fn detail(
             }
 
             @if let Some(text) = summary {
-                section class="mb-12" {
+                section class="mb-8" {
                     (ui::translated::prose(
                         text,
                         loc.is_translated("summary").then_some(person.summary.as_deref()).flatten(),
@@ -127,10 +127,8 @@ pub async fn detail(
             (ui::background::section(&education, &attributes))
 
             @if !roles.is_empty() {
-                section class="mb-12" {
-                    h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        (i18n::t("Roles"))
-                    }
+                section class="mb-8" {
+                    (ui::section_header(i18n::t("Roles"), None))
                     (ui::timeline_entry::timeline_list(
                         roles.iter().map(|r| ui::timeline_entry::Entry {
                             kind: r.role_type.clone(),
@@ -145,10 +143,8 @@ pub async fn detail(
             }
 
             @if !memberships.is_empty() {
-                section class="mb-12" {
-                    h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                        (i18n::t("Party memberships"))
-                    }
+                section class="mb-8" {
+                    (ui::section_header(i18n::t("Party memberships"), None))
                     (ui::timeline_entry::timeline_list(
                         memberships.iter().map(|m| ui::timeline_entry::Entry {
                             kind: i18n::t("Party").to_string(),
@@ -166,7 +162,7 @@ pub async fn detail(
 
             (ui::news::news_section(&news, &country.slug, None))
 
-            (ui::poll_widget::poll_previews(&polls, &country.slug, None))
+            (ui::poll_widget::poll_previews(&polls, &country.slug, None, None, None))
 
             (ui::references::references(person.wikidata_id.as_deref(), person.photo_license.as_deref()))
         }

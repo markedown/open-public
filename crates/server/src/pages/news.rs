@@ -27,20 +27,16 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("News").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                div class="flex items-baseline justify-between gap-3" {
-                    h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                        (i18n::t("News"))
-                    }
+            (ui::page_header(
+                i18n::t("News"),
+                Some(html! { span class="font-mono" { (items.len()) } " " (i18n::t("News")) }),
+                Some(html! {
                     a href={"/" (country.slug) "/outlets"}
-                      class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
+                      class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
                         (i18n::t("Outlets")) " →"
                     }
-                }
-                p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (items.len()) } " " (i18n::t("News"))
-                }
-            }
+                }),
+            ))
 
             @if items.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No news yet.")) }
@@ -91,19 +87,19 @@ pub async fn detail(
                 Crumb { label: headline.to_string(), href: None },
             ]))
 
-            header class={"mb-6 border-[1.5px] border-ink bg-paper-raised p-6 sm:p-8 " (ui::CORNER_TICK)} {
+            header class="op-card mb-6 p-6 sm:p-8" {
                 // The outlet that published it.
                 @if let Some(ref o) = item.outlet {
                     a href={"/" (country.slug) "/outlet/" (o.slug)}
                       class="mb-4 inline-flex items-center gap-2 transition-opacity hover:opacity-80" {
                         @if let Some(ref logo) = o.logo_url {
                             img src=(logo) alt="" loading="lazy"
-                                class="h-6 w-6 border border-hairline object-contain";
+                                class="h-6 w-6 rounded border border-hairline object-contain";
                         }
                         span class="text-xs font-bold uppercase tracking-widest text-ink-muted" { (o.name) }
                     }
                 }
-                h1 class="font-serif text-2xl font-semibold leading-snug tracking-tight text-ink sm:text-3xl" {
+                h1 class="text-2xl font-bold leading-snug tracking-tight text-ink sm:text-3xl" {
                     (headline)
                 }
                 div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-ink-muted" {
@@ -141,7 +137,7 @@ pub async fn detail(
             }
 
             a href=(item.url) rel="noopener" target="_blank"
-              class="inline-flex items-center gap-1.5 border border-ink px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
                 (i18n::t("Read at the source")) " ↗"
             }
         }

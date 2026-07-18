@@ -41,17 +41,43 @@
   --font-serif: "Petrona", ui-serif, Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* Neutral chrome: a warm paper/ink scale. Saturated color is data only and
-     never appears here. */
-  --color-paper: oklch(97% 0.012 75);
-  --color-paper-raised: oklch(99% 0.008 75);
-  --color-ink: oklch(22% 0.02 60);
-  --color-ink-muted: oklch(45% 0.02 60);
-  --color-hairline: oklch(80% 0.015 70);
-  --color-hairline-light: oklch(88% 0.01 70);
+  /* Cool "civic dashboard" chrome: a slate neutral scale on near-white cards.
+     Saturated party colour still appears only inside data (badges, bars,
+     charts), never as chrome. */
+  --color-paper: oklch(98.2% 0.004 264);        /* app background, cool slate-50 */
+  --color-paper-raised: oklch(100% 0 0);        /* cards, pure white */
+  --color-paper-sunken: oklch(96.4% 0.005 264); /* insets, tracks */
+  --color-ink: oklch(28% 0.03 264);             /* near-black slate */
+  --color-ink-muted: oklch(52% 0.025 264);      /* secondary text */
+  --color-hairline: oklch(91% 0.008 264);       /* card borders */
+  --color-hairline-light: oklch(94.5% 0.005 264);
 
-  /* The single interface accent: links, focus, and the record-card corner
-     tick. Never mapped to a party. */
-  --color-accent: #33527a;
-  --color-accent-tint: oklch(94% 0.02 250);
+  /* Brand accent: indigo. Distinct from every party's signature colour, so it
+     never reads as a political allegiance. Used for links, actions and focus. */
+  --color-accent: oklch(51% 0.20 277);          /* ~ #5b57d8 */
+  --color-accent-strong: oklch(45% 0.21 277);
+  --color-accent-tint: oklch(96% 0.03 280);
+
+  /* Rounded surfaces and soft depth for the dashboard card language. */
+  --radius-card: 0.875rem;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 16px -6px rgba(15, 23, 42, 0.08);
+  --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 28px -8px rgba(79, 70, 229, 0.14);
+}
+
+/* A reusable card surface for the dashboard layout. */
+@layer components {
+  .op-card {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  .op-card-link {
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .op-card-link:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
 }

@@ -10,10 +10,8 @@ pub fn references(wikidata_id: Option<&str>, photo_license: Option<&str>) -> Mar
         return html! {};
     }
     html! {
-        section class="mb-12" {
-            h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                (i18n::t("References"))
-            }
+        section class="mb-8" {
+            (crate::ui::section_header(i18n::t("References"), None))
             ul class="space-y-1.5 text-sm text-ink-muted" {
                 @if let Some(qid) = wikidata_id {
                     li {

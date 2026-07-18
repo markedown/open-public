@@ -9,7 +9,7 @@ use crate::ui;
 pub fn person_chip(name: &str, slug: &str, country: &str) -> Markup {
     html! {
         a href={"/" (country) "/people/" (slug)}
-          class="inline-flex items-center border border-ink px-2 py-0.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-accent" {
+          class="inline-flex items-center rounded-md border border-hairline px-2 py-0.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-accent" {
             (name)
         }
     }
@@ -49,7 +49,7 @@ pub fn index(items: &[db::news::NewsCard], country: &str, admin: bool) -> Markup
                 li class="py-4 first:pt-0" {
                     div class="flex items-start justify-between gap-3" {
                         a href={"/" (country) "/news/" (it.id)}
-                          class="block font-serif text-base font-medium leading-snug text-ink transition-colors hover:text-accent" {
+                          class="block text-base font-semibold leading-snug text-ink transition-colors hover:text-accent" {
                             (it.headline)
                         }
                         @if admin {
@@ -74,16 +74,14 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
     if items.is_empty() && add_href.is_none() {
         return html! {};
     }
+    let add = add_href.map(|href| html! {
+        a href=(href) class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+            "+ " (i18n::t("Add news"))
+        }
+    });
     html! {
-        section class="mb-12" {
-            div class="mb-5 flex items-center justify-between gap-3 border-b-2 border-accent pb-2" {
-                h2 class="text-xs font-bold uppercase tracking-widest text-ink" { (i18n::t("News")) }
-                @if let Some(href) = add_href {
-                    a href=(href) class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
-                        "+ " (i18n::t("Add news"))
-                    }
-                }
-            }
+        section class="mb-8" {
+            (ui::section_header(i18n::t("News"), add))
             @if items.is_empty() {
                 p class="text-sm text-ink-muted" { (i18n::t("No news yet.")) }
             } @else {

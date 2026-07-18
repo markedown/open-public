@@ -27,12 +27,10 @@ pub fn document(
                 script src="/static/htmx.min.js" defer {}
             }
             body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased" {
-                // A thin accent strip at the very top: the one interface colour,
-                // used as a quiet brand signature.
-                div class="h-1 bg-accent" {}
-                header class="sticky top-0 z-20 border-b border-hairline bg-paper" {
-                    nav class="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6" {
-                        a href="/" class="inline-flex shrink-0 font-serif text-[19px] font-semibold tracking-[0.01em] text-ink" {
+                header class="sticky top-0 z-20 border-b border-hairline bg-paper-raised/85 backdrop-blur-md" {
+                    nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6" {
+                        a href="/" class="inline-flex shrink-0 items-center gap-2 text-[18px] font-bold tracking-tight text-ink" {
+                            span class="grid h-6 w-6 place-items-center rounded-md bg-accent text-[13px] font-black text-white" { "o" }
                             (SITE_NAME)
                         }
                         div class="flex items-center gap-4 text-[13px] font-medium sm:gap-5" {
@@ -74,7 +72,7 @@ pub fn document(
                                 }
                                 form method="post" action="/logout" {
                                     button type="submit"
-                                        class="border border-ink bg-paper px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                                        class="rounded-lg border border-hairline bg-paper-raised px-3 py-1.5 text-[12px] font-medium text-ink-muted transition-colors hover:border-accent hover:text-accent" {
                                         (i18n::t("Log out"))
                                     }
                                 }
@@ -83,14 +81,14 @@ pub fn document(
                                     (i18n::t("Log in"))
                                 }
                                 a href="/register"
-                                   class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                                   class="rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                                     (i18n::t("Register"))
                                 }
                             }
                         }
                     }
                 }
-                main class="mx-auto w-full max-w-5xl grow px-4 py-10 sm:px-6 sm:py-14" {
+                main class="mx-auto w-full max-w-6xl grow px-4 py-9 sm:px-6 sm:py-12" {
                     (content)
                 }
                 footer class="mt-16 border-t border-hairline" {

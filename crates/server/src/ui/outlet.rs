@@ -29,7 +29,7 @@ pub fn leaning_bar(leaning: &str, compact: bool) -> Markup {
             div class="flex gap-0.5" title=(leaning_label(leaning)) {
                 @for i in 0..db::outlets::LEANINGS.len() {
                     div class={
-                        "h-2 w-5 border border-ink "
+                        "h-2 w-5 rounded-sm border border-hairline "
                         (if Some(i) == active { "bg-ink" } else { "bg-transparent" })
                     } {}
                 }
@@ -47,12 +47,12 @@ pub fn leaning_bar(leaning: &str, compact: bool) -> Markup {
 pub fn card(o: &db::outlets::OutletCard, country: &str) -> Markup {
     html! {
         a href={"/" (country) "/outlet/" (o.slug)}
-          class="flex items-center gap-4 border border-hairline px-4 py-3 transition-colors hover:border-ink" {
+          class="op-card op-card-link flex items-center gap-4 px-4 py-3" {
             @if let Some(ref logo) = o.logo_url {
                 img src=(logo) alt="" loading="lazy"
-                    class="h-8 w-8 shrink-0 border border-hairline object-contain";
+                    class="h-8 w-8 shrink-0 rounded border border-hairline object-contain";
             } @else {
-                span class="flex h-8 w-8 shrink-0 items-center justify-center border border-ink font-mono text-[11px] font-semibold text-ink-muted" {
+                span class="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-hairline bg-paper-sunken font-mono text-[11px] font-semibold text-ink-muted" {
                     (crate::ui::initials(&o.name))
                 }
             }

@@ -13,10 +13,8 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
         return html! {};
     }
     html! {
-        section class="mb-12" {
-            h2 class="mb-5 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
-                (i18n::t("Background"))
-            }
+        section class="mb-8" {
+            (crate::ui::section_header(i18n::t("Background"), None))
             @if !education.is_empty() {
                 div class="mb-6" {
                     h3 class="mb-3 text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
@@ -60,7 +58,7 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
                         div class="flex flex-wrap gap-2" {
                             @for a in &vals {
                                 a href=(a.source_url) target="_blank" rel="noopener noreferrer"
-                                  class="inline-flex items-center border border-hairline px-2 py-1 text-xs text-ink transition-colors hover:border-accent" {
+                                  class="inline-flex items-center rounded-md border border-hairline bg-paper-raised px-2.5 py-1 text-xs text-ink transition-colors hover:border-accent hover:text-accent" {
                                     (a.value)
                                 }
                             }

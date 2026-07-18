@@ -1,8 +1,8 @@
 use maud::{html, Markup};
 
-/// The primary action: a flat ink-filled block. No shadow, no press animation;
-/// hover shifts the fill to the accent.
-const PRIMARY: &str = "inline-flex items-center justify-center border border-ink bg-ink px-4 py-2 text-sm font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent";
+/// The primary action: an accent-filled rounded button with a soft shadow that
+/// deepens on hover, matching the dashboard card language.
+const PRIMARY: &str = "inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong";
 
 /// The primary submit button.
 pub fn primary(label: &str) -> Markup {

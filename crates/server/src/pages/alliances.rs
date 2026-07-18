@@ -26,32 +26,29 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Alliances").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Alliances"))
-                }
-                p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (alliances.len()) } " " (i18n::t("Alliances"))
-                }
-            }
+            (ui::page_header(
+                i18n::t("Alliances"),
+                Some(html! { span class="font-mono" { (alliances.len()) } " " (i18n::t("Alliances")) }),
+                None,
+            ))
 
             @if alliances.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No alliances yet.")) }
             } @else {
-                ul class="space-y-2.5" {
+                ul class="grid gap-3 sm:grid-cols-2" {
                     @for a in &alliances {
                         li {
                             a href={"/" (country.slug) "/alliance/" (a.slug)}
-                              class="block border border-hairline px-4 py-3 transition-colors hover:border-ink" {
+                              class="op-card op-card-link block px-4 py-3.5" {
                                 div class="flex items-baseline justify-between gap-3" {
                                     span class="text-sm font-medium text-ink" { (a.name) }
                                     // Active while not dissolved.
                                     @if a.dissolved_date.is_none() {
-                                        span class="shrink-0 border border-accent px-1.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
+                                        span class="shrink-0 rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
                                             (i18n::t("Active"))
                                         }
                                     } @else {
-                                        span class="shrink-0 border border-hairline px-1.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                                        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
                                             (i18n::t("Inactive"))
                                         }
                                     }

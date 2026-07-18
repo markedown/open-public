@@ -41,7 +41,7 @@ pub async fn index(
 
     let content = html! {
         section class="mx-auto max-w-2xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Admin panel"))
             }
             p class="mt-4 max-w-prose text-sm text-ink-muted" {
@@ -57,7 +57,7 @@ pub async fn index(
                     (i18n::t("Review data conflicts"), "/admin/conflicts", open_conflicts),
                 ] {
                     a href=(href)
-                      class="flex items-center justify-between gap-3 border-[1.5px] border-ink px-5 py-3 transition-colors hover:border-accent" {
+                      class="flex items-center justify-between gap-3 rounded-lg border border-hairline px-5 py-3 transition-colors hover:border-accent" {
                         span class="text-sm font-medium text-ink" { (label) }
                         span class={"font-mono text-xs font-bold "
                             (if count > 0 { "text-accent" } else { "text-ink-muted" })} {
@@ -69,25 +69,25 @@ pub async fn index(
 
             // Each country's editing entry points, including its own outlets.
             @for (c, outlets) in &country_outlets {
-                section class={"mt-8 border-[1.5px] border-ink p-5 " (ui::CORNER_TICK)} {
+                section class="mt-8 op-card p-5" {
                     div class="flex items-baseline justify-between gap-3" {
-                        h2 class="font-serif text-xl font-semibold text-ink" { (c.name) }
+                        h2 class="text-xl font-bold text-ink" { (c.name) }
                     }
                     div class="mt-4 flex flex-wrap gap-2" {
                         a href={"/" (c.slug) "/people"}
-                          class="border border-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
                             (i18n::t("People"))
                         }
                         a href={"/" (c.slug) "/parties"}
-                          class="border border-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
                             (i18n::t("Parties"))
                         }
                         a href={"/admin/poll/new?country=" (c.slug)}
-                          class="border border-ink bg-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                             (i18n::t("Add poll"))
                         }
                         a href={"/admin/outlet/new?country=" (c.slug)}
-                          class="border border-ink bg-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                             (i18n::t("Add outlet"))
                         }
                     }
@@ -141,7 +141,7 @@ pub async fn summaries(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review summaries"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -166,12 +166,12 @@ pub async fn summaries(
                             form method="post" action={"/admin/summaries/" (d.id) "/publish"}
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="summary" rows="3"
-                                  class="w-full border border-hairline bg-paper p-2 text-sm text-ink" {
+                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
                                     (d.summary_draft)
                                 }
                                 div class="flex gap-2" {
                                     button type="submit"
-                                      class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Publish"))
                                     }
                                     button type="submit" formaction={"/admin/summaries/" (d.id) "/discard"}
@@ -250,7 +250,7 @@ pub async fn translations(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review translations"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -277,12 +277,12 @@ pub async fn translations(
                             form method="post" action={"/admin/translations/" (d.id) "/publish"}
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="text" rows="3"
-                                  class="w-full border border-hairline bg-paper p-2 text-sm text-ink" {
+                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
                                     (d.text)
                                 }
                                 div class="flex gap-2" {
                                     button type="submit"
-                                      class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Publish"))
                                     }
                                     button type="submit" formaction={"/admin/translations/" (d.id) "/discard"}
@@ -357,7 +357,7 @@ pub async fn conflicts(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Data conflicts"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -380,7 +380,7 @@ pub async fn conflicts(
                                 }
                                 form method="post" action={"/admin/conflicts/" (c.id) "/resolve"} {
                                     button type="submit"
-                                      class="border border-ink px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                                      class="rounded-lg border border-hairline px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
                                         (i18n::t("Mark resolved"))
                                     }
                                 }
@@ -460,7 +460,7 @@ fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) ->
             a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (name)
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Manage")) " · " (name)
             }
             p class="mt-2 text-sm text-ink-muted" {
@@ -473,7 +473,7 @@ fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) ->
                     (i18n::t("Add poll"), "poll"),
                 ] {
                     a href=(add(what))
-                      class="border border-ink bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                      class="rounded-lg bg-accent px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                         (label)
                     }
                 }
@@ -543,7 +543,7 @@ fn person_manage_page(
             a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (name)
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Manage")) " · " (name)
             }
             div class="mt-6 flex flex-wrap gap-2" {
@@ -553,14 +553,14 @@ fn person_manage_page(
                     (i18n::t("Add poll"), "poll"),
                 ] {
                     a href={"/admin/" (what) "/new?country=" (country) "&person=" (slug)}
-                      class="border border-ink bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                      class="rounded-lg bg-accent px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                         (label)
                     }
                 }
             }
 
             // Education.
-            h2 class="mt-10 mb-3 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
+            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                 (i18n::t("Education"))
             }
             @if !education.is_empty() {
@@ -589,7 +589,7 @@ fn person_manage_page(
             }
 
             // Attributes.
-            h2 class="mt-10 mb-3 border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
+            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                 (i18n::t("Attributes"))
             }
             @if !attributes.is_empty() {
@@ -610,7 +610,7 @@ fn person_manage_page(
                 div {
                     label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Kind")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         @for k in db::people::ATTRIBUTE_KINDS {
                             option value=(k) { (k) }
                         }
@@ -771,7 +771,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" { (heading) }
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" { (heading) }
             form class="mt-6 space-y-4" method="post" action="/admin/outlet" {
                 input type="hidden" name="country" value=(country);
                 (prefilled("name", i18n::t("Name"), "text", true, o.map(|x| x.name.as_str())))
@@ -782,7 +782,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
                 div {
                     label class="block text-sm font-medium text-ink" for="leaning" { (i18n::t("Political leaning")) }
                     select name="leaning" id="leaning"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         option value="" { (i18n::t("Unrated")) }
                         @for l in db::outlets::LEANINGS {
                             option value=(l) selected[o.and_then(|x| x.leaning.as_deref()) == Some(l)] {
@@ -794,7 +794,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
                 div {
                     label class="block text-sm font-medium text-ink" for="summary" { (i18n::t("Summary")) }
                     textarea name="summary" id="summary" rows="3"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         (o.map(|x| text(x.summary.as_deref())).unwrap_or_default())
                     }
                 }
@@ -811,7 +811,7 @@ fn prefilled(name: &str, label: &str, ty: &str, req: bool, value: Option<&str>) 
         div {
             label class="block text-sm font-medium text-ink" for=(name) { (label) }
             input type=(ty) name=(name) id=(name) required[req] value=(value.unwrap_or(""))
-                class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -938,7 +938,7 @@ pub async fn news_edit(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Edit news"))
             }
             a href=(item.url) rel="noopener" target="_blank"
@@ -950,7 +950,7 @@ pub async fn news_edit(
                 div {
                     label class="block text-sm font-medium text-ink" for="our_summary" { (i18n::t("Summary")) }
                     textarea name="our_summary" id="our_summary" rows="3"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         (item.our_summary.clone().unwrap_or_default())
                     }
                 }
@@ -958,7 +958,7 @@ pub async fn news_edit(
             }
 
             section class="mt-8 space-y-4" {
-                h2 class="border-b-2 border-accent pb-2 text-xs font-bold uppercase tracking-widest text-ink" {
+                h2 class="border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
                     (i18n::t("Relations"))
                 }
                 (linked(i18n::t("People"), "person", &item.people))
@@ -971,7 +971,7 @@ pub async fn news_edit(
                     input type="search" name="q" id="q" autocomplete="off"
                         hx-get={"/admin/news/" (id) "/search"} hx-target="#search-results"
                         hx-trigger="keyup changed delay:300ms, search"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                     noscript { button type="submit" class="mt-2 text-xs font-bold uppercase tracking-wide text-accent" { (i18n::t("Search")) } }
                 }
                 div id="search-results" {}
@@ -1037,7 +1037,7 @@ pub async fn news_relation_search(
                 a href={"/admin/news/" (id) "/edit"} class="text-xs text-ink-muted hover:text-accent" {
                     "← " (i18n::t("Edit news"))
                 }
-                h1 class="mt-2 font-serif text-2xl font-semibold text-ink" { (i18n::t("Attach a person or party")) }
+                h1 class="mt-2 text-2xl font-bold text-ink" { (i18n::t("Attach a person or party")) }
                 (list)
             }
         })
@@ -1127,7 +1127,7 @@ pub async fn news_form(
 
     let content = html! {
         section class="mx-auto max-w-xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Add news"))
             }
             form class="mt-6 space-y-4" method="post" action="/admin/news" {
@@ -1144,7 +1144,7 @@ pub async fn news_form(
                         (i18n::t("Summary"))
                     }
                     textarea name="our_summary" id="our_summary" rows="3"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
                 }
                 (ui::button::primary(i18n::t("Save")))
             }
@@ -1163,7 +1163,7 @@ fn field(name: &str, label: &str, ty: &str, req: bool) -> Markup {
         div {
             label class="block text-sm font-medium text-ink" for=(name) { (label) }
             input type=(ty) name=(name) id=(name) required[req]
-                class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -1234,7 +1234,7 @@ pub async fn statement_form(
 
     let content = html! {
         section class="mx-auto max-w-xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Add statement"))
             }
             form class="mt-6 space-y-4" method="post" action="/admin/statement" {
@@ -1247,14 +1247,14 @@ pub async fn statement_form(
                         (i18n::t("Statement"))
                     }
                     textarea name="text" id="text" rows="3" required
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
                 }
                 (field("url", i18n::t("Source URL"), "url", true))
                 (field("outlet", i18n::t("Outlet"), "text", false))
                 (field("stated_at", i18n::t("Date"), "date", false))
                 label class="flex items-center gap-2 pt-1 text-sm text-ink" {
                     input type="checkbox" name="is_paraphrase"
-                        class="h-4 w-4 border-[1.5px] border-ink accent-ink";
+                        class="h-4 w-4 rounded border border-hairline accent-accent";
                     (i18n::t("Paraphrase in our own words"))
                 }
                 (ui::button::primary(i18n::t("Save")))
@@ -1332,7 +1332,7 @@ pub async fn poll_form(
 
     let content = html! {
         section class="mx-auto max-w-xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Add poll"))
             }
             form class="mt-6 space-y-4" method="post" action="/admin/poll" {
@@ -1345,7 +1345,7 @@ pub async fn poll_form(
                 div {
                     label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         option value="single" { (i18n::t("Single choice")) }
                         option value="multi" { (i18n::t("Multiple choice")) }
                         option value="yesno" { (i18n::t("Yes / No")) }
@@ -1388,9 +1388,9 @@ fn option_row() -> Markup {
     html! {
         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
             input type="text" name="option" placeholder=(i18n::t("Option"))
-                class="block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
             input type="url" name="option_media" placeholder=(i18n::t("image URL"))
-                class="block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -1518,7 +1518,7 @@ pub async fn submissions(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review poll submissions"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -1565,14 +1565,14 @@ pub async fn submissions(
                             div class="mt-4 flex flex-wrap items-start gap-3 border-t border-hairline-light pt-3" {
                                 form method="post" action={"/admin/submissions/" (s.id) "/approve"} {
                                     button type="submit"
-                                        class="border border-ink bg-ink px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                                        class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Approve"))
                                     }
                                 }
                                 form method="post" action={"/admin/submissions/" (s.id) "/reject"}
                                      class="flex flex-1 flex-col gap-2" {
                                     input type="text" name="note" placeholder=(i18n::t("Reason (optional)"))
-                                        class="w-full border border-hairline bg-paper px-2 py-1.5 text-sm text-ink";
+                                        class="w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-sm text-ink";
                                     label class="flex items-center gap-2 text-xs text-ink-muted" {
                                         input type="checkbox" name="violation" value="on";
                                         (i18n::t("Policy violation (counts toward a ban)"))

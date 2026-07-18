@@ -19,14 +19,13 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str) -> Markup {
     let can_vote = matches!(viewer, Viewer::CanVote);
 
     html! {
-        article id={"poll-" (poll.slug)}
-                class={"border-[1.5px] border-ink bg-paper-raised p-7 " (crate::ui::CORNER_TICK)} {
-            h3 class="font-serif text-2xl font-medium leading-snug text-ink" { (poll.question) }
+        article id={"poll-" (poll.slug)} class="op-card p-6 sm:p-8" {
+            h3 class="text-2xl font-bold leading-snug tracking-tight text-ink" { (poll.question) }
 
             @if let Some(ref url) = poll.media_url {
                 figure class="mt-4" {
                     img src=(url) alt="" loading="lazy"
-                        class="max-h-56 w-full border border-hairline object-contain";
+                        class="max-h-56 w-full rounded-lg border border-hairline object-contain";
                     @if let Some(ref lic) = poll.media_license {
                         figcaption class="mt-1 font-mono text-[10px] text-ink-muted" { (lic) }
                     }
@@ -50,52 +49,76 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str) -> Markup {
                     @else { (i18n::t("Tap an option to vote.")) }
                 },
                 Viewer::Anonymous => p class="mt-1 text-sm text-ink-muted" {
-                    a href="/login" class="text-accent hover:underline" { (i18n::t("Log in to vote.")) }
+                    a href="/login" class="font-medium text-accent hover:underline" { (i18n::t("Log in to vote.")) }
                 },
             }
         }
     }
 }
 
-/// Read-only poll previews for a person or party page: question plus current
-/// results, each linking to the full poll. Renders nothing when there are none
-/// and no admin add affordance.
-pub fn poll_previews(polls: &[Poll], country: &str, add_href: Option<&str>) -> Markup {
+/// Read-only poll previews for a country, person or party page: each poll is a
+/// card with its question and current results, linking to the full poll. Shows
+/// at most `limit` cards, laid out two-up, with an optional "see all" link and
+/// admin add affordance in the header. Renders nothing when there is nothing to
+/// show.
+pub fn poll_previews(
+    polls: &[Poll],
+    country: &str,
+    limit: Option<usize>,
+    see_all: Option<&str>,
+    add_href: Option<&str>,
+) -> Markup {
     if polls.is_empty() && add_href.is_none() {
         return html! {};
     }
-    html! {
-        section class="mb-12" {
-            div class="mb-5 flex items-center justify-between gap-3 border-b-2 border-accent pb-2" {
-                h2 class="text-xs font-bold uppercase tracking-widest text-ink" { (i18n::t("Polls")) }
-                @if let Some(href) = add_href {
-                    a href=(href) class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
-                        "+ " (i18n::t("Add poll"))
-                    }
+    let shown: &[Poll] = match limit {
+        Some(n) if polls.len() > n => &polls[..n],
+        _ => polls,
+    };
+    let action = html! {
+        div class="flex items-center gap-4" {
+            @if let Some(href) = add_href {
+                a href=(href) class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+                    "+ " (i18n::t("Add poll"))
                 }
             }
+            @if let Some(href) = see_all { (crate::ui::see_all_link(href)) }
+        }
+    };
+    html! {
+        section class="mb-8" {
+            (crate::ui::section_header(i18n::t("Polls"), Some(action)))
             @if polls.is_empty() {
                 p class="text-sm text-ink-muted" { (i18n::t("No polls yet.")) }
-            }
-            div class="space-y-5" {
-                @for poll in polls {
-                    @let total: i64 = poll.options.iter().map(|o| o.votes).sum();
-                    a href={"/" (country) "/poll/" (poll.slug)}
-                      class="block border border-hairline p-4 transition-colors hover:border-ink" {
-                        span class="text-sm font-medium text-ink" { (poll.question) }
-                        div class="mt-3 space-y-1.5" {
-                            @for opt in &poll.options {
-                                @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
-                                div class="relative overflow-hidden border border-hairline-light" {
-                                    (result_row(&opt.label, pct, opt.votes, opt.media_url.as_deref()))
-                                }
-                            }
-                        }
-                        p class="mt-2 font-mono text-[11px] text-ink-muted" {
-                            (format!("{} {}", total, i18n::t("votes")))
-                        }
+            } @else {
+                div class="grid gap-4 sm:grid-cols-2" {
+                    @for poll in shown {
+                        (poll_preview_card(poll, country))
                     }
                 }
+            }
+        }
+    }
+}
+
+/// One poll rendered as a preview card: the question, its option tallies, and
+/// the total vote count, the whole card linking to the poll's own page.
+fn poll_preview_card(poll: &Poll, country: &str) -> Markup {
+    let total: i64 = poll.options.iter().map(|o| o.votes).sum();
+    html! {
+        a href={"/" (country) "/poll/" (poll.slug)}
+          class="op-card op-card-link flex flex-col p-5" {
+            span class="text-[15px] font-semibold leading-snug text-ink" { (poll.question) }
+            div class="mt-4 space-y-1.5" {
+                @for opt in &poll.options {
+                    @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
+                    div class="relative overflow-hidden rounded-md bg-paper-sunken" {
+                        (result_row(&opt.label, pct, opt.votes, opt.media_url.as_deref()))
+                    }
+                }
+            }
+            p class="mt-3 font-mono text-[11px] text-ink-muted" {
+                (format!("{} {}", total, i18n::t("votes")))
             }
         }
     }
@@ -106,15 +129,15 @@ pub fn poll_previews(polls: &[Poll], country: &str, add_href: Option<&str>) -> M
 fn result_row(label: &str, pct: i64, votes: i64, media: Option<&str>) -> Markup {
     html! {
         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
-        div class="relative flex items-center justify-between gap-3 px-4 py-3 text-sm" {
+        div class="relative flex items-center justify-between gap-3 px-3 py-2.5 text-sm" {
             div class="flex min-w-0 items-center gap-3" {
                 @if let Some(url) = media {
                     img src=(url) alt="" loading="lazy"
-                        class="h-9 w-9 shrink-0 border border-hairline object-cover";
+                        class="h-9 w-9 shrink-0 rounded border border-hairline object-cover";
                 }
                 span class="truncate text-ink" { (label) }
             }
-            span class="shrink-0 font-mono font-semibold text-ink" { (pct) "% · " (votes) }
+            span class="shrink-0 font-mono text-xs font-semibold text-ink" { (pct) "% · " (votes) }
         }
     }
 }
@@ -152,7 +175,7 @@ fn stacked_options(poll: &Poll, total: i64, can_vote: bool, action: &str, target
                 @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
                 (option_control(
                     can_vote, action, target, opt.id,
-                    "relative block w-full overflow-hidden border border-hairline text-left transition-colors hover:border-ink",
+                    "relative block w-full overflow-hidden rounded-lg border border-hairline text-left transition-colors hover:border-accent",
                     result_row(&opt.label, pct, opt.votes, opt.media_url.as_deref()),
                 ))
             }
@@ -177,13 +200,13 @@ fn grid_options(
                 @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
                 (option_control(
                     can_vote, action, target, opt.id,
-                    "relative grow basis-24 overflow-hidden border-[1.5px] border-ink px-3 py-4 text-center transition-colors hover:border-accent",
+                    "relative grow basis-24 overflow-hidden rounded-lg border border-hairline px-3 py-4 text-center transition-colors hover:border-accent",
                     html! {
                         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
                         div class="relative" {
                             @if let Some(url) = opt.media_url.as_deref() {
                                 img src=(url) alt="" loading="lazy"
-                                    class="mx-auto mb-2 h-20 w-20 border border-hairline object-cover";
+                                    class="mx-auto mb-2 h-20 w-20 rounded border border-hairline object-cover";
                             }
                             div class="text-sm font-semibold text-ink" { (opt.label) }
                             div class="mt-1 font-mono text-xs text-ink-muted" { (pct) "% · " (opt.votes) }
@@ -205,13 +228,13 @@ fn multi_options(poll: &Poll, total: i64, action: &str, target: &str) -> Markup 
             div class="space-y-2.5" {
                 @for opt in &poll.options {
                     @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
-                    label class="relative flex cursor-pointer items-center gap-3 overflow-hidden border border-hairline px-4 py-3 transition-colors hover:border-ink" {
+                    label class="relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-lg border border-hairline px-4 py-3 transition-colors hover:border-accent" {
                         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
                         input type="checkbox" name="option_id" value=(opt.id)
-                            class="relative z-10 h-4 w-4 shrink-0 border border-ink accent-ink";
+                            class="relative z-10 h-4 w-4 shrink-0 rounded border border-hairline accent-accent";
                         @if let Some(url) = opt.media_url.as_deref() {
                             img src=(url) alt="" loading="lazy"
-                                class="relative z-10 h-9 w-9 shrink-0 border border-hairline object-cover";
+                                class="relative z-10 h-9 w-9 shrink-0 rounded border border-hairline object-cover";
                         }
                         span class="relative z-10 grow text-sm text-ink" { (opt.label) }
                         span class="relative z-10 shrink-0 font-mono text-sm font-semibold text-ink" {
@@ -221,7 +244,7 @@ fn multi_options(poll: &Poll, total: i64, action: &str, target: &str) -> Markup 
                 }
             }
             button type="submit"
-                class="mt-3 border border-ink bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:border-accent hover:bg-accent" {
+                class="mt-3 rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                 (i18n::t("Vote"))
             }
         }

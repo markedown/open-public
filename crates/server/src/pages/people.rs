@@ -39,11 +39,7 @@ pub async fn list(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("People").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("People"))
-                }
-            }
+            (ui::page_header(i18n::t("People"), None, None))
             (ui::search::bar(&list_url, "#people-results", &query))
 
             // The search box swaps this container in place as the query changes.
@@ -55,12 +51,12 @@ pub async fn list(
                 @if people.is_empty() {
                     p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No people found.")) }
                 } @else {
-                    ul class="divide-y divide-hairline-light" {
+                    ul class="op-card divide-y divide-hairline-light px-4" {
                         @for p in &people {
                             li {
                                 a href={"/" (country.slug) "/people/" (p.slug)}
                                   class="group flex items-center gap-3 py-3" {
-                                    span class="flex h-7 w-7 shrink-0 items-center justify-center border border-ink font-mono text-[10px] font-semibold text-ink" {
+                                    span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline bg-paper-sunken font-mono text-[10px] font-semibold text-ink-muted" {
                                         (ui::initials(&p.full_name))
                                     }
                                     span class="grow text-sm font-medium text-ink transition-colors group-hover:text-accent" {
@@ -112,8 +108,9 @@ fn pagination(page: i64, total: i64, country_slug: &str, query: &str) -> Markup 
     } else {
         format!("&q={}", percent_encode(query))
     };
-    let box_active = "border border-ink px-4 py-2 text-ink-muted transition-colors hover:border-accent hover:text-accent";
-    let box_disabled = "border border-hairline px-4 py-2 text-ink-muted/40 cursor-default";
+    let box_active = "rounded-lg border border-hairline px-4 py-2 text-ink-muted transition-colors hover:border-accent hover:text-accent";
+    let box_disabled =
+        "rounded-lg border border-hairline px-4 py-2 text-ink-muted/40 cursor-default";
     html! {
         nav class="mt-8 flex items-center justify-center gap-4 text-sm" {
             @if page > 1 {

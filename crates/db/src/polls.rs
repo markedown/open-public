@@ -286,6 +286,41 @@ pub async fn list_for_country(pool: &Pool, country_id: i64) -> Result<Vec<PollLi
     Ok(rows)
 }
 
+/// Every poll belonging to a country whose question matches the query, newest
+/// first, for the searchable index. A blank query lists all of the country's
+/// polls. Matching is accent- and case-insensitive, consistent with the people
+/// and party search.
+pub async fn list_filtered_for_country(
+    pool: &Pool,
+    country_id: i64,
+    query: &str,
+) -> Result<Vec<PollListItem>> {
+    let q = query.trim();
+    if q.is_empty() {
+        return list_for_country(pool, country_id).await;
+    }
+    let pattern = format!("%{q}%");
+    let rows = sqlx::query_as!(
+        PollListItem,
+        r#"
+        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as "votes!"
+        from polls p
+        left join poll_votes v on v.poll_id = p.id
+        where (p.country_id = $1
+           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
+           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))
+          and unaccent(p.question) ilike unaccent($2)
+        group by p.id
+        order by p.id desc
+        "#,
+        country_id,
+        pattern,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
 /// Full polls (with options and tallies) attached directly to a country
 /// (country-level questions, not tied to a single party or person), newest
 /// first, so the country page can show results inline.

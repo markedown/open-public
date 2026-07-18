@@ -24,11 +24,7 @@ pub async fn detail(
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Timeline").to_string(), href: None },
             ]))
-            header class="mb-8 border-b-2 border-accent pb-4" {
-                h1 class="font-serif text-4xl font-semibold tracking-tight text-ink" {
-                    (i18n::t("Timeline"))
-                }
-            }
+            (ui::page_header(i18n::t("Timeline"), None, None))
             @if events.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No events yet.")) }
             } @else {

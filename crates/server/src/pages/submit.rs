@@ -47,9 +47,9 @@ fn option_row_markup() -> Markup {
     html! {
         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
             input type="text" name="option" placeholder=(i18n::t("Option"))
-                class="block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
             input type="file" name="option_image" accept="image/png,image/jpeg,image/webp"
-                class="block w-full text-sm text-ink-muted file:mr-3 file:border file:border-ink file:bg-paper file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
+                class="block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
         }
     }
 }
@@ -75,7 +75,7 @@ fn submit_page(
     let rows = option_labels.len().max(3);
     let content = html! {
         section class="mx-auto max-w-xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Propose a poll"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -83,7 +83,7 @@ fn submit_page(
             }
 
             @if let Some(err) = error {
-                p class="mt-4 border-l-2 border-accent bg-paper-raised px-3 py-2 text-sm text-ink" { (err) }
+                p class="mt-4 rounded-lg border-l-2 border-accent bg-accent-tint px-3 py-2 text-sm text-ink" { (err) }
             }
 
             form class="mt-6 space-y-4" method="post"
@@ -93,13 +93,13 @@ fn submit_page(
                 div {
                     label class="block text-sm font-medium text-ink" for="question" { (i18n::t("Question")) }
                     input type="text" name="question" id="question" required value=(question)
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                 }
 
                 div {
                     label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         @for (value, label) in KINDS {
                             option value=(value) selected[value == kind] { (i18n::t(label)) }
                         }
@@ -112,7 +112,7 @@ fn submit_page(
                     }
                     input type="file" name="question_image" id="question_image"
                         accept="image/png,image/jpeg,image/webp"
-                        class="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:border file:border-ink file:bg-paper file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
+                        class="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
                     p class="mt-1 text-xs text-ink-muted" {
                         (i18n::t("PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."))
                     }
@@ -126,9 +126,9 @@ fn submit_page(
                         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
                             input type="text" name="option" placeholder=(i18n::t("Option"))
                                 value=(option_labels.get(i).map(String::as_str).unwrap_or(""))
-                                class="block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                             input type="file" name="option_image" accept="image/png,image/jpeg,image/webp"
-                                class="block w-full text-sm text-ink-muted file:mr-3 file:border file:border-ink file:bg-paper file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
+                                class="block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
                         }
                     }
                 }
@@ -329,7 +329,7 @@ pub async fn mine(
     let subs = db::submissions::for_submitter(&state.pool, session.user_id).await?;
     let content = html! {
         section class="mx-auto max-w-2xl" {
-            h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("My submissions"))
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
@@ -342,7 +342,7 @@ pub async fn mine(
             } @else {
                 ul class="mt-6 space-y-3" {
                     @for s in &subs {
-                        li class="border border-hairline p-4" {
+                        li class="op-card p-4" {
                             div class="flex items-baseline justify-between gap-3" {
                                 span class="text-sm font-medium text-ink" { (s.question) }
                                 (status_badge(&s.status))
@@ -352,7 +352,7 @@ pub async fn mine(
                             }
                             @if let Some(ref sha) = s.question_sha {
                                 img src={"/media/" (sha)} alt="" loading="lazy"
-                                    class="mt-2 max-h-32 border border-hairline object-contain";
+                                    class="mt-2 max-h-32 rounded-lg border border-hairline object-contain";
                             }
                             @if matches!(s.status.as_str(), "approved") {
                                 @if let Some(pid) = s.published_poll_id {
@@ -392,7 +392,7 @@ fn status_badge(status: &str) -> Markup {
         _ => i18n::t("Not accepted"),
     };
     html! {
-        span class="shrink-0 border border-hairline px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
             (label)
         }
     }

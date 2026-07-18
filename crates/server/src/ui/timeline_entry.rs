@@ -26,7 +26,7 @@ pub fn timeline_list(entries: impl Iterator<Item = Entry>) -> Markup {
 fn timeline_entry(entry: Entry) -> Markup {
     html! {
         div class="relative ml-2 border-l border-hairline pb-6 pl-8 last:border-l-0 last:pb-0" {
-            div class="absolute left-0 top-1.5 h-2.5 w-2.5 -translate-x-1/2 border border-ink bg-paper" {}
+            div class="absolute left-0 top-1.5 h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-accent bg-paper-raised" {}
 
             @if !entry.kind.is_empty() {
                 div class="mb-0.5" {

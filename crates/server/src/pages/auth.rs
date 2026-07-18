@@ -193,7 +193,7 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
         false,
         html! {
             section class="mx-auto max-w-md" {
-                h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+                h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t(title))
                 }
                 @if let Some(msg) = message {
@@ -206,7 +206,7 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                         }
                         input
                             type="email" name="email" id="email" required autocomplete="email"
-                            class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                            class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                     }
                     div {
                         label class="block text-sm font-medium text-ink" for="password" {
@@ -216,12 +216,12 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                             input
                                 type="password" name="password" id="password" required
                                 autocomplete="current-password"
-                                class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                         } @else {
                             input
                                 type="password" name="password" id="password" required minlength="8"
                                 autocomplete="new-password"
-                                class="mt-1 block w-full border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                         }
                     }
                     (ui::button::primary(i18n::t(title)))
@@ -262,7 +262,7 @@ fn verified_page() -> Markup {
         false,
         html! {
             section class="mx-auto max-w-md" {
-                h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+                h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t("Email verified"))
                 }
                 p class="mt-3 text-sm text-ink-muted" {
@@ -283,7 +283,7 @@ fn notice_page(title: &'static str, body: &str) -> Markup {
         false,
         html! {
             section class="mx-auto max-w-md" {
-                h1 class="font-serif text-3xl font-semibold tracking-tight text-ink" {
+                h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t(title))
                 }
                 p class="mt-3 text-sm text-ink-muted" { (body) }
