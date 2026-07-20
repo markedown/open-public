@@ -879,3 +879,9 @@ msgstr "Référence"
 
 msgid "Add"
 msgstr "Ajouter"
+
+msgid "Bill"
+msgstr "Proposition de loi"
+
+msgid "Court application"
+msgstr "Recours constitutionnel"

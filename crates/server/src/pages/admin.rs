@@ -2067,9 +2067,11 @@ pub struct EvidenceForm {
 
 /// The evidence kinds an admin can record, stated intention first, then the
 /// recorded acts that outrank it when a stance is resolved.
-const EVIDENCE_KINDS: [&str; 6] = [
+const EVIDENCE_KINDS: [&str; 8] = [
     "manifesto",
     "statement",
+    "bill",
+    "court",
     "vote",
     "law",
     "decree",

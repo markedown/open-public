@@ -879,3 +879,9 @@ msgstr "Fundstelle"
 
 msgid "Add"
 msgstr "Hinzufügen"
+
+msgid "Bill"
+msgstr "Gesetzentwurf"
+
+msgid "Court application"
+msgstr "Verfassungsklage"

@@ -159,6 +159,8 @@ fn thesis_field(number: usize, t: &db::compass::Thesis) -> Markup {
 /// promise from a recorded act at a glance.
 fn kind_label(kind: &str) -> &'static str {
     match kind {
+        "bill" => i18n::t("Bill"),
+        "court" => i18n::t("Court application"),
         "vote" => i18n::t("Vote"),
         "law" => i18n::t("Law"),
         "decree" => i18n::t("Decree"),
