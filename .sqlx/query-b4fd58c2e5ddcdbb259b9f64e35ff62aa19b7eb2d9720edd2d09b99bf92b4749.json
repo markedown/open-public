@@ -1,0 +1,53 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select distinct on (e.thesis_id, e.party_id)\n               e.thesis_id, e.party_id, e.stance\n        from position_evidence e\n        join theses t on t.id = e.thesis_id\n        where t.country_id = $1\n        order by e.thesis_id, e.party_id,\n                 case when e.kind = any($2) then 0 else 1 end,\n                 e.occurred_on desc nulls last, e.id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "thesis_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "thesis_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "party_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "party_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "stance",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "stance"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "b4fd58c2e5ddcdbb259b9f64e35ff62aa19b7eb2d9720edd2d09b99bf92b4749"
+}

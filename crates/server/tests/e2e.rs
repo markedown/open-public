@@ -4677,12 +4677,12 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
         .unwrap();
     // test-partisi agrees with both positions; diger-parti opposes both.
     for (thesis, stance) in [(t1, 2i16), (t2, 2)] {
-        db::compass::set_position(&pool, thesis, tp, stance, None, src)
+        db::compass::add_evidence(&pool, thesis, tp, "manifesto", stance, None, None, src)
             .await
             .unwrap();
     }
     for (thesis, stance) in [(t1, -2i16), (t2, -2)] {
-        db::compass::set_position(&pool, thesis, other, stance, None, src)
+        db::compass::add_evidence(&pool, thesis, other, "manifesto", stance, None, None, src)
             .await
             .unwrap();
     }
@@ -4815,11 +4815,11 @@ async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
 
     // Recording a stance makes the public compass score that party.
     let stance = format!(
-        "party_id={party}&stance=2&justification=Party+programme&source_url=https://example.org/s1"
+        "party_id={party}&kind=manifesto&stance=2&quote=Party+programme&source_url=https://example.org/s1"
     );
     let resp = post_form(
         &app,
-        &format!("/admin/compass/thesis/{thesis}/stance"),
+        &format!("/admin/compass/thesis/{thesis}/evidence"),
         &stance,
         Some(&cookie),
     )
@@ -4843,16 +4843,20 @@ async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
         "stance source is linked"
     );
 
-    // Clearing the stance drops it again.
+    // Clearing the stance drops the evidence it rested on.
+    let evidence_id: i64 = sqlx::query_scalar("select id from position_evidence")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
     let resp = post_form(
         &app,
-        &format!("/admin/compass/thesis/{thesis}/stance/{party}/delete"),
+        &format!("/admin/compass/thesis/{thesis}/evidence/{evidence_id}/delete"),
         "",
         Some(&cookie),
     )
     .await;
     assert_eq!(resp.status(), StatusCode::SEE_OTHER);
-    let remaining: i64 = sqlx::query_scalar("select count(*) from party_positions")
+    let remaining: i64 = sqlx::query_scalar("select count(*) from position_evidence")
         .fetch_one(&pool)
         .await
         .unwrap();
@@ -4921,10 +4925,75 @@ async fn compass_admin_rejects_bad_input_and_unknown_targets(pool: db::Pool) {
         .unwrap();
     let resp = post_form(
         &app,
-        &format!("/admin/compass/thesis/{thesis}/stance"),
-        &format!("party_id={party}&stance=5&source_url=https://example.org/s"),
+        &format!("/admin/compass/thesis/{thesis}/evidence"),
+        &format!("party_id={party}&kind=manifesto&stance=5&source_url=https://example.org/s"),
         Some(&cookie),
     )
     .await;
     assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let party: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let thesis = db::compass::add_thesis(&pool, country_id, "Bir konu.", None, 1, src)
+        .await
+        .unwrap();
+
+    // The party pledged one thing in its manifesto and later legislated the
+    // opposite. A manifesto-only compass would report the pledge.
+    db::compass::add_evidence(
+        &pool,
+        thesis,
+        party,
+        "manifesto",
+        2,
+        Some("beyanname s.10"),
+        NaiveDate::from_ymd_opt(2023, 5, 1),
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        thesis,
+        party,
+        "law",
+        -2,
+        Some("Kanun 7000"),
+        NaiveDate::from_ymd_opt(2024, 3, 1),
+        src,
+    )
+    .await
+    .unwrap();
+
+    // A visitor who strongly agrees matches the record (-2), not the pledge, so
+    // the party scores 0% rather than 100%.
+    let body = body_string(
+        post_form(
+            &app,
+            "/tr/compass",
+            &format!("a{thesis}=2"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(body.contains("0%"), "scored against the recorded act");
+    assert!(
+        !body.contains("100%"),
+        "the pledge must not decide the score"
+    );
+
+    // Both pieces of evidence are shown, and the disagreement is marked rather
+    // than hidden.
+    assert!(body.contains("Pledge differs from record"));
+    assert!(body.contains("Manifesto") && body.contains("Law"));
+    assert!(body.contains("beyanname s.10") && body.contains("Kanun 7000"));
 }

@@ -155,6 +155,19 @@ fn thesis_field(number: usize, t: &db::compass::Thesis) -> Markup {
     }
 }
 
+/// A short label for what a piece of evidence is, so a reader can tell a
+/// promise from a recorded act at a glance.
+fn kind_label(kind: &str) -> &'static str {
+    match kind {
+        "vote" => i18n::t("Vote"),
+        "law" => i18n::t("Law"),
+        "decree" => i18n::t("Decree"),
+        "alliance" => i18n::t("Alliance"),
+        "statement" => i18n::t("Statement"),
+        _ => i18n::t("Manifesto"),
+    }
+}
+
 /// POST `/{country}/compass`: score the submitted answers and render the match.
 /// The body is read as raw key/value pairs because the field set is dynamic (one
 /// group per position). Answers are used only to compute the result here.
@@ -169,6 +182,7 @@ pub async fn result(
         .ok_or(PageError::NotFound)?;
     let theses = db::compass::theses_for_country(&pool, country.id).await?;
     let positions = db::compass::positions_for_country(&pool, country.id).await?;
+    let evidence = db::compass::evidence_for_country(&pool, country.id).await?;
     let parties = db::parties::list(&pool, country.id).await?;
     let by_id: HashMap<i64, &Party> = parties.iter().map(|p| (p.id, p)).collect();
 
@@ -242,7 +256,7 @@ pub async fn result(
                     }
                     (methodology_note())
 
-                    (comparison(&theses, &positions, &answered, &by_id))
+                    (comparison(&theses, &positions, &evidence, &answered, &by_id))
                 }
 
                 div class="mt-8 border-t border-hairline pt-5" {
@@ -286,10 +300,13 @@ fn score_row(rank: usize, s: &compass::PartyScore, party: &Party, country: &str)
 }
 
 /// The per-position breakdown: for each answered position, the visitor's answer
-/// and every party's recorded stance on it, so the ranking above is inspectable.
+/// and every party's stance, with the evidence each stance rests on. Where a
+/// party's pledges and its recorded acts point opposite ways, both are shown and
+/// the disagreement is marked rather than hidden.
 fn comparison(
     theses: &[db::compass::Thesis],
     positions: &[db::compass::Position],
+    evidence: &[db::compass::Evidence],
     answered: &HashMap<i64, i8>,
     by_id: &HashMap<i64, &Party>,
 ) -> Markup {
@@ -305,29 +322,62 @@ fn comparison(
                                 (i18n::t("Your answer")) ": "
                                 span class="font-semibold text-ink" { (value_label(mine)) }
                             }
-                            // Each stance carries its own source, so a reader can
-                            // check any position rather than take it on trust.
-                            ul class="mt-2.5 space-y-1.5" {
+                            ul class="mt-2.5 space-y-2.5" {
                                 @for p in positions.iter().filter(|p| p.thesis_id == t.id) {
                                     @if let Some(party) = by_id.get(&p.party_id) {
-                                        li class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {
-                                            (ui::badge::party_chip(
-                                                party.short_name.as_deref().unwrap_or(&party.name),
-                                                party.color.as_deref(),
-                                            ))
-                                            span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
-                                                (value_label(p.stance as i8))
-                                            }
-                                            @if let Some(j) = &p.justification {
-                                                span class="text-xs text-ink-muted" { (j) }
-                                            }
-                                            (ui::citation::source_marker(&p.source_url))
+                                        li {
+                                            (party_stance(t.id, p, party, evidence))
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+/// One party's stance on one position: the resolved value, a marker when its
+/// pledges and its record disagree, and every piece of evidence with its source.
+fn party_stance(
+    thesis_id: i64,
+    position: &db::compass::Position,
+    party: &Party,
+    evidence: &[db::compass::Evidence],
+) -> Markup {
+    let items: Vec<&db::compass::Evidence> = evidence
+        .iter()
+        .filter(|e| e.thesis_id == thesis_id && e.party_id == position.party_id)
+        .collect();
+    // A party is in conflict with itself when its evidence points both ways.
+    let diverges = items.iter().any(|e| e.stance > 0) && items.iter().any(|e| e.stance < 0);
+    html! {
+        div class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {
+            (ui::badge::party_chip(
+                party.short_name.as_deref().unwrap_or(&party.name),
+                party.color.as_deref(),
+            ))
+            span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+                (value_label(position.stance as i8))
+            }
+            @if diverges {
+                span class="rounded border border-hairline px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink" {
+                    (i18n::t("Pledge differs from record"))
+                }
+            }
+        }
+        ul class="mt-1 space-y-0.5 pl-1" {
+            @for e in &items {
+                li class="flex flex-wrap items-baseline gap-x-2 text-xs text-ink-muted" {
+                    span class="font-mono text-[10px] uppercase tracking-wide text-ink" { (kind_label(&e.kind)) }
+                    span { (value_label(e.stance as i8)) }
+                    @if let Some(d) = e.occurred_on {
+                        span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) }
+                    }
+                    @if let Some(q) = &e.quote { span { (q) } }
+                    (ui::citation::source_marker(&e.source_url))
                 }
             }
         }

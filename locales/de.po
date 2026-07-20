@@ -855,3 +855,27 @@ msgstr "Die Parteien sind danach geordnet, wie genau ihre hinterlegten Positione
 
 msgid "Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
 msgstr "Die Positionen der Parteien sind hier unsere Lesart des jeweils veröffentlichten Parteiprogramms, keine Aussagen der Parteien selbst. Jede Position ist mit ihrer Quelle verlinkt, sodass sie überprüft und bei Fehlern korrigiert werden kann."
+
+msgid "Law"
+msgstr "Gesetz"
+
+msgid "Decree"
+msgstr "Verordnung"
+
+msgid "Manifesto"
+msgstr "Wahlprogramm"
+
+msgid "Pledge differs from record"
+msgstr "Zusage weicht vom Handeln ab"
+
+msgid "Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."
+msgstr "Halten Sie fest, was jede Partei versprochen und was sie tatsächlich getan hat. Bei der Ermittlung der Position geht eine belegte Handlung einer Zusage vor; widersprechen sie einander, werden beide gezeigt."
+
+msgid "Evidence"
+msgstr "Beleg"
+
+msgid "Reference"
+msgstr "Fundstelle"
+
+msgid "Add"
+msgstr "Hinzufügen"
