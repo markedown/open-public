@@ -4997,3 +4997,69 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
     assert!(body.contains("Manifesto") && body.contains("Law"));
     assert!(body.contains("beyanname s.10") && body.contains("Kanun 7000"));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, other) = two_parties(&pool, country_id, src).await;
+    let thesis = db::compass::add_thesis(&pool, country_id, "Bir yasa konusu.", None, 1, src)
+        .await
+        .unwrap();
+
+    // A party that cannot legislate still acts: it tables a bill, or asks the
+    // Constitutional Court to annul a law. Both must outrank a manifesto pledge,
+    // otherwise only a governing party is ever judged on its record.
+    db::compass::add_evidence(
+        &pool,
+        thesis,
+        tp,
+        "manifesto",
+        -2,
+        Some("beyanname"),
+        NaiveDate::from_ymd_opt(2023, 1, 1),
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        thesis,
+        tp,
+        "court",
+        2,
+        Some("iptal davası"),
+        NaiveDate::from_ymd_opt(2024, 1, 1),
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        thesis,
+        other,
+        "bill",
+        2,
+        Some("kanun teklifi"),
+        NaiveDate::from_ymd_opt(2024, 1, 1),
+        src,
+    )
+    .await
+    .unwrap();
+
+    let body = body_string(
+        post_form(
+            &app,
+            "/tr/compass",
+            &format!("a{thesis}=2"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    // The court application decides, not the pledge, so the party matches fully.
+    assert!(body.contains("100%"));
+    assert!(body.contains("Pledge differs from record"));
+    assert!(body.contains("Court application") && body.contains("Bill"));
+}

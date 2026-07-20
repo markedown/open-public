@@ -891,3 +891,9 @@ msgstr "Künye"
 
 msgid "Add"
 msgstr "Ekle"
+
+msgid "Bill"
+msgstr "Kanun teklifi"
+
+msgid "Court application"
+msgstr "Anayasa Mahkemesi başvurusu"

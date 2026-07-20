@@ -54,7 +54,11 @@ pub struct Position {
 /// The evidence kinds that record what a party actually did, as opposed to what
 /// it said it would do. These outrank stated intention when a stance is
 /// resolved, so a party is measured by its actions where they exist.
-pub const RECORDED_ACTION: [&str; 4] = ["vote", "law", "decree", "alliance"];
+///
+/// Includes the acts available to a party that cannot legislate: tabling a bill
+/// and asking the Constitutional Court to annul a law. Without those, only a
+/// governing party could ever be judged on its record.
+pub const RECORDED_ACTION: [&str; 6] = ["bill", "court", "vote", "law", "decree", "alliance"];
 
 /// Every party's effective stance on the country's theses.
 ///
