@@ -762,3 +762,66 @@ msgstr "Un registre public de données politiques."
 
 msgid "Every chamber, at a glance."
 msgstr "Chaque chambre, en un coup d'œil."
+
+msgid "Strongly disagree"
+msgstr "Pas du tout d'accord"
+
+msgid "Disagree"
+msgstr "Pas d'accord"
+
+msgid "Neutral"
+msgstr "Neutre"
+
+msgid "Agree"
+msgstr "D'accord"
+
+msgid "Strongly agree"
+msgstr "Tout à fait d'accord"
+
+msgid "Compass"
+msgstr "Boussole"
+
+msgid "positions"
+msgstr "propositions"
+
+msgid "No positions have been recorded for this country yet."
+msgstr "Aucune proposition n'a encore été enregistrée pour ce pays."
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Indiquez votre position sur chaque proposition. Marquez comme importantes celles qui comptent pour vous afin qu'elles pèsent davantage. Rien de ce que vous saisissez n'est conservé : votre correspondance est calculée sur le moment et jamais enregistrée."
+
+msgid "See my match"
+msgstr "Voir ma correspondance"
+
+msgid "Skip"
+msgstr "Passer"
+
+msgid "Important"
+msgstr "Important"
+
+msgid "Your match"
+msgstr "Votre correspondance"
+
+msgid "You did not answer any positions, so there is nothing to match."
+msgstr "Vous n'avez répondu à aucune proposition, il n'y a donc rien à comparer."
+
+msgid "Go back"
+msgstr "Retour"
+
+msgid "Positions answered"
+msgstr "Propositions répondues"
+
+msgid "No party has recorded a stance on the positions you answered."
+msgstr "Aucun parti n'a de position enregistrée sur les propositions auxquelles vous avez répondu."
+
+msgid "Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."
+msgstr "Les partis sont classés selon la proximité de leurs positions enregistrées avec vos réponses. Chaque position est sourcée sur la page du parti."
+
+msgid "Start over"
+msgstr "Recommencer"
+
+msgid "How the parties compare"
+msgstr "Comparaison des partis"
+
+msgid "Your answer"
+msgstr "Votre réponse"

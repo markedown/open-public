@@ -62,6 +62,10 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}/elections", get(pages::elections::list))
         .route("/{country}/election/{slug}", get(pages::elections::detail))
         .route("/{country}/history", get(pages::history::detail))
+        .route(
+            "/{country}/compass",
+            get(pages::compass::form).post(pages::compass::result),
+        )
         .route("/{country}/news", get(pages::news::list))
         .route("/{country}/news/{id}", get(pages::news::detail))
         .route("/{country}/outlets", get(pages::outlets::list))

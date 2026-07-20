@@ -762,3 +762,66 @@ msgstr "Ein öffentliches Register politischer Daten."
 
 msgid "Every chamber, at a glance."
 msgstr "Jede Kammer auf einen Blick."
+
+msgid "Strongly disagree"
+msgstr "Stimme überhaupt nicht zu"
+
+msgid "Disagree"
+msgstr "Stimme nicht zu"
+
+msgid "Neutral"
+msgstr "Neutral"
+
+msgid "Agree"
+msgstr "Stimme zu"
+
+msgid "Strongly agree"
+msgstr "Stimme voll zu"
+
+msgid "Compass"
+msgstr "Kompass"
+
+msgid "positions"
+msgstr "Thesen"
+
+msgid "No positions have been recorded for this country yet."
+msgstr "Für dieses Land wurden noch keine Thesen erfasst."
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Geben Sie an, wo Sie zu jeder These stehen. Markieren Sie die Ihnen wichtigen Thesen, damit sie stärker zählen. Nichts, was Sie eingeben, wird gespeichert: Ihre Übereinstimmung wird sofort berechnet und nie gespeichert."
+
+msgid "See my match"
+msgstr "Meine Übereinstimmung anzeigen"
+
+msgid "Skip"
+msgstr "Überspringen"
+
+msgid "Important"
+msgstr "Wichtig"
+
+msgid "Your match"
+msgstr "Ihre Übereinstimmung"
+
+msgid "You did not answer any positions, so there is nothing to match."
+msgstr "Sie haben keine These beantwortet, daher gibt es nichts zu vergleichen."
+
+msgid "Go back"
+msgstr "Zurück"
+
+msgid "Positions answered"
+msgstr "Beantwortete Thesen"
+
+msgid "No party has recorded a stance on the positions you answered."
+msgstr "Keine Partei hat zu den von Ihnen beantworteten Thesen eine Position hinterlegt."
+
+msgid "Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."
+msgstr "Die Parteien sind danach geordnet, wie genau ihre hinterlegten Positionen zu Ihren Antworten passen. Jede Position ist auf der Seite der Partei mit Quelle belegt."
+
+msgid "Start over"
+msgstr "Von vorne beginnen"
+
+msgid "How the parties compare"
+msgstr "Wie die Parteien im Vergleich stehen"
+
+msgid "Your answer"
+msgstr "Ihre Antwort"

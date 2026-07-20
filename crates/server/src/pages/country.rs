@@ -87,6 +87,7 @@ pub async fn detail(
     // is omitted, so a newly added country shows only what it actually has. The
     // full history (Timeline) lives on its own page and is reached from here,
     // not rendered inline on the country page.
+    let theses = db::compass::count_theses(&pool, country.id).await?;
     let chips = [
         (i18n::t("People"), "people", counts.people),
         (i18n::t("Parties"), "parties", counts.parties),
@@ -94,6 +95,7 @@ pub async fn detail(
         (i18n::t("Elections"), "elections", counts.elections),
         (i18n::t("News"), "news", counts.news),
         (i18n::t("Polls"), "polls", counts.polls),
+        (i18n::t("Compass"), "compass", theses),
         (i18n::t("Timeline"), "history", counts.events),
     ];
 
