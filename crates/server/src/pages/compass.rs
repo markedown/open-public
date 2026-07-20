@@ -33,6 +33,19 @@ fn scale() -> [(i8, &'static str); 5] {
     ]
 }
 
+/// How the party stances were arrived at, stated plainly wherever they are
+/// shown. They are our readings of each party's published programme, not
+/// statements by the parties, and every one links to its source so a reader can
+/// check it. If a party states its own position, that becomes the stance's
+/// source instead, so this claim never overstates what is behind the data.
+fn methodology_note() -> Markup {
+    html! {
+        p class="mt-4 max-w-prose text-xs text-ink-muted" {
+            (i18n::t("Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
+        }
+    }
+}
+
 /// The label for a stance or answer value on the shared scale.
 fn value_label(value: i8) -> &'static str {
     scale()
@@ -73,8 +86,11 @@ pub async fn form(
                     (i18n::t("No positions have been recorded for this country yet."))
                 }
             } @else {
-                p class="mb-8 max-w-prose text-sm text-ink-muted" {
-                    (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
+                div class="mb-8" {
+                    p class="max-w-prose text-sm text-ink-muted" {
+                        (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
+                    }
+                    (methodology_note())
                 }
                 form method="post" action=(action) class="space-y-8" {
                     @for (i, t) in theses.iter().enumerate() {
@@ -222,8 +238,9 @@ pub async fn result(
                         }
                     }
                     p class="mt-5 max-w-prose text-xs text-ink-muted" {
-                        (i18n::t("Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."))
+                        (i18n::t("Parties are ranked by how closely their recorded stances match your answers."))
                     }
+                    (methodology_note())
 
                     (comparison(&theses, &positions, &answered, &by_id))
                 }
@@ -288,16 +305,23 @@ fn comparison(
                                 (i18n::t("Your answer")) ": "
                                 span class="font-semibold text-ink" { (value_label(mine)) }
                             }
-                            div class="mt-2.5 flex flex-wrap gap-1.5" {
+                            // Each stance carries its own source, so a reader can
+                            // check any position rather than take it on trust.
+                            ul class="mt-2.5 space-y-1.5" {
                                 @for p in positions.iter().filter(|p| p.thesis_id == t.id) {
                                     @if let Some(party) = by_id.get(&p.party_id) {
-                                        span title={(party.name) ": " (value_label(p.stance as i8))}
-                                          class="inline-flex items-center gap-1.5 rounded-md border border-hairline px-1.5 py-1" {
+                                        li class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {
                                             (ui::badge::party_chip(
                                                 party.short_name.as_deref().unwrap_or(&party.name),
                                                 party.color.as_deref(),
                                             ))
-                                            span class="font-mono text-[10px] text-ink-muted" { (value_label(p.stance as i8)) }
+                                            span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+                                                (value_label(p.stance as i8))
+                                            }
+                                            @if let Some(j) = &p.justification {
+                                                span class="text-xs text-ink-muted" { (j) }
+                                            }
+                                            (ui::citation::source_marker(&p.source_url))
                                         }
                                     }
                                 }

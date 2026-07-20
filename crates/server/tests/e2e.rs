@@ -4651,6 +4651,7 @@ async fn compass_form_lists_positions_and_country_links_to_it(pool: db::Pool) {
     assert!(body.contains("Strongly agree"));
     assert!(body.contains("Skip"));
     assert!(body.contains("See my match"));
+    assert!(body.contains("not statements by the parties themselves"));
 
     // The country page surfaces the compass once it has positions.
     let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
@@ -4703,6 +4704,13 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
     // The per-position breakdown shows the visitor's own answer.
     assert!(body.contains("Your answer"));
     assert!(body.contains("How the parties compare"));
+    // Every stance is checkable: its source is linked, not merely stored, and
+    // the page states these are our readings rather than party statements.
+    assert!(
+        body.contains("https://example.test/compass"),
+        "each stance links to its source"
+    );
+    assert!(body.contains("not statements by the parties themselves"));
 
     // Stateless: submitting again yields the same result, nothing accumulates,
     // and no answer rows are written (there is no table that could hold them).
@@ -4829,6 +4837,11 @@ async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
     )
     .await;
     assert!(public.contains("Test Partisi") && public.contains("100%"));
+    assert!(public.contains("Party programme"), "justification is shown");
+    assert!(
+        public.contains("https://example.org/s1"),
+        "stance source is linked"
+    );
 
     // Clearing the stance drops it again.
     let resp = post_form(
