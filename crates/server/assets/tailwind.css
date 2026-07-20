@@ -3,23 +3,48 @@
 /* Tailwind scans the maud templates (Rust source) for class names. */
 @source "../src/**/*.rs";
 
-/* Self-hosted fonts only (no CDN, for privacy). All three cover Turkish
-   (İ ı ğ ş ç ö ü). Public Sans is the UI/body face; Petrona is the display
-   serif for the wordmark and headings; IBM Plex Mono marks verifiable figures
-   (record counts, citation chits). */
+/* Self-hosted fonts only (no CDN, for privacy). All cover Turkish (İ ı ğ ş ç ö
+   ü). Archivo (heavy) is the display voice: a grotesque with the squared,
+   civic-signage character of official notices. Public Sans carries running
+   prose; IBM Plex Mono marks data (seat counts, shares, dates, source chits). */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latin-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latinext-700.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latin-800.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/static/fonts/Archivo-latinext-800.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+}
 @font-face {
   font-family: "Public Sans";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
   src: url("/static/fonts/PublicSans.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Petrona";
-  font-style: normal;
-  font-weight: 400 900;
-  font-display: swap;
-  src: url("/static/fonts/Petrona.woff2") format("woff2");
 }
 @font-face {
   font-family: "IBM Plex Mono";
@@ -37,47 +62,50 @@
 }
 
 @theme {
+  --font-display: "Archivo", "Public Sans", ui-sans-serif, sans-serif;
   --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Petrona", ui-serif, Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: "Archivo", ui-sans-serif, sans-serif;
 
-  /* Cool "civic dashboard" chrome: a slate neutral scale on near-white cards.
-     Saturated party colour still appears only inside data (badges, bars,
-     charts), never as chrome. */
-  --color-paper: oklch(98.2% 0.004 264);        /* app background, cool slate-50 */
-  --color-paper-raised: oklch(100% 0 0);        /* cards, pure white */
-  --color-paper-sunken: oklch(96.4% 0.005 264); /* insets, tracks */
-  --color-ink: oklch(28% 0.03 264);             /* near-black slate */
-  --color-ink-muted: oklch(52% 0.025 264);      /* secondary text */
-  --color-hairline: oklch(91% 0.008 264);       /* card borders */
-  --color-hairline-light: oklch(94.5% 0.005 264);
+  /* Quiet chrome, loud data. The interface is a near-neutral document tone so
+     that the one place colour appears, the seat compositions of real chambers,
+     carries all the signal. Colour is data; the chrome has no hue of its own.
+     Light only for launch. */
+  --color-paper: oklch(96.6% 0.003 250);        /* document off-white */
+  --color-paper-raised: oklch(99% 0.0015 250);  /* records */
+  --color-paper-sunken: oklch(93.2% 0.004 250); /* tracks, insets */
+  --color-ink: oklch(21% 0.012 260);            /* near-black, faint cool */
+  --color-ink-muted: oklch(44% 0.009 260);      /* secondary */
+  --color-ink-faint: oklch(60% 0.006 260);      /* meta */
+  --color-hairline: oklch(87% 0.004 255);       /* structure */
+  --color-hairline-light: oklch(91% 0.004 255);
+  --color-hairline-strong: oklch(72% 0.006 258);/* emphasis rules */
 
-  /* Brand accent: indigo. Distinct from every party's signature colour, so it
-     never reads as a political allegiance. Used for links, actions and focus. */
-  --color-accent: oklch(51% 0.20 277);          /* ~ #5b57d8 */
-  --color-accent-strong: oklch(45% 0.21 277);
-  --color-accent-tint: oklch(96% 0.03 280);
+  /* Bridge: pages not yet rebuilt reference an accent; map it to ink so the
+     interface stays monochrome (emphasis is weight and inversion, never a hue)
+     until each page moves onto the new language. */
+  --color-accent: oklch(21% 0.012 260);
+  --color-accent-strong: oklch(12% 0.012 260);
+  --color-accent-tint: oklch(93.2% 0.004 250);
 
-  /* Rounded surfaces and soft depth for the dashboard card language. */
-  --radius-card: 0.875rem;
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 16px -6px rgba(15, 23, 42, 0.08);
-  --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 12px 28px -8px rgba(79, 70, 229, 0.14);
+  --radius-card: 0px;
 }
 
-/* A reusable card surface for the dashboard layout. */
+/* The register's surfaces and marks. */
 @layer components {
   .op-card {
     background: var(--color-paper-raised);
     border: 1px solid var(--color-hairline);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
   }
   .op-card-link {
-    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    transition: border-color 0.12s ease, background-color 0.12s ease;
   }
   .op-card-link:hover {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
+    border-color: var(--color-ink);
+  }
+  /* The solid ink block: an emphasis primitive (inverted chips, marks). */
+  .op-block {
+    background: var(--color-ink);
+    color: var(--color-paper);
   }
 }

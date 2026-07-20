@@ -768,3 +768,9 @@ msgstr "Yerine geçer"
 
 msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
 msgstr "Her önerilen özet, siz inceleyene kadar yayınlanmaz. Gerekirse metni düzenleyin, ardından onaylayın veya taslağı silin."
+
+msgid "A public register of political data."
+msgstr "Siyasi verilerin açık bir kaydı."
+
+msgid "Every chamber, at a glance."
+msgstr "Her meclis, tek bakışta."

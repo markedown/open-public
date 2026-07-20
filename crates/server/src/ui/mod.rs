@@ -10,6 +10,7 @@ pub mod citation;
 pub mod election;
 pub mod event;
 pub mod follow;
+pub mod hemicycle;
 pub mod layout;
 pub mod news;
 pub mod outlet;

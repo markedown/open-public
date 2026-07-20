@@ -12,6 +12,9 @@ pub fn document(
         Some(t) => format!("{t} · {SITE_NAME}"),
         None => SITE_NAME.to_string(),
     };
+    // Nav links share one monospace, uppercase, underline-on-hover style: the
+    // register has no coloured controls.
+    let link = "text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
     html! {
         (DOCTYPE)
         html lang=(i18n::lang_code()) {
@@ -27,78 +30,61 @@ pub fn document(
                 script src="/static/htmx.min.js" defer {}
             }
             body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased" {
-                header class="sticky top-0 z-20 border-b border-hairline bg-paper-raised/85 backdrop-blur-md" {
-                    nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6" {
-                        a href="/" class="inline-flex shrink-0 items-center gap-2 text-[18px] font-bold tracking-tight text-ink" {
-                            span class="grid h-6 w-6 place-items-center rounded-md bg-accent text-[13px] font-black text-white" { "o" }
-                            (SITE_NAME)
+                header class="sticky top-0 z-20 border-b border-hairline-strong bg-paper" {
+                    nav class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" {
+                        a href="/" class="inline-flex shrink-0 items-center" {
+                            img src="/static/brand/wordmark.svg" alt=(SITE_NAME)
+                                class="h-[18px] w-auto";
                         }
-                        div class="flex items-center gap-4 text-[13px] font-medium sm:gap-5" {
-                            // Language switcher: a native dropdown (no JavaScript),
-                            // so it scales as more languages are added. Selecting
-                            // one sets a cookie and returns to the current page.
+                        div class="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wide sm:gap-5" {
+                            // Language switcher: a native dropdown (no JavaScript).
                             details class="group relative" {
-                                summary class="flex cursor-pointer list-none items-center gap-1 font-mono text-[11px] font-bold text-ink-muted transition-colors hover:text-accent [&::-webkit-details-marker]:hidden" {
+                                summary class="flex cursor-pointer list-none items-center gap-1 text-ink-muted transition-colors hover:text-ink [&::-webkit-details-marker]:hidden" {
                                     (i18n::current().label())
-                                    span class="text-[8px] leading-none transition-transform group-open:rotate-180" { "▼" }
+                                    span class="text-[7px] leading-none transition-transform group-open:rotate-180" { "▼" }
                                 }
-                                div class="absolute right-0 z-30 mt-2 min-w-[9rem] border border-hairline bg-paper py-1 shadow-sm" {
+                                div class="absolute right-0 z-30 mt-2 min-w-[9rem] border border-hairline bg-paper-raised py-1" {
                                     @for lang in i18n::Lang::ALL {
                                         a href={"/lang/" (lang.code())}
                                           class=(if lang.is_active() {
-                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[12px] font-medium text-ink"
+                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[11px] text-ink"
                                           } else {
-                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[12px] font-medium text-ink-muted transition-colors hover:bg-paper-raised hover:text-accent"
+                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[11px] text-ink-muted transition-colors hover:bg-paper-sunken hover:text-ink"
                                           }) {
-                                            span { (lang.name()) }
-                                            span class="font-mono text-[10px] font-bold" { (lang.label()) }
+                                            span class="normal-case" { (lang.name()) }
+                                            span { (lang.label()) }
                                         }
                                     }
                                 }
                             }
-                            // People and parties are reached through a country or
-                            // through search, never as a global cross-country list.
-                            a href="/search" class="text-ink-muted transition-colors hover:text-accent" {
-                                (i18n::t("Search"))
-                            }
+                            a href="/search" class=(link) { (i18n::t("Search")) }
                             @if is_admin {
-                                a href="/admin" class="text-ink-muted transition-colors hover:text-accent" {
-                                    (i18n::t("Admin panel"))
-                                }
+                                a href="/admin" class=(link) { (i18n::t("Admin panel")) }
                             }
                             @if logged_in {
-                                a href="/feed" class="text-ink-muted transition-colors hover:text-accent" {
-                                    (i18n::t("Feed"))
-                                }
-                                a href="/submissions" class="text-ink-muted transition-colors hover:text-accent" {
-                                    (i18n::t("My submissions"))
-                                }
+                                a href="/feed" class=(link) { (i18n::t("Feed")) }
+                                a href="/submissions" class=(link) { (i18n::t("My submissions")) }
                                 form method="post" action="/logout" {
-                                    button type="submit"
-                                        class="rounded-lg border border-hairline bg-paper-raised px-3 py-1.5 text-[12px] font-medium text-ink-muted transition-colors hover:border-accent hover:text-accent" {
-                                        (i18n::t("Log out"))
-                                    }
+                                    button type="submit" class=(link) { (i18n::t("Log out")) }
                                 }
                             } @else {
-                                a href="/login" class="text-ink-muted transition-colors hover:text-accent" {
-                                    (i18n::t("Log in"))
-                                }
+                                a href="/login" class=(link) { (i18n::t("Log in")) }
                                 a href="/register"
-                                   class="rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                                   class="border border-ink bg-ink px-3.5 py-1.5 font-semibold text-paper transition-colors hover:bg-paper hover:text-ink" {
                                     (i18n::t("Register"))
                                 }
                             }
                         }
                     }
                 }
-                main class="mx-auto w-full max-w-6xl grow px-4 py-9 sm:px-6 sm:py-12" {
+                main class="mx-auto w-full max-w-6xl grow px-4 py-8 sm:px-6 sm:py-12" {
                     (content)
                 }
-                footer class="mt-16 border-t border-hairline" {
-                    div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-6 text-xs font-medium text-ink-muted sm:px-6" {
+                footer class="mt-16 border-t border-hairline-strong" {
+                    div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 font-mono text-[11px] uppercase tracking-wide text-ink-faint sm:px-6" {
                         span { (i18n::t("Open political data.")) }
                         nav class="flex gap-4" {
-                            a href="/search" class="transition-colors hover:text-accent" { (i18n::t("Search")) }
+                            a href="/search" class="transition-colors hover:text-ink" { (i18n::t("Search")) }
                         }
                     }
                 }

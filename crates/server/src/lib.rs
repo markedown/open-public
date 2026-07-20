@@ -250,8 +250,7 @@ const COMING_SOON_HTML: &str = r#"<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>open-public</title>
 <style>
-:root{--paper:#f5f5f3;--ink:#141414;--muted:#6a6a68;--rule:#dcdcda;--block:#141414}
-@media (prefers-color-scheme:dark){:root{--paper:#0b0b0b;--ink:#ededeb;--muted:#86867f;--rule:#232322;--block:#ededeb}}
+:root{--paper:#f0f1f3;--ink:#22242a;--muted:#6a6c72;--rule:#d5d7db;--block:#22242a}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{background:var(--paper);color:var(--ink);font:400 15px/1.55 ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;display:flex;align-items:center;justify-content:center;padding:6vw;-webkit-font-smoothing:antialiased}
