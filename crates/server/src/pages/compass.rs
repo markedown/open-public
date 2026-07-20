@@ -296,7 +296,15 @@ fn score_row(rank: usize, s: &compass::PartyScore, party: &Party, country: &str)
                       style={(width) ";background-color:" (party.color.as_deref().unwrap_or("#33527a"))} {}
                 }
             }
-            span class="shrink-0 font-mono text-sm font-semibold tabular-nums text-ink" { (pct) }
+            span class="shrink-0 text-right" {
+                span class="block font-mono text-sm font-semibold tabular-nums text-ink" { (pct) }
+                // How many positions the percentage actually rests on. Without
+                // this a party scored on three positions looks as solid as one
+                // scored on twenty.
+                span class="block font-mono text-[10px] text-ink-muted" {
+                    (s.matched) " " (i18n::t("positions"))
+                }
+            }
         }
     }
 }

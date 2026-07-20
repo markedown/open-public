@@ -4701,6 +4701,13 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
     let first = body.find("Test Partisi").expect("test-partisi in results");
     let second = body.find("Diger Parti").expect("diger-parti in results");
     assert!(first < second, "closer party ranked first");
+    // The percentage states how many positions it rests on, so a party scored
+    // on few positions cannot look as solid as one scored on many.
+    assert!(
+        body.contains("2 positions"),
+        "match shows its evidence base"
+    );
+
     // The per-position breakdown shows the visitor's own answer.
     assert!(body.contains("Your answer"));
     assert!(body.contains("How the parties compare"));
