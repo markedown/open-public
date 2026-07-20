@@ -6,6 +6,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/markedown/open-public/releases"><img alt="Latest release" src="https://img.shields.io/github/v/release/markedown/open-public?label=version&color=33527a"></a>
   <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/markedown/open-public/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/markedown/open-public/actions/workflows/verify-production.yml"><img alt="Production verified" src="https://github.com/markedown/open-public/actions/workflows/verify-production.yml/badge.svg"></a>
   <a href="https://github.com/markedown/open-public/actions/workflows/ci.yml"><img alt="Coverage: at least 97%" src="https://img.shields.io/badge/coverage-%E2%89%A597%25-brightgreen.svg"></a>
@@ -88,6 +89,25 @@ source commit and public workflow that built it, that production is pinned to an
 against those attested digests, and that an independent public job confirms the running digest. It
 does not, on its own, defeat a malicious host that forges `/version`; that would require hardware
 remote attestation, which is out of scope and is never claimed.
+
+## Versioning
+
+Releases follow [Semantic Versioning](https://semver.org). The project is pre-1.0, which under SemVer
+means what it says: this is initial development, and anything may still change.
+
+While on `0.x`:
+
+- **`0.x.0` (minor)** for user-visible features, and for any release carrying a database migration.
+  Migrations are append-only and are applied to production deliberately, so a release that changes
+  the schema is always worth signalling.
+- **`0.x.y` (patch)** for fixes, copy and translation updates: no migration, no new surface.
+
+`1.0.0` is reserved for public launch: the construction notice off, and a documented, stable schema
+for the public data dumps. Those dumps are the closest thing this project has to a public API, so
+they are the compatibility surface a major version should track once anyone depends on them.
+
+Pushing a `v*` tag builds and attests the image and publishes a [GitHub Release](https://github.com/markedown/open-public/releases)
+recording the attested digest, so every version is traceable to exactly what was deployed.
 
 ## Quickstart
 
