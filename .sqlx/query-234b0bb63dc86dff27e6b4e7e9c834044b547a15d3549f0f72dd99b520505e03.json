@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select pp.thesis_id, pp.party_id, pp.stance\n        from party_positions pp\n        join theses t on t.id = pp.thesis_id\n        where t.country_id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "thesis_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "party_positions",
+            "name": "thesis_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "party_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "party_positions",
+            "name": "party_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "stance",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "party_positions",
+            "name": "stance"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "234b0bb63dc86dff27e6b4e7e9c834044b547a15d3549f0f72dd99b520505e03"
+}

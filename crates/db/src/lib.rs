@@ -5,6 +5,7 @@ use sqlx::postgres::{PgPool, PgPoolOptions};
 
 pub mod alliances;
 pub mod assets;
+pub mod compass;
 pub mod conflicts;
 pub mod country;
 pub mod elections;
