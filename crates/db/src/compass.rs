@@ -67,6 +67,32 @@ pub async fn positions_for_country(pool: &Pool, country_id: i64) -> Result<Vec<P
     Ok(rows)
 }
 
+/// A thesis with the country it belongs to, for the admin pages that work on a
+/// single thesis and need to scope parties and links to its country.
+pub struct ThesisDetail {
+    pub id: i64,
+    pub text: String,
+    pub country_id: i64,
+    pub country_slug: String,
+}
+
+/// One thesis by id, with its country.
+pub async fn get_thesis(pool: &Pool, id: i64) -> Result<Option<ThesisDetail>> {
+    let row = sqlx::query_as!(
+        ThesisDetail,
+        r#"
+        select t.id, t.text, t.country_id, c.slug as country_slug
+        from theses t
+        join countries c on c.id = t.country_id
+        where t.id = $1
+        "#,
+        id,
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(row)
+}
+
 /// Insert a thesis; returns its id.
 pub async fn add_thesis(
     pool: &Pool,
@@ -110,6 +136,57 @@ pub async fn set_position(
         stance,
         justification,
         source_id,
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+/// Delete a thesis; its party positions cascade.
+pub async fn delete_thesis(pool: &Pool, id: i64) -> Result<()> {
+    sqlx::query!("delete from theses where id = $1", id)
+        .execute(pool)
+        .await?;
+    Ok(())
+}
+
+/// A party of the thesis's country with its stance (if any) on that thesis, for
+/// the admin positions grid.
+pub struct StanceRow {
+    pub party_id: i64,
+    pub party_name: String,
+    pub short_name: Option<String>,
+    pub color: Option<String>,
+    pub stance: Option<i16>,
+    pub justification: Option<String>,
+}
+
+/// Every party of the thesis's country with its stance, where one is recorded.
+pub async fn stances_for_thesis(pool: &Pool, thesis_id: i64) -> Result<Vec<StanceRow>> {
+    let rows = sqlx::query_as!(
+        StanceRow,
+        r#"
+        select p.id as party_id, p.name as party_name, p.short_name, p.color,
+               pp.stance as "stance?", pp.justification
+        from theses t
+        join parties p on p.country_id = t.country_id
+        left join party_positions pp on pp.thesis_id = t.id and pp.party_id = p.id
+        where t.id = $1
+        order by p.name collate "name_sort"
+        "#,
+        thesis_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// Remove a party's stance on a thesis.
+pub async fn clear_position(pool: &Pool, thesis_id: i64, party_id: i64) -> Result<()> {
+    sqlx::query!(
+        "delete from party_positions where thesis_id = $1 and party_id = $2",
+        thesis_id,
+        party_id,
     )
     .execute(pool)
     .await?;

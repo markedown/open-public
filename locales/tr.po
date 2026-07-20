@@ -837,3 +837,30 @@ msgstr "Partiler nasıl karşılaştırılıyor"
 
 msgid "Your answer"
 msgstr "Yanıtınız"
+
+msgid "Compass positions"
+msgstr "Pusula önermeleri"
+
+msgid "Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."
+msgstr "Her önerme bir kaynak gerektirir, üzerindeki her parti tutumu da öyle. Ziyaretçiler bunları yanıtlar; yanıtları hiçbir zaman saklanmaz."
+
+msgid "Position"
+msgstr "Önerme"
+
+msgid "Order"
+msgstr "Sıra"
+
+msgid "Add position"
+msgstr "Önerme ekle"
+
+msgid "Stances"
+msgstr "Tutumlar"
+
+msgid "Record where each party stands. A party with no stance is left out of that party's match."
+msgstr "Her partinin nerede durduğunu kaydedin. Tutumu olmayan bir parti, o parti için eşleşmenin dışında bırakılır."
+
+msgid "Stance"
+msgstr "Tutum"
+
+msgid "Clear stance"
+msgstr "Tutumu temizle"

@@ -825,3 +825,30 @@ msgstr "Comparaison des partis"
 
 msgid "Your answer"
 msgstr "Votre réponse"
+
+msgid "Compass positions"
+msgstr "Propositions de la boussole"
+
+msgid "Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."
+msgstr "Chaque proposition doit être sourcée, tout comme chaque position de parti à son sujet. Les visiteurs y répondent ; leurs réponses ne sont jamais conservées."
+
+msgid "Position"
+msgstr "Proposition"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Add position"
+msgstr "Ajouter une proposition"
+
+msgid "Stances"
+msgstr "Positions"
+
+msgid "Record where each party stands. A party with no stance is left out of that party's match."
+msgstr "Enregistrez la position de chaque parti. Un parti sans position est exclu de sa propre correspondance."
+
+msgid "Stance"
+msgstr "Position"
+
+msgid "Clear stance"
+msgstr "Effacer la position"

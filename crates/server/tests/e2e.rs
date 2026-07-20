@@ -4744,3 +4744,174 @@ async fn compass_reports_when_no_party_has_a_stance(pool: db::Pool) {
     let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
     assert!(body.contains("No party has recorded a stance"));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // The locale is pinned so the assertions below read in one language.
+    let cookie = format!("{}; lang=en", admin_cookie(&pool).await);
+    let party: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // The whole compass backoffice is a plain 404 for signed-out visitors.
+    for uri in [
+        &format!("/admin/compass?country={COUNTRY}")[..],
+        "/admin/compass/thesis/1",
+    ] {
+        assert_eq!(
+            get(&app, uri).await.status(),
+            StatusCode::NOT_FOUND,
+            "{uri}"
+        );
+    }
+    assert_eq!(
+        post_form(
+            &app,
+            "/admin/compass/thesis",
+            "country=tr&text=x&source_url=https://e.test",
+            None
+        )
+        .await
+        .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // The admin sees the (empty) positions page and adds one, sourced.
+    let page = get_cookie(&app, &format!("/admin/compass?country={COUNTRY}"), &cookie).await;
+    assert_eq!(page.status(), StatusCode::OK);
+    assert!(body_string(page)
+        .await
+        .contains("No positions have been recorded"));
+
+    let form = "country=tr&text=Vergiler+dusurulmeli.&position=1&source_url=https://example.org/p1";
+    let resp = post_form(&app, "/admin/compass/thesis", form, Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    let thesis: i64 = sqlx::query_scalar("select id from theses")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let listed =
+        body_string(get_cookie(&app, &format!("/admin/compass?country={COUNTRY}"), &cookie).await)
+            .await;
+    assert!(listed.contains("Vergiler dusurulmeli."));
+
+    // The stance grid lists every party of the country.
+    let grid =
+        body_string(get_cookie(&app, &format!("/admin/compass/thesis/{thesis}"), &cookie).await)
+            .await;
+    assert!(grid.contains("Test Partisi"));
+
+    // Recording a stance makes the public compass score that party.
+    let stance = format!(
+        "party_id={party}&stance=2&justification=Party+programme&source_url=https://example.org/s1"
+    );
+    let resp = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/stance"),
+        &stance,
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    let public = body_string(
+        post_form(
+            &app,
+            "/tr/compass",
+            &format!("a{thesis}=2"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(public.contains("Test Partisi") && public.contains("100%"));
+
+    // Clearing the stance drops it again.
+    let resp = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/stance/{party}/delete"),
+        "",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let remaining: i64 = sqlx::query_scalar("select count(*) from party_positions")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(remaining, 0);
+
+    // Deleting the position removes it from the country's compass.
+    let resp = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/delete"),
+        "",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let left: i64 = sqlx::query_scalar("select count(*) from theses")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(left, 0);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_admin_rejects_bad_input_and_unknown_targets(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cookie = format!("{}; lang=en", admin_cookie(&pool).await);
+
+    // An unknown country, or a position that does not exist, is a 404.
+    assert_eq!(
+        get_cookie(&app, "/admin/compass?country=nowhere", &cookie)
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get_cookie(&app, "/admin/compass/thesis/9999", &cookie)
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        post_form(&app, "/admin/compass/thesis/9999/delete", "", Some(&cookie))
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // Blank text is refused, so a position is never stored without content.
+    let resp = post_form(
+        &app,
+        "/admin/compass/thesis",
+        "country=tr&text=+&source_url=https://example.org/p",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+
+    // A stance outside the five-point scale is refused.
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let thesis = db::compass::add_thesis(&pool, country_id, "Bir onerme.", None, 1, src)
+        .await
+        .unwrap();
+    let party: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let resp = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/stance"),
+        &format!("party_id={party}&stance=5&source_url=https://example.org/s"),
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}

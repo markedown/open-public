@@ -127,6 +127,27 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
             "/admin/translations/{id}/discard",
             post(pages::admin::translation_discard),
         )
+        .route("/admin/compass", get(pages::admin::compass))
+        .route(
+            "/admin/compass/thesis",
+            post(pages::admin::compass_thesis_create),
+        )
+        .route(
+            "/admin/compass/thesis/{id}",
+            get(pages::admin::compass_thesis),
+        )
+        .route(
+            "/admin/compass/thesis/{id}/delete",
+            post(pages::admin::compass_thesis_delete),
+        )
+        .route(
+            "/admin/compass/thesis/{id}/stance",
+            post(pages::admin::compass_stance_set),
+        )
+        .route(
+            "/admin/compass/thesis/{id}/stance/{party_id}/delete",
+            post(pages::admin::compass_stance_clear),
+        )
         .route("/admin/conflicts", get(pages::admin::conflicts))
         .route(
             "/admin/conflicts/{id}/resolve",
