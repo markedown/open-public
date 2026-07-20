@@ -814,9 +814,6 @@ msgstr "Beantwortete Thesen"
 msgid "No party has recorded a stance on the positions you answered."
 msgstr "Keine Partei hat zu den von Ihnen beantworteten Thesen eine Position hinterlegt."
 
-msgid "Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."
-msgstr "Die Parteien sind danach geordnet, wie genau ihre hinterlegten Positionen zu Ihren Antworten passen. Jede Position ist auf der Seite der Partei mit Quelle belegt."
-
 msgid "Start over"
 msgstr "Von vorne beginnen"
 
@@ -852,3 +849,9 @@ msgstr "Position"
 
 msgid "Clear stance"
 msgstr "Position entfernen"
+
+msgid "Parties are ranked by how closely their recorded stances match your answers."
+msgstr "Die Parteien sind danach geordnet, wie genau ihre hinterlegten Positionen zu Ihren Antworten passen."
+
+msgid "Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Die Positionen der Parteien sind hier unsere Lesart des jeweils veröffentlichten Parteiprogramms, keine Aussagen der Parteien selbst. Jede Position ist mit ihrer Quelle verlinkt, sodass sie überprüft und bei Fehlern korrigiert werden kann."

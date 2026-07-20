@@ -826,9 +826,6 @@ msgstr "Yanıtlanan önermeler"
 msgid "No party has recorded a stance on the positions you answered."
 msgstr "Yanıtladığınız önermeler hakkında hiçbir partinin kayıtlı tutumu yok."
 
-msgid "Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."
-msgstr "Partiler, kayıtlı tutumlarının yanıtlarınıza ne kadar yakın olduğuna göre sıralanır. Her tutum, partinin sayfasında kaynağıyla belirtilir."
-
 msgid "Start over"
 msgstr "Baştan başla"
 
@@ -864,3 +861,9 @@ msgstr "Tutum"
 
 msgid "Clear stance"
 msgstr "Tutumu temizle"
+
+msgid "Parties are ranked by how closely their recorded stances match your answers."
+msgstr "Partiler, kayıtlı tutumlarının yanıtlarınıza ne kadar yakın olduğuna göre sıralanır."
+
+msgid "Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Buradaki parti tutumları, her partinin yayımlanmış programını bizim okuyuşumuzdur; partilerin kendi açıklamaları değildir. Her tutum kaynağına bağlanır, böylece herhangi biri denetlenebilir ve yanlışsa düzeltilebilir."

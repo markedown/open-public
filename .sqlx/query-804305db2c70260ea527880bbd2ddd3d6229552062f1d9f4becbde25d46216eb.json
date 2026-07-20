@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select pp.thesis_id, pp.party_id, pp.stance\n        from party_positions pp\n        join theses t on t.id = pp.thesis_id\n        where t.country_id = $1\n        ",
+  "query": "\n        select pp.thesis_id, pp.party_id, pp.stance, pp.justification, s.url as source_url\n        from party_positions pp\n        join theses t on t.id = pp.thesis_id\n        join sources s on s.id = pp.source_id\n        where t.country_id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -35,6 +35,28 @@
             "name": "stance"
           }
         }
+      },
+      {
+        "ordinal": 3,
+        "name": "justification",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "party_positions",
+            "name": "justification"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
       }
     ],
     "parameters": {
@@ -45,8 +67,10 @@
     "nullable": [
       false,
       false,
+      false,
+      true,
       false
     ]
   },
-  "hash": "234b0bb63dc86dff27e6b4e7e9c834044b547a15d3549f0f72dd99b520505e03"
+  "hash": "804305db2c70260ea527880bbd2ddd3d6229552062f1d9f4becbde25d46216eb"
 }

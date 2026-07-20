@@ -43,21 +43,26 @@ pub async fn count_theses(pool: &Pool, country_id: i64) -> Result<i64> {
     Ok(n)
 }
 
-/// A party's stance on a thesis, for scoring the match.
+/// A party's stance on a thesis, for scoring the match and for showing the
+/// reader where the stance came from. The source travels with the stance so a
+/// visitor can check any position rather than take it on trust.
 pub struct Position {
     pub thesis_id: i64,
     pub party_id: i64,
     pub stance: i16,
+    pub justification: Option<String>,
+    pub source_url: String,
 }
 
-/// Every recorded party position for a country's theses.
+/// Every recorded party position for a country's theses, with its source.
 pub async fn positions_for_country(pool: &Pool, country_id: i64) -> Result<Vec<Position>> {
     let rows = sqlx::query_as!(
         Position,
         r#"
-        select pp.thesis_id, pp.party_id, pp.stance
+        select pp.thesis_id, pp.party_id, pp.stance, pp.justification, s.url as source_url
         from party_positions pp
         join theses t on t.id = pp.thesis_id
+        join sources s on s.id = pp.source_id
         where t.country_id = $1
         "#,
         country_id,
