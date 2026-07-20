@@ -825,3 +825,30 @@ msgstr "Wie die Parteien im Vergleich stehen"
 
 msgid "Your answer"
 msgstr "Ihre Antwort"
+
+msgid "Compass positions"
+msgstr "Kompass-Thesen"
+
+msgid "Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."
+msgstr "Jede These braucht eine Quelle, ebenso jede Position einer Partei dazu. Besucher beantworten sie; ihre Antworten werden nie gespeichert."
+
+msgid "Position"
+msgstr "These"
+
+msgid "Order"
+msgstr "Reihenfolge"
+
+msgid "Add position"
+msgstr "These hinzufügen"
+
+msgid "Stances"
+msgstr "Positionen"
+
+msgid "Record where each party stands. A party with no stance is left out of that party's match."
+msgstr "Halten Sie fest, wo jede Partei steht. Eine Partei ohne Position bleibt bei ihrer Übereinstimmung unberücksichtigt."
+
+msgid "Stance"
+msgstr "Position"
+
+msgid "Clear stance"
+msgstr "Position entfernen"

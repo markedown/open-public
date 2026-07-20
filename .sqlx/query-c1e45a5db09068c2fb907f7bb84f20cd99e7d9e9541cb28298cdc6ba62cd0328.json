@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from party_positions where thesis_id = $1 and party_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c1e45a5db09068c2fb907f7bb84f20cd99e7d9e9541cb28298cdc6ba62cd0328"
+}

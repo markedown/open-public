@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from theses where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e4b2c4655ea881680b2c5f52a2bb4ee718aa60b4f99fb7bcdecf5754e4aafaf7"
+}

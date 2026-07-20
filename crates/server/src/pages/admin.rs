@@ -92,6 +92,10 @@ pub async fn index(
                           class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
                             (i18n::t("Add outlet"))
                         }
+                        a href={"/admin/compass?country=" (c.slug)}
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                            (i18n::t("Compass positions"))
+                        }
                     }
                     @if !outlets.is_empty() {
                         div class="mt-4" {
@@ -1768,4 +1772,293 @@ mod tests {
         assert_eq!(options, ["A", "B", ""]); // order and the empty trailing row kept
         assert_eq!(pairs.iter().find(|(k, _)| k == "question").unwrap().1, "Q?");
     }
+}
+
+// ---------------------------------------------------------------------------
+// Compass positions: authoring the theses a country's compass asks about, and
+// each party's stance on them. Every thesis and every stance carries a manual
+// source built from the URL the admin supplies, like all curated content.
+// ---------------------------------------------------------------------------
+
+/// The five-point stance scale shared by the compass answers and party stances.
+fn stance_choices() -> [(i16, &'static str); 5] {
+    [
+        (-2, i18n::t("Strongly disagree")),
+        (-1, i18n::t("Disagree")),
+        (0, i18n::t("Neutral")),
+        (1, i18n::t("Agree")),
+        (2, i18n::t("Strongly agree")),
+    ]
+}
+
+/// GET `/admin/compass?country=<slug>`: a country's compass positions, with a
+/// form to add one and a link into each one's per-party stance grid.
+pub async fn compass(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Query(q): Query<CountryQuery>,
+) -> Result<Markup, PageError> {
+    require_admin(&session)?;
+    let slug = q.country.unwrap_or_default();
+    let country = db::country::get_by_slug(&pool, &slug)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    let theses = db::compass::theses_for_country(&pool, country.id).await?;
+
+    let content = html! {
+        section class="mx-auto max-w-3xl" {
+            h1 class="text-3xl font-bold tracking-tight text-ink" {
+                (i18n::t("Compass positions")) " " span class="text-ink-muted" { (country.name) }
+            }
+            p class="mt-3 max-w-prose text-sm text-ink-muted" {
+                (i18n::t("Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."))
+            }
+
+            form method="post" action="/admin/compass/thesis" class="mt-6 op-card space-y-3 p-5" {
+                input type="hidden" name="country" value=(country.slug);
+                label class="block" {
+                    span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Position")) }
+                    textarea name="text" rows="2" required
+                      class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink" {}
+                }
+                div class="flex flex-wrap gap-3" {
+                    label class="block" {
+                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Order")) }
+                        input type="number" name="position" value="0"
+                          class="mt-1 w-24 rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
+                    }
+                    label class="block grow" {
+                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                        input type="url" name="source_url" required
+                          class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
+                    }
+                }
+                button type="submit"
+                  class="rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                    (i18n::t("Add position"))
+                }
+            }
+
+            @if theses.is_empty() {
+                p class="py-10 text-center text-sm text-ink-muted" {
+                    (i18n::t("No positions have been recorded for this country yet."))
+                }
+            } @else {
+                ul class="mt-6 space-y-2" {
+                    @for t in &theses {
+                        li class="op-card flex items-start justify-between gap-3 px-4 py-3" {
+                            span class="text-sm text-ink" { (t.text) }
+                            span class="flex shrink-0 items-center gap-3" {
+                                a href={"/admin/compass/thesis/" (t.id)}
+                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                                    (i18n::t("Stances"))
+                                }
+                                form method="post" action={"/admin/compass/thesis/" (t.id) "/delete"} {
+                                    button type="submit"
+                                      class="font-mono text-[11px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                        (i18n::t("Delete"))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Compass positions")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// A new compass position.
+#[derive(Deserialize)]
+pub struct ThesisForm {
+    country: String,
+    text: String,
+    position: Option<i32>,
+    source_url: String,
+}
+
+/// POST `/admin/compass/thesis`: create a position, sourced to the given URL.
+pub async fn compass_thesis_create(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Form(form): Form<ThesisForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    let country = db::country::get_by_slug(&pool, &form.country)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    let text = form.text.trim();
+    let url = form.source_url.trim();
+    if text.is_empty() || url.is_empty() {
+        return Err(PageError::Server);
+    }
+    let source_id = db::sources::insert_source(&pool, "manual", url, None, None).await?;
+    db::compass::add_thesis(
+        &pool,
+        country.id,
+        text,
+        None,
+        form.position.unwrap_or(0),
+        source_id,
+    )
+    .await?;
+    Ok(Redirect::to(&format!(
+        "/admin/compass?country={}",
+        country.slug
+    )))
+}
+
+/// POST `/admin/compass/thesis/{id}/delete`: remove a position and its stances.
+pub async fn compass_thesis_delete(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    let thesis = db::compass::get_thesis(&pool, id)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    db::compass::delete_thesis(&pool, id).await?;
+    Ok(Redirect::to(&format!(
+        "/admin/compass?country={}",
+        thesis.country_slug
+    )))
+}
+
+/// GET `/admin/compass/thesis/{id}`: every party of the position's country with
+/// its recorded stance, each editable in place.
+pub async fn compass_thesis(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+) -> Result<Markup, PageError> {
+    require_admin(&session)?;
+    let thesis = db::compass::get_thesis(&pool, id)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    let rows = db::compass::stances_for_thesis(&pool, id).await?;
+
+    let content = html! {
+        section class="mx-auto max-w-3xl" {
+            a href={"/admin/compass?country=" (thesis.country_slug)}
+              class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                "← " (i18n::t("Compass positions"))
+            }
+            h1 class="mt-3 text-2xl font-bold tracking-tight text-ink" { (thesis.text) }
+            p class="mt-2 text-sm text-ink-muted" {
+                (i18n::t("Record where each party stands. A party with no stance is left out of that party's match."))
+            }
+
+            ul class="mt-6 space-y-2" {
+                @for r in &rows {
+                    li class="op-card px-4 py-3" {
+                        form method="post" action={"/admin/compass/thesis/" (thesis.id) "/stance"}
+                             class="flex flex-wrap items-end gap-3" {
+                            input type="hidden" name="party_id" value=(r.party_id);
+                            span class="flex items-center gap-2" {
+                                (ui::badge::party_chip(
+                                    r.short_name.as_deref().unwrap_or(&r.party_name),
+                                    r.color.as_deref(),
+                                ))
+                                span class="text-sm font-medium text-ink" { (r.party_name) }
+                            }
+                            label class="block" {
+                                span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
+                                select name="stance"
+                                  class="mt-1 rounded-lg border border-hairline bg-paper px-2 py-1.5 text-sm text-ink" {
+                                    @for (value, label) in stance_choices() {
+                                        option value=(value) selected[r.stance == Some(value)] { (label) }
+                                    }
+                                }
+                            }
+                            label class="block grow" {
+                                span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                                input type="url" name="source_url" required
+                                  class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
+                            }
+                            button type="submit"
+                              class="rounded-lg bg-accent px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                                (i18n::t("Save"))
+                            }
+                        }
+                        @if r.stance.is_some() {
+                            form method="post"
+                                 action={"/admin/compass/thesis/" (thesis.id) "/stance/" (r.party_id) "/delete"}
+                                 class="mt-2" {
+                                button type="submit"
+                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                    (i18n::t("Clear stance"))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Stances")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// A party's stance on one position.
+#[derive(Deserialize)]
+pub struct StanceForm {
+    party_id: i64,
+    stance: i16,
+    justification: Option<String>,
+    source_url: String,
+}
+
+/// POST `/admin/compass/thesis/{id}/stance`: set or update a party's stance.
+pub async fn compass_stance_set(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+    Form(form): Form<StanceForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    db::compass::get_thesis(&pool, id)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    let url = form.source_url.trim();
+    if url.is_empty() || !(-2..=2).contains(&form.stance) {
+        return Err(PageError::Server);
+    }
+    let justification = form
+        .justification
+        .as_deref()
+        .map(str::trim)
+        .filter(|j| !j.is_empty());
+    let source_id = db::sources::insert_source(&pool, "manual", url, None, None).await?;
+    db::compass::set_position(
+        &pool,
+        id,
+        form.party_id,
+        form.stance,
+        justification,
+        source_id,
+    )
+    .await?;
+    Ok(Redirect::to(&format!("/admin/compass/thesis/{id}")))
+}
+
+/// POST `/admin/compass/thesis/{id}/stance/{party_id}/delete`: drop a stance.
+pub async fn compass_stance_clear(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path((id, party_id)): Path<(i64, i64)>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    db::compass::clear_position(&pool, id, party_id).await?;
+    Ok(Redirect::to(&format!("/admin/compass/thesis/{id}")))
 }
