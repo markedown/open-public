@@ -2,6 +2,7 @@ pub mod admin;
 pub mod alliance;
 pub mod alliances;
 pub mod auth;
+pub mod compass;
 pub mod country;
 pub mod data;
 pub mod elections;

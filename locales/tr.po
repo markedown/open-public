@@ -774,3 +774,66 @@ msgstr "Siyasi verilerin açık bir kaydı."
 
 msgid "Every chamber, at a glance."
 msgstr "Her meclis, tek bakışta."
+
+msgid "Strongly disagree"
+msgstr "Kesinlikle katılmıyorum"
+
+msgid "Disagree"
+msgstr "Katılmıyorum"
+
+msgid "Neutral"
+msgstr "Nötr"
+
+msgid "Agree"
+msgstr "Katılıyorum"
+
+msgid "Strongly agree"
+msgstr "Kesinlikle katılıyorum"
+
+msgid "Compass"
+msgstr "Pusula"
+
+msgid "positions"
+msgstr "önerme"
+
+msgid "No positions have been recorded for this country yet."
+msgstr "Bu ülke için henüz önerme kaydedilmedi."
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Her önerme için nerede durduğunuzu belirtin. Önemsediklerinizi önemli olarak işaretleyin, böylece daha fazla ağırlık taşısınlar. Girdikleriniz saklanmaz: eşleşmeniz anında hesaplanır ve hiçbir zaman kaydedilmez."
+
+msgid "See my match"
+msgstr "Eşleşmemi gör"
+
+msgid "Skip"
+msgstr "Atla"
+
+msgid "Important"
+msgstr "Önemli"
+
+msgid "Your match"
+msgstr "Eşleşmeniz"
+
+msgid "You did not answer any positions, so there is nothing to match."
+msgstr "Hiçbir önermeyi yanıtlamadınız, bu yüzden eşleştirilecek bir şey yok."
+
+msgid "Go back"
+msgstr "Geri dön"
+
+msgid "Positions answered"
+msgstr "Yanıtlanan önermeler"
+
+msgid "No party has recorded a stance on the positions you answered."
+msgstr "Yanıtladığınız önermeler hakkında hiçbir partinin kayıtlı tutumu yok."
+
+msgid "Parties are ranked by how closely their recorded stances match your answers. Every stance is sourced on the party's page."
+msgstr "Partiler, kayıtlı tutumlarının yanıtlarınıza ne kadar yakın olduğuna göre sıralanır. Her tutum, partinin sayfasında kaynağıyla belirtilir."
+
+msgid "Start over"
+msgstr "Baştan başla"
+
+msgid "How the parties compare"
+msgstr "Partiler nasıl karşılaştırılıyor"
+
+msgid "Your answer"
+msgstr "Yanıtınız"

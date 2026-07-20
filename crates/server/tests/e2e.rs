@@ -4569,3 +4569,178 @@ async fn construction_mode_gates_the_whole_site(pool: db::Pool) {
         .await
         .contains("commit"));
 }
+
+/// The seeded country's id and a fresh manual source, for building compass data.
+async fn compass_country_and_source(pool: &db::Pool) -> (i64, i64) {
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
+        .bind(COUNTRY)
+        .fetch_one(pool)
+        .await
+        .unwrap();
+    let src = db::sources::insert_source(
+        pool,
+        "manual",
+        "https://example.test/compass",
+        None,
+        Some("compass"),
+    )
+    .await
+    .unwrap();
+    (country_id, src)
+}
+
+/// A second party in the seeded country, so a compass ranking has two parties to
+/// order. Returns (test-partisi id, other party id).
+async fn two_parties(pool: &db::Pool, country_id: i64, src: i64) -> (i64, i64) {
+    let tp: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(pool)
+        .await
+        .unwrap();
+    let other = db::parties::upsert_party(
+        pool,
+        &NewParty {
+            wikidata_id: None,
+            name: "Diger Parti".to_string(),
+            short_name: Some("DP".to_string()),
+            slug: "diger-parti".to_string(),
+            founded_date: NaiveDate::from_ymd_opt(2012, 1, 1),
+            dissolved_date: None,
+            ideology_tags: vec![],
+            summary: None,
+            source_id: src,
+            country_id: Some(country_id),
+        },
+    )
+    .await
+    .unwrap();
+    (tp, other)
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_form_lists_positions_and_country_links_to_it(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+
+    // With no positions recorded yet, the questionnaire shows an empty state.
+    let empty = body_string(get_cookie(&app, "/tr/compass", "lang=en").await).await;
+    assert!(empty.contains("No positions have been recorded"));
+
+    let topic: i64 = sqlx::query_scalar(
+        "insert into topics (name, slug) values ('Ekonomi', 'ekonomi') returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        Some(topic),
+        1,
+        src,
+    )
+    .await
+    .unwrap();
+
+    // The questionnaire renders the position (with its topic) and the five-point
+    // scale, no login.
+    let body = body_string(get_cookie(&app, "/tr/compass", "lang=en").await).await;
+    assert!(body.contains("Vergiler dusurulmeli."));
+    assert!(body.contains("Ekonomi"));
+    assert!(body.contains("Strongly agree"));
+    assert!(body.contains("Skip"));
+    assert!(body.contains("See my match"));
+
+    // The country page surfaces the compass once it has positions.
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(
+        country.contains("/tr/compass"),
+        "country page links to compass"
+    );
+    assert!(country.contains("Compass"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_scores_and_ranks_parties(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, other) = two_parties(&pool, country_id, src).await;
+
+    let t1 = db::compass::add_thesis(&pool, country_id, "Vergiler dusurulmeli.", None, 1, src)
+        .await
+        .unwrap();
+    let t2 = db::compass::add_thesis(&pool, country_id, "Kamu harcamalari artmali.", None, 2, src)
+        .await
+        .unwrap();
+    // test-partisi agrees with both positions; diger-parti opposes both.
+    for (thesis, stance) in [(t1, 2i16), (t2, 2)] {
+        db::compass::set_position(&pool, thesis, tp, stance, None, src)
+            .await
+            .unwrap();
+    }
+    for (thesis, stance) in [(t1, -2i16), (t2, -2)] {
+        db::compass::set_position(&pool, thesis, other, stance, None, src)
+            .await
+            .unwrap();
+    }
+
+    // A visitor who agrees with both positions matches test-partisi fully and
+    // diger-parti not at all.
+    let form = format!("a{t1}=2&a{t2}=2");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+
+    assert!(body.contains("Your match"));
+    assert!(body.contains("Positions answered"));
+    assert!(body.contains("2 / 2"));
+    assert!(body.contains("100%"), "full match shown");
+    assert!(body.contains("0%"), "no match shown");
+    // test-partisi (the closer party) is ranked above diger-parti.
+    let first = body.find("Test Partisi").expect("test-partisi in results");
+    let second = body.find("Diger Parti").expect("diger-parti in results");
+    assert!(first < second, "closer party ranked first");
+    // The per-position breakdown shows the visitor's own answer.
+    assert!(body.contains("Your answer"));
+    assert!(body.contains("How the parties compare"));
+
+    // Stateless: submitting again yields the same result, nothing accumulates,
+    // and no answer rows are written (there is no table that could hold them).
+    let again = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(again.contains("100%") && again.contains("Test Partisi"));
+    let thesis_rows: i64 = sqlx::query_scalar("select count(*) from theses")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(thesis_rows, 2, "positions unchanged by answering");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_with_no_answers_prompts_to_go_back(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    db::compass::add_thesis(&pool, country_id, "Vergiler dusurulmeli.", None, 1, src)
+        .await
+        .unwrap();
+
+    // Every position left at the default "skip" means nothing to match.
+    let body = body_string(post_form(&app, "/tr/compass", "", Some("lang=en")).await).await;
+    assert!(body.contains("did not answer any positions"));
+    assert!(body.contains("Go back"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_reports_when_no_party_has_a_stance(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    // A position no party has taken a stance on.
+    let t1 = db::compass::add_thesis(&pool, country_id, "Uzaya insan gonderilmeli.", None, 1, src)
+        .await
+        .unwrap();
+
+    let form = format!("a{t1}=2");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("No party has recorded a stance"));
+}
