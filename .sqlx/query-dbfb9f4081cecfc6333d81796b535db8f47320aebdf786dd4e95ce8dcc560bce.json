@@ -1,0 +1,124 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select e.id as \"id?\", p.id as party_id, p.name as party_name, p.short_name,\n               p.color, e.kind as \"kind?\", e.stance as \"stance?\", e.quote,\n               e.occurred_on\n        from theses t\n        join parties p on p.country_id = t.country_id\n        left join position_evidence e on e.thesis_id = t.id and e.party_id = p.id\n        where t.id = $1\n        order by p.name collate \"name_sort\", e.id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id?",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "party_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "kind?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "stance?",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "stance"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "quote",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "quote"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "occurred_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "occurred_on"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "dbfb9f4081cecfc6333d81796b535db8f47320aebdf786dd4e95ce8dcc560bce"
+}

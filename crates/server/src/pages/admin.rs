@@ -1932,7 +1932,9 @@ pub async fn compass_thesis_delete(
 }
 
 /// GET `/admin/compass/thesis/{id}`: every party of the position's country with
-/// its recorded stance, each editable in place.
+/// the evidence recorded for it, and a form to add more. A stance is not typed
+/// in directly: it is resolved from this evidence, so the grid is where the
+/// pledges and the recorded acts are entered.
 pub async fn compass_thesis(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
@@ -1942,7 +1944,15 @@ pub async fn compass_thesis(
     let thesis = db::compass::get_thesis(&pool, id)
         .await?
         .ok_or(PageError::NotFound)?;
-    let rows = db::compass::stances_for_thesis(&pool, id).await?;
+    let rows = db::compass::evidence_for_thesis(&pool, id).await?;
+
+    // One block per party, holding whatever evidence it already has.
+    let mut parties: Vec<i64> = Vec::new();
+    for r in &rows {
+        if !parties.contains(&r.party_id) {
+            parties.push(r.party_id);
+        }
+    }
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -1951,49 +1961,83 @@ pub async fn compass_thesis(
                 "← " (i18n::t("Compass positions"))
             }
             h1 class="mt-3 text-2xl font-bold tracking-tight text-ink" { (thesis.text) }
-            p class="mt-2 text-sm text-ink-muted" {
-                (i18n::t("Record where each party stands. A party with no stance is left out of that party's match."))
+            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                (i18n::t("Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."))
             }
 
-            ul class="mt-6 space-y-2" {
-                @for r in &rows {
-                    li class="op-card px-4 py-3" {
-                        form method="post" action={"/admin/compass/thesis/" (thesis.id) "/stance"}
-                             class="flex flex-wrap items-end gap-3" {
-                            input type="hidden" name="party_id" value=(r.party_id);
-                            span class="flex items-center gap-2" {
+            ul class="mt-6 space-y-3" {
+                @for party_id in &parties {
+                    @if let Some(first) = rows.iter().find(|r| r.party_id == *party_id) {
+                        li class="op-card px-4 py-3" {
+                            div class="flex items-center gap-2" {
                                 (ui::badge::party_chip(
-                                    r.short_name.as_deref().unwrap_or(&r.party_name),
-                                    r.color.as_deref(),
+                                    first.short_name.as_deref().unwrap_or(&first.party_name),
+                                    first.color.as_deref(),
                                 ))
-                                span class="text-sm font-medium text-ink" { (r.party_name) }
+                                span class="text-sm font-medium text-ink" { (first.party_name) }
                             }
-                            label class="block" {
-                                span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
-                                select name="stance"
-                                  class="mt-1 rounded-lg border border-hairline bg-paper px-2 py-1.5 text-sm text-ink" {
-                                    @for (value, label) in stance_choices() {
-                                        option value=(value) selected[r.stance == Some(value)] { (label) }
+
+                            ul class="mt-2 space-y-1" {
+                                @for r in rows.iter().filter(|r| r.party_id == *party_id && r.id.is_some()) {
+                                    li class="flex flex-wrap items-baseline gap-2 text-xs text-ink-muted" {
+                                        span class="font-mono text-[10px] uppercase tracking-wide text-ink" {
+                                            (r.kind.as_deref().unwrap_or(""))
+                                        }
+                                        span class="font-mono" { (r.stance.unwrap_or(0)) }
+                                        @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                        @if let Some(q) = &r.quote { span { (q) } }
+                                        @if let Some(eid) = r.id {
+                                            form method="post"
+                                                 action={"/admin/compass/thesis/" (thesis.id) "/evidence/" (eid) "/delete"} {
+                                                button type="submit"
+                                                  class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                                    (i18n::t("Delete"))
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            label class="block grow" {
-                                span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
-                                input type="url" name="source_url" required
-                                  class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
-                            }
-                            button type="submit"
-                              class="rounded-lg bg-accent px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
-                                (i18n::t("Save"))
-                            }
-                        }
-                        @if r.stance.is_some() {
-                            form method="post"
-                                 action={"/admin/compass/thesis/" (thesis.id) "/stance/" (r.party_id) "/delete"}
-                                 class="mt-2" {
+
+                            form method="post" action={"/admin/compass/thesis/" (thesis.id) "/evidence"}
+                                 class="mt-2 flex flex-wrap items-end gap-2" {
+                                input type="hidden" name="party_id" value=(party_id);
+                                label class="block" {
+                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Evidence")) }
+                                    select name="kind"
+                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                                        @for k in EVIDENCE_KINDS {
+                                            option value=(k) { (k) }
+                                        }
+                                    }
+                                }
+                                label class="block" {
+                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
+                                    select name="stance"
+                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                                        @for (value, label) in stance_choices() {
+                                            option value=(value) { (label) }
+                                        }
+                                    }
+                                }
+                                label class="block" {
+                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Date")) }
+                                    input type="date" name="occurred_on"
+                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                                }
+                                label class="block grow" {
+                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Reference")) }
+                                    input type="text" name="quote"
+                                      class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                                }
+                                label class="block grow" {
+                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                                    input type="url" name="source_url" required
+                                      class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                                }
                                 button type="submit"
-                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
-                                    (i18n::t("Clear stance"))
+                                  class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                                    (i18n::t("Add"))
                                 }
                             }
                         }
@@ -2010,55 +2054,79 @@ pub async fn compass_thesis(
     ))
 }
 
-/// A party's stance on one position.
+/// One piece of evidence for a party's stance on a position.
 #[derive(Deserialize)]
-pub struct StanceForm {
+pub struct EvidenceForm {
     party_id: i64,
+    kind: String,
     stance: i16,
-    justification: Option<String>,
+    quote: Option<String>,
+    occurred_on: Option<String>,
     source_url: String,
 }
 
-/// POST `/admin/compass/thesis/{id}/stance`: set or update a party's stance.
-pub async fn compass_stance_set(
+/// The evidence kinds an admin can record, stated intention first, then the
+/// recorded acts that outrank it when a stance is resolved.
+const EVIDENCE_KINDS: [&str; 6] = [
+    "manifesto",
+    "statement",
+    "vote",
+    "law",
+    "decree",
+    "alliance",
+];
+
+/// POST `/admin/compass/thesis/{id}/evidence`: record evidence for a party.
+pub async fn compass_evidence_add(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
     Path(id): Path<i64>,
-    Form(form): Form<StanceForm>,
+    Form(form): Form<EvidenceForm>,
 ) -> Result<Redirect, PageError> {
     require_admin(&session)?;
     db::compass::get_thesis(&pool, id)
         .await?
         .ok_or(PageError::NotFound)?;
     let url = form.source_url.trim();
-    if url.is_empty() || !(-2..=2).contains(&form.stance) {
+    if url.is_empty()
+        || !(-2..=2).contains(&form.stance)
+        || !EVIDENCE_KINDS.contains(&form.kind.as_str())
+    {
         return Err(PageError::Server);
     }
-    let justification = form
-        .justification
+    let quote = form
+        .quote
         .as_deref()
         .map(str::trim)
-        .filter(|j| !j.is_empty());
+        .filter(|q| !q.is_empty());
+    let occurred_on = form
+        .occurred_on
+        .as_deref()
+        .map(str::trim)
+        .filter(|d| !d.is_empty())
+        .and_then(|d| NaiveDate::parse_from_str(d, "%Y-%m-%d").ok());
     let source_id = db::sources::insert_source(&pool, "manual", url, None, None).await?;
-    db::compass::set_position(
+    db::compass::add_evidence(
         &pool,
         id,
         form.party_id,
+        &form.kind,
         form.stance,
-        justification,
+        quote,
+        occurred_on,
         source_id,
     )
     .await?;
     Ok(Redirect::to(&format!("/admin/compass/thesis/{id}")))
 }
 
-/// POST `/admin/compass/thesis/{id}/stance/{party_id}/delete`: drop a stance.
-pub async fn compass_stance_clear(
+/// POST `/admin/compass/thesis/{id}/evidence/{evidence_id}/delete`.
+pub async fn compass_evidence_delete(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
-    Path((id, party_id)): Path<(i64, i64)>,
+    Path((id, evidence_id)): Path<(i64, i64)>,
 ) -> Result<Redirect, PageError> {
     require_admin(&session)?;
-    db::compass::clear_position(&pool, id, party_id).await?;
+    db::compass::delete_evidence(&pool, evidence_id).await?;
     Ok(Redirect::to(&format!("/admin/compass/thesis/{id}")))
 }

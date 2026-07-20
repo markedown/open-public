@@ -141,12 +141,12 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
             post(pages::admin::compass_thesis_delete),
         )
         .route(
-            "/admin/compass/thesis/{id}/stance",
-            post(pages::admin::compass_stance_set),
+            "/admin/compass/thesis/{id}/evidence",
+            post(pages::admin::compass_evidence_add),
         )
         .route(
-            "/admin/compass/thesis/{id}/stance/{party_id}/delete",
-            post(pages::admin::compass_stance_clear),
+            "/admin/compass/thesis/{id}/evidence/{evidence_id}/delete",
+            post(pages::admin::compass_evidence_delete),
         )
         .route("/admin/conflicts", get(pages::admin::conflicts))
         .route(

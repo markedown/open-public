@@ -867,3 +867,27 @@ msgstr "Partiler, kayıtlı tutumlarının yanıtlarınıza ne kadar yakın oldu
 
 msgid "Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
 msgstr "Buradaki parti tutumları, her partinin yayımlanmış programını bizim okuyuşumuzdur; partilerin kendi açıklamaları değildir. Her tutum kaynağına bağlanır, böylece herhangi biri denetlenebilir ve yanlışsa düzeltilebilir."
+
+msgid "Law"
+msgstr "Kanun"
+
+msgid "Decree"
+msgstr "Karar"
+
+msgid "Manifesto"
+msgstr "Beyanname"
+
+msgid "Pledge differs from record"
+msgstr "Söz ile icraat farklı"
+
+msgid "Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."
+msgstr "Her partinin ne vaat ettiğini ve fiilen ne yaptığını kaydedin. Tutum belirlenirken kayıtlı bir icraat, verilen bir sözün önüne geçer; ikisi çeliştiğinde her ikisi de gösterilir."
+
+msgid "Evidence"
+msgstr "Dayanak"
+
+msgid "Reference"
+msgstr "Künye"
+
+msgid "Add"
+msgstr "Ekle"
