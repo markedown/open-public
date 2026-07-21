@@ -39,13 +39,10 @@ pub async fn list(
     let mut elections =
         db::elections::list_for_country(&pool, country.id, i18n::lang_code()).await?;
     elections.retain(|e| ui::search::matches(&e.name, &query));
-    // An election dated ahead of today has not happened yet, so it is listed
-    // separately: it has no results to show and it is the one a reader is most
-    // likely looking for.
-    let today = chrono::Utc::now().date_naive();
-    let (upcoming, held): (Vec<_>, Vec<_>) = elections
-        .iter()
-        .partition(|e| e.held_on.is_some_and(|d| d > today));
+    // An election still to come has no results to show and is the one a reader
+    // is most likely looking for, so it is listed separately.
+    let (upcoming, held): (Vec<_>, Vec<_>) =
+        elections.iter().partition(|e| ui::election::is_upcoming(e));
     let list_url = format!("/{}/elections", country.slug);
 
     let content = html! {

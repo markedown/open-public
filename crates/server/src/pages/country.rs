@@ -117,8 +117,7 @@ pub async fn detail(
     let content = html! {
         article {
             @if let Some(ref ne) = next_election {
-                @let days = ne.held_on.map(|d| (d - chrono::Utc::now().date_naive()).num_days()).unwrap_or(-1);
-                (ui::election::next_election(ne, &country.slug, days, next_compass.as_deref()))
+                (ui::election::next_election(ne, &country.slug, next_compass.as_deref()))
             }
             // Identity, key facts and the in-country navigation, all in one
             // compact hero card so the page opens short.

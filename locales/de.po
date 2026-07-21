@@ -921,3 +921,6 @@ msgstr "Die Kandidaten sind danach geordnet, wie nah ihre erfassten Haltungen an
 
 msgid "How the candidates compare"
 msgstr "Wie die Kandidaten sich unterscheiden"
+
+msgid "Date not fixed"
+msgstr "Termin noch offen"

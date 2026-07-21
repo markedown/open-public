@@ -933,3 +933,6 @@ msgstr "Adaylar, kayıtlı tutumlarının yanıtlarınıza yakınlığına göre
 
 msgid "How the candidates compare"
 msgstr "Adaylar nasıl ayrışıyor"
+
+msgid "Date not fixed"
+msgstr "Tarih belirlenmedi"

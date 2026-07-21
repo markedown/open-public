@@ -5227,6 +5227,34 @@ async fn country_and_index_show_the_next_election(pool: db::Pool) {
         upcoming_at < ahead_at && ahead_at < past_at,
         "the election still ahead is listed above the ones already held"
     );
+
+    // A future date alone does not make an election upcoming: a mistyped
+    // historical date must not become the country's next election.
+    sqlx::query("update elections set expected_note = null where slug = 'gelecek-secim'")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(!country.contains("Next election"));
+
+    // An election whose date is not fixed yet is still the next one, and says
+    // so instead of showing a date it does not have.
+    sqlx::query(
+        "insert into elections (country_id, name, slug, kind, source_id, expected_note) \
+         values ($1,'Tarihsiz Secim','tarihsiz-secim','general',$2,'Tarih yasayla belirlenecek.')",
+    )
+    .bind(country_id)
+    .bind(src)
+    .execute(&pool)
+    .await
+    .unwrap();
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(country.contains("Next election"));
+    assert!(country.contains("Tarihsiz Secim"));
+    assert!(country.contains("Date not fixed"));
+    let index = body_string(get_cookie(&app, "/tr/elections", "lang=en").await).await;
+    assert!(index.contains("Upcoming"));
+    assert!(index.find("Tarihsiz Secim").unwrap() < index.find("Gecmis Secim").unwrap());
 }
 
 #[sqlx::test(migrations = "../../migrations")]

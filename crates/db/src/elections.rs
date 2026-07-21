@@ -319,9 +319,14 @@ pub async fn history_for_party(pool: &Pool, party_id: i64) -> Result<Vec<PartyHi
 
 /// The soonest election a country has that has not happened yet, if any.
 ///
-/// An election dated in the future simply has not been held; `expected_note`
-/// carries how firm that date is. Returns None once every recorded election is
-/// in the past, which is the normal state between cycles.
+/// The country's next election, meaning the earliest one recorded as still to
+/// come. What marks an election as still to come is `expected_note`, not the
+/// date: many systems fix only a window or a deadline, so an upcoming election
+/// often has no date at all, and one that does could otherwise be created by a
+/// typo in a historical date. The note says how firm the date is, and is
+/// therefore required of every election that has not happened.
+///
+/// Returns None between cycles, when nothing upcoming has been recorded yet.
 pub async fn next_for_country(
     pool: &Pool,
     country_id: i64,
@@ -335,8 +340,9 @@ pub async fn next_for_country(
         from elections e
         left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id
             and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'
-        where e.country_id = $1 and e.held_on > current_date
-        order by e.held_on
+        where e.country_id = $1 and e.expected_note is not null
+          and (e.held_on is null or e.held_on >= current_date)
+        order by e.held_on nulls last, e.id
         limit 1
         "#,
         country_id,
