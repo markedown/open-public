@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.thesis_id, e.party_id, e.kind, e.stance, e.quote, e.occurred_on,\n               s.url as source_url\n        from position_evidence e\n        join theses t on t.id = e.thesis_id\n        join sources s on s.id = e.source_id\n        where t.country_id = $1\n        order by e.thesis_id, e.party_id,\n                 case when e.kind = any($2) then 0 else 1 end,\n                 e.occurred_on desc nulls last, e.id desc\n        ",
+  "query": "\n        select e.thesis_id,\n               coalesce(e.person_id, e.party_id) as \"contestant_id!\",\n               e.kind, e.stance, e.quote, e.occurred_on, s.url as source_url\n        from position_evidence e\n        join theses t on t.id = e.thesis_id\n        join sources s on s.id = e.source_id\n        where t.country_id = $1 and t.scope = $3\n          and case when $3 = 'person' then e.person_id else e.party_id end is not null\n        order by e.thesis_id, coalesce(e.person_id, e.party_id),\n                 case when e.kind = any($2) then 0 else 1 end,\n                 e.occurred_on desc nulls last, e.id desc\n        ",
   "describe": {
     "columns": [
       {
@@ -16,14 +16,9 @@
       },
       {
         "ordinal": 1,
-        "name": "party_id",
+        "name": "contestant_id!",
         "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "position_evidence",
-            "name": "party_id"
-          }
-        }
+        "origin": "Expression"
       },
       {
         "ordinal": 2,
@@ -84,12 +79,13 @@
     "parameters": {
       "Left": [
         "Int8",
-        "TextArray"
+        "TextArray",
+        "Text"
       ]
     },
     "nullable": [
       false,
-      false,
+      null,
       false,
       false,
       true,
@@ -97,5 +93,5 @@
       false
     ]
   },
-  "hash": "93118b4a4a80fe5a0adb5b580e53d9ef6794a76b6a69e8eb4dd043e058982221"
+  "hash": "8bd6a26130f414a59ae1086c25b0eebd6625202d5a4542c55dcfe855dbaeb82d"
 }

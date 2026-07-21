@@ -15,7 +15,7 @@ pub struct Params {
 }
 
 /// A localized label for an election kind.
-fn kind_label(kind: Option<&str>) -> &'static str {
+pub(crate) fn kind_label(kind: Option<&str>) -> &'static str {
     match kind {
         Some("presidential") => i18n::t("Presidential"),
         Some("referendum") => i18n::t("Referendum"),
@@ -39,6 +39,13 @@ pub async fn list(
     let mut elections =
         db::elections::list_for_country(&pool, country.id, i18n::lang_code()).await?;
     elections.retain(|e| ui::search::matches(&e.name, &query));
+    // An election dated ahead of today has not happened yet, so it is listed
+    // separately: it has no results to show and it is the one a reader is most
+    // likely looking for.
+    let today = chrono::Utc::now().date_naive();
+    let (upcoming, held): (Vec<_>, Vec<_>) = elections
+        .iter()
+        .partition(|e| e.held_on.is_some_and(|d| d > today));
     let list_url = format!("/{}/elections", country.slug);
 
     let content = html! {
@@ -56,9 +63,36 @@ pub async fn list(
                 }
                 @if elections.is_empty() {
                     p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No elections yet.")) }
-                } @else {
+                }
+                @if !upcoming.is_empty() {
+                    h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                        (i18n::t("Upcoming"))
+                    }
+                    ul class="mb-8 grid gap-3 sm:grid-cols-2" {
+                        @for e in &upcoming {
+                            li {
+                                a href={"/" (country.slug) "/election/" (e.slug)}
+                                  class="op-card op-card-link block px-4 py-3.5" {
+                                    div class="flex items-baseline justify-between gap-3" {
+                                        span class="text-sm font-medium text-ink" { (e.name) }
+                                        @if let Some(d) = e.held_on {
+                                            span class="shrink-0 font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+                                        }
+                                    }
+                                    span class="mt-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
+                                        (kind_label(e.kind.as_deref()))
+                                    }
+                                    @if let Some(note) = &e.expected_note {
+                                        p class="mt-1 text-xs text-ink-muted" { (note) }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                @if !held.is_empty() {
                     ul class="grid gap-3 sm:grid-cols-2" {
-                        @for e in &elections {
+                        @for e in &held {
                             li {
                                 a href={"/" (country.slug) "/election/" (e.slug)}
                                   class="op-card op-card-link block px-4 py-3.5" {

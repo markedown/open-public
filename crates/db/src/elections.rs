@@ -19,6 +19,10 @@ pub struct Election {
     pub electorate: Option<i64>,
     pub votes_cast: Option<i64>,
     pub valid_votes: Option<i64>,
+    /// How firm the date is, for an election that has not happened yet. Some
+    /// systems fix the day by law, others only a deadline, and presenting a
+    /// provisional date as certain would be wrong.
+    pub expected_note: Option<String>,
 }
 
 /// Fields for creating an election.
@@ -158,7 +162,7 @@ pub async fn set_description(pool: &Pool, election_id: i64, description: &str) -
 pub async fn get_by_slug(pool: &Pool, slug: &str) -> Result<Option<Election>> {
     let row = sqlx::query_as!(
         Election,
-        r#"select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes from elections where slug = $1"#,
+        r#"select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes, expected_note from elections where slug = $1"#,
         slug,
     )
     .fetch_optional(pool)
@@ -175,7 +179,8 @@ pub async fn get_by_slug_in_country(
 ) -> Result<Option<Election>> {
     let row = sqlx::query_as!(
         Election,
-        r#"select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes
+        r#"select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes,
+                  expected_note
            from elections where slug = $1 and country_id = $2"#,
         slug,
         country_id,
@@ -192,7 +197,7 @@ pub async fn list_for_country(pool: &Pool, country_id: i64, lang: &str) -> Resul
         Election,
         r#"
         select e.id, coalesce(ntr.text, e.name) as "name!", e.slug, e.held_on, e.kind,
-               e.description, e.electorate, e.votes_cast, e.valid_votes
+               e.description, e.electorate, e.votes_cast, e.valid_votes, e.expected_note
         from elections e
         left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id
             and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'
@@ -221,7 +226,7 @@ pub async fn previous_comparable(
         Election,
         r#"
         select e.id, e.name, e.slug, e.held_on, e.kind, e.description,
-               e.electorate, e.votes_cast, e.valid_votes
+               e.electorate, e.votes_cast, e.valid_votes, e.expected_note
         from elections e
         join elections cur on cur.id = $1
         where e.country_id = cur.country_id
@@ -310,4 +315,34 @@ pub async fn history_for_party(pool: &Pool, party_id: i64) -> Result<Vec<PartyHi
     .fetch_all(pool)
     .await?;
     Ok(rows)
+}
+
+/// The soonest election a country has that has not happened yet, if any.
+///
+/// An election dated in the future simply has not been held; `expected_note`
+/// carries how firm that date is. Returns None once every recorded election is
+/// in the past, which is the normal state between cycles.
+pub async fn next_for_country(
+    pool: &Pool,
+    country_id: i64,
+    lang: &str,
+) -> Result<Option<Election>> {
+    let row = sqlx::query_as!(
+        Election,
+        r#"
+        select e.id, coalesce(ntr.text, e.name) as "name!", e.slug, e.held_on, e.kind,
+               e.description, e.electorate, e.votes_cast, e.valid_votes, e.expected_note
+        from elections e
+        left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id
+            and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'
+        where e.country_id = $1 and e.held_on > current_date
+        order by e.held_on
+        limit 1
+        "#,
+        country_id,
+        lang,
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(row)
 }

@@ -4638,6 +4638,7 @@ async fn compass_form_lists_positions_and_country_links_to_it(pool: db::Pool) {
         "Vergiler dusurulmeli.",
         Some(topic),
         1,
+        db::compass::SCOPE_PARTY,
         src,
     )
     .await
@@ -4669,22 +4670,58 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
     let (country_id, src) = compass_country_and_source(&pool).await;
     let (tp, other) = two_parties(&pool, country_id, src).await;
 
-    let t1 = db::compass::add_thesis(&pool, country_id, "Vergiler dusurulmeli.", None, 1, src)
-        .await
-        .unwrap();
-    let t2 = db::compass::add_thesis(&pool, country_id, "Kamu harcamalari artmali.", None, 2, src)
-        .await
-        .unwrap();
+    let t1 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let t2 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Kamu harcamalari artmali.",
+        None,
+        2,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
     // test-partisi agrees with both positions; diger-parti opposes both.
     for (thesis, stance) in [(t1, 2i16), (t2, 2)] {
-        db::compass::add_evidence(&pool, thesis, tp, "manifesto", stance, None, None, src)
-            .await
-            .unwrap();
+        db::compass::add_evidence(
+            &pool,
+            thesis,
+            db::compass::SCOPE_PARTY,
+            tp,
+            "manifesto",
+            stance,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
     }
     for (thesis, stance) in [(t1, -2i16), (t2, -2)] {
-        db::compass::add_evidence(&pool, thesis, other, "manifesto", stance, None, None, src)
-            .await
-            .unwrap();
+        db::compass::add_evidence(
+            &pool,
+            thesis,
+            db::compass::SCOPE_PARTY,
+            other,
+            "manifesto",
+            stance,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
     }
 
     // A visitor who agrees with both positions matches test-partisi fully and
@@ -4735,9 +4772,17 @@ async fn compass_with_no_answers_prompts_to_go_back(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
     let (country_id, src) = compass_country_and_source(&pool).await;
-    db::compass::add_thesis(&pool, country_id, "Vergiler dusurulmeli.", None, 1, src)
-        .await
-        .unwrap();
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
 
     // Every position left at the default "skip" means nothing to match.
     let body = body_string(post_form(&app, "/tr/compass", "", Some("lang=en")).await).await;
@@ -4751,9 +4796,17 @@ async fn compass_reports_when_no_party_has_a_stance(pool: db::Pool) {
     let app = router(pool.clone());
     let (country_id, src) = compass_country_and_source(&pool).await;
     // A position no party has taken a stance on.
-    let t1 = db::compass::add_thesis(&pool, country_id, "Uzaya insan gonderilmeli.", None, 1, src)
-        .await
-        .unwrap();
+    let t1 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Uzaya insan gonderilmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
 
     let form = format!("a{t1}=2");
     let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
@@ -4822,7 +4875,7 @@ async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
 
     // Recording a stance makes the public compass score that party.
     let stance = format!(
-        "party_id={party}&kind=manifesto&stance=2&quote=Party+programme&source_url=https://example.org/s1"
+        "contestant_id={party}&kind=manifesto&stance=2&quote=Party+programme&source_url=https://example.org/s1"
     );
     let resp = post_form(
         &app,
@@ -4923,9 +4976,17 @@ async fn compass_admin_rejects_bad_input_and_unknown_targets(pool: db::Pool) {
 
     // A stance outside the five-point scale is refused.
     let (country_id, src) = compass_country_and_source(&pool).await;
-    let thesis = db::compass::add_thesis(&pool, country_id, "Bir onerme.", None, 1, src)
-        .await
-        .unwrap();
+    let thesis = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir onerme.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
     let party: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
         .fetch_one(&pool)
         .await
@@ -4933,7 +4994,7 @@ async fn compass_admin_rejects_bad_input_and_unknown_targets(pool: db::Pool) {
     let resp = post_form(
         &app,
         &format!("/admin/compass/thesis/{thesis}/evidence"),
-        &format!("party_id={party}&kind=manifesto&stance=5&source_url=https://example.org/s"),
+        &format!("contestant_id={party}&kind=manifesto&stance=5&source_url=https://example.org/s"),
         Some(&cookie),
     )
     .await;
@@ -4949,15 +5010,24 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
         .fetch_one(&pool)
         .await
         .unwrap();
-    let thesis = db::compass::add_thesis(&pool, country_id, "Bir konu.", None, 1, src)
-        .await
-        .unwrap();
+    let thesis = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir konu.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
 
     // The party pledged one thing in its manifesto and later legislated the
     // opposite. A manifesto-only compass would report the pledge.
     db::compass::add_evidence(
         &pool,
         thesis,
+        db::compass::SCOPE_PARTY,
         party,
         "manifesto",
         2,
@@ -4970,6 +5040,7 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
     db::compass::add_evidence(
         &pool,
         thesis,
+        db::compass::SCOPE_PARTY,
         party,
         "law",
         -2,
@@ -5011,9 +5082,17 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
     let app = router(pool.clone());
     let (country_id, src) = compass_country_and_source(&pool).await;
     let (tp, other) = two_parties(&pool, country_id, src).await;
-    let thesis = db::compass::add_thesis(&pool, country_id, "Bir yasa konusu.", None, 1, src)
-        .await
-        .unwrap();
+    let thesis = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir yasa konusu.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
 
     // A party that cannot legislate still acts: it tables a bill, or asks the
     // Constitutional Court to annul a law. Both must outrank a manifesto pledge,
@@ -5021,6 +5100,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
     db::compass::add_evidence(
         &pool,
         thesis,
+        db::compass::SCOPE_PARTY,
         tp,
         "manifesto",
         -2,
@@ -5033,6 +5113,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
     db::compass::add_evidence(
         &pool,
         thesis,
+        db::compass::SCOPE_PARTY,
         tp,
         "court",
         2,
@@ -5045,6 +5126,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
     db::compass::add_evidence(
         &pool,
         thesis,
+        db::compass::SCOPE_PARTY,
         other,
         "bill",
         2,
@@ -5069,4 +5151,254 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
     assert!(body.contains("100%"));
     assert!(body.contains("Pledge differs from record"));
     assert!(body.contains("Court application") && body.contains("Bill"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn country_and_index_show_the_next_election(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+
+    // One election already held and one still ahead. Only the second is the
+    // "next" one, and only it carries the note about how firm its date is.
+    let past = chrono::Utc::now().date_naive() - chrono::Duration::days(400);
+    let ahead = chrono::Utc::now().date_naive() + chrono::Duration::days(120);
+    for (name, slug, day, kind) in [
+        ("Gecmis Secim", "gecmis-secim", past, "general"),
+        ("Gelecek Secim", "gelecek-secim", ahead, "general"),
+    ] {
+        sqlx::query(
+            "insert into elections (country_id, name, slug, held_on, kind, source_id) \
+             values ($1,$2,$3,$4,$5,$6)",
+        )
+        .bind(country_id)
+        .bind(name)
+        .bind(slug)
+        .bind(day)
+        .bind(kind)
+        .bind(src)
+        .execute(&pool)
+        .await
+        .unwrap();
+    }
+    sqlx::query("update elections set expected_note = $1 where slug = 'gelecek-secim'")
+        .bind("Tarih yasayla belirlenir.")
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(country.contains("Next election"), "card is shown");
+    assert!(country.contains("Gelecek Secim"));
+    assert!(country.contains("Tarih yasayla belirlenir."), "date note");
+    assert!(
+        !country.contains("Compare your positions"),
+        "no compass link while there are no positions"
+    );
+
+    // With positions recorded, the card invites the reader into the compass.
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(country.contains("Compare your positions"));
+
+    // The election's own page says it has not happened rather than showing an
+    // empty result set.
+    let detail = body_string(get_cookie(&app, "/tr/election/gelecek-secim", "lang=en").await).await;
+    assert!(detail.contains("Not held yet"));
+    assert!(detail.contains("Tarih yasayla belirlenir."));
+
+    // The index lists the upcoming election separately from the held ones.
+    let index = body_string(get_cookie(&app, "/tr/elections", "lang=en").await).await;
+    assert!(index.contains("Upcoming"));
+    let upcoming_at = index.find("Upcoming").unwrap();
+    let ahead_at = index.find("Gelecek Secim").unwrap();
+    let past_at = index.find("Gecmis Secim").unwrap();
+    assert!(
+        upcoming_at < ahead_at && ahead_at < past_at,
+        "the election still ahead is listed above the ones already held"
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_ranks_candidates_in_a_person_scope(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let mehmet: i64 = sqlx::query_scalar("select id from people where slug = 'mehmet-demir'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // A candidate thesis set is separate from the party one, so a party
+    // position never leaks into a presidential match.
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Parti onermesi.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let t = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Aday onermesi.",
+        None,
+        1,
+        db::compass::SCOPE_PERSON,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        t,
+        db::compass::SCOPE_PERSON,
+        ayse,
+        "statement",
+        2,
+        Some("Kampanya konusmasi"),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        t,
+        db::compass::SCOPE_PERSON,
+        mehmet,
+        "statement",
+        -2,
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+
+    let form = body_string(get_cookie(&app, "/tr/compass/person", "lang=en").await).await;
+    assert!(form.contains("Aday onermesi."));
+    assert!(!form.contains("Parti onermesi."), "scopes are separate");
+    assert!(form.contains("not statements by the candidates themselves"));
+
+    let body = body_string(
+        post_form(
+            &app,
+            "/tr/compass/person",
+            &format!("a{t}=2"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(body.contains("Ayse Yilmaz"));
+    assert!(body.contains("100%"));
+    assert!(
+        body.contains("/tr/people/ayse-yilmaz"),
+        "links to the person"
+    );
+    assert!(body.contains("How the candidates compare"));
+    assert!(body.contains("Candidates are ranked"));
+    let ayse_at = body.find("Ayse Yilmaz").unwrap();
+    let mehmet_at = body.find("Mehmet Demir").unwrap();
+    assert!(ayse_at < mehmet_at, "the closer candidate ranks first");
+
+    // The party compass still answers about parties only.
+    let party_form = body_string(get_cookie(&app, "/tr/compass", "lang=en").await).await;
+    assert!(party_form.contains("Parti onermesi."));
+    assert!(!party_form.contains("Aday onermesi."));
+
+    // An unknown scope is not a silent fallback to parties.
+    assert_eq!(
+        get(&app, "/tr/compass/mayor").await.status(),
+        StatusCode::NOT_FOUND
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_admin_authors_a_candidate_position(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cookie = admin_cookie(&pool).await;
+
+    let res = post_form(
+        &app,
+        "/admin/compass/thesis",
+        "country=tr&text=Aday+onermesi.&position=1&scope=person&source_url=https://example.org/t",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(res.status(), StatusCode::SEE_OTHER);
+    let thesis: i64 = sqlx::query_scalar("select id from theses where scope = 'person'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // A candidate enters the thesis by name, not from a grid of every person.
+    let res = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/evidence"),
+        "person_slug=ayse-yilmaz&kind=statement&stance=2&source_url=https://example.org/e",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(res.status(), StatusCode::SEE_OTHER);
+    let n: i64 = sqlx::query_scalar(
+        "select count(*) from position_evidence where thesis_id = $1 and person_id is not null",
+    )
+    .bind(thesis)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(n, 1, "evidence is filed against the person");
+
+    let page = body_string(
+        get_cookie(
+            &app,
+            &format!("/admin/compass/thesis/{thesis}"),
+            &format!("{cookie}; lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(page.contains("Ayse Yilmaz"));
+    assert!(page.contains("Candidate"));
+
+    // A name that is not a person of this country is refused, not filed blank.
+    let res = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{thesis}/evidence"),
+        "person_slug=yok-kimse&kind=statement&stance=2&source_url=https://example.org/e2",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(res.status(), StatusCode::NOT_FOUND);
+
+    // A scope the schema does not allow is refused before it reaches the insert.
+    let res = post_form(
+        &app,
+        "/admin/compass/thesis",
+        "country=tr&text=Baska.&position=1&scope=mayor&source_url=https://example.org/t2",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
 }

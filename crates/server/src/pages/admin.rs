@@ -1803,7 +1803,7 @@ pub async fn compass(
     let country = db::country::get_by_slug(&pool, &slug)
         .await?
         .ok_or(PageError::NotFound)?;
-    let theses = db::compass::theses_for_country(&pool, country.id).await?;
+    let theses = db::compass::admin_theses_for_country(&pool, country.id).await?;
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -1827,6 +1827,14 @@ pub async fn compass(
                         input type="number" name="position" value="0"
                           class="mt-1 w-24 rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
                     }
+                    label class="block" {
+                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Answered about")) }
+                        select name="scope"
+                          class="mt-1 block rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink" {
+                            option value=(db::compass::SCOPE_PARTY) { (i18n::t("Parties")) }
+                            option value=(db::compass::SCOPE_PERSON) { (i18n::t("Candidates")) }
+                        }
+                    }
                     label class="block grow" {
                         span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
                         input type="url" name="source_url" required
@@ -1847,7 +1855,16 @@ pub async fn compass(
                 ul class="mt-6 space-y-2" {
                     @for t in &theses {
                         li class="op-card flex items-start justify-between gap-3 px-4 py-3" {
-                            span class="text-sm text-ink" { (t.text) }
+                            span class="text-sm text-ink" {
+                                span class="mr-2 font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                                    @if t.scope == db::compass::SCOPE_PERSON {
+                                        (i18n::t("Candidates"))
+                                    } @else {
+                                        (i18n::t("Parties"))
+                                    }
+                                }
+                                (t.text)
+                            }
                             span class="flex shrink-0 items-center gap-3" {
                                 a href={"/admin/compass/thesis/" (t.id)}
                                   class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
@@ -1880,6 +1897,9 @@ pub struct ThesisForm {
     country: String,
     text: String,
     position: Option<i32>,
+    /// "party" or "person"; anything else is refused rather than silently
+    /// filed under the default, since the scope decides who gets scored.
+    scope: Option<String>,
     source_url: String,
 }
 
@@ -1895,7 +1915,15 @@ pub async fn compass_thesis_create(
         .ok_or(PageError::NotFound)?;
     let text = form.text.trim();
     let url = form.source_url.trim();
-    if text.is_empty() || url.is_empty() {
+    let scope = form
+        .scope
+        .as_deref()
+        .unwrap_or(db::compass::SCOPE_PARTY)
+        .to_string();
+    if text.is_empty()
+        || url.is_empty()
+        || (scope != db::compass::SCOPE_PARTY && scope != db::compass::SCOPE_PERSON)
+    {
         return Err(PageError::Server);
     }
     let source_id = db::sources::insert_source(&pool, "manual", url, None, None).await?;
@@ -1905,6 +1933,7 @@ pub async fn compass_thesis_create(
         text,
         None,
         form.position.unwrap_or(0),
+        &scope,
         source_id,
     )
     .await?;
@@ -1931,6 +1960,51 @@ pub async fn compass_thesis_delete(
     )))
 }
 
+/// The fields of the evidence-entry form, shared by the party grid and the
+/// candidate list: only the contestant the evidence is about differs between
+/// them, and that is supplied by the caller as a hidden field.
+fn evidence_fields() -> Markup {
+    html! {
+                        label class="block" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Evidence")) }
+                            select name="kind"
+                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                                @for k in EVIDENCE_KINDS {
+                                    option value=(k) { (k) }
+                                }
+                            }
+                        }
+                        label class="block" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
+                            select name="stance"
+                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                                @for (value, label) in stance_choices() {
+                                    option value=(value) { (label) }
+                                }
+                            }
+                        }
+                        label class="block" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Date")) }
+                            input type="date" name="occurred_on"
+                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                        }
+                        label class="block grow" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Reference")) }
+                            input type="text" name="quote"
+                              class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                        }
+                        label class="block grow" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                            input type="url" name="source_url" required
+                              class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                        }
+        button type="submit"
+          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+            (i18n::t("Add"))
+        }
+    }
+}
+
 /// GET `/admin/compass/thesis/{id}`: every party of the position's country with
 /// the evidence recorded for it, and a form to add more. A stance is not typed
 /// in directly: it is resolved from this evidence, so the grid is where the
@@ -1944,13 +2018,32 @@ pub async fn compass_thesis(
     let thesis = db::compass::get_thesis(&pool, id)
         .await?
         .ok_or(PageError::NotFound)?;
-    let rows = db::compass::evidence_for_thesis(&pool, id).await?;
+    let person_scope = thesis.scope == db::compass::SCOPE_PERSON;
+    // A party thesis lists every party of the country, so a stance can be added
+    // for any of them. A candidate thesis lists only the people already entered:
+    // a country has thousands of people, and a new candidate is named instead.
+    let rows = if person_scope {
+        Vec::new()
+    } else {
+        db::compass::evidence_for_thesis(&pool, id).await?
+    };
+    let people = if person_scope {
+        db::compass::person_evidence_for_thesis(&pool, id).await?
+    } else {
+        Vec::new()
+    };
 
     // One block per party, holding whatever evidence it already has.
     let mut parties: Vec<i64> = Vec::new();
     for r in &rows {
         if !parties.contains(&r.party_id) {
             parties.push(r.party_id);
+        }
+    }
+    let mut person_ids: Vec<i64> = Vec::new();
+    for r in &people {
+        if !person_ids.contains(&r.person_id) {
+            person_ids.push(r.person_id);
         }
     }
 
@@ -1965,6 +2058,53 @@ pub async fn compass_thesis(
                 (i18n::t("Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."))
             }
 
+            @if person_scope {
+                ul class="mt-6 space-y-3" {
+                    @for pid in &person_ids {
+                        @if let Some(first) = people.iter().find(|r| r.person_id == *pid) {
+                            li class="op-card px-4 py-3" {
+                                a href={"/" (thesis.country_slug) "/people/" (first.person_slug)}
+                                  class="text-sm font-medium text-ink hover:text-accent" {
+                                    (first.person_name)
+                                }
+                                ul class="mt-2 space-y-1" {
+                                    @for r in people.iter().filter(|r| r.person_id == *pid) {
+                                        li class="flex flex-wrap items-baseline gap-2 text-xs text-ink-muted" {
+                                            span class="font-mono text-[10px] uppercase tracking-wide text-ink" { (r.kind) }
+                                            span class="font-mono" { (r.stance) }
+                                            @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                            @if let Some(q) = &r.quote { span { (q) } }
+                                            form method="post"
+                                                 action={"/admin/compass/thesis/" (thesis.id) "/evidence/" (r.id) "/delete"} {
+                                                button type="submit"
+                                                  class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                                    (i18n::t("Delete"))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                form method="post" action={"/admin/compass/thesis/" (thesis.id) "/evidence"}
+                                     class="mt-2 flex flex-wrap items-end gap-2" {
+                                    input type="hidden" name="contestant_id" value=(first.person_id);
+                                    (evidence_fields())
+                                }
+                            }
+                        }
+                    }
+                }
+                // Naming a candidate is how a new contestant enters a candidate
+                // thesis; the slug is the one in that person's page URL.
+                form method="post" action={"/admin/compass/thesis/" (thesis.id) "/evidence"}
+                     class="mt-4 op-card flex flex-wrap items-end gap-2 p-4" {
+                    label class="block grow" {
+                        span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Candidate")) }
+                        input type="text" name="person_slug" required
+                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                    }
+                    (evidence_fields())
+                }
+            } @else {
             ul class="mt-6 space-y-3" {
                 @for party_id in &parties {
                     @if let Some(first) = rows.iter().find(|r| r.party_id == *party_id) {
@@ -2001,48 +2141,13 @@ pub async fn compass_thesis(
 
                             form method="post" action={"/admin/compass/thesis/" (thesis.id) "/evidence"}
                                  class="mt-2 flex flex-wrap items-end gap-2" {
-                                input type="hidden" name="party_id" value=(party_id);
-                                label class="block" {
-                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Evidence")) }
-                                    select name="kind"
-                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
-                                        @for k in EVIDENCE_KINDS {
-                                            option value=(k) { (k) }
-                                        }
-                                    }
-                                }
-                                label class="block" {
-                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
-                                    select name="stance"
-                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
-                                        @for (value, label) in stance_choices() {
-                                            option value=(value) { (label) }
-                                        }
-                                    }
-                                }
-                                label class="block" {
-                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Date")) }
-                                    input type="date" name="occurred_on"
-                                      class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
-                                }
-                                label class="block grow" {
-                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Reference")) }
-                                    input type="text" name="quote"
-                                      class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
-                                }
-                                label class="block grow" {
-                                    span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
-                                    input type="url" name="source_url" required
-                                      class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
-                                }
-                                button type="submit"
-                                  class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-accent-strong" {
-                                    (i18n::t("Add"))
-                                }
+                                input type="hidden" name="contestant_id" value=(party_id);
+                                (evidence_fields())
                             }
                         }
                     }
                 }
+            }
             }
         }
     };
@@ -2057,7 +2162,10 @@ pub async fn compass_thesis(
 /// One piece of evidence for a party's stance on a position.
 #[derive(Deserialize)]
 pub struct EvidenceForm {
-    party_id: i64,
+    /// The party or person already listed on the page. Absent when a candidate
+    /// is being named for the first time, in which case `person_slug` carries it.
+    contestant_id: Option<i64>,
+    person_slug: Option<String>,
     kind: String,
     stance: i16,
     quote: Option<String>,
@@ -2078,7 +2186,7 @@ const EVIDENCE_KINDS: [&str; 8] = [
     "alliance",
 ];
 
-/// POST `/admin/compass/thesis/{id}/evidence`: record evidence for a party.
+/// POST `/admin/compass/thesis/{id}/evidence`: record evidence for a contestant.
 pub async fn compass_evidence_add(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
@@ -2086,7 +2194,7 @@ pub async fn compass_evidence_add(
     Form(form): Form<EvidenceForm>,
 ) -> Result<Redirect, PageError> {
     require_admin(&session)?;
-    db::compass::get_thesis(&pool, id)
+    let thesis = db::compass::get_thesis(&pool, id)
         .await?
         .ok_or(PageError::NotFound)?;
     let url = form.source_url.trim();
@@ -2096,6 +2204,19 @@ pub async fn compass_evidence_add(
     {
         return Err(PageError::Server);
     }
+    // The contestant is either one already on the page or, on a candidate
+    // thesis, a person named by slug. An unknown name is a 404 rather than a
+    // silently dropped entry.
+    let contestant_id = match form.contestant_id {
+        Some(cid) => cid,
+        None => {
+            let slug = form.person_slug.as_deref().unwrap_or("").trim().to_string();
+            db::people::get_by_slug_in_country(&pool, &slug, thesis.country_id)
+                .await?
+                .ok_or(PageError::NotFound)?
+                .id
+        }
+    };
     let quote = form
         .quote
         .as_deref()
@@ -2111,7 +2232,8 @@ pub async fn compass_evidence_add(
     db::compass::add_evidence(
         &pool,
         id,
-        form.party_id,
+        &thesis.scope,
+        contestant_id,
         &form.kind,
         form.stance,
         quote,

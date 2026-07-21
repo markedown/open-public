@@ -897,3 +897,39 @@ msgstr "Kanun teklifi"
 
 msgid "Court application"
 msgstr "Anayasa Mahkemesi başvurusu"
+
+msgid "Next election"
+msgstr "Sonraki seçim"
+
+msgid "days"
+msgstr "gün"
+
+msgid "Compare your positions"
+msgstr "Görüşlerinizi karşılaştırın"
+
+msgid "Upcoming"
+msgstr "Yaklaşan"
+
+msgid "Answered about"
+msgstr "Şunlar için"
+
+msgid "Candidate"
+msgstr "Aday"
+
+msgid "Candidates"
+msgstr "Adaylar"
+
+msgid "Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Buradaki aday tutumları, her adayın yayımladıklarını veya görevdeyken yaptıklarını bizim okumamızdır; adayların kendi açıklamaları değildir. Her tutum kaynağına bağlanır, böylece hepsi denetlenebilir ve yanlışsa düzeltilebilir."
+
+msgid "Not held yet"
+msgstr "Henüz yapılmadı"
+
+msgid "No candidate has a recorded stance on the positions you answered."
+msgstr "Yanıtladığınız önermelerde kayıtlı tutumu olan aday yok."
+
+msgid "Candidates are ranked by how closely their recorded stances match your answers."
+msgstr "Adaylar, kayıtlı tutumlarının yanıtlarınıza yakınlığına göre sıralanır."
+
+msgid "How the candidates compare"
+msgstr "Adaylar nasıl ayrışıyor"

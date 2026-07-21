@@ -66,6 +66,12 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
             "/{country}/compass",
             get(pages::compass::form).post(pages::compass::result),
         )
+        // A presidential compass ranks people rather than parties, so its
+        // thesis set lives under its own scope.
+        .route(
+            "/{country}/compass/{scope}",
+            get(pages::compass::form_for_scope).post(pages::compass::result_for_scope),
+        )
         .route("/{country}/news", get(pages::news::list))
         .route("/{country}/news/{id}", get(pages::news::detail))
         .route("/{country}/outlets", get(pages::outlets::list))

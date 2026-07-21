@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes from elections where slug = $1",
+  "query": "select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes,\n                  expected_note\n           from elections where slug = $1 and country_id = $2",
   "describe": {
     "columns": [
       {
@@ -101,11 +101,23 @@
             "name": "valid_votes"
           }
         }
+      },
+      {
+        "ordinal": 9,
+        "name": "expected_note",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "expected_note"
+          }
+        }
       }
     ],
     "parameters": {
       "Left": [
-        "Text"
+        "Text",
+        "Int8"
       ]
     },
     "nullable": [
@@ -117,8 +129,9 @@
       true,
       true,
       true,
+      true,
       true
     ]
   },
-  "hash": "6cd60ed478025adebb1af279257dbeaad7a35b1eb7c1762e6b844370b15437b6"
+  "hash": "958434fae0833f3324d83d5b6aa90aceaf87912e938043cc4bb6e31c768f2157"
 }

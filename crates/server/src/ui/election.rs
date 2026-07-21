@@ -239,6 +239,14 @@ pub fn election_box(
 /// comparable election is supplied, each vote-share bar carries a faint ghost of
 /// that election's share and a swing figure (for a runoff, the ghost is the first
 /// round).
+/// How many days until an election that has not been held, or `None` once its
+/// date has passed.
+fn days_ahead(election: &db::elections::Election) -> Option<i64> {
+    let day = election.held_on?;
+    let today = chrono::Utc::now().date_naive();
+    (day > today).then(|| (day - today).num_days())
+}
+
 pub fn election_detail(
     election: &db::elections::Election,
     rows: &[db::elections::ResultRow],
@@ -256,6 +264,17 @@ pub fn election_detail(
             }
             @if let Some(ref desc) = election.description {
                 p class="mt-4 max-w-prose text-[15px] leading-relaxed text-ink" { (desc) }
+            }
+            // An election dated ahead of today has not been held, so the page
+            // says so rather than presenting an empty result set as a result.
+            @if let Some(days) = days_ahead(election) {
+                p class="mt-4 text-[13px] font-medium text-ink" {
+                    (i18n::t("Not held yet"))
+                    @if days >= 0 { " · " span class="font-mono" { (days) } " " (i18n::t("days")) }
+                }
+            }
+            @if let Some(note) = &election.expected_note {
+                p class="mt-2 max-w-prose text-xs text-ink-muted" { (note) }
             }
         }
 
@@ -480,5 +499,55 @@ fn thousands(n: i64) -> String {
         format!("-{out}")
     } else {
         out
+    }
+}
+
+/// The country's next election, shown above its data because an election is the
+/// event that makes the rest of the page matter.
+///
+/// `days` is the count until polling day. Some systems fix the date by law and
+/// others only a deadline, so `expected_note` is printed whenever it is set
+/// rather than presenting a provisional date as a certainty.
+pub fn next_election(
+    election: &db::elections::Election,
+    country: &str,
+    days: i64,
+    compass_href: Option<&str>,
+) -> Markup {
+    html! {
+        section class="op-card mb-6 px-5 py-4" {
+            div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1" {
+                span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
+                    (i18n::t("Next election"))
+                }
+                @if days >= 0 {
+                    span class="font-mono text-[11px] text-ink-muted" {
+                        (days) " " (i18n::t("days"))
+                    }
+                }
+            }
+            a href={"/" (country) "/election/" (election.slug)}
+              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-accent hover:underline" {
+                (election.name)
+            }
+            div class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px] text-ink-muted" {
+                @if let Some(d) = election.held_on {
+                    span class="font-mono text-ink" { (crate::fmt::date(Some(d))) }
+                }
+                span class="text-[11px] font-bold uppercase tracking-wide" {
+                    (crate::pages::elections::kind_label(election.kind.as_deref()))
+                }
+            }
+            // Whether the date is fixed or merely a legal deadline.
+            @if let Some(note) = &election.expected_note {
+                p class="mt-2 max-w-prose text-xs text-ink-muted" { (note) }
+            }
+            @if let Some(href) = compass_href {
+                a href=(href)
+                  class="mt-3 inline-block rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                    (i18n::t("Compare your positions"))
+                }
+            }
+        }
     }
 }

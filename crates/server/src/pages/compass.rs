@@ -21,6 +21,57 @@ use crate::ui::{self, breadcrumb::Crumb};
 use domain::compass::{self, Answer, Stance};
 use domain::models::Party;
 
+/// A contestant in the compass: a party in a parliamentary thesis set, a person
+/// in a presidential one. The page renders both the same way, so the scoring and
+/// the breakdown do not care which kind an election has.
+struct Contestant {
+    name: String,
+    short: String,
+    colour: Option<String>,
+    href: String,
+}
+
+impl Contestant {
+    fn from_party(p: &Party, country: &str) -> Self {
+        Self {
+            name: p.name.clone(),
+            short: p.short_name.clone().unwrap_or_else(|| p.name.clone()),
+            colour: p.color.clone(),
+            href: format!("/{}/parties/{}", country, p.slug),
+        }
+    }
+    fn from_person(p: &db::compass::PersonContestant, country: &str) -> Self {
+        Self {
+            name: p.full_name.clone(),
+            short: crate::ui::initials(&p.full_name),
+            // A person carries no organisation colour, and inventing one would
+            // make colour stop meaning "this party's colour".
+            colour: None,
+            href: format!("/{}/people/{}", country, p.slug),
+        }
+    }
+}
+
+/// Load every contestant of the given scope, keyed by id.
+async fn contestants(
+    pool: &db::Pool,
+    country_id: i64,
+    country_slug: &str,
+    scope: &str,
+) -> Result<HashMap<i64, Contestant>, PageError> {
+    let mut out = HashMap::new();
+    if scope == db::compass::SCOPE_PERSON {
+        for p in db::compass::person_contestants(pool, country_id).await? {
+            out.insert(p.id, Contestant::from_person(&p, country_slug));
+        }
+    } else {
+        for p in db::parties::list(pool, country_id).await? {
+            out.insert(p.id, Contestant::from_party(&p, country_slug));
+        }
+    }
+    Ok(out)
+}
+
 /// The five-point answer scale, from strongly disagree to strongly agree, as
 /// `(value, label)` pairs. Answers and party stances share this scale.
 fn scale() -> [(i8, &'static str); 5] {
@@ -38,10 +89,14 @@ fn scale() -> [(i8, &'static str); 5] {
 /// statements by the parties, and every one links to its source so a reader can
 /// check it. If a party states its own position, that becomes the stance's
 /// source instead, so this claim never overstates what is behind the data.
-fn methodology_note() -> Markup {
+fn methodology_note(scope: &str) -> Markup {
     html! {
         p class="mt-4 max-w-prose text-xs text-ink-muted" {
-            (i18n::t("Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
+            @if scope == db::compass::SCOPE_PERSON {
+                (i18n::t("Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
+            } @else {
+                (i18n::t("Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
+            }
         }
     }
 }
@@ -63,11 +118,38 @@ pub async fn form(
     session: Option<AuthSession>,
     Path(country): Path<String>,
 ) -> Result<Markup, PageError> {
+    form_scoped(pool, session, country, db::compass::SCOPE_PARTY.to_string()).await
+}
+
+/// GET `/{country}/compass/{scope}`: the same questionnaire for a scope other
+/// than the default. A presidential compass ranks people, so its thesis set is
+/// separate from the parliamentary one.
+pub async fn form_for_scope(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path((country, scope)): Path<(String, String)>,
+) -> Result<Markup, PageError> {
+    form_scoped(pool, session, country, scope).await
+}
+
+async fn form_scoped(
+    pool: db::Pool,
+    session: Option<AuthSession>,
+    country: String,
+    scope: String,
+) -> Result<Markup, PageError> {
+    if scope != db::compass::SCOPE_PARTY && scope != db::compass::SCOPE_PERSON {
+        return Err(PageError::NotFound);
+    }
     let country = db::country::get_by_slug(&pool, &country)
         .await?
         .ok_or(PageError::NotFound)?;
-    let theses = db::compass::theses_for_country(&pool, country.id).await?;
-    let action = format!("/{}/compass", country.slug);
+    let theses = db::compass::theses_for_country(&pool, country.id, &scope).await?;
+    let action = if scope == db::compass::SCOPE_PARTY {
+        format!("/{}/compass", country.slug)
+    } else {
+        format!("/{}/compass/{}", country.slug, scope)
+    };
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -90,7 +172,7 @@ pub async fn form(
                     p class="max-w-prose text-sm text-ink-muted" {
                         (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
                     }
-                    (methodology_note())
+                    (methodology_note(&scope))
                 }
                 form method="post" action=(action) class="space-y-8" {
                     @for (i, t) in theses.iter().enumerate() {
@@ -179,14 +261,43 @@ pub async fn result(
     Path(country): Path<String>,
     Form(pairs): Form<Vec<(String, String)>>,
 ) -> Result<Markup, PageError> {
+    result_scoped(
+        pool,
+        session,
+        country,
+        db::compass::SCOPE_PARTY.to_string(),
+        pairs,
+    )
+    .await
+}
+
+/// POST `/{country}/compass/{scope}`: score a non-default scope.
+pub async fn result_for_scope(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path((country, scope)): Path<(String, String)>,
+    Form(pairs): Form<Vec<(String, String)>>,
+) -> Result<Markup, PageError> {
+    result_scoped(pool, session, country, scope, pairs).await
+}
+
+async fn result_scoped(
+    pool: db::Pool,
+    session: Option<AuthSession>,
+    country: String,
+    scope: String,
+    pairs: Vec<(String, String)>,
+) -> Result<Markup, PageError> {
+    if scope != db::compass::SCOPE_PARTY && scope != db::compass::SCOPE_PERSON {
+        return Err(PageError::NotFound);
+    }
     let country = db::country::get_by_slug(&pool, &country)
         .await?
         .ok_or(PageError::NotFound)?;
-    let theses = db::compass::theses_for_country(&pool, country.id).await?;
-    let positions = db::compass::positions_for_country(&pool, country.id).await?;
-    let evidence = db::compass::evidence_for_country(&pool, country.id).await?;
-    let parties = db::parties::list(&pool, country.id).await?;
-    let by_id: HashMap<i64, &Party> = parties.iter().map(|p| (p.id, p)).collect();
+    let theses = db::compass::theses_for_country(&pool, country.id, &scope).await?;
+    let positions = db::compass::positions_for_country(&pool, country.id, &scope).await?;
+    let evidence = db::compass::evidence_for_country(&pool, country.id, &scope).await?;
+    let by_id = contestants(&pool, country.id, &country.slug, &scope).await?;
 
     let fields: HashMap<String, String> = pairs.into_iter().collect();
 
@@ -213,13 +324,17 @@ pub async fn result(
         .iter()
         .map(|p| Stance {
             thesis_id: p.thesis_id,
-            party_id: p.party_id,
+            contestant_id: p.contestant_id,
             value: p.stance as i8,
         })
         .collect();
     let scores = compass::score(&answers, &stances);
 
-    let compass_url = format!("/{}/compass", country.slug);
+    let compass_url = if scope == db::compass::SCOPE_PARTY {
+        format!("/{}/compass", country.slug)
+    } else {
+        format!("/{}/compass/{}", country.slug, scope)
+    };
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -243,22 +358,30 @@ pub async fn result(
 
                 @if scores.is_empty() {
                     p class="py-8 text-sm text-ink-muted" {
-                        (i18n::t("No party has recorded a stance on the positions you answered."))
+                        @if scope == db::compass::SCOPE_PERSON {
+                            (i18n::t("No candidate has a recorded stance on the positions you answered."))
+                        } @else {
+                            (i18n::t("No party has recorded a stance on the positions you answered."))
+                        }
                     }
                 } @else {
                     ol class="space-y-2.5" {
                         @for (rank, s) in scores.iter().enumerate() {
-                            @if let Some(p) = by_id.get(&s.party_id) {
-                                (score_row(rank + 1, s, p, &country.slug))
+                            @if let Some(p) = by_id.get(&s.contestant_id) {
+                                (score_row(rank + 1, s, p))
                             }
                         }
                     }
                     p class="mt-5 max-w-prose text-xs text-ink-muted" {
-                        (i18n::t("Parties are ranked by how closely their recorded stances match your answers."))
+                        @if scope == db::compass::SCOPE_PERSON {
+                            (i18n::t("Candidates are ranked by how closely their recorded stances match your answers."))
+                        } @else {
+                            (i18n::t("Parties are ranked by how closely their recorded stances match your answers."))
+                        }
                     }
-                    (methodology_note())
+                    (methodology_note(&scope))
 
-                    (comparison(&theses, &positions, &evidence, &answered, &by_id))
+                    (comparison(&theses, &positions, &evidence, &answered, &by_id, &scope))
                 }
 
                 div class="mt-8 border-t border-hairline pt-5" {
@@ -280,20 +403,20 @@ pub async fn result(
 
 /// One ranked party row: rank, chip, name, a match bar filled with the party's
 /// colour (colour only ever appears inside data), and the percentage.
-fn score_row(rank: usize, s: &compass::PartyScore, party: &Party, country: &str) -> Markup {
-    let label = party.short_name.as_deref().unwrap_or(&party.name);
+fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Markup {
+    let label = c.short.as_str();
     let pct = format!("{:.0}%", s.percent);
     let width = format!("width:{:.1}%", s.percent);
     html! {
         li class="op-card flex items-center gap-3 px-4 py-3" {
             span class="w-5 shrink-0 text-center font-mono text-xs text-ink-muted" { (rank) }
-            (ui::badge::party_chip(label, party.color.as_deref()))
+            (ui::badge::party_chip(label, c.colour.as_deref()))
             div class="min-w-0 flex-1" {
-                a href={"/" (country) "/parties/" (party.slug)}
-                  class="text-sm font-medium text-ink hover:text-accent hover:underline" { (party.name) }
+                a href=(c.href)
+                  class="text-sm font-medium text-ink hover:text-accent hover:underline" { (c.name) }
                 div class="mt-1.5 h-2 overflow-hidden rounded-full bg-paper-sunken" {
                     div class="h-full rounded-full"
-                      style={(width) ";background-color:" (party.color.as_deref().unwrap_or("#33527a"))} {}
+                      style={(width) ";background-color:" (c.colour.as_deref().unwrap_or("#33527a"))} {}
                 }
             }
             span class="shrink-0 text-right" {
@@ -318,11 +441,19 @@ fn comparison(
     positions: &[db::compass::Position],
     evidence: &[db::compass::Evidence],
     answered: &HashMap<i64, i8>,
-    by_id: &HashMap<i64, &Party>,
+    by_id: &HashMap<i64, Contestant>,
+    scope: &str,
 ) -> Markup {
     html! {
         section class="mt-10" {
-            (ui::section_header(i18n::t("How the parties compare"), None))
+            (ui::section_header(
+                if scope == db::compass::SCOPE_PERSON {
+                    i18n::t("How the candidates compare")
+                } else {
+                    i18n::t("How the parties compare")
+                },
+                None,
+            ))
             div class="space-y-4" {
                 @for t in theses {
                     @if let Some(&mine) = answered.get(&t.id) {
@@ -334,9 +465,9 @@ fn comparison(
                             }
                             ul class="mt-2.5 space-y-2.5" {
                                 @for p in positions.iter().filter(|p| p.thesis_id == t.id) {
-                                    @if let Some(party) = by_id.get(&p.party_id) {
+                                    @if let Some(c) = by_id.get(&p.contestant_id) {
                                         li {
-                                            (party_stance(t.id, p, party, evidence))
+                                            (party_stance(t.id, p, c, evidence))
                                         }
                                     }
                                 }
@@ -354,21 +485,18 @@ fn comparison(
 fn party_stance(
     thesis_id: i64,
     position: &db::compass::Position,
-    party: &Party,
+    c: &Contestant,
     evidence: &[db::compass::Evidence],
 ) -> Markup {
     let items: Vec<&db::compass::Evidence> = evidence
         .iter()
-        .filter(|e| e.thesis_id == thesis_id && e.party_id == position.party_id)
+        .filter(|e| e.thesis_id == thesis_id && e.contestant_id == position.contestant_id)
         .collect();
     // A party is in conflict with itself when its evidence points both ways.
     let diverges = items.iter().any(|e| e.stance > 0) && items.iter().any(|e| e.stance < 0);
     html! {
         div class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {
-            (ui::badge::party_chip(
-                party.short_name.as_deref().unwrap_or(&party.name),
-                party.color.as_deref(),
-            ))
+            (ui::badge::party_chip(&c.short, c.colour.as_deref()))
             span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
                 (value_label(position.stance as i8))
             }

@@ -885,3 +885,39 @@ msgstr "Gesetzentwurf"
 
 msgid "Court application"
 msgstr "Verfassungsklage"
+
+msgid "Next election"
+msgstr "Nächste Wahl"
+
+msgid "days"
+msgstr "Tage"
+
+msgid "Compare your positions"
+msgstr "Positionen vergleichen"
+
+msgid "Upcoming"
+msgstr "Bevorstehend"
+
+msgid "Answered about"
+msgstr "Bezogen auf"
+
+msgid "Candidate"
+msgstr "Kandidat"
+
+msgid "Candidates"
+msgstr "Kandidaten"
+
+msgid "Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Die Positionen der Kandidaten sind unsere Lesart dessen, was jede Kandidatin oder jeder Kandidat veröffentlicht oder im Amt getan hat, keine Aussagen der Kandidaten selbst. Jede Position verweist auf ihre Quelle, so lässt sich jede prüfen und, falls sie falsch ist, korrigieren."
+
+msgid "Not held yet"
+msgstr "Noch nicht abgehalten"
+
+msgid "No candidate has a recorded stance on the positions you answered."
+msgstr "Zu den von Ihnen beantworteten Positionen hat kein Kandidat eine erfasste Haltung."
+
+msgid "Candidates are ranked by how closely their recorded stances match your answers."
+msgstr "Die Kandidaten sind danach geordnet, wie nah ihre erfassten Haltungen an Ihren Antworten liegen."
+
+msgid "How the candidates compare"
+msgstr "Wie die Kandidaten sich unterscheiden"
