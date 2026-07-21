@@ -25,7 +25,8 @@ pub async fn list(
         .await?
         .ok_or(PageError::NotFound)?;
     let query = params.q.unwrap_or_default();
-    let polls = db::polls::list_filtered_for_country(&pool, country.id, &query).await?;
+    let polls =
+        db::polls::list_filtered_for_country(&pool, country.id, &query, i18n::lang_code()).await?;
     let list_url = format!("/{}/polls", country.slug);
 
     // A poll is closed once its close time has passed; everything else (no close

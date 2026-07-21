@@ -6185,3 +6185,44 @@ async fn the_published_dump_can_actually_be_verified(pool: db::Pool) {
     );
     let _ = out;
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn lists_are_read_in_the_reader_s_language_too(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let poll = db::polls::get_by_slug(&pool, "party-poll")
+        .await
+        .unwrap()
+        .unwrap();
+
+    // A published translation of a poll question.
+    db::translations::upsert(
+        &pool,
+        &db::translations::NewTranslation {
+            entity_type: "poll",
+            entity_id: poll.id,
+            field: "question",
+            lang: "en",
+            text: "How do you rate this party?",
+            origin: "machine",
+            status: "published",
+            source_lang: Some("tr"),
+        },
+    )
+    .await
+    .unwrap();
+
+    // The index reads it, not only the poll's own page. A reader met a list in
+    // one language and a detail page in another before this.
+    let list = body_string(get_cookie(&app, "/tr/polls", "lang=en").await).await;
+    assert!(list.contains("How do you rate this party?"));
+
+    // Searching still works against the question as written, so a translation
+    // never hides a poll from the language it was authored in.
+    let found = body_string(get_cookie(&app, "/tr/polls?q=buluyorsunuz", "lang=en").await).await;
+    assert!(found.contains("How do you rate this party?"));
+
+    // Untranslated languages fall back to the original rather than to nothing.
+    let tr = body_string(get_cookie(&app, "/tr/polls", "lang=tr").await).await;
+    assert!(!tr.contains("How do you rate this party?"));
+}

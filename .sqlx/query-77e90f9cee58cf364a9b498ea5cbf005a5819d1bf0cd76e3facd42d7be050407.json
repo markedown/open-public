@@ -1,0 +1,94 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select n.id,\n          coalesce(htr.text, n.headline) as \"headline!\",\n          coalesce(str.text, n.our_summary) as our_summary,\n          s.url as \"url!\", s.outlet, s.published_at,\n          coalesce(\n            (select array_agg(p.slug || E'\\t' || p.full_name order by p.full_name collate \"name_sort\")\n             from news_item_people nip join people p on p.id = nip.person_id\n             where nip.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"people!: Vec<String>\",\n          coalesce(\n            (select array_agg(\n               pt.slug || E'\\t' || coalesce(pt.short_name, pt.name) || E'\\t' || coalesce(pt.color, '')\n               order by pt.name collate \"name_sort\")\n             from news_item_parties nap join parties pt on pt.id = nap.party_id\n             where nap.news_item_id = n.id),\n            '{}'::text[]\n          ) as \"parties!: Vec<String>\"\n        from news_items n\n        join sources s on s.id = n.source_id\n        left join translations htr on htr.entity_type = 'news_item' and htr.entity_id = n.id\n            and htr.field = 'headline' and htr.lang = $2 and htr.status = 'published'\n        -- Our own summary in the reader's language too: a translated headline\n        -- above an untranslated summary is worse than neither.\n        left join translations str on str.entity_type = 'news_item' and str.entity_id = n.id\n            and str.field = 'our_summary' and str.lang = $2 and str.status = 'published'\n        where exists (\n              select 1 from news_item_people x\n              join people pe on pe.id = x.person_id\n              where x.news_item_id = n.id and pe.country_id = $1)\n           or exists (\n              select 1 from news_item_parties y\n              join parties pa on pa.id = y.party_id\n              where y.news_item_id = n.id and pa.country_id = $1)\n        order by s.published_at desc nulls last, n.id desc\n        limit $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "headline!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "our_summary",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "url!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "outlet",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "outlet"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "published_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "published_at"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "people!: Vec<String>",
+        "type_info": "TextArray",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "parties!: Vec<String>",
+        "type_info": "TextArray",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      null,
+      null,
+      false,
+      true,
+      true,
+      null,
+      null
+    ]
+  },
+  "hash": "77e90f9cee58cf364a9b498ea5cbf005a5819d1bf0cd76e3facd42d7be050407"
+}

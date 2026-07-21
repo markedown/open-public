@@ -1,18 +1,13 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as \"votes!\"\n        from polls p\n        left join poll_votes v on v.poll_id = p.id\n        where (p.country_id = $1\n           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))\n          and unaccent(p.question) ilike unaccent($2)\n        group by p.id\n        order by p.id desc\n        ",
+  "query": "\n        select coalesce(qtr.text, p.question) as \"question!\", p.slug, p.kind,\n               p.closes_at, count(v.id) as \"votes!\"\n        from polls p\n        left join poll_votes v on v.poll_id = p.id\n        left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id\n            and qtr.field = 'question' and qtr.lang = $3 and qtr.status = 'published'\n        where (p.country_id = $1\n           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))\n          -- Search still reads the question as written, so a search works\n          -- whether or not a translation exists for the reader's language.\n          and unaccent(p.question) ilike unaccent($2)\n        group by p.id, qtr.text\n        order by p.id desc\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "question",
+        "name": "question!",
         "type_info": "Text",
-        "origin": {
-          "Table": {
-            "table": "polls",
-            "name": "question"
-          }
-        }
+        "origin": "Expression"
       },
       {
         "ordinal": 1,
@@ -57,16 +52,17 @@
     "parameters": {
       "Left": [
         "Int8",
+        "Text",
         "Text"
       ]
     },
     "nullable": [
-      false,
+      null,
       false,
       false,
       true,
       null
     ]
   },
-  "hash": "a31a657ba5425e28a589be6f0cadb5cbcaf83cbc84a8214456cadb88e9aeaa94"
+  "hash": "5b864aeb617d5f87a658ae9bd2cbb364e375357909c1f756c193cb21a7f94b22"
 }

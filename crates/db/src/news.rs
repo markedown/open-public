@@ -116,7 +116,8 @@ pub async fn recent(pool: &Pool, country_id: i64, lang: &str, limit: i64) -> Res
     let rows = sqlx::query!(
         r#"
         select n.id,
-          coalesce(htr.text, n.headline) as "headline!", n.our_summary,
+          coalesce(htr.text, n.headline) as "headline!",
+          coalesce(str.text, n.our_summary) as our_summary,
           s.url as "url!", s.outlet, s.published_at,
           coalesce(
             (select array_agg(p.slug || E'\t' || p.full_name order by p.full_name collate "name_sort")
@@ -136,6 +137,10 @@ pub async fn recent(pool: &Pool, country_id: i64, lang: &str, limit: i64) -> Res
         join sources s on s.id = n.source_id
         left join translations htr on htr.entity_type = 'news_item' and htr.entity_id = n.id
             and htr.field = 'headline' and htr.lang = $2 and htr.status = 'published'
+        -- Our own summary in the reader's language too: a translated headline
+        -- above an untranslated summary is worse than neither.
+        left join translations str on str.entity_type = 'news_item' and str.entity_id = n.id
+            and str.field = 'our_summary' and str.lang = $2 and str.status = 'published'
         where exists (
               select 1 from news_item_people x
               join people pe on pe.id = x.person_id

@@ -279,20 +279,30 @@ pub async fn list_all(pool: &Pool) -> Result<Vec<PollListItem>> {
 /// for the per-country index. A poll belongs to a country when it is attached
 /// directly (a country-level question) or through the party or person it is
 /// about.
-pub async fn list_for_country(pool: &Pool, country_id: i64) -> Result<Vec<PollListItem>> {
+pub async fn list_for_country(
+    pool: &Pool,
+    country_id: i64,
+    lang: &str,
+) -> Result<Vec<PollListItem>> {
     let rows = sqlx::query_as!(
         PollListItem,
         r#"
-        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as "votes!"
+        select coalesce(qtr.text, p.question) as "question!", p.slug, p.kind,
+               p.closes_at, count(v.id) as "votes!"
         from polls p
         left join poll_votes v on v.poll_id = p.id
+        -- The question in the reader's language where one has been published,
+        -- overlaid in the query so a list of a hundred rows stays one query.
+        left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id
+            and qtr.field = 'question' and qtr.lang = $2 and qtr.status = 'published'
         where p.country_id = $1
            or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
            or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)
-        group by p.id
+        group by p.id, qtr.text
         order by p.id desc
         "#,
         country_id,
+        lang,
     )
     .fetch_all(pool)
     .await?;
@@ -307,27 +317,34 @@ pub async fn list_filtered_for_country(
     pool: &Pool,
     country_id: i64,
     query: &str,
+    lang: &str,
 ) -> Result<Vec<PollListItem>> {
     let q = query.trim();
     if q.is_empty() {
-        return list_for_country(pool, country_id).await;
+        return list_for_country(pool, country_id, lang).await;
     }
     let pattern = format!("%{q}%");
     let rows = sqlx::query_as!(
         PollListItem,
         r#"
-        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as "votes!"
+        select coalesce(qtr.text, p.question) as "question!", p.slug, p.kind,
+               p.closes_at, count(v.id) as "votes!"
         from polls p
         left join poll_votes v on v.poll_id = p.id
+        left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id
+            and qtr.field = 'question' and qtr.lang = $3 and qtr.status = 'published'
         where (p.country_id = $1
            or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
            or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))
+          -- Search still reads the question as written, so a search works
+          -- whether or not a translation exists for the reader's language.
           and unaccent(p.question) ilike unaccent($2)
-        group by p.id
+        group by p.id, qtr.text
         order by p.id desc
         "#,
         country_id,
         pattern,
+        lang,
     )
     .fetch_all(pool)
     .await?;
