@@ -171,9 +171,17 @@ sqlx migrate run
 # 5. Load the published dataset (optional; the server also runs against an empty database)
 cargo run -p ingest -- import dataset
 
-# 6. Run the server
+# 6. Appoint yourself administrator (the password is read from stdin)
+printf 'your-password' | cargo run -p server -- create-admin you@example.org
+
+# 7. Run the server
 cargo run -p server           # http://127.0.0.1:3000
 ```
+
+A fresh instance has no accounts, and every route that could create one sits
+behind sign-in or behind the construction gate, so the first administrator is
+appointed from the server. The command is idempotent and never overwrites an
+existing password.
 
 ## Development
 

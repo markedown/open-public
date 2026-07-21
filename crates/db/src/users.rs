@@ -67,6 +67,22 @@ pub async fn mark_verified(pool: &Pool, user_id: i64) -> Result<()> {
     Ok(())
 }
 
+/// Grant or revoke administrator rights.
+///
+/// There is no route that does this: the first administrator of an instance is
+/// appointed from the server, by someone who already has the database, and any
+/// later one by an administrator who already exists.
+pub async fn set_admin(pool: &Pool, user_id: i64, is_admin: bool) -> Result<()> {
+    sqlx::query!(
+        r#"update users set is_admin = $2 where id = $1"#,
+        user_id,
+        is_admin,
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
 /// Get the stored password hash for a user (for verification during login).
 pub async fn password_hash(pool: &Pool, user_id: i64) -> Result<Option<String>> {
     let row = sqlx::query!(r#"select password_hash from users where id = $1"#, user_id,)

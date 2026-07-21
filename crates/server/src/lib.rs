@@ -2,6 +2,7 @@
 //! by end-to-end tests. The binary in `main.rs` is a thin wrapper that reads
 //! configuration and serves [`app`].
 
+pub mod admin_account;
 pub mod auth;
 pub mod config;
 pub mod content;
