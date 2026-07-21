@@ -17,17 +17,21 @@
 </p>
 
 **open-public** is an open, source-backed record of public political life: who holds office, the
-parties they belong to, how those roles and memberships shift over time, the news that mentions them,
-and polls anyone can vote in. Every fact links to the source it came from, so it can be checked, and
-anything that changes over time is kept as dated history instead of being overwritten. The code is
-open source, the dataset is public domain, and the platform is country-agnostic.
+parties they belong to, how those roles and memberships shift over time, the elections that put them
+there, where they stand on the questions of the day, the news that mentions them, and polls anyone can
+vote in. Every fact links to the source it came from, so it can be checked, and anything that changes
+over time is kept as dated history instead of being overwritten. The code is open source, the
+[dataset](#the-dataset) is public domain, and the platform is country-agnostic.
 
-Two rules shape the whole codebase and are enforced in review:
+Three rules shape the whole codebase and are enforced in review:
 
 1. **No fact without a source.** Every record in the database references a `sources` row, seed data
    included. A source is provenance, not a lock: a correction is a new sourced edit.
 2. **History, not overwrites.** Anything that varies over time (a membership, a role, a position) is a
    time-ranged relation with start and end dates, never a column that gets rewritten in place.
+3. **A position is derived, never asserted.** Where a party stands on a question is read from dated,
+   typed, sourced evidence, so a stance can never contradict what it rests on. What a party did
+   outranks what it promised, and where the two disagree, both are shown.
 
 ## Architecture
 
@@ -53,7 +57,9 @@ Full detail is in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
   [SQLx](https://github.com/launchbadge/sqlx) 0.9 with compile-time-checked queries. The `.sqlx/`
   offline metadata is committed so CI builds without a live database.
 - **Ingestion:** the `ingest` crate holds standalone import binaries, idempotent by upserting on
-  external IDs. Importers are added per data source; none ship in this repository yet.
+  natural keys. `ingest import` loads the published [dataset](#the-dataset) into a database. The
+  harvesters that fetch from third-party sites are run separately and are not part of this
+  repository.
 - **Verifiable deployment:** each release is an attested build, production is pinned to and
   continuously verified against those attested digests, and `GET /version` reports the running commit
   and digest (`GET /health` is liveness, `GET /readyz` readiness). See
@@ -91,6 +97,37 @@ source commit and public workflow that built it, that production is pinned to an
 against those attested digests, and that an independent public job confirms the running digest. It
 does not, on its own, defeat a malicious host that forges `/version`; that would require hardware
 remote attestation, which is out of scope and is never claimed.
+
+## The dataset
+
+Everything the platform knows is published in [`dataset/`](./dataset), one JSON file per entity type,
+under [CC0](./LICENSE-DATA). It is the same data the site serves.
+
+```bash
+# load it into a database of your own
+cargo run -p ingest -- import dataset
+
+# check the guarantees it claims, the same check CI runs
+python3 scripts/validate_data.py dataset
+```
+
+- **Nothing is keyed by a database id.** Rows reference each other by slug, and a source by its `url`
+  and `content_hash` together, so a rebuilt database does not read as changed data.
+- **Deterministic.** Sorted rows, sorted keys, a total ordering in every file. A day with no editorial
+  change produces an empty diff, so the git history is a record of what actually changed and when.
+- **Provenance travels with each row.** Every fact carries its source; each cited document records
+  when it was fetched, the SHA-256 of the bytes where we downloaded them, and an archived copy where
+  one exists. Recorded positions also carry the page, article or roll call the quote comes from.
+- **It round-trips.** Importing the dataset into an empty database and exporting it again reproduces
+  the files byte for byte, which is checked in CI against the real files rather than a fixture.
+- **Only approved content is in it.** No accounts, no votes, no drafts, no unpublished translations,
+  and no news: a news summary is our own prose about what someone is accused of, and it decays as the
+  story moves on.
+
+Participation data is separate and lives at `GET /data/polls.json` on a running instance: every poll's
+tally, its vote-chain head, and every vote reduced to `(poll, option, cast_at, opaque voter index)`.
+Anyone can recompute the tallies and check the chain head against the poll page. It carries no
+identity, never a user id and never an email hash.
 
 ## Versioning
 
@@ -131,7 +168,10 @@ sqlx migrate run
 # 4. Build the CSS (add --watch during development)
 ./scripts/tailwind.sh
 
-# 5. Run the server (it starts against an empty database)
+# 5. Load the published dataset (optional; the server also runs against an empty database)
+cargo run -p ingest -- import dataset
+
+# 6. Run the server
 cargo run -p server           # http://127.0.0.1:3000
 ```
 
@@ -142,6 +182,7 @@ cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
 cargo fmt --all --check
 cargo sqlx prepare --workspace   # regenerate .sqlx/ after changing any query
+python3 scripts/validate_data.py dataset   # check the published data
 ```
 
 Please read [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md) before opening a pull request. The content
@@ -175,6 +216,10 @@ This license covers the source code only. The database contents (the political d
 results) are dedicated to the public domain under [CC0 1.0 Universal](./LICENSE-DATA), so anyone can
 copy, adapt, redistribute, and independently verify them without restriction. CC0 matches the main
 upstream source (Wikidata, itself CC0) and keeps the published data dumps frictionless to reuse.
+
+One limit, stated plainly: **quoted excerpts are not ours to relicense.** Where a row quotes a party
+programme, a law or a parliamentary record, those words belong to whoever wrote them and appear as
+citations. CC0 covers the compilation, our own prose and the structure, not the quotations inside it.
 
 ### Contribution
 

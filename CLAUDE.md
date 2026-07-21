@@ -36,11 +36,13 @@ open-public/
 ├── docker-compose.yml
 ├── .env.example          DATABASE_URL etc. Never commit .env
 ├── migrations/           sqlx migrations
+├── dataset/              the published dataset (CC0) plus its README
+├── scripts/              tailwind.sh, validate_data.py
 ├── crates/
 │   ├── domain/           shared types, no sqlx, dependency-light
 │   ├── db/               sqlx queries and repository functions
 │   ├── server/           Axum binary: handlers, maud templates, ui components, static assets
-│   └── ingest/           data import binaries
+│   └── ingest/           data import binaries; `import` loads the published dataset
 └── CLAUDE.md
 ```
 
@@ -53,9 +55,10 @@ Rules that follow from this:
 - Vendored assets (`htmx.min.js`, self-hosted font if any) are committed under the server crate's static dir. The Tailwind output CSS is generated, not committed.
 - Ingest binaries are idempotent. Running them twice never duplicates rows (upsert on external IDs like `wikidata_id`).
 
-## Database schema (v1)
+## Database schema
 
-Implemented as sqlx migrations. Table and column names below are canonical.
+Implemented as sqlx migrations. Table and column names below are canonical. The migrations are the
+source of truth; this is the map.
 
 ```sql
 sources (
@@ -66,8 +69,13 @@ sources (
   outlet text,
   fetched_at timestamptz NOT NULL,
   published_at timestamptz,
-  content_hash text,
+  content_hash text,      -- the version key; part of the row's identity
+  content_sha256 text,    -- hash of the bytes we actually read, NULL if we did
+                          -- not download them. Never invent one: a fabricated
+                          -- hash looks like proof.
+  snapshot_url text,      -- archived copy, because these documents rot
   raw_ref text,
+  outlet_id bigint REFERENCES outlets,
   UNIQUE (url, content_hash)
 )
 
@@ -190,6 +198,82 @@ poll_submissions (
 )
 poll_submission_options ( id, submission_id FK, label text, position int, asset_id FK assets NULL )
 -- users also gains: banned_at timestamptz, ban_reason text  (permanent suspension)
+
+-- Countries. Everything political is scoped to one; the platform is multi-country.
+countries (
+  id, slug UNIQUE, name, capital, government_type, legislature_name,
+  founded_date, population, summary, flag_url, source_id NOT NULL
+)
+-- people and parties carry country_id.
+
+-- Elections and their results. An election with an `expected_note` has not been
+-- held: the note says how firm the date is, and `held_on` may be NULL, because
+-- many systems fix a window or a deadline rather than a day.
+elections (
+  id, country_id FK, name, slug UNIQUE, held_on date NULL, kind text,
+  description text, expected_note text,
+  electorate bigint, votes_cast bigint, valid_votes bigint, source_id NOT NULL
+)
+election_results ( id, election_id FK, party_id FK NULL, label text NULL,
+                   seats int, votes bigint, source_id NOT NULL )
+
+alliances ( id, country_id FK, slug UNIQUE, name, founded_date, dissolved_date,
+            summary, source_id NOT NULL )
+party_alliances ( id, party_id FK, alliance_id FK, start_date, end_date, source_id NOT NULL )
+
+events ( id, country_id FK NULL, party_id FK NULL, person_id FK NULL,
+         kind, title, happened_on date, source_id NOT NULL )
+
+outlets ( id, country_id FK, slug UNIQUE, name, homepage_url, logo_url,
+          logo_license, leaning text, leaning_source_id FK sources NULL,
+          summary, source_id NULL )
+
+-- Person background, both sourced and time-ranged.
+person_education ( id, person_id FK, institution, institution_wikidata_id,
+                   degree, field, start_date, end_date, source_id NOT NULL )
+person_attributes ( id, person_id FK, kind, value, value_wikidata_id,
+                    start_date, end_date, source_id NOT NULL )
+
+-- The preference-match compass. A thesis is one proposition a visitor answers;
+-- `scope` says whether it is answered about parties or about people, because a
+-- parliamentary election is contested by parties and a presidential one is not.
+theses ( id, country_id FK, topic_id FK NULL, text, position int,
+         scope text CHECK (scope IN ('party','person')), source_id NOT NULL )
+
+-- A stance is NEVER stored. It is derived from this evidence: recorded action
+-- outranks stated intention, then the most recent within a tier.
+position_evidence (
+  id, thesis_id FK,
+  party_id FK NULL, person_id FK NULL,   -- exactly one of the two is set
+  kind text CHECK (kind IN ('manifesto','statement',      -- stated intention
+                            'bill','court','vote','law','decree','alliance')),
+  stance smallint CHECK (stance BETWEEN -2 AND 2),
+  quote text,
+  locator text,       -- page, article, decree number, roll call. On the
+                      -- citation, not the source: two readings routinely cite
+                      -- different pages of one document.
+  occurred_on date, source_id NOT NULL,
+  UNIQUE NULLS NOT DISTINCT (thesis_id, party_id, person_id, kind, source_id)
+)
+
+-- Content translation, keyed by entity. Controlled vocabulary (government_type,
+-- legislature_name) stays in the .po catalogs, not here.
+translations ( id, entity_type, entity_id, field, lang, text,
+               origin text CHECK (origin IN ('human','machine')),
+               status text CHECK (status IN ('draft','published')),
+               source_lang, translated_at, reviewed_by FK users NULL, reviewed_at )
+
+-- Following an entity, for the personal feed. No user-to-user graph exists.
+follows ( id, user_id FK, entity_type text, entity_id bigint, created_at,
+          UNIQUE (user_id, entity_type, entity_id) )
+
+-- Tamper-evidence for votes: each vote hashes its content with the previous
+-- row's hash, so altering one breaks every hash after it.
+poll_chains ( poll_id PK FK polls, head_seq bigint, head_hash bytea,
+              next_voter_index bigint )
+
+-- people and parties also carry summary_draft: an unreviewed summary, never
+-- public, published only through the admin review queue.
 ```
 
 Full text search: `tsvector` indexes on `people.full_name`, `parties.name`, `statements.text_original`, `news_items.headline`.
@@ -211,6 +295,11 @@ These are product rules, treat them like compiler errors:
 - User-submitted polls pass a two-tier gate before they are public: an automated content pre-screen, then an admin approval. Nothing a user wrote or uploaded is visible to anyone else until it clears both. The pre-screen provider is pluggable (a `PollReviewer` trait); with none configured, submissions still flow to the admin queue rather than auto-publishing. Repeated policy violations suspend the account permanently; a suspension never touches cast votes.
 - Uploaded images are never trusted by their declared type: the format is detected from content, decoded under strict size and dimension limits (a decompression-bomb guard), and re-encoded to a normalized raster format that strips all metadata and defeats polyglot files. Only the re-encoded bytes are stored (content-addressed) and served, with `nosniff`, a restrictive `Content-Security-Policy`, and an inline disposition. SVG is rejected. Images stay visible only to their uploader and admins until the poll is approved.
 - Ingest: rate limit at least 1s per host, descriptive User-Agent with contact info, respect robots.txt, no paywalled content. On conflicts between sources, log to `data_conflicts` instead of overwriting.
+- A position is derived, never asserted. No row says "this party holds this view": a stance is resolved from `position_evidence`, so it can never contradict what it rests on. Recorded action (a vote, law, decree, alliance, bill, court application) outranks stated intention (a manifesto, a statement), and where they disagree both are shown rather than averaged. Only documentary facts are evidence: news commentary and opinion are not, and there is no field for an editorial characterisation of a party.
+- A quotation is verbatim. Never tidy a source's grammar, spelling or punctuation inside quotation marks, and record where in the document it is (`locator`). A position a document does not address is left unrecorded rather than inferred: silence is a result.
+- A thesis asks one thing. Two propositions in one sentence cannot be answered, and rewording one after stances exist inverts them silently, so change the wording only in the direction it was coded.
+- The published dataset in `dataset/` carries only approved content: no user rows, no votes, no drafts, no unpublished translations, and no news (a news summary is our own prose about what someone is accused of, and it decays). It is keyed by natural keys, never database ids, and its ordering is total so a re-export diffs to nothing. `scripts/validate_data.py` enforces this and runs in CI.
+- The data is CC0, but quoted excerpts are not ours to relicense: they belong to whoever wrote them and appear as citations.
 
 ## Design
 
@@ -291,3 +380,5 @@ License: MIT OR Apache-2.0 (dual). Set `license = "MIT OR Apache-2.0"` in every 
 - No secrets or infrastructure details in any commit.
 - No mutable image tags in deployment artifacts: images are referenced by digest only.
 - No claims of verifiability in the UI or docs beyond what is actually implemented.
+- No stance without evidence, and no evidence without a source document.
+- No unreviewed content in the published dataset: a draft summary or an unpublished translation never leaves the database.
