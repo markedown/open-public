@@ -234,6 +234,14 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
             "/login",
             get(pages::auth::login_form).post(pages::auth::login_submit),
         )
+        .route(
+            "/forgot",
+            get(pages::auth::forgot_form).post(pages::auth::forgot_submit),
+        )
+        .route(
+            "/reset",
+            get(pages::auth::reset_form).post(pages::auth::reset_submit),
+        )
         .route("/logout", post(pages::auth::logout))
         .route("/lang/{code}", get(set_language))
         .nest_service("/static", ServeDir::new(static_dir))

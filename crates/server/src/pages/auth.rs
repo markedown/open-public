@@ -13,6 +13,9 @@ use crate::state::AppState;
 use crate::ui;
 
 const VERIFICATION_TTL_HOURS: i64 = 24;
+/// A reset link is short-lived: it is the one credential that arrives by mail
+/// and can change a password, so it should not sit usable in an inbox for long.
+const RESET_TTL_HOURS: i64 = 1;
 
 #[derive(Deserialize)]
 pub struct Credentials {
@@ -228,6 +231,11 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                 }
                 @if login {
                     p class="mt-4 text-sm text-ink-muted" {
+                        a href="/forgot" class="text-accent hover:underline" {
+                            (i18n::t("Forgotten your password?"))
+                        }
+                    }
+                    p class="mt-2 text-sm text-ink-muted" {
                         (i18n::t("No account?"))
                         " "
                         a href="/register" class="text-accent hover:underline" {
@@ -287,6 +295,191 @@ fn notice_page(title: &'static str, body: &str) -> Markup {
                     (i18n::t(title))
                 }
                 p class="mt-3 text-sm text-ink-muted" { (body) }
+            }
+        },
+    )
+}
+
+#[derive(Deserialize)]
+pub struct EmailOnly {
+    email: String,
+}
+
+#[derive(Deserialize)]
+pub struct ResetForm {
+    token: String,
+    password: String,
+}
+
+pub async fn forgot_form() -> Markup {
+    forgot_page(None)
+}
+
+/// POST `/forgot`: mail a reset link if that address has an account.
+///
+/// The answer is the same either way. A different page, or a different response
+/// time, would turn this form into a way to ask whether someone has an account
+/// here, which for a political platform is a question worth refusing.
+pub async fn forgot_submit(
+    State(state): State<AppState>,
+    Form(form): Form<EmailOnly>,
+) -> Result<Response, Markup> {
+    let email = form.email.trim();
+    // Anything that goes wrong here is treated as "no account": the answer is
+    // the same either way, so there is nothing to report and nothing a caller
+    // could learn from the difference.
+    let account = match auth::hash_email(email, &state.secret) {
+        Some(hash) => db::users::get_by_email_hash(&state.pool, &hash).await,
+        None => Ok(None),
+    };
+
+    match account {
+        // An unverified account is left alone: finishing registration is the
+        // path there, and a reset would otherwise verify it by the back door.
+        Ok(Some(user)) if user.verified_at.is_some() && user.banned_at.is_none() => {
+            if let Err(e) = send_reset(&state, user.id, email).await {
+                tracing::error!(?e, "sending the reset mail failed");
+            }
+        }
+        Ok(_) => {}
+        Err(e) => tracing::error!(?e, "looking up the account failed"),
+    }
+
+    Ok(notice_page(
+        "Set a new password",
+        i18n::t("If that address has an account, a link to set a new password is on its way."),
+    )
+    .into_response())
+}
+
+async fn send_reset(state: &AppState, user_id: i64, email: &str) -> anyhow::Result<()> {
+    let token = auth::generate_session_token();
+    let expires_at = chrono::Utc::now() + chrono::Duration::hours(RESET_TTL_HOURS);
+    db::password_resets::create(&state.pool, user_id, &auth::hash_token(&token), expires_at)
+        .await?;
+    state.mailer.send_password_reset(email, &token).await?;
+    Ok(())
+}
+
+/// GET `/reset`: the form that sets a new password, if the link is still good.
+pub async fn reset_form(State(state): State<AppState>, Query(query): Query<VerifyQuery>) -> Markup {
+    match db::password_resets::user_for_token(&state.pool, &auth::hash_token(&query.token)).await {
+        Ok(Some(_)) => reset_page(&query.token, None),
+        Ok(None) => notice_page(
+            "Set a new password",
+            i18n::t("This link is invalid or has expired."),
+        ),
+        Err(e) => {
+            tracing::error!(?e, "checking the reset link failed");
+            notice_page(
+                "Set a new password",
+                i18n::t("Something went wrong. Please try again."),
+            )
+        }
+    }
+}
+
+/// POST `/reset`: set the password, spend the link, and end every session of
+/// that account, since whoever asked may be locking someone else out.
+pub async fn reset_submit(
+    State(state): State<AppState>,
+    Form(form): Form<ResetForm>,
+) -> Result<Response, Markup> {
+    if form.password.chars().count() < 8 {
+        return Err(reset_page(
+            &form.token,
+            Some(i18n::t("Password must be at least 8 characters.")),
+        ));
+    }
+    let Ok(password_hash) = auth::hash_password(&form.password) else {
+        return Err(reset_page(
+            &form.token,
+            Some(i18n::t("Something went wrong. Please try again.")),
+        ));
+    };
+
+    match db::password_resets::consume(&state.pool, &auth::hash_token(&form.token), &password_hash)
+        .await
+    {
+        Ok(true) => Ok(notice_page(
+            "Set a new password",
+            i18n::t("Your password has been changed. You can log in with it now."),
+        )
+        .into_response()),
+        Ok(false) => Ok(notice_page(
+            "Set a new password",
+            i18n::t("This link is invalid or has expired."),
+        )
+        .into_response()),
+        Err(e) => {
+            tracing::error!(?e, "setting the new password failed");
+            Err(reset_page(
+                &form.token,
+                Some(i18n::t("Something went wrong. Please try again.")),
+            ))
+        }
+    }
+}
+
+fn forgot_page(message: Option<&str>) -> Markup {
+    ui::layout::document(
+        Some("Set a new password"),
+        false,
+        false,
+        html! {
+            section class="mx-auto max-w-md" {
+                h1 class="text-3xl font-bold tracking-tight text-ink" {
+                    (i18n::t("Set a new password"))
+                }
+                p class="mt-3 max-w-prose text-sm text-ink-muted" {
+                    (i18n::t("Enter the address you registered with and we will send a link."))
+                }
+                @if let Some(msg) = message {
+                    p class="mt-3 text-sm text-red-600" { (msg) }
+                }
+                form class="mt-6 space-y-4" method="post" action="/forgot" {
+                    div {
+                        label class="block text-sm font-medium text-ink" for="email" {
+                            (i18n::t("Email"))
+                        }
+                        input type="email" name="email" id="email" required autocomplete="email"
+                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                    }
+                    (ui::button::primary(i18n::t("Send the link")))
+                }
+                p class="mt-4 text-sm text-ink-muted" {
+                    a href="/login" class="text-accent hover:underline" { (i18n::t("Back to log in")) }
+                }
+            }
+        },
+    )
+}
+
+fn reset_page(token: &str, message: Option<&str>) -> Markup {
+    ui::layout::document(
+        Some("Set a new password"),
+        false,
+        false,
+        html! {
+            section class="mx-auto max-w-md" {
+                h1 class="text-3xl font-bold tracking-tight text-ink" {
+                    (i18n::t("Set a new password"))
+                }
+                @if let Some(msg) = message {
+                    p class="mt-3 text-sm text-red-600" { (msg) }
+                }
+                form class="mt-6 space-y-4" method="post" action="/reset" {
+                    input type="hidden" name="token" value=(token);
+                    div {
+                        label class="block text-sm font-medium text-ink" for="password" {
+                            (i18n::t("New password"))
+                        }
+                        input type="password" name="password" id="password" required minlength="8"
+                          autocomplete="new-password"
+                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                    }
+                    (ui::button::primary(i18n::t("Set a new password")))
+                }
             }
         },
     )

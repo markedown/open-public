@@ -352,6 +352,32 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
     server::app(state, Path::new("static"))
 }
 
+/// Build the router with a mail relay that cannot be reached, to prove that a
+/// mail outage never changes what a visitor is told.
+fn router_broken_mail(pool: db::Pool) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Smtp {
+            host: "127.0.0.1".to_string(),
+            port: 1,
+            user: "u".to_string(),
+            pass: "p".to_string(),
+        },
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("smtp mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: false,
+    };
+    server::app(state, Path::new("static"))
+}
+
 /// Build the router in construction mode, gating the whole site.
 fn router_construction(pool: db::Pool) -> Router {
     let mailer = Mailer::new(
@@ -5656,4 +5682,319 @@ async fn the_first_administrator_is_appointed_from_the_server(pool: db::Pool) {
         .await
         .unwrap();
     assert_eq!(still_one, 1);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_forgotten_password_can_be_reset(pool: db::Pool) {
+    let app = router(pool.clone());
+    let (uid, cookie) = user_cookie(&pool, "forgetful@test.invalid").await;
+
+    // The form answers the same way whether or not the address is known, so it
+    // cannot be used to ask who has an account here.
+    let known = body_string(
+        post_form(
+            &app,
+            "/forgot",
+            "email=forgetful@test.invalid",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    let unknown = body_string(
+        post_form(
+            &app,
+            "/forgot",
+            "email=nobody@test.invalid",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(known.contains("If that address has an account"));
+    assert_eq!(known, unknown, "the answer does not depend on the address");
+
+    // A token was issued for the account that exists, and none for the other.
+    let issued: i64 = sqlx::query_scalar("select count(*) from password_resets")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(issued, 1);
+
+    // The link is what arrives by mail; here it is taken from the database the
+    // same way, by its hash.
+    let token = "reset-token-for-the-test";
+    sqlx::query("update password_resets set token_hash = $1 where user_id = $2")
+        .bind(server::auth::hash_token(token))
+        .bind(uid)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let form =
+        body_string(get_cookie(&app, &format!("/reset?token={token}"), "lang=en").await).await;
+    assert!(form.contains("New password"), "the link opens the form");
+
+    // Too short is refused and the token survives, so a slip does not burn it.
+    let short = body_string(
+        post_form(
+            &app,
+            "/reset",
+            &format!("token={token}&password=abc"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(short.contains("at least 8 characters"));
+
+    let done = body_string(
+        post_form(
+            &app,
+            "/reset",
+            &format!("token={token}&password=a-fresh-password"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(done.contains("Your password has been changed"));
+
+    // Every session of that account is gone: whoever asked for the reset may be
+    // locking someone else out, and leaving them signed in would hand it back.
+    let sessions: i64 = sqlx::query_scalar("select count(*) from sessions where user_id = $1")
+        .bind(uid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(sessions, 0);
+    let after = body_string(get_cookie(&app, "/feed", &cookie).await).await;
+    assert!(
+        !after.contains("Your feed"),
+        "the old session no longer works"
+    );
+
+    // The new password works and the old one does not.
+    let ok = post_form(
+        &app,
+        "/login",
+        "email=forgetful@test.invalid&password=a-fresh-password",
+        Some("lang=en"),
+    )
+    .await;
+    assert_eq!(ok.status(), StatusCode::SEE_OTHER, "the new password works");
+    let old = body_string(
+        post_form(
+            &app,
+            "/login",
+            "email=forgetful@test.invalid&password=pw123456",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(old.contains("Invalid email or password"));
+
+    // The link works exactly once, so a forwarded mail or a reload is harmless.
+    let again = body_string(
+        post_form(
+            &app,
+            "/reset",
+            &format!("token={token}&password=another-password"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(again.contains("invalid or has expired"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_reset_link_expires_and_an_unverified_account_gets_none(pool: db::Pool) {
+    let app = router(pool.clone());
+
+    // An account that never finished registering is not sent a reset link:
+    // finishing registration is the way in, and a reset would otherwise verify
+    // the address by the back door.
+    let email_hash = server::auth::hash_email("pending@test.invalid", SECRET).unwrap();
+    db::users::insert(&pool, &email_hash, "pw").await.unwrap();
+    post_form(&app, "/forgot", "email=pending@test.invalid", None).await;
+    let issued: i64 = sqlx::query_scalar("select count(*) from password_resets")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(issued, 0, "an unverified account gets no reset link");
+
+    // An expired link opens nothing.
+    let (uid, _) = user_cookie(&pool, "slow@test.invalid").await;
+    db::password_resets::create(
+        &pool,
+        uid,
+        &server::auth::hash_token("stale"),
+        chrono::Utc::now() - chrono::Duration::minutes(1),
+    )
+    .await
+    .unwrap();
+    let page = body_string(get_cookie(&app, "/reset?token=stale", "lang=en").await).await;
+    assert!(page.contains("invalid or has expired"));
+
+    // Asking again invalidates the first link, so only the newest mail works.
+    db::password_resets::create(
+        &pool,
+        uid,
+        &server::auth::hash_token("first"),
+        chrono::Utc::now() + chrono::Duration::hours(1),
+    )
+    .await
+    .unwrap();
+    db::password_resets::create(
+        &pool,
+        uid,
+        &server::auth::hash_token("second"),
+        chrono::Utc::now() + chrono::Duration::hours(1),
+    )
+    .await
+    .unwrap();
+    assert!(
+        db::password_resets::user_for_token(&pool, &server::auth::hash_token("first"))
+            .await
+            .unwrap()
+            .is_none(),
+        "the earlier link stopped working"
+    );
+    assert!(
+        db::password_resets::user_for_token(&pool, &server::auth::hash_token("second"))
+            .await
+            .unwrap()
+            .is_some()
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_reset_pages_render_and_a_suspended_account_gets_no_link(pool: db::Pool) {
+    let app = router(pool.clone());
+
+    // The form is reachable from the sign-in page.
+    let login = body_string(get_cookie(&app, "/login", "lang=en").await).await;
+    assert!(login.contains("/forgot"), "sign-in offers a way to recover");
+    let forgot = body_string(get_cookie(&app, "/forgot", "lang=en").await).await;
+    assert!(forgot.contains("Send the link"));
+    assert!(forgot.contains("Back to log in"));
+
+    // A suspended account is not sent a way back in: a reset would undo the
+    // suspension in effect, since the account could sign in again.
+    let (uid, _) = user_cookie(&pool, "banned@test.invalid").await;
+    sqlx::query("update users set banned_at = now(), ban_reason = 'test' where id = $1")
+        .bind(uid)
+        .execute(&pool)
+        .await
+        .unwrap();
+    post_form(&app, "/forgot", "email=banned@test.invalid", None).await;
+    let issued: i64 = sqlx::query_scalar("select count(*) from password_resets")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(issued, 0, "a suspended account gets no reset link");
+
+    // A token that was never issued opens nothing, on either verb.
+    let page = body_string(get_cookie(&app, "/reset?token=made-up", "lang=en").await).await;
+    assert!(page.contains("invalid or has expired"));
+    let posted = body_string(
+        post_form(
+            &app,
+            "/reset",
+            "token=made-up&password=a-long-enough-one",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(posted.contains("invalid or has expired"));
+
+    // The console transport is what dev and CI run on: it logs the link rather
+    // than sending, and must not fail the request path.
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .unwrap();
+    mailer
+        .send_password_reset("someone@test.invalid", "a-token")
+        .await
+        .expect("the console transport reports success");
+}
+
+#[tokio::test]
+async fn a_broken_mail_configuration_reports_failure_rather_than_pretending() {
+    // Port 1 has nothing listening. A misconfigured relay has to surface as an
+    // error, because the caller decides what to do about it: registration logs
+    // and carries on so the response cannot reveal whether an address is known,
+    // and a reset does the same.
+    let mailer = Mailer::new(
+        &MailTransport::Smtp {
+            host: "127.0.0.1".to_string(),
+            port: 1,
+            user: "u".to_string(),
+            pass: "p".to_string(),
+        },
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("an smtp mailer is built from configuration alone");
+
+    assert!(mailer
+        .send_verification("someone@test.invalid", "tok")
+        .await
+        .is_err());
+    assert!(mailer
+        .send_password_reset("someone@test.invalid", "tok")
+        .await
+        .is_err());
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_mail_outage_does_not_change_what_a_visitor_is_told(pool: db::Pool) {
+    let app = router_broken_mail(pool.clone());
+
+    // Registration answers the same way whether or not the mail went out. It
+    // has to: the response is already shaped so it cannot reveal whether an
+    // address is known, and a mail failure must not leak that either.
+    let page = body_string(
+        post_form(
+            &app,
+            "/register",
+            "email=new@test.invalid&password=a-long-password",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(page.contains("Check your email"));
+    let created: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(created, 1, "the account was still created");
+
+    // Same for a reset: the token is issued, the mail fails, and the page says
+    // exactly what it says on a good day.
+    let (uid, _) = user_cookie(&pool, "existing@test.invalid").await;
+    let page = body_string(
+        post_form(
+            &app,
+            "/forgot",
+            "email=existing@test.invalid",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(page.contains("If that address has an account"));
+    let issued: i64 = sqlx::query_scalar("select count(*) from password_resets where user_id = $1")
+        .bind(uid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(issued, 1);
 }
