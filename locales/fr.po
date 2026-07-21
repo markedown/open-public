@@ -921,3 +921,6 @@ msgstr "Les candidats sont classés selon la proximité de leurs positions enreg
 
 msgid "How the candidates compare"
 msgstr "Comment les candidats se comparent"
+
+msgid "Date not fixed"
+msgstr "Date non fixée"
