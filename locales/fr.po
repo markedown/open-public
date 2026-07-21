@@ -1029,3 +1029,6 @@ msgstr "Un vote émis ne peut pas être retiré. Il ne contient aucune informati
 
 msgid "Back"
 msgstr "Précédent"
+
+msgid "Next elections"
+msgstr "Prochaines élections"

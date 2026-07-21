@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.id, coalesce(ntr.text, e.name) as \"name!\", e.slug, e.held_on, e.kind,\n               e.description, e.electorate, e.votes_cast, e.valid_votes, e.expected_note\n        from elections e\n        left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id\n            and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'\n        where e.country_id = $1 and e.expected_note is not null\n          and (e.held_on is null or e.held_on >= current_date)\n        order by e.held_on nulls last, e.id\n        limit 1\n        ",
+  "query": "\n        select e.id, coalesce(ntr.text, e.name) as \"name!\", e.slug, e.held_on, e.kind,\n               e.description, e.electorate, e.votes_cast, e.valid_votes, e.expected_note\n        from elections e\n        left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id\n            and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'\n        where e.country_id = $1 and e.expected_note is not null\n          and (e.held_on is null or e.held_on >= current_date)\n          -- Every contest of the soonest round, not just one of them. Systems\n          -- that elect a parliament and a president on the same day record two\n          -- elections, because they produce two results, and a card that showed\n          -- one of them would hide the other until a reader went looking.\n          and (e.held_on is not distinct from (\n                  select min(x.held_on) from elections x\n                  where x.country_id = $1 and x.expected_note is not null\n                    and (x.held_on is null or x.held_on >= current_date)))\n        order by e.kind, e.id\n        ",
   "describe": {
     "columns": [
       {
@@ -128,5 +128,5 @@
       true
     ]
   },
-  "hash": "c4c7f0b85bd2fb268b6cad942e42fc1e624fd9d188b8d9b6dba87252d3cd5c07"
+  "hash": "f5815e33a2f568ce1cccdda44b11b4fd3f8a978e54ea70375bc3e2ab839bc8b0"
 }

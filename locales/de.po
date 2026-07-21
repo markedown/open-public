@@ -1029,3 +1029,6 @@ msgstr "Eine abgegebene Stimme kann nicht zurückgezogen werden. Sie enthält ke
 
 msgid "Back"
 msgstr "Zurück"
+
+msgid "Next elections"
+msgstr "Nächste Wahlen"

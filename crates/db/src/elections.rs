@@ -317,21 +317,21 @@ pub async fn history_for_party(pool: &Pool, party_id: i64) -> Result<Vec<PartyHi
     Ok(rows)
 }
 
-/// The soonest election a country has that has not happened yet, if any.
+/// Every contest of a country's next round of elections.
 ///
-/// The country's next election, meaning the earliest one recorded as still to
-/// come. What marks an election as still to come is `expected_note`, not the
-/// date: many systems fix only a window or a deadline, so an upcoming election
-/// often has no date at all, and one that does could otherwise be created by a
-/// typo in a historical date. The note says how firm the date is, and is
-/// therefore required of every election that has not happened.
+/// What marks an election as still to come is `expected_note`, not the date:
+/// many systems fix only a window or a deadline, so an upcoming election often
+/// has no date at all, and one that does could otherwise be created by a typo
+/// in a historical date. The note says how firm the date is, and is therefore
+/// required of every election that has not happened.
 ///
-/// Returns None between cycles, when nothing upcoming has been recorded yet.
-pub async fn next_for_country(
-    pool: &Pool,
-    country_id: i64,
-    lang: &str,
-) -> Result<Option<Election>> {
+/// More than one comes back when a country votes for more than one thing on the
+/// same day, which is common: a parliament and a president elected together are
+/// two elections, because they produce two results and are contested by
+/// different kinds of candidate.
+///
+/// Empty between cycles, when nothing upcoming has been recorded yet.
+pub async fn next_for_country(pool: &Pool, country_id: i64, lang: &str) -> Result<Vec<Election>> {
     let row = sqlx::query_as!(
         Election,
         r#"
@@ -342,13 +342,20 @@ pub async fn next_for_country(
             and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'
         where e.country_id = $1 and e.expected_note is not null
           and (e.held_on is null or e.held_on >= current_date)
-        order by e.held_on nulls last, e.id
-        limit 1
+          -- Every contest of the soonest round, not just one of them. Systems
+          -- that elect a parliament and a president on the same day record two
+          -- elections, because they produce two results, and a card that showed
+          -- one of them would hide the other until a reader went looking.
+          and (e.held_on is not distinct from (
+                  select min(x.held_on) from elections x
+                  where x.country_id = $1 and x.expected_note is not null
+                    and (x.held_on is null or x.held_on >= current_date)))
+        order by e.kind, e.id
         "#,
         country_id,
         lang,
     )
-    .fetch_optional(pool)
+    .fetch_all(pool)
     .await?;
     Ok(row)
 }
