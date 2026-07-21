@@ -1,18 +1,13 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.question, p.slug, p.kind, p.closes_at, count(v.id) as \"votes!\"\n        from polls p\n        left join poll_votes v on v.poll_id = p.id\n        where p.country_id = $1\n           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)\n        group by p.id\n        order by p.id desc\n        ",
+  "query": "\n        select coalesce(qtr.text, p.question) as \"question!\", p.slug, p.kind,\n               p.closes_at, count(v.id) as \"votes!\"\n        from polls p\n        left join poll_votes v on v.poll_id = p.id\n        -- The question in the reader's language where one has been published,\n        -- overlaid in the query so a list of a hundred rows stays one query.\n        left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id\n            and qtr.field = 'question' and qtr.lang = $2 and qtr.status = 'published'\n        where p.country_id = $1\n           or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)\n           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)\n        group by p.id, qtr.text\n        order by p.id desc\n        ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "question",
+        "name": "question!",
         "type_info": "Text",
-        "origin": {
-          "Table": {
-            "table": "polls",
-            "name": "question"
-          }
-        }
+        "origin": "Expression"
       },
       {
         "ordinal": 1,
@@ -56,16 +51,17 @@
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Int8",
+        "Text"
       ]
     },
     "nullable": [
-      false,
+      null,
       false,
       false,
       true,
       null
     ]
   },
-  "hash": "3dd7b6e42e9c0987487960e57bf6897a6179c732454aa0b4259ed32a86fd7eda"
+  "hash": "7995b030ca74e7800a6adee696e927f1884adfc54b46f71a422b85827ce338bb"
 }
