@@ -549,7 +549,19 @@ fn party_stance(
                         span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) }
                     }
                     @if let Some(q) = &e.quote { span { (q) } }
+                    @if let Some(l) = &e.locator {
+                        span class="font-mono text-[10px] text-ink" { (l) }
+                    }
                     (ui::citation::source_marker(&e.source_url))
+                    // Where the original has been archived, the copy is offered
+                    // too: these documents disappear, and a dead link would
+                    // take the evidence with it.
+                    @if let Some(snap) = &e.snapshot_url {
+                        a href=(snap) rel="noopener" target="_blank"
+                          class="font-mono text-[10px] text-ink-muted hover:text-accent hover:underline" {
+                            (i18n::t("archived"))
+                        }
+                    }
                 }
             }
         }

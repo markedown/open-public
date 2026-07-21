@@ -1993,6 +1993,11 @@ fn evidence_fields() -> Markup {
                             input type="text" name="quote"
                               class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
                         }
+                        label class="block" {
+                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Page or article")) }
+                            input type="text" name="locator"
+                              class="mt-1 block w-28 rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                        }
                         label class="block grow" {
                             span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
                             input type="url" name="source_url" required
@@ -2073,6 +2078,9 @@ pub async fn compass_thesis(
                                             span class="font-mono text-[10px] uppercase tracking-wide text-ink" { (r.kind) }
                                             span class="font-mono" { (r.stance) }
                                             @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                            @if let Some(l) = &r.locator {
+                                                span class="font-mono text-[10px] text-ink" { (l) }
+                                            }
                                             @if let Some(q) = &r.quote { span { (q) } }
                                             form method="post"
                                                  action={"/admin/compass/thesis/" (thesis.id) "/evidence/" (r.id) "/delete"} {
@@ -2125,6 +2133,9 @@ pub async fn compass_thesis(
                                         }
                                         span class="font-mono" { (r.stance.unwrap_or(0)) }
                                         @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                        @if let Some(l) = &r.locator {
+                                            span class="font-mono text-[10px] text-ink" { (l) }
+                                        }
                                         @if let Some(q) = &r.quote { span { (q) } }
                                         @if let Some(eid) = r.id {
                                             form method="post"
@@ -2169,6 +2180,8 @@ pub struct EvidenceForm {
     kind: String,
     stance: i16,
     quote: Option<String>,
+    /// Where in the cited document the quote is.
+    locator: Option<String>,
     occurred_on: Option<String>,
     source_url: String,
 }
@@ -2222,6 +2235,11 @@ pub async fn compass_evidence_add(
         .as_deref()
         .map(str::trim)
         .filter(|q| !q.is_empty());
+    let locator = form
+        .locator
+        .as_deref()
+        .map(str::trim)
+        .filter(|l| !l.is_empty());
     let occurred_on = form
         .occurred_on
         .as_deref()
@@ -2237,6 +2255,7 @@ pub async fn compass_evidence_add(
         &form.kind,
         form.stance,
         quote,
+        locator,
         occurred_on,
         source_id,
     )
