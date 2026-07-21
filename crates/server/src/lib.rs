@@ -17,8 +17,9 @@ pub mod ui;
 
 use std::path::Path;
 
-use axum::extract::{DefaultBodyLimit, Path as UrlPath, State};
+use axum::extract::{DefaultBodyLimit, Path as UrlPath, Request, State};
 use axum::http::{header, HeaderMap, StatusCode};
+use axum::middleware::Next;
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
     middleware,
@@ -30,22 +31,54 @@ use serde::Serialize;
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
 
+use auth::AuthSession;
 use i18n::Lang;
 use state::AppState;
 
 /// Build the application router. `static_dir` is served under `/static`.
 pub fn app(state: AppState, static_dir: &Path) -> Router {
-    // Construction mode gates the whole platform behind a single coming-soon
-    // page; only the operational endpoints stay live so deploys and monitoring
-    // still work. Nothing else about the site is reachable.
-    if state.construction {
-        return Router::new()
-            .route("/health", get(health))
-            .route("/readyz", get(readyz))
-            .route("/version", get(version))
-            .fallback(coming_soon)
-            .with_state(state);
+    let construction = state.construction;
+    let router = routes(state.clone(), static_dir);
+    if construction {
+        // Construction mode hides the platform behind a single coming-soon
+        // page. An admin still needs to reach it: the content waiting to be
+        // reviewed lives on exactly the instance that is gated, so locking the
+        // operator out would stop the work the gate exists to protect.
+        return router.layer(middleware::from_fn_with_state(state, construction_gate));
     }
+    router
+}
+
+/// Paths that stay reachable while construction mode is on, for anyone.
+///
+/// The operational endpoints keep deploys and monitoring working. Sign-in has
+/// to be reachable too, or an admin could never obtain the session that opens
+/// the rest, and the assets are what make the sign-in page render. None of them
+/// says anything about the data behind the gate.
+fn open_while_gated(path: &str) -> bool {
+    matches!(
+        path,
+        "/health" | "/readyz" | "/version" | "/login" | "/logout"
+    ) || path.starts_with("/static/")
+}
+
+/// Serve the coming-soon page for everyone except a signed-in admin.
+async fn construction_gate(
+    State(state): State<AppState>,
+    session: Option<AuthSession>,
+    request: Request,
+    next: Next,
+) -> Response {
+    let _ = state;
+    if open_while_gated(request.uri().path()) || session.is_some_and(|s| s.is_admin) {
+        return next.run(request).await;
+    }
+    coming_soon().await
+}
+
+/// Every route of the platform. Construction mode wraps this rather than
+/// replacing it, so there is one definition of what the site is.
+fn routes(state: AppState, static_dir: &Path) -> Router {
     Router::new()
         .route("/", get(pages::home::page))
         .route("/health", get(health))

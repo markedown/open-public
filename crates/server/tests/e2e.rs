@@ -4570,6 +4570,42 @@ async fn construction_mode_gates_the_whole_site(pool: db::Pool) {
         .contains("commit"));
 }
 
+#[sqlx::test(migrations = "../../migrations")]
+async fn construction_mode_lets_an_admin_in_and_nobody_else(pool: db::Pool) {
+    seed(&pool).await;
+    let admin = admin_cookie(&pool).await;
+    let app = router_construction(pool.clone());
+
+    // Sign-in has to be reachable, or an admin could never get the session that
+    // opens the rest. It shows a form and nothing about the data behind it.
+    let login = body_string(get_cookie(&app, "/login", "lang=en").await).await;
+    assert!(login.contains("password"), "the sign-in form is reachable");
+    assert!(!login.contains("Test Partisi"), "and it leaks no content");
+
+    // An admin sees the real site.
+    for path in ["/", "/tr", "/tr/parties/test-partisi", "/admin"] {
+        let body = body_string(get_cookie(&app, path, &format!("{admin}; lang=en")).await).await;
+        assert!(!body.contains("Under construction"), "admin sees {path}");
+    }
+    assert!(
+        body_string(get_cookie(&app, "/tr/parties/test-partisi", &admin).await)
+            .await
+            .contains("Test Partisi"),
+        "an admin reaches the content waiting to be reviewed"
+    );
+
+    // A signed-in visitor who is not an admin is still outside the gate.
+    let (_, user) = user_cookie(&pool, "member@test.invalid").await;
+    for path in ["/", "/tr", "/admin"] {
+        let body = body_string(get_cookie(&app, path, &user).await).await;
+        assert!(
+            body.contains("Under"),
+            "a plain account sees only the notice"
+        );
+        assert!(!body.contains("Test Partisi"), "no content leak at {path}");
+    }
+}
+
 /// The seeded country's id and a fresh manual source, for building compass data.
 async fn compass_country_and_source(pool: &db::Pool) -> (i64, i64) {
     let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
