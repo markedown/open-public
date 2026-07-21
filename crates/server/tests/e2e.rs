@@ -5998,3 +5998,28 @@ async fn a_mail_outage_does_not_change_what_a_visitor_is_told(pool: db::Pool) {
         .unwrap();
     assert_eq!(issued, 1);
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_privacy_page_says_what_is_stored_and_what_cannot_be_claimed(pool: db::Pool) {
+    let app = router(pool.clone());
+    let body = body_string(get_cookie(&app, "/privacy", "lang=en").await).await;
+
+    // The claims that matter, each of which is true of the schema.
+    assert!(body.contains("Your email address is never stored"));
+    assert!(body.contains("argon2"));
+    assert!(body.contains("never changed and never deleted"));
+    assert!(body.contains("not a survey"));
+    assert!(body.contains("does not prove that one person voted once"));
+
+    // Reachable from every page without hunting for it.
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    assert!(home.contains("/privacy"), "the footer links to it");
+
+    // It is a public page: no account required to read what is collected.
+    assert_eq!(get(&app, "/privacy").await.status(), StatusCode::OK);
+
+    // And it exists in the other languages rather than falling back to English.
+    let de = body_string(get_cookie(&app, "/privacy", "lang=de").await).await;
+    assert!(de.contains("Datenschutz"));
+    assert!(!de.contains("Your email address is never stored"));
+}

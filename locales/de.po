@@ -963,3 +963,66 @@ msgstr "Passwort vergessen?"
 
 msgid "New password"
 msgstr "Neues Passwort"
+
+msgid "Privacy"
+msgstr "Datenschutz"
+
+msgid "Reading the site"
+msgstr "Die Seite lesen"
+
+msgid "If you create an account"
+msgstr "Wenn Sie ein Konto anlegen"
+
+msgid "If you vote in a poll"
+msgstr "Wenn Sie an einer Umfrage teilnehmen"
+
+msgid "If you propose a poll"
+msgstr "Wenn Sie eine Umfrage vorschlagen"
+
+msgid "What the platform cannot tell you"
+msgstr "Was diese Plattform nicht sagen kann"
+
+msgid "Your data"
+msgstr "Ihre Daten"
+
+msgid "This page describes what the platform stores, why, and for how long. Everything on it can be checked against the published source code and the database schema, both of which are open."
+msgstr "Diese Seite beschreibt, was die Plattform speichert, warum und wie lange. Alles hier lässt sich am veröffentlichten Quellcode und am Datenbankschema prüfen, beides ist offen."
+
+msgid "Nothing is required to read anything here. There is no account needed, no tracking script, no advertising network, and no third-party analytics."
+msgstr "Zum Lesen ist hier nichts nötig: kein Konto, kein Tracking-Skript, kein Werbenetzwerk, keine Analyse durch Dritte."
+
+msgid "The site sets one cookie for the language you choose. It holds a language code and nothing else."
+msgstr "Die Seite setzt ein Cookie für die gewählte Sprache. Es enthält einen Sprachcode und sonst nichts."
+
+msgid "Your email address is never stored. What is stored is a keyed hash of it, which is what lets the platform recognise a returning address without being able to read it. The address itself is used to send a message and then discarded, so it cannot be recovered from the database, by us or by anyone who obtains a copy of it."
+msgstr "Ihre E-Mail-Adresse wird nicht gespeichert. Gespeichert wird ein mit einem Schlüssel gebildeter Hash davon; damit lässt sich eine wiederkehrende Adresse erkennen, ohne sie lesen zu können. Die Adresse selbst wird zum Versand benutzt und dann verworfen und ist aus der Datenbank nicht wiederherstellbar, weder für uns noch für jemanden, der eine Kopie erlangt."
+
+msgid "Your password is stored only as an argon2 hash, which cannot be reversed into the password."
+msgstr "Ihr Passwort wird nur als argon2-Hash gespeichert, der sich nicht in das Passwort zurückrechnen lässt."
+
+msgid "A session is a random token. Only its hash is stored, and it expires. Signing out deletes it, and setting a new password ends every session of that account."
+msgstr "Eine Sitzung ist ein zufälliges Token. Gespeichert wird nur dessen Hash, und es läuft ab. Abmelden löscht es, und ein neues Passwort beendet alle Sitzungen dieses Kontos."
+
+msgid "A vote records which account cast it, so that one account votes once in a poll. It records nothing about who you are, because the platform does not know."
+msgstr "Eine Stimme hält fest, welches Konto sie abgegeben hat, damit ein Konto in einer Umfrage einmal stimmt. Über Ihre Person hält sie nichts fest, denn die Plattform weiß es nicht."
+
+msgid "A vote is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."
+msgstr "Eine Stimme wird von niemandem geändert oder gelöscht, auch nicht von Administratoren. Es gibt keinen Codepfad dafür. Eine Umfrage, die korrigiert werden muss, wird geschlossen und neu eröffnet."
+
+msgid "The published participation record contains, for each vote, the poll, the option, the time, and an opaque number that is unique to you within that poll and means nothing outside it. It contains no account reference and no address hash."
+msgstr "Der veröffentlichte Teilnahmedatensatz enthält je Stimme die Umfrage, die Option, den Zeitpunkt und eine undurchsichtige Zahl, die innerhalb dieser Umfrage eindeutig ist und außerhalb nichts bedeutet. Er enthält keinen Kontobezug und keinen Adress-Hash."
+
+msgid "What you write and any image you upload are visible only to you and to administrators until the proposal is approved. An uploaded image is decoded and re-encoded before it is stored, which removes any metadata it carried, including location."
+msgstr "Was Sie schreiben und hochladen, sehen bis zur Freigabe nur Sie und die Administratoren. Ein hochgeladenes Bild wird vor dem Speichern dekodiert und neu kodiert, wodurch alle Metadaten entfernt werden, auch der Ort."
+
+msgid "Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."
+msgstr "Umfrageergebnisse sind keine Erhebung. Die Bestätigung einer Adresse verhindert, dass jemand aus einem Konto mehrfach abstimmt; sie zieht keine Stichprobe einer Bevölkerung, und kein Ergebnis hier ist repräsentativ für andere als die Antwortenden."
+
+msgid "The vote record is tamper-evident, which means it can be shown that votes were not altered after the fact. It does not prove that one person voted once, and that difference is not blurred anywhere on this site."
+msgstr "Der Stimmdatensatz ist manipulationssichtbar: Es lässt sich zeigen, dass Stimmen nachträglich nicht verändert wurden. Er beweist nicht, dass eine Person einmal abgestimmt hat, und dieser Unterschied wird auf dieser Seite nirgends verwischt."
+
+msgid "Because an address is stored only as a hash, an account cannot be looked up by anyone reading the database, and that includes us. Write to the contact address to ask about an account, and expect to be asked to prove control of the address it was created with."
+msgstr "Da eine Adresse nur als Hash gespeichert wird, kann niemand, der die Datenbank liest, ein Konto darüber finden, wir eingeschlossen. Schreiben Sie an die Kontaktadresse, um nach einem Konto zu fragen, und rechnen Sie damit, die Kontrolle über die Adresse nachweisen zu müssen."
+
+msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
+msgstr "Eine abgegebene Stimme kann nicht zurückgezogen werden. Sie enthält keine identifizierenden Angaben, und ihre Entfernung würde den Datensatz zerstören, mit dem jede Person die Zählung prüfen kann."
