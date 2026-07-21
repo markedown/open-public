@@ -6023,3 +6023,62 @@ async fn the_privacy_page_says_what_is_stored_and_what_cannot_be_claimed(pool: d
     assert!(de.contains("Datenschutz"));
     assert!(!de.contains("Your email address is never stored"));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_compass_steps_through_positions_without_needing_javascript(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    for (i, text) in ["Birinci onerme.", "Ikinci onerme.", "Ucuncu onerme."]
+        .into_iter()
+        .enumerate()
+    {
+        db::compass::add_thesis(
+            &pool,
+            country_id,
+            text,
+            None,
+            i as i32 + 1,
+            db::compass::SCOPE_PARTY,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+
+    let body = body_string(get_cookie(&app, "/tr/compass", "lang=en").await).await;
+
+    // Every position is still in the one form, so a browser that applies no
+    // stylesheet at all shows the whole list and a single submit answers it.
+    assert!(body.contains("Birinci onerme."));
+    assert!(body.contains("Ikinci onerme."));
+    assert!(body.contains("Ucuncu onerme."));
+    assert_eq!(body.matches("See my match").count(), 1, "one submit");
+
+    // Stepping is ordinary links between cards, which is what makes it work
+    // with no script: the browser does the moving.
+    assert!(body.contains("id=\"q1\""));
+    assert!(body.contains("href=\"#q2\""));
+    assert!(body.contains("href=\"#q3\""));
+    assert!(!body.contains("href=\"#q4\""), "the last card has no next");
+    assert!(!body.contains("href=\"#q0\""), "the first card has no back");
+    assert_eq!(body.matches("compass-step ").count(), 3, "one card each");
+    assert!(
+        body.contains("1/3") && body.contains("3/3"),
+        "progress shown"
+    );
+
+    // Answering still scores from a single submit, whichever card was on screen.
+    let ids: Vec<i64> = sqlx::query_scalar("select id from theses order by position")
+        .fetch_all(&pool)
+        .await
+        .unwrap();
+    let form = ids
+        .iter()
+        .map(|id| format!("a{id}=2"))
+        .collect::<Vec<_>>()
+        .join("&");
+    let result = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(result.contains("Positions answered"));
+    assert!(result.contains("3 / 3"));
+}

@@ -1038,3 +1038,6 @@ msgstr "Adres yalnızca özet olarak saklandığı için, veritabanını okuyan 
 
 msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
 msgstr "Verilmiş bir oy geri alınamaz. Kimliğe dair bilgi taşımaz ve silinmesi, sayımı herkesin doğrulamasını sağlayan kaydı bozar."
+
+msgid "Back"
+msgstr "Geri"
