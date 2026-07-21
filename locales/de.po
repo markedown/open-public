@@ -1026,3 +1026,6 @@ msgstr "Da eine Adresse nur als Hash gespeichert wird, kann niemand, der die Dat
 
 msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
 msgstr "Eine abgegebene Stimme kann nicht zurückgezogen werden. Sie enthält keine identifizierenden Angaben, und ihre Entfernung würde den Datensatz zerstören, mit dem jede Person die Zählung prüfen kann."
+
+msgid "Back"
+msgstr "Zurück"

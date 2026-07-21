@@ -209,8 +209,10 @@ async fn form_scoped(
                     (methodology_note(&scope))
                 }
                 form method="post" action=(action) class="space-y-8" {
-                    @for (i, t) in theses.iter().enumerate() {
-                        (thesis_field(i + 1, t))
+                    ol class="compass-steps space-y-8" {
+                        @for (i, t) in theses.iter().enumerate() {
+                            (thesis_field(i + 1, theses.len(), t))
+                        }
                     }
                     div class="sticky bottom-0 -mx-4 border-t border-hairline bg-paper/90 px-4 py-4 backdrop-blur-sm" {
                         button type="submit"
@@ -234,15 +236,26 @@ async fn form_scoped(
 /// One position in the questionnaire: its text, a topic chip when set, the
 /// five-point radio group (name `a{id}`, defaulting to a checked "skip"), and an
 /// "important" checkbox (name `w{id}`).
-fn thesis_field(number: usize, t: &db::compass::Thesis) -> Markup {
+/// One position: its text, the five-point radio group (name `a{id}`, defaulting
+/// to a checked "skip"), an "important" checkbox (name `w{id}`), and links to
+/// the neighbouring positions.
+///
+/// The links are why this works without JavaScript. They are ordinary anchors
+/// to the next and previous card, so a browser that applies the stylesheet
+/// shows one card at a time, and one that does not shows the whole list, which
+/// is what this page always was.
+fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup {
     let name = format!("a{}", t.id);
     html! {
+        li id={"q" (number)} class="compass-step list-none" {
         fieldset class="op-card px-4 py-4 sm:px-5" {
             legend class="sr-only" { (t.text) }
             div class="mb-3 flex items-start gap-3" {
-                span class="mt-0.5 font-mono text-xs font-semibold text-ink-muted" { (number) }
+                span class="mt-0.5 shrink-0 font-mono text-xs font-semibold text-ink-muted" {
+                    (number) "/" (total)
+                }
                 div class="min-w-0" {
-                    p class="text-sm font-medium text-ink" { (t.text) }
+                    p class="text-[15px] font-medium leading-snug text-ink sm:text-sm" { (t.text) }
                     @if let Some(topic) = &t.topic {
                         span class="mt-1 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-muted" { (topic) }
                     }
@@ -267,6 +280,23 @@ fn thesis_field(number: usize, t: &db::compass::Thesis) -> Markup {
                     (i18n::t("Important"))
                 }
             }
+            div class="compass-nav mt-4 items-center justify-between gap-3 border-t border-hairline-light pt-3" {
+                @if number > 1 {
+                    a href={"#q" (number - 1)}
+                      class="rounded-lg border border-hairline px-4 py-2 text-[13px] font-medium text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                        (i18n::t("Back"))
+                    }
+                } @else {
+                    span {}
+                }
+                @if number < total {
+                    a href={"#q" (number + 1)}
+                      class="rounded-lg bg-accent px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                        (i18n::t("Next"))
+                    }
+                }
+            }
+        }
         }
     }
 }

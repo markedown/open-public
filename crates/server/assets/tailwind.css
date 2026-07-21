@@ -109,3 +109,33 @@
     color: var(--color-paper);
   }
 }
+
+@layer components {
+  /* The compass, one question at a time.
+   *
+   * Every question is in one form and every field is present, so the page
+   * answers with a single submit and nothing travels to the server between
+   * steps. Stepping is presentation only: the anchors are ordinary links, and
+   * a browser without :has() support, or without this stylesheet at all, shows
+   * the whole list and the form still works. That is the fallback, unchanged
+   * from what the page was before.
+   */
+  @supports selector(:has(*)) {
+    .compass-steps .compass-step {
+      display: none;
+    }
+    .compass-steps .compass-step:target {
+      display: block;
+    }
+    .compass-steps:not(:has(.compass-step:target)) .compass-step:first-child {
+      display: block;
+    }
+    /* Only meaningful while stepping; the full list needs no jump links. */
+    .compass-nav {
+      display: flex;
+    }
+  }
+  .compass-nav {
+    display: none;
+  }
+}

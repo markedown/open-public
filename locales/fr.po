@@ -1026,3 +1026,6 @@ msgstr "Comme une adresse n'est conservée que sous forme d'empreinte, personne 
 
 msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
 msgstr "Un vote émis ne peut pas être retiré. Il ne contient aucune information identifiante, et le supprimer briserait le registre qui permet à quiconque de vérifier le décompte."
+
+msgid "Back"
+msgstr "Précédent"
