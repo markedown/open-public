@@ -95,7 +95,7 @@ fn methodology_note(scope: &str) -> Markup {
             @if scope == db::compass::SCOPE_PERSON {
                 (i18n::t("Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
             } @else {
-                (i18n::t("Party stances here are our readings of each party's published programme, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
+                (i18n::t("Party stances here are our readings of what each party published and how it voted, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
             }
         }
     }
@@ -150,6 +150,27 @@ async fn form_scoped(
     } else {
         format!("/{}/compass/{}", country.slug, scope)
     };
+    // A country can ask both kinds of question: one set about parties, one
+    // about the people contesting a presidential election. Offer the other set
+    // only when it has questions in it.
+    let other = if scope == db::compass::SCOPE_PARTY {
+        db::compass::SCOPE_PERSON
+    } else {
+        db::compass::SCOPE_PARTY
+    };
+    let other_link = (db::compass::count_theses(&pool, country.id, other).await? > 0).then(|| {
+        let href = if other == db::compass::SCOPE_PARTY {
+            format!("/{}/compass", country.slug)
+        } else {
+            format!("/{}/compass/{}", country.slug, other)
+        };
+        let label = if other == db::compass::SCOPE_PARTY {
+            i18n::t("Parties")
+        } else {
+            i18n::t("Candidates")
+        };
+        (href, label)
+    });
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -162,6 +183,19 @@ async fn form_scoped(
                 Some(html! { span class="font-mono" { (theses.len()) } " " (i18n::t("positions")) }),
                 None,
             ))
+
+            @if let Some((href, label)) = &other_link {
+                p class="-mt-3 mb-6 text-[13px] text-ink-muted" {
+                    (i18n::t("Answered about")) ": "
+                    @if scope == db::compass::SCOPE_PERSON {
+                        span class="font-medium text-ink" { (i18n::t("Candidates")) }
+                    } @else {
+                        span class="font-medium text-ink" { (i18n::t("Parties")) }
+                    }
+                    " · "
+                    a href=(href) class="text-accent hover:underline" { (label) }
+                }
+            }
 
             @if theses.is_empty() {
                 p class="py-12 text-center text-sm text-ink-muted" {
