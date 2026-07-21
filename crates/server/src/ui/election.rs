@@ -519,34 +519,60 @@ fn thousands(n: i64) -> String {
 /// `days` is the count until polling day. Some systems fix the date by law and
 /// others only a deadline, so `expected_note` is printed whenever it is set
 /// rather than presenting a provisional date as a certainty.
-pub fn next_election(
-    election: &db::elections::Election,
+pub fn next_elections(
+    elections: &[(&db::elections::Election, Option<String>)],
     country: &str,
-    compass_href: Option<&str>,
 ) -> Markup {
+    let Some((first, _)) = elections.first() else {
+        return html! {};
+    };
     html! {
         section class="op-card mb-6 px-5 py-4" {
             div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1" {
                 span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
-                    (i18n::t("Next election"))
+                    // One round, so one date and one countdown, however many
+                    // contests are decided on it.
+                    @if elections.len() > 1 {
+                        (i18n::t("Next elections"))
+                    } @else {
+                        (i18n::t("Next election"))
+                    }
                 }
-                @if let Some(days) = days_ahead(election) {
+                @if let Some(days) = days_ahead(first) {
                     span class="font-mono text-[11px] text-ink-muted" {
                         (days) " " (i18n::t("days"))
                     }
                 }
             }
-            a href={"/" (country) "/election/" (election.slug)}
-              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-accent hover:underline" {
-                (election.name)
-            }
-            div class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px] text-ink-muted" {
-                @if let Some(d) = election.held_on {
+            div class="mt-1 flex flex-wrap items-baseline gap-x-3 text-[13px] text-ink-muted" {
+                @if let Some(d) = first.held_on {
                     span class="font-mono text-ink" { (crate::fmt::date(Some(d))) }
                 } @else {
                     // No date fixed yet: the note below says what decides it.
                     span class="font-mono text-ink" { (i18n::t("Date not fixed")) }
                 }
+            }
+            @for (election, compass_href) in elections {
+                (next_election_entry(election, country, compass_href.as_deref()))
+            }
+        }
+    }
+}
+
+/// One contest of the next round: what is being elected, the note about the
+/// date, and the compass that matches what it is contested by.
+fn next_election_entry(
+    election: &db::elections::Election,
+    country: &str,
+    compass_href: Option<&str>,
+) -> Markup {
+    html! {
+        div class="mt-3 border-t border-hairline-light pt-3 first:border-0 first:pt-1" {
+            a href={"/" (country) "/election/" (election.slug)}
+              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-accent hover:underline" {
+                (election.name)
+            }
+            div class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px] text-ink-muted" {
                 span class="text-[11px] font-bold uppercase tracking-wide" {
                     (crate::pages::elections::kind_label(election.kind.as_deref()))
                 }

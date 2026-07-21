@@ -1041,3 +1041,6 @@ msgstr "Verilmiş bir oy geri alınamaz. Kimliğe dair bilgi taşımaz ve silinm
 
 msgid "Back"
 msgstr "Geri"
+
+msgid "Next elections"
+msgstr "Sonraki seçimler"

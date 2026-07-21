@@ -5280,6 +5280,34 @@ async fn country_and_index_show_the_next_election(pool: db::Pool) {
     let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
     assert!(country.contains("Compare your positions"));
 
+    // A country that decides two things on one day shows both, not one of them.
+    sqlx::query(
+        "insert into elections (country_id, name, slug, held_on, kind, source_id, expected_note) \
+         values ($1,'Gelecek Cumhurbaskani','gelecek-cumhurbaskani',$2,'presidential',$3,'Ayni gun.')",
+    )
+    .bind(country_id)
+    .bind(ahead)
+    .bind(src)
+    .execute(&pool)
+    .await
+    .unwrap();
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(country.contains("Next elections"), "plural for a round");
+    assert!(country.contains("Gelecek Secim"));
+    assert!(
+        country.contains("Gelecek Cumhurbaskani"),
+        "both contests shown"
+    );
+    assert_eq!(
+        country.matches("Tarih yasayla belirlenir.").count(),
+        1,
+        "each contest keeps its own note"
+    );
+    sqlx::query("delete from elections where slug = 'gelecek-cumhurbaskani'")
+        .execute(&pool)
+        .await
+        .unwrap();
+
     // The election's own page says it has not happened rather than showing an
     // empty result set.
     let detail = body_string(get_cookie(&app, "/tr/election/gelecek-secim", "lang=en").await).await;
