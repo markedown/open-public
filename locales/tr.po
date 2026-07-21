@@ -975,3 +975,66 @@ msgstr "Parolanızı mı unuttunuz?"
 
 msgid "New password"
 msgstr "Yeni parola"
+
+msgid "Privacy"
+msgstr "Gizlilik"
+
+msgid "Reading the site"
+msgstr "Siteyi okumak"
+
+msgid "If you create an account"
+msgstr "Hesap açarsanız"
+
+msgid "If you vote in a poll"
+msgstr "Bir ankette oy verirseniz"
+
+msgid "If you propose a poll"
+msgstr "Bir anket önerirseniz"
+
+msgid "What the platform cannot tell you"
+msgstr "Platformun size söyleyemeyecekleri"
+
+msgid "Your data"
+msgstr "Verileriniz"
+
+msgid "This page describes what the platform stores, why, and for how long. Everything on it can be checked against the published source code and the database schema, both of which are open."
+msgstr "Bu sayfa platformun neyi, niçin ve ne kadar süreyle sakladığını anlatır. Buradaki her ifade, ikisi de açık olan kaynak kodu ve veritabanı şeması üzerinden denetlenebilir."
+
+msgid "Nothing is required to read anything here. There is no account needed, no tracking script, no advertising network, and no third-party analytics."
+msgstr "Buradaki hiçbir şeyi okumak için bir şey gerekmez. Hesap gerekmez, takip betiği, reklam ağı veya üçüncü taraf analiz aracı yoktur."
+
+msgid "The site sets one cookie for the language you choose. It holds a language code and nothing else."
+msgstr "Site yalnızca seçtiğiniz dil için bir çerez kullanır. İçinde bir dil kodundan başka bir şey yoktur."
+
+msgid "Your email address is never stored. What is stored is a keyed hash of it, which is what lets the platform recognise a returning address without being able to read it. The address itself is used to send a message and then discarded, so it cannot be recovered from the database, by us or by anyone who obtains a copy of it."
+msgstr "E-posta adresiniz saklanmaz. Saklanan, adresin anahtarlı bir özetidir; bu, adresi okuyamadan tanımayı sağlar. Adresin kendisi yalnızca ileti göndermek için kullanılır ve sonra atılır; veritabanından geri elde edilemez, ne bizim ne de veritabanının bir kopyasını ele geçirenlerin eline geçer."
+
+msgid "Your password is stored only as an argon2 hash, which cannot be reversed into the password."
+msgstr "Parolanız yalnızca argon2 özeti olarak saklanır; bu özet parolaya geri çevrilemez."
+
+msgid "A session is a random token. Only its hash is stored, and it expires. Signing out deletes it, and setting a new password ends every session of that account."
+msgstr "Oturum rastgele bir belirteçtir. Yalnızca özeti saklanır ve süresi dolar. Çıkış yapmak onu siler; yeni bir parola belirlemek ise o hesabın bütün oturumlarını sonlandırır."
+
+msgid "A vote records which account cast it, so that one account votes once in a poll. It records nothing about who you are, because the platform does not know."
+msgstr "Bir oy, hangi hesabın verdiğini kaydeder; böylece bir hesap bir ankette bir kez oy verir. Kim olduğunuza dair bir şey kaydetmez, çünkü platform bunu bilmez."
+
+msgid "A vote is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."
+msgstr "Bir oy hiç kimse tarafından, yöneticiler dâhil, değiştirilmez ve silinmez. Kodda bunu yapan bir yol yoktur. Düzeltilmesi gereken anket kapatılır ve yenisi açılır."
+
+msgid "The published participation record contains, for each vote, the poll, the option, the time, and an opaque number that is unique to you within that poll and means nothing outside it. It contains no account reference and no address hash."
+msgstr "Yayımlanan katılım kaydı her oy için anketi, seçeneği, zamanı ve o anket içinde size özgü olan, dışarıda hiçbir anlam taşımayan opak bir sayıyı içerir. Hesap referansı ve adres özeti içermez."
+
+msgid "What you write and any image you upload are visible only to you and to administrators until the proposal is approved. An uploaded image is decoded and re-encoded before it is stored, which removes any metadata it carried, including location."
+msgstr "Yazdıklarınız ve yüklediğiniz görseller, öneri onaylanana kadar yalnızca size ve yöneticilere görünür. Yüklenen görsel saklanmadan önce çözülüp yeniden kodlanır; böylece konum dâhil taşıdığı üstveri kaldırılır."
+
+msgid "Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."
+msgstr "Anket sonuçları bir araştırma değildir. Adres doğrulaması, bir kişinin tek hesaptan tekrar tekrar oy vermesini engeller; herhangi bir nüfustan örneklem almaz ve buradaki hiçbir sonuç yanıt verenler dışında kimseyi temsil etmez."
+
+msgid "The vote record is tamper-evident, which means it can be shown that votes were not altered after the fact. It does not prove that one person voted once, and that difference is not blurred anywhere on this site."
+msgstr "Oy kaydı kurcalanmaya karşı kanıt bırakır; yani oyların sonradan değiştirilmediği gösterilebilir. Bir kişinin bir kez oy verdiğini kanıtlamaz ve bu ayrım bu sitenin hiçbir yerinde bulanıklaştırılmaz."
+
+msgid "Because an address is stored only as a hash, an account cannot be looked up by anyone reading the database, and that includes us. Write to the contact address to ask about an account, and expect to be asked to prove control of the address it was created with."
+msgstr "Adres yalnızca özet olarak saklandığı için, veritabanını okuyan hiç kimse, biz dâhil, bir hesabı adresle bulamaz. Bir hesap hakkında sormak için iletişim adresine yazın; hesabın açıldığı adresin denetiminde olduğunuzu göstermeniz istenecektir."
+
+msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
+msgstr "Verilmiş bir oy geri alınamaz. Kimliğe dair bilgi taşımaz ve silinmesi, sayımı herkesin doğrulamasını sağlayan kaydı bozar."

@@ -963,3 +963,66 @@ msgstr "Mot de passe oublié ?"
 
 msgid "New password"
 msgstr "Nouveau mot de passe"
+
+msgid "Privacy"
+msgstr "Confidentialité"
+
+msgid "Reading the site"
+msgstr "Consulter le site"
+
+msgid "If you create an account"
+msgstr "Si vous créez un compte"
+
+msgid "If you vote in a poll"
+msgstr "Si vous votez à un sondage"
+
+msgid "If you propose a poll"
+msgstr "Si vous proposez un sondage"
+
+msgid "What the platform cannot tell you"
+msgstr "Ce que la plateforme ne peut pas vous dire"
+
+msgid "Your data"
+msgstr "Vos données"
+
+msgid "This page describes what the platform stores, why, and for how long. Everything on it can be checked against the published source code and the database schema, both of which are open."
+msgstr "Cette page décrit ce que la plateforme conserve, pourquoi et pendant combien de temps. Tout ce qui y figure peut être vérifié dans le code source publié et le schéma de la base, tous deux ouverts."
+
+msgid "Nothing is required to read anything here. There is no account needed, no tracking script, no advertising network, and no third-party analytics."
+msgstr "Rien n'est requis pour lire quoi que ce soit ici. Ni compte, ni script de pistage, ni régie publicitaire, ni analyse tierce."
+
+msgid "The site sets one cookie for the language you choose. It holds a language code and nothing else."
+msgstr "Le site dépose un cookie pour la langue choisie. Il contient un code de langue et rien d'autre."
+
+msgid "Your email address is never stored. What is stored is a keyed hash of it, which is what lets the platform recognise a returning address without being able to read it. The address itself is used to send a message and then discarded, so it cannot be recovered from the database, by us or by anyone who obtains a copy of it."
+msgstr "Votre adresse e-mail n'est jamais conservée. Ce qui est conservé est une empreinte à clé, qui permet de reconnaître une adresse déjà vue sans pouvoir la lire. L'adresse elle-même sert à envoyer un message puis est écartée : elle ne peut être retrouvée dans la base, ni par nous ni par quiconque en obtiendrait une copie."
+
+msgid "Your password is stored only as an argon2 hash, which cannot be reversed into the password."
+msgstr "Votre mot de passe n'est conservé que sous forme d'empreinte argon2, qui ne peut pas être inversée."
+
+msgid "A session is a random token. Only its hash is stored, and it expires. Signing out deletes it, and setting a new password ends every session of that account."
+msgstr "Une session est un jeton aléatoire. Seule son empreinte est conservée, et elle expire. Se déconnecter la supprime, et définir un nouveau mot de passe met fin à toutes les sessions du compte."
+
+msgid "A vote records which account cast it, so that one account votes once in a poll. It records nothing about who you are, because the platform does not know."
+msgstr "Un vote enregistre quel compte l'a émis, afin qu'un compte vote une fois par sondage. Il n'enregistre rien sur qui vous êtes, car la plateforme l'ignore."
+
+msgid "A vote is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."
+msgstr "Un vote n'est jamais modifié ni supprimé, par personne, administrateurs compris. Aucun chemin de code ne le permet. Un sondage à corriger est clos et un nouveau est ouvert."
+
+msgid "The published participation record contains, for each vote, the poll, the option, the time, and an opaque number that is unique to you within that poll and means nothing outside it. It contains no account reference and no address hash."
+msgstr "Le registre de participation publié contient, pour chaque vote, le sondage, l'option, l'heure et un nombre opaque, unique au sein de ce sondage et sans signification ailleurs. Il ne contient aucune référence de compte ni empreinte d'adresse."
+
+msgid "What you write and any image you upload are visible only to you and to administrators until the proposal is approved. An uploaded image is decoded and re-encoded before it is stored, which removes any metadata it carried, including location."
+msgstr "Ce que vous écrivez et les images que vous envoyez ne sont visibles que par vous et les administrateurs jusqu'à l'approbation. Une image envoyée est décodée puis réencodée avant d'être stockée, ce qui supprime toutes ses métadonnées, y compris la localisation."
+
+msgid "Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."
+msgstr "Les résultats des sondages ne sont pas une enquête. Vérifier une adresse empêche une personne de voter plusieurs fois depuis un compte ; cela ne constitue aucun échantillon d'une population, et aucun résultat ici n'est représentatif d'autres que ceux qui ont répondu."
+
+msgid "The vote record is tamper-evident, which means it can be shown that votes were not altered after the fact. It does not prove that one person voted once, and that difference is not blurred anywhere on this site."
+msgstr "Le registre des votes est infalsifiable au sens où l'on peut montrer que les votes n'ont pas été modifiés après coup. Il ne prouve pas qu'une personne a voté une fois, et cette différence n'est estompée nulle part sur ce site."
+
+msgid "Because an address is stored only as a hash, an account cannot be looked up by anyone reading the database, and that includes us. Write to the contact address to ask about an account, and expect to be asked to prove control of the address it was created with."
+msgstr "Comme une adresse n'est conservée que sous forme d'empreinte, personne lisant la base ne peut retrouver un compte à partir d'elle, nous compris. Écrivez à l'adresse de contact pour toute question sur un compte, en sachant qu'il vous sera demandé de prouver que vous contrôlez l'adresse d'inscription."
+
+msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
+msgstr "Un vote émis ne peut pas être retiré. Il ne contient aucune information identifiante, et le supprimer briserait le registre qui permet à quiconque de vérifier le décompte."
