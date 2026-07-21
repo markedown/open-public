@@ -32,6 +32,16 @@ jobs:
           components: rustfmt
       - run: cargo fmt --all --check
 
+  data:
+    name: dataset
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      # The published dataset claims that every fact cites a source, that no
+      # personal or unreviewed field is in it, and that every reference
+      # resolves. This is that claim, checked.
+      - run: python3 scripts/validate_data.py dataset
+
   clippy:
     name: clippy
     runs-on: ubuntu-latest

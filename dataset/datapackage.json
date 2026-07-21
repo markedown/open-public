@@ -1,0 +1,1111 @@
+{
+  "description": "Structured political data: people, parties, roles, elections, news and recorded positions. Every fact references the source it was read from.",
+  "licenses": [
+    {
+      "name": "CC0-1.0",
+      "path": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "title": "Creative Commons Zero v1.0 Universal"
+    }
+  ],
+  "name": "open-public",
+  "profile": "data-package",
+  "resources": [
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "alliances",
+      "path": "alliances.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "dissolved_date",
+            "type": "string"
+          },
+          {
+            "name": "founded_date",
+            "type": "date"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "summary",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "countries",
+      "path": "countries.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "capital",
+            "type": "string"
+          },
+          {
+            "name": "flag_url",
+            "type": "string"
+          },
+          {
+            "name": "founded_date",
+            "type": "date"
+          },
+          {
+            "name": "government_type",
+            "type": "string"
+          },
+          {
+            "name": "legislature_name",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "population",
+            "type": "integer"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "summary",
+            "type": "string"
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "election_results",
+      "path": "election_results.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "election",
+            "type": "string"
+          },
+          {
+            "name": "label",
+            "type": "string"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "seats",
+            "type": "integer"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "votes",
+            "type": "integer"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "election",
+            "reference": {
+              "fields": "slug",
+              "resource": "elections"
+            }
+          },
+          {
+            "fields": "party",
+            "reference": {
+              "fields": "slug",
+              "resource": "parties"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "elections",
+      "path": "elections.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "electorate",
+            "type": "integer"
+          },
+          {
+            "name": "expected_note",
+            "type": "string"
+          },
+          {
+            "name": "held_on",
+            "type": "date"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "valid_votes",
+            "type": "integer"
+          },
+          {
+            "name": "votes_cast",
+            "type": "integer"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "events",
+      "path": "events.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "happened_on",
+            "type": "date"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "outlets",
+      "path": "outlets.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "homepage_url",
+            "type": "string"
+          },
+          {
+            "name": "leaning",
+            "type": "string"
+          },
+          {
+            "name": "leaning_source_hash",
+            "type": "string"
+          },
+          {
+            "name": "leaning_source_url",
+            "type": "string"
+          },
+          {
+            "name": "logo_license",
+            "type": "string"
+          },
+          {
+            "name": "logo_url",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "summary",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "parties",
+      "path": "parties.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "color",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "dissolved_date",
+            "type": "string"
+          },
+          {
+            "name": "founded_date",
+            "type": "date"
+          },
+          {
+            "name": "ideology_tags",
+            "type": "array"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "short_name",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "summary",
+            "type": "string"
+          },
+          {
+            "name": "wikidata_id",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "party_alliances",
+      "path": "party_alliances.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "alliance",
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "type": "string"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "date"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "party",
+            "reference": {
+              "fields": "slug",
+              "resource": "parties"
+            }
+          },
+          {
+            "fields": "alliance",
+            "reference": {
+              "fields": "slug",
+              "resource": "alliances"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "party_memberships",
+      "path": "party_memberships.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "end_date",
+            "type": "string"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "date"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "person",
+            "reference": {
+              "fields": "slug",
+              "resource": "people"
+            }
+          },
+          {
+            "fields": "party",
+            "reference": {
+              "fields": "slug",
+              "resource": "parties"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "people",
+      "path": "people.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "birth_date",
+            "type": "date"
+          },
+          {
+            "name": "birth_place",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "full_name",
+            "type": "string"
+          },
+          {
+            "name": "photo_license",
+            "type": "string"
+          },
+          {
+            "name": "photo_url",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "summary",
+            "type": "string"
+          },
+          {
+            "name": "wikidata_id",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "person_attributes",
+      "path": "person_attributes.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "end_date",
+            "type": "string"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "string"
+          },
+          {
+            "name": "value",
+            "type": "string"
+          },
+          {
+            "name": "value_wikidata_id",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "person",
+            "reference": {
+              "fields": "slug",
+              "resource": "people"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "person_education",
+      "path": "person_education.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "degree",
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "type": "date"
+          },
+          {
+            "name": "field",
+            "type": "string"
+          },
+          {
+            "name": "institution",
+            "type": "string"
+          },
+          {
+            "name": "institution_wikidata_id",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "date"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "person",
+            "reference": {
+              "fields": "slug",
+              "resource": "people"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "poll_options",
+      "path": "poll_options.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "label",
+            "type": "string"
+          },
+          {
+            "name": "poll",
+            "type": "string"
+          },
+          {
+            "name": "position",
+            "type": "integer"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "poll",
+            "reference": {
+              "fields": "slug",
+              "resource": "polls"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "polls",
+      "path": "polls.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "closes_at",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "opens_at",
+            "type": "string"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "question",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "position_evidence",
+      "path": "position_evidence.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "locator",
+            "type": "string"
+          },
+          {
+            "name": "occurred_on",
+            "type": "date"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "quote",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "stance",
+            "type": "integer"
+          },
+          {
+            "name": "thesis",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          },
+          {
+            "fields": "party",
+            "reference": {
+              "fields": "slug",
+              "resource": "parties"
+            }
+          },
+          {
+            "fields": "person",
+            "reference": {
+              "fields": "slug",
+              "resource": "people"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "roles",
+      "path": "roles.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "district",
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "type": "string"
+          },
+          {
+            "name": "org",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "role_type",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "start_date",
+            "type": "date"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "person",
+            "reference": {
+              "fields": "slug",
+              "resource": "people"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "sources",
+      "path": "sources.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "content_hash",
+            "type": "string"
+          },
+          {
+            "name": "content_sha256",
+            "type": "string"
+          },
+          {
+            "name": "fetched_at",
+            "type": "datetime"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "outlet",
+            "type": "string"
+          },
+          {
+            "name": "published_at",
+            "type": "datetime"
+          },
+          {
+            "name": "snapshot_url",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "type": "string"
+          }
+        ],
+        "primaryKey": [
+          "url",
+          "content_hash"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "statements",
+      "path": "statements.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "is_paraphrase",
+            "type": "boolean"
+          },
+          {
+            "name": "party",
+            "type": "string"
+          },
+          {
+            "name": "person",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "stated_at",
+            "type": "date"
+          },
+          {
+            "name": "text_original",
+            "type": "string"
+          },
+          {
+            "name": "topic",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "theses",
+      "path": "theses.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "position",
+            "type": "integer"
+          },
+          {
+            "name": "scope",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "text",
+            "type": "string"
+          },
+          {
+            "name": "topic",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "topics",
+      "path": "topics.json",
+      "schema": {
+        "fields": []
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "translations",
+      "path": "translations.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "entity",
+            "type": "string"
+          },
+          {
+            "name": "entity_type",
+            "type": "string"
+          },
+          {
+            "name": "field",
+            "type": "string"
+          },
+          {
+            "name": "lang",
+            "type": "string"
+          },
+          {
+            "name": "origin",
+            "type": "string"
+          },
+          {
+            "name": "source_lang",
+            "type": "string"
+          },
+          {
+            "name": "text",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "title": "open-public dataset"
+}

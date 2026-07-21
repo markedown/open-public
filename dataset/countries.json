@@ -1,0 +1,54 @@
+[
+  {
+    "capital": "Paris",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg",
+    "founded_date": "1958-10-04",
+    "government_type": "Semi-presidential republic",
+    "legislature_name": "National Assembly",
+    "name": "France",
+    "population": null,
+    "slug": "france",
+    "source_hash": "fr-country",
+    "source_url": "https://www.assemblee-nationale.fr",
+    "summary": "La France est une république semi-présidentielle. Le président de la République est le chef de l'État et le Premier ministre dirige le gouvernement. L'Assemblée nationale est la chambre basse du Parlement, élue au suffrage universel direct."
+  },
+  {
+    "capital": "Berlin",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg",
+    "founded_date": "1949-05-23",
+    "government_type": "Federal parliamentary republic",
+    "legislature_name": "Bundestag",
+    "name": "Germany",
+    "population": null,
+    "slug": "germany",
+    "source_hash": "de-country",
+    "source_url": "https://www.bundestag.de",
+    "summary": "Deutschland ist eine föderale parlamentarische Republik mit sechzehn Ländern. Das Parlament ist der Bundestag; der Bundeskanzler führt die Regierung, der Bundespräsident ist das Staatsoberhaupt."
+  },
+  {
+    "capital": "Ankara",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg",
+    "founded_date": "1923-10-29",
+    "government_type": "Presidential government system",
+    "legislature_name": null,
+    "name": "Türkiye",
+    "population": 85000000,
+    "slug": "turkiye",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "summary": "Türkiye, 1923'te kurulan ve 2018'den bu yana cumhurbaşkanlığı hükümet sistemiyle yönetilen bir cumhuriyettir. Yasama yetkisi 600 sandalyeli Türkiye Büyük Millet Meclisi'ndedir; yürütme cumhurbaşkanı ve kabinesindedir."
+  },
+  {
+    "capital": "Washington, D.C.",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg",
+    "founded_date": "1776-07-04",
+    "government_type": "Federal presidential republic",
+    "legislature_name": "Congress",
+    "name": "United States",
+    "population": null,
+    "slug": "usa",
+    "source_hash": "wd-Q30",
+    "source_url": "https://www.wikidata.org/wiki/Q30",
+    "summary": "Amerika Birleşik Devletleri, 1776'da bağımsızlığını ilan eden federal bir cumhuriyettir. Yasama organı, Temsilciler Meclisi ve Senato'dan oluşan iki kanatlı Kongre'dir. Devlet başkanı aynı zamanda hükümetin başıdır ve dört yılda bir seçilir."
+  }
+]

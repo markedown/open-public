@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "alliances": 3,
+    "countries": 4,
+    "election_results": 99,
+    "elections": 21,
+    "events": 11,
+    "outlets": 12,
+    "parties": 54,
+    "party_alliances": 12,
+    "party_memberships": 2657,
+    "people": 2708,
+    "person_attributes": 3279,
+    "person_education": 2617,
+    "poll_options": 17,
+    "polls": 5,
+    "position_evidence": 289,
+    "roles": 2709,
+    "sources": 4167,
+    "statements": 1,
+    "theses": 79,
+    "topics": 0,
+    "translations": 1
+  },
+  "note": "Row counts of this export. Generated file; see README for what is included and what is deliberately left out."
+}

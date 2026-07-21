@@ -1,0 +1,32 @@
+[
+  {
+    "country": "turkiye",
+    "dissolved_date": null,
+    "founded_date": "2018-02-20",
+    "name": "Cumhur İttifakı",
+    "slug": "cumhur-ittifaki",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "summary": "Türkiye'de 2018'de kurulan seçim ittifakı. AK Parti ve MHP öncülüğünde oluşturuldu; sonraki dönemde başka partiler de katıldı."
+  },
+  {
+    "country": "turkiye",
+    "dissolved_date": null,
+    "founded_date": "2022-09-01",
+    "name": "Emek ve Özgürlük İttifakı",
+    "slug": "emek-ve-ozgurluk-ittifaki",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "summary": "2022'de kurulan sol seçim ittifakı. Yeşil Sol Parti (sonradan DEM Parti) ve TİP gibi partileri kapsadı."
+  },
+  {
+    "country": "turkiye",
+    "dissolved_date": null,
+    "founded_date": "2018-05-05",
+    "name": "Millet İttifakı",
+    "slug": "millet-ittifaki",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "summary": "2018'de kurulan muhalefet seçim ittifakı. CHP ve İYİ Parti başta olmak üzere birden çok partiyi bir araya getirdi."
+  }
+]

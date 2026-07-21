@@ -1,0 +1,713 @@
+[
+  {
+    "country": "france",
+    "position": 1,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "La réforme portant l'âge de départ à la retraite à 64 ans doit être abrogée.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 2,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Le SMIC doit être augmenté.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 3,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Un impôt sur les grandes fortunes doit être rétabli.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 4,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "L'immigration légale et illégale doit être fortement réduite.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 5,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Le droit du sol doit être supprimé.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 6,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Le nucléaire doit rester la base du mix énergétique français.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 7,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "La France doit défendre sa souveraineté face à l'Union européenne.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 8,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "L'aide militaire à l'Ukraine doit être poursuivie.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 9,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "La proportionnelle doit être introduite aux élections législatives.",
+    "topic": null
+  },
+  {
+    "country": "france",
+    "position": 10,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Les services publics doivent être renforcés par l'investissement public.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 1,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die Schuldenbremse soll gelockert werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 2,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Der gesetzliche Mindestlohn soll auf 15 Euro angehoben werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 3,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Sehr hohe Vermögen sollen zusätzlich besteuert werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 4,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 5,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Asylsuchende sollen an der deutschen Grenze zurückgewiesen werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 6,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die doppelte Staatsbürgerschaft soll wieder abgeschafft werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 7,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Abschiebungen nach Syrien und Afghanistan sollen ermöglicht werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 8,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Deutschland soll gezielt Fachkräfte aus dem Ausland anwerben.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 9,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Der Kohleausstieg soll vorgezogen werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 10,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die abgeschalteten Kernkraftwerke sollen wieder in Betrieb genommen werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 11,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Das Verbrenner-Aus ab 2035 soll bestehen bleiben.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 12,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Der CO2-Preis soll weiter steigen.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 13,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die Europäische Union soll zu einem Bundesstaat weiterentwickelt werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 14,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Deutschland soll die Ukraine weiterhin militärisch unterstützen.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 15,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die Wehrpflicht soll wieder eingeführt werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 16,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Deutschland soll dauerhaft mindestens zwei Prozent des BIP für Verteidigung ausgeben.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 17,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Das Renteneintrittsalter soll steigen.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 18,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die Mietpreisbremse soll verschärft werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 19,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Cannabis soll legal bleiben.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 20,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Der Rundfunkbeitrag soll abgeschafft werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 21,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Die Sanktionen gegen Russland sollen aufrechterhalten werden.",
+    "topic": null
+  },
+  {
+    "country": "germany",
+    "position": 22,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Deutschland soll Mitglied der Europäischen Union bleiben.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 1,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Merkez Bankası faiz kararlarını hükümetten bağımsız almalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 2,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Asgari ücret yılda birden fazla kez artırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 3,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Kamu iktisadi teşebbüsleri özelleştirilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 4,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Asgari ücret gelir vergisinden muaf tutulmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 5,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye parlamenter sisteme geri dönmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 6,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Hâkimler ve Savcılar Kurulunun yapısı yürütmeden bağımsız hale getirilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 7,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Seçim barajı tamamen kaldırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 8,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Seçilmiş belediye başkanlarının yerine kayyum atanması uygulamasına son verilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 9,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Kürtçe kamu okullarında eğitim dili olarak kullanılabilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 10,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye İstanbul Sözleşmesi'ne yeniden taraf olmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 11,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Zorunlu din kültürü dersi kaldırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 12,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Sosyal medyada içerik kaldırma ve erişim engelleme yetkileri sınırlandırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 13,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Suriyeli sığınmacıların ülkelerine dönüşü için aktif bir program yürütülmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 14,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye Avrupa Birliği üyelik sürecini canlandırmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 15,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye NATO üyeliğini sürdürmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 16,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye'nin sınır ötesi askerî operasyonları sürdürülmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 17,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Nükleer enerji yatırımları sürdürülmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 18,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Yeni kömürlü termik santral kurulmamalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 19,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Kanal İstanbul projesi hayata geçirilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 20,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Madencilik izinleri korunan doğal alanlarda verilmemelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 21,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Sosyal konut üretimi devlet eliyle büyük ölçüde artırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 22,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Emekli aylıkları asgari ücret düzeyine yükseltilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 24,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Sağlıkta şehir hastanesi modeli sonlandırılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 25,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Türkiye'nin üniter yapısı korunmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 27,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Kürt sorununun çözümü için siyasi müzakere yürütülmelidir.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 28,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Diyanet İşleri Başkanlığının bütçesi ve yetkileri azaltılmalıdır.",
+    "topic": null
+  },
+  {
+    "country": "turkiye",
+    "position": 29,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "LGBTİ+ bireyler için ayrımcılığa karşı yasal koruma getirilmelidir.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 1,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Tariffs on imported goods should be increased.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 2,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The federal minimum wage should be raised.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 3,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Taxes on corporations and high earners should be increased.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 4,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The Affordable Care Act should be preserved and expanded.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 5,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Medicare should negotiate prescription drug prices.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 6,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Construction of a wall along the southern border should continue.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 7,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Large-scale deportation of undocumented immigrants should be carried out.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 8,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Undocumented immigrants brought as children should get a path to citizenship.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 9,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Abortion access should be protected by federal law.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 10,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Stricter gun control laws should be enacted.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 11,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Gender-affirming medical care for minors should be restricted.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 12,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Diversity, equity and inclusion programmes in federal agencies should be ended.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 13,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The United States should remain in the Paris Climate Agreement.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 14,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Domestic oil and gas drilling should be expanded.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 15,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Electric vehicle mandates should be repealed.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 17,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The United States should remain committed to NATO.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 18,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Voter identification should be required in federal elections.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 20,
+    "scope": "party",
+    "source_hash": "compass-tr",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Federal student loan debt should be forgiven.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 21,
+    "scope": "party",
+    "source_hash": "us-house-roll-2026-207",
+    "source_url": "https://clerk.house.gov/evs/2026/roll207.xml",
+    "text": "The United States should keep supporting Ukraine militarily.",
+    "topic": null
+  },
+  {
+    "country": "usa",
+    "position": 22,
+    "scope": "party",
+    "source_hash": "us-house-roll-2025-12",
+    "source_url": "https://clerk.house.gov/evs/2025/roll012.xml",
+    "text": "Participation in women's school sports should be limited to athletes whose sex at birth was female.",
+    "topic": null
+  }
+]

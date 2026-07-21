@@ -1,0 +1,112 @@
+[
+  {
+    "country": "turkiye",
+    "happened_on": "1920-04-23",
+    "kind": "founding",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q274918",
+    "source_url": "https://www.wikidata.org/wiki/Q274918",
+    "title": "Türkiye Büyük Millet Meclisi'nin açılışı"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1923-07-24",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q193258",
+    "source_url": "https://www.wikidata.org/wiki/Q193258",
+    "title": "Lozan Antlaşması'nın imzalanması"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1923-10-29",
+    "kind": "founding",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q31187690",
+    "source_url": "https://www.wikidata.org/wiki/Q31187690",
+    "title": "Cumhuriyet'in ilanı"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1924-04-20",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q1535453",
+    "source_url": "https://www.wikidata.org/wiki/Q1535453",
+    "title": "1924 Anayasası'nın kabulü"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1960-05-27",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q1859259",
+    "source_url": "https://www.wikidata.org/wiki/Q1859259",
+    "title": "27 Mayıs 1960 askerî darbesi"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1961-07-09",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q847801",
+    "source_url": "https://www.wikidata.org/wiki/Q847801",
+    "title": "1961 Anayasası'nın kabulü"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1971-03-12",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q931943",
+    "source_url": "https://www.wikidata.org/wiki/Q931943",
+    "title": "12 Mart 1971 muhtırası"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1980-09-12",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q1758028",
+    "source_url": "https://www.wikidata.org/wiki/Q1758028",
+    "title": "12 Eylül 1980 askerî darbesi"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "1982-11-07",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q646519",
+    "source_url": "https://www.wikidata.org/wiki/Q646519",
+    "title": "1982 Anayasası'nın kabulü"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "2016-07-15",
+    "kind": "milestone",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q25906338",
+    "source_url": "https://www.wikidata.org/wiki/Q25906338",
+    "title": "15 Temmuz 2016 darbe girişimi"
+  },
+  {
+    "country": "turkiye",
+    "happened_on": "2018-07-09",
+    "kind": "government",
+    "party": null,
+    "person": null,
+    "source_hash": "wd-Q94696515",
+    "source_url": "https://www.wikidata.org/wiki/Q94696515",
+    "title": "Cumhurbaşkanlığı hükûmet sistemine geçiş"
+  }
+]

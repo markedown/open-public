@@ -36,14 +36,23 @@ if [ -n "$private_files$private_ingest" ]; then
   fail "refusing to commit private code/data: $(printf '%s %s' "$private_files" "$private_ingest" | xargs)"
 fi
 
-# 4. The public repo is country-agnostic and reads as ordinary human-authored
-#    work: no real politician names, country-specific dataset/source references,
-#    or AI attribution may enter it. Scan added lines (allowed i18n vocab such as
-#    "National Assembly"/"Bundestag" lives only in locales and is not matched).
+# 4. The code, the docs and the commit messages stay country-agnostic and read
+#    as ordinary human-authored work: no real politician names, no
+#    country-specific dataset or source references, no AI attribution.
+#
+#    `dataset/` is exempt from the country-agnostic part, and only from that.
+#    It holds the published dataset, which is country-specific by definition:
+#    real people, real parties, and the official sources they were read from.
+#    Publishing it is a deliberate decision, and it is released under CC0.
 if [ -n "$staged" ]; then
-  added=$(git diff --cached -U0 -- . ':(exclude).githooks' | grep '^+' || true)
-  if printf '%s' "$added" | grep -EqiI 'erdo[ğg]an|imamo[ğg]lu|lecornu|steinmeier|friedrich merz|\bTBMM\b|\bYSK\b|abgeordnetenwatch|bundeswahlleiter|congress-legislators|bioguide|\bODSEN\b|assemblee-nationale|data\.senat|secim[_ ]?id|Co-Authored-By:[^$]*Claude|Generated with[^$]*Claude|AI-generated'; then
-    fail "country-specific data, a real name, or AI attribution found in staged changes"
+  # AI attribution is never acceptable, in any file, including the dataset.
+  everywhere=$(git diff --cached -U0 -- . ':(exclude).githooks' | grep '^+' || true)
+  if printf '%s' "$everywhere" | grep -EqiI 'Co-Authored-By:[^$]*Claude|Generated with[^$]*Claude|AI-generated'; then
+    fail "AI attribution found in staged changes"
+  fi
+  added=$(git diff --cached -U0 -- . ':(exclude).githooks' ':(exclude)dataset' | grep '^+' || true)
+  if printf '%s' "$added" | grep -EqiI 'erdo[ğg]an|imamo[ğg]lu|lecornu|steinmeier|friedrich merz|\bTBMM\b|\bYSK\b|abgeordnetenwatch|bundeswahlleiter|congress-legislators|bioguide|\bODSEN\b|assemblee-nationale|data\.senat|secim[_ ]?id'; then
+    fail "country-specific data or a real name found outside data/"
   fi
   emdash=$(printf '\342\200\224')  # U+2014 built from bytes, not embedded literally
   if printf '%s' "$added" | grep -q "$emdash"; then
