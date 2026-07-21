@@ -78,7 +78,9 @@ Production runs only released, attested code, and anyone can check it independen
 
 2. **Digest-pinned deploys.** Production pulls the image by digest, never a mutable tag, and refuses
    any image that is not an attested release build. The running digest, commit, and build time are
-   reported at `GET /version`.
+   reported at `GET /version`. The image also carries the migrations that belong to that build under
+   `/app/migrations`, so a deployment applies the schema the code expects rather than whatever copy
+   of the repository happens to sit beside it.
 
 3. **Continuous public verification.** A scheduled workflow, [`verify-production.yml`](./.github/workflows/verify-production.yml),
    runs on GitHub's infrastructure (independent of the host), reads `/version`, and verifies the

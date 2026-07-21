@@ -28,6 +28,10 @@ RUN apt-get update \
 
 COPY --from=builder /app/target/release/server /usr/local/bin/server
 COPY --from=builder /app/crates/server/static /app/static
+# The schema this binary expects, carried by the image itself. A deployment can
+# then apply exactly the migrations that belong to the code it is starting,
+# instead of trusting a copy of the repository kept somewhere alongside it.
+COPY --from=builder /app/migrations /app/migrations
 
 ENV STATIC_DIR=/app/static \
     SITE_ADDR=0.0.0.0:3000
