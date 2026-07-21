@@ -1,0 +1,893 @@
+[
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 18867411
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "btp",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 96475
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "cumhuriyet-halk-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 11518139
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "demokratik-sol-parti",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 85810
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "demokrat-parti",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 75784
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "hak-par",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 58716
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "halklarin-esitlik-ve-demokrasi-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 6058489
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "hkp",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 60396
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "kp",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 13780
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "milliyetci-hareket-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 7520006
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "saadet-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 949178
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "turk-parti",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 72701
+  },
+  {
+    "election": "2015-haziran-genel-secimi",
+    "label": null,
+    "party": "vatan-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-haziran-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 161674
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 23681926
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "bbp",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 253204
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "btp",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 49297
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "cumhuriyet-halk-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 12111812
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "demokratik-sol-parti",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 31805
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "demokrat-parti",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 69319
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "hak-par",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 108583
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "halklarin-esitlik-ve-demokrasi-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5148085
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "hkp",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 83057
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "kp",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 52527
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "milliyetci-hareket-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5694136
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "saadet-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 325978
+  },
+  {
+    "election": "2015-kasim-genel-secimi",
+    "label": null,
+    "party": "vatan-partisi",
+    "seats": null,
+    "source_hash": "ysk-2015-kasim-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 118803
+  },
+  {
+    "election": "2017-halkoylamasi",
+    "label": "Evet",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2017-halkoylamasi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 25157463
+  },
+  {
+    "election": "2017-halkoylamasi",
+    "label": "Hayır",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2017-halkoylamasi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 23779141
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Doğu Perinçek",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 98953
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Meral Akşener",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 3648983
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Muharrem İnce",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 15340157
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Recep Tayyip Erdoğan",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 26330141
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Selahattin Demirtaş",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 4205791
+  },
+  {
+    "election": "2018-cumhurbaskani",
+    "label": "Temel Karamollaoğlu",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2018-cumhurbaskani",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 443695
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 20981381
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "cumhuriyet-halk-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 11275458
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "halklarin-esitlik-ve-demokrasi-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5867290
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "hur-dava-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 155538
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "iyi-parti",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 4958172
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "milliyetci-hareket-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5466431
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "saadet-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 667030
+  },
+  {
+    "election": "2018-genel-secimi",
+    "label": null,
+    "party": "vatan-partisi",
+    "seats": null,
+    "source_hash": "ysk-2018-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 114867
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-afd",
+    "seats": 83,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 4809228
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-buendnis-90",
+    "seats": 118,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 6814401
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-cdu-csu",
+    "seats": 197,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 11177746
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-linke",
+    "seats": 39,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 2255860
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-spd",
+    "seats": 206,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 11901556
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": "FDP",
+    "party": null,
+    "seats": 91,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 5291010
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": "SSW",
+    "party": null,
+    "seats": 1,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 55578
+  },
+  {
+    "election": "2022-abd-temsilciler-meclisi-secimleri",
+    "label": null,
+    "party": "democratic-party",
+    "seats": 213,
+    "source_hash": "uselec-2022-abd-temsilciler-meclisi-secimleri",
+    "source_url": "https://clerk.house.gov/Votes/Statistics",
+    "votes": 51280463
+  },
+  {
+    "election": "2022-abd-temsilciler-meclisi-secimleri",
+    "label": null,
+    "party": "republican-party",
+    "seats": 222,
+    "source_hash": "uselec-2022-abd-temsilciler-meclisi-secimleri",
+    "source_url": "https://clerk.house.gov/Votes/Statistics",
+    "votes": 54227992
+  },
+  {
+    "election": "2022-legislatives",
+    "label": "Autres",
+    "party": null,
+    "seats": 48,
+    "source_hash": "fr-elec-2022-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 4234226
+  },
+  {
+    "election": "2022-legislatives",
+    "label": "Ensemble",
+    "party": null,
+    "seats": 245,
+    "source_hash": "fr-elec-2022-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 5857364
+  },
+  {
+    "election": "2022-legislatives",
+    "label": "NUPES",
+    "party": null,
+    "seats": 131,
+    "source_hash": "fr-elec-2022-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 5836079
+  },
+  {
+    "election": "2022-legislatives",
+    "label": "Rassemblement National",
+    "party": null,
+    "seats": 89,
+    "source_hash": "fr-elec-2022-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 4248537
+  },
+  {
+    "election": "2022-legislatives",
+    "label": "Union de la droite et du centre",
+    "party": null,
+    "seats": 64,
+    "source_hash": "fr-elec-2022-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 2568502
+  },
+  {
+    "election": "2022-presidentielle",
+    "label": "Emmanuel Macron",
+    "party": null,
+    "seats": null,
+    "source_hash": "fr-elec-2022-presidentielle",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 18768639
+  },
+  {
+    "election": "2022-presidentielle",
+    "label": "Marine Le Pen",
+    "party": null,
+    "seats": null,
+    "source_hash": "fr-elec-2022-presidentielle",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 13288686
+  },
+  {
+    "election": "2023-cumhurbaskani-1",
+    "label": "Kemal Kılıçdaroğlu",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-1",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 24595178
+  },
+  {
+    "election": "2023-cumhurbaskani-1",
+    "label": "Muharrem İnce",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-1",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 235783
+  },
+  {
+    "election": "2023-cumhurbaskani-1",
+    "label": "Recep Tayyip Erdoğan",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-1",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 27133849
+  },
+  {
+    "election": "2023-cumhurbaskani-1",
+    "label": "Sinan Oğan",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-1",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 2831239
+  },
+  {
+    "election": "2023-cumhurbaskani-2",
+    "label": "Kemal Kılıçdaroğlu",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-2",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 25504724
+  },
+  {
+    "election": "2023-cumhurbaskani-2",
+    "label": "Recep Tayyip Erdoğan",
+    "party": null,
+    "seats": null,
+    "source_hash": "ysk-2023-cumhurbaskani-2",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 27834589
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "seats": 268,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 19187214
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "anap",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 66102
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "ap",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 108713
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "bbp",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 524833
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "cumhuriyet-halk-partisi",
+    "seats": 169,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 13675902
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "gencparti",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 112972
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "hak-par",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 42509
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "halklarin-esitlik-ve-demokrasi-partisi",
+    "seats": 61,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 4800592
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "hkp",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 31831
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "iyi-parti",
+    "seats": 43,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5225196
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "memleket",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 502669
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "milliyetci-hareket-partisi",
+    "seats": 50,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 5421802
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "sol-parti",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 76801
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "tkp",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 62832
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "turkiye-isci-partisi",
+    "seats": 4,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 954583
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "vatan-partisi",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 52720
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "yeniden-refah-partisi",
+    "seats": 5,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 1510740
+  },
+  {
+    "election": "2023-genel-secimi",
+    "label": null,
+    "party": "zafer-partisi",
+    "seats": null,
+    "source_hash": "ysk-2023-genel-secimi",
+    "source_url": "https://sonuc.ysk.gov.tr/sorgu",
+    "votes": 1211917
+  },
+  {
+    "election": "2024-abd-baskanlik-secimi",
+    "label": "Donald Trump",
+    "party": null,
+    "seats": 312,
+    "source_hash": "uselec-2024-abd-baskanlik-secimi",
+    "source_url": "https://www.fec.gov/introduction-to-campaign-finance/election-results-and-voting-information/",
+    "votes": 77302580
+  },
+  {
+    "election": "2024-abd-baskanlik-secimi",
+    "label": "Kamala Harris",
+    "party": null,
+    "seats": 226,
+    "source_hash": "uselec-2024-abd-baskanlik-secimi",
+    "source_url": "https://www.fec.gov/introduction-to-campaign-finance/election-results-and-voting-information/",
+    "votes": 75017613
+  },
+  {
+    "election": "2024-abd-temsilciler-meclisi-secimleri",
+    "label": null,
+    "party": "democratic-party",
+    "seats": 215,
+    "source_hash": "uselec-2024-abd-temsilciler-meclisi-secimleri",
+    "source_url": "https://clerk.house.gov/Votes/Statistics",
+    "votes": 70571330
+  },
+  {
+    "election": "2024-abd-temsilciler-meclisi-secimleri",
+    "label": null,
+    "party": "republican-party",
+    "seats": 220,
+    "source_hash": "uselec-2024-abd-temsilciler-meclisi-secimleri",
+    "source_url": "https://clerk.house.gov/Votes/Statistics",
+    "votes": 74390864
+  },
+  {
+    "election": "2024-legislatives",
+    "label": "Autres",
+    "party": null,
+    "seats": 57,
+    "source_hash": "fr-elec-2024-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 3482004
+  },
+  {
+    "election": "2024-legislatives",
+    "label": "Ensemble",
+    "party": null,
+    "seats": 159,
+    "source_hash": "fr-elec-2024-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 6820446
+  },
+  {
+    "election": "2024-legislatives",
+    "label": "Les Républicains",
+    "party": null,
+    "seats": 39,
+    "source_hash": "fr-elec-2024-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 2106166
+  },
+  {
+    "election": "2024-legislatives",
+    "label": "Nouveau Front populaire",
+    "party": null,
+    "seats": 180,
+    "source_hash": "fr-elec-2024-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 9042485
+  },
+  {
+    "election": "2024-legislatives",
+    "label": "Rassemblement National et alliés",
+    "party": null,
+    "seats": 142,
+    "source_hash": "fr-elec-2024-legislatives",
+    "source_url": "https://www.resultats-elections.interieur.gouv.fr",
+    "votes": 10647914
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-afd",
+    "seats": 152,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 10328780
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-buendnis-90",
+    "seats": 85,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 5762380
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-cdu-csu",
+    "seats": 208,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 14160402
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-linke",
+    "seats": 64,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 4356532
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-spd",
+    "seats": 120,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 8149124
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": "BSW",
+    "party": null,
+    "seats": 0,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 2472947
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": "FDP",
+    "party": null,
+    "seats": 0,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 2148757
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": "SSW",
+    "party": null,
+    "seats": 1,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 76138
+  }
+]

@@ -1,0 +1,98 @@
+[
+  {
+    "alliance": "cumhur-ittifaki",
+    "end_date": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "cumhur-ittifaki",
+    "end_date": null,
+    "party": "hur-dava-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "cumhur-ittifaki",
+    "end_date": null,
+    "party": "milliyetci-hareket-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "cumhur-ittifaki",
+    "end_date": null,
+    "party": "yeniden-refah-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "emek-ve-ozgurluk-ittifaki",
+    "end_date": null,
+    "party": "demokratik-bolgeler-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "emek-ve-ozgurluk-ittifaki",
+    "end_date": null,
+    "party": "emek-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "emek-ve-ozgurluk-ittifaki",
+    "end_date": null,
+    "party": "halklarin-esitlik-ve-demokrasi-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "emek-ve-ozgurluk-ittifaki",
+    "end_date": null,
+    "party": "turkiye-isci-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "millet-ittifaki",
+    "end_date": null,
+    "party": "cumhuriyet-halk-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "millet-ittifaki",
+    "end_date": null,
+    "party": "demokrat-parti",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "millet-ittifaki",
+    "end_date": null,
+    "party": "iyi-parti",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  },
+  {
+    "alliance": "millet-ittifaki",
+    "end_date": null,
+    "party": "saadet-partisi",
+    "source_hash": null,
+    "source_url": "https://open-public.example/tr-politics",
+    "start_date": "2023-04-01"
+  }
+]

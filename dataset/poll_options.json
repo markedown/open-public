@@ -1,0 +1,87 @@
+[
+  {
+    "label": "Çok iyi",
+    "poll": "akp-performans-2026",
+    "position": 1
+  },
+  {
+    "label": "İyi",
+    "poll": "akp-performans-2026",
+    "position": 2
+  },
+  {
+    "label": "Orta",
+    "poll": "akp-performans-2026",
+    "position": 3
+  },
+  {
+    "label": "Kötü",
+    "poll": "akp-performans-2026",
+    "position": 4
+  },
+  {
+    "label": "Çok kötü",
+    "poll": "akp-performans-2026",
+    "position": 5
+  },
+  {
+    "label": "Amblem A",
+    "poll": "amblem",
+    "position": 1
+  },
+  {
+    "label": "Amblem B",
+    "poll": "amblem",
+    "position": 2
+  },
+  {
+    "label": "Evet",
+    "poll": "muhalefet-yeterince-etkili-mi",
+    "position": 1
+  },
+  {
+    "label": "Hayır",
+    "poll": "muhalefet-yeterince-etkili-mi",
+    "position": 2
+  },
+  {
+    "label": "Kararsızım",
+    "poll": "muhalefet-yeterince-etkili-mi",
+    "position": 3
+  },
+  {
+    "label": "Çok iyi",
+    "poll": "ulke-gidisat",
+    "position": 1
+  },
+  {
+    "label": "İyi",
+    "poll": "ulke-gidisat",
+    "position": 2
+  },
+  {
+    "label": "Orta",
+    "poll": "ulke-gidisat",
+    "position": 3
+  },
+  {
+    "label": "Kötü",
+    "poll": "ulke-gidisat",
+    "position": 4
+  },
+  {
+    "label": "Çok kötü",
+    "poll": "ulke-gidisat",
+    "position": 5
+  },
+  {
+    "label": "Evet",
+    "poll": "yerel-memnuniyet",
+    "position": 1
+  },
+  {
+    "label": "Hayır",
+    "poll": "yerel-memnuniyet",
+    "position": 2
+  }
+]

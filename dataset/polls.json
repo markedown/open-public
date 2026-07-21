@@ -1,0 +1,52 @@
+[
+  {
+    "closes_at": null,
+    "country": null,
+    "kind": "single",
+    "opens_at": null,
+    "party": "adalet-ve-kalkinma-partisi",
+    "person": null,
+    "question": "Bu partinin son bir yıldaki performansını nasıl değerlendiriyorsunuz?",
+    "slug": "akp-performans-2026"
+  },
+  {
+    "closes_at": null,
+    "country": "turkiye",
+    "kind": "single",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Hangi amblemi tercih ediyorsunuz?",
+    "slug": "amblem"
+  },
+  {
+    "closes_at": null,
+    "country": null,
+    "kind": "single",
+    "opens_at": null,
+    "party": "cumhuriyet-halk-partisi",
+    "person": null,
+    "question": "Muhalefet yeterince etkili mi?",
+    "slug": "muhalefet-yeterince-etkili-mi"
+  },
+  {
+    "closes_at": null,
+    "country": "turkiye",
+    "kind": "scale",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Ülkenin genel gidişatını nasıl değerlendiriyorsunuz?",
+    "slug": "ulke-gidisat"
+  },
+  {
+    "closes_at": null,
+    "country": "turkiye",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Yerel yönetimlerden memnun musunuz?",
+    "slug": "yerel-memnuniyet"
+  }
+]
