@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select t.id, t.text, t.country_id, c.slug as country_slug\n        from theses t\n        join countries c on c.id = t.country_id\n        where t.id = $1\n        ",
+  "query": "\n        select t.id, t.text, t.country_id, c.slug as country_slug, t.scope\n        from theses t\n        join countries c on c.id = t.country_id\n        where t.id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -46,6 +46,17 @@
             "name": "slug"
           }
         }
+      },
+      {
+        "ordinal": 4,
+        "name": "scope",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "theses",
+            "name": "scope"
+          }
+        }
       }
     ],
     "parameters": {
@@ -57,8 +68,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "0adb42b301fb93c68509969207f1eb2d8d8698d00928e65b4ae14f088ea3e671"
+  "hash": "fcb7d72f5190772d64260d7cf978f010679b91663fa0610c4cc1b1fea1fb6524"
 }

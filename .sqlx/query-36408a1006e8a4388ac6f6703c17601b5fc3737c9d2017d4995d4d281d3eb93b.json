@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.id, e.name, e.slug, e.held_on, e.kind, e.description,\n               e.electorate, e.votes_cast, e.valid_votes\n        from elections e\n        join elections cur on cur.id = $1\n        where e.country_id = cur.country_id\n          and e.id <> cur.id\n          and e.held_on is not null and cur.held_on is not null\n          and e.held_on < cur.held_on\n          and e.kind is not distinct from cur.kind\n        order by e.held_on desc, e.id desc\n        limit 1\n        ",
+  "query": "\n        select e.id, e.name, e.slug, e.held_on, e.kind, e.description,\n               e.electorate, e.votes_cast, e.valid_votes, e.expected_note\n        from elections e\n        join elections cur on cur.id = $1\n        where e.country_id = cur.country_id\n          and e.id <> cur.id\n          and e.held_on is not null and cur.held_on is not null\n          and e.held_on < cur.held_on\n          and e.kind is not distinct from cur.kind\n        order by e.held_on desc, e.id desc\n        limit 1\n        ",
   "describe": {
     "columns": [
       {
@@ -101,6 +101,17 @@
             "name": "valid_votes"
           }
         }
+      },
+      {
+        "ordinal": 9,
+        "name": "expected_note",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "expected_note"
+          }
+        }
       }
     ],
     "parameters": {
@@ -117,8 +128,9 @@
       true,
       true,
       true,
+      true,
       true
     ]
   },
-  "hash": "b0179e6655371274e09d4851058e329818fdf2687fb768aef06e63940aa72c05"
+  "hash": "36408a1006e8a4388ac6f6703c17601b5fc3737c9d2017d4995d4d281d3eb93b"
 }

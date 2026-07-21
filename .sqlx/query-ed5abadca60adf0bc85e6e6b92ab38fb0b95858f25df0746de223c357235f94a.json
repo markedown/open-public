@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "insert into theses (country_id, text, topic_id, position, source_id)\n         values ($1, $2, $3, $4, $5) returning id",
+  "query": "insert into theses (country_id, text, topic_id, position, scope, source_id)\n         values ($1, $2, $3, $4, $5, $6) returning id",
   "describe": {
     "columns": [
       {
@@ -21,6 +21,7 @@
         "Text",
         "Int8",
         "Int4",
+        "Text",
         "Int8"
       ]
     },
@@ -28,5 +29,5 @@
       false
     ]
   },
-  "hash": "3c442964ded2dbd99368791b0e8c2f96758719f28967941ff0bafcb8c808b8de"
+  "hash": "ed5abadca60adf0bc85e6e6b92ab38fb0b95858f25df0746de223c357235f94a"
 }

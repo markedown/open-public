@@ -87,7 +87,22 @@ pub async fn detail(
     // is omitted, so a newly added country shows only what it actually has. The
     // full history (Timeline) lives on its own page and is reached from here,
     // not rendered inline on the country page.
-    let theses = db::compass::count_theses(&pool, country.id).await?;
+    let theses = db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PARTY).await?;
+    // The next election is the reason most of this page matters, so it sits
+    // above the data rather than inside the elections box.
+    let next_election =
+        db::elections::next_for_country(&pool, country.id, i18n::lang_code()).await?;
+    // A presidential election is contested by people, so its compass is the
+    // candidate one; every other kind is contested by parties. The link appears
+    // only once that thesis set actually has questions in it.
+    let next_compass = match &next_election {
+        Some(e) if e.kind.as_deref() == Some("presidential") => {
+            let n = db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PERSON).await?;
+            (n > 0).then(|| format!("/{}/compass/{}", country.slug, db::compass::SCOPE_PERSON))
+        }
+        Some(_) => (theses > 0).then(|| format!("/{}/compass", country.slug)),
+        None => None,
+    };
     let chips = [
         (i18n::t("People"), "people", counts.people),
         (i18n::t("Parties"), "parties", counts.parties),
@@ -101,6 +116,10 @@ pub async fn detail(
 
     let content = html! {
         article {
+            @if let Some(ref ne) = next_election {
+                @let days = ne.held_on.map(|d| (d - chrono::Utc::now().date_naive()).num_days()).unwrap_or(-1);
+                (ui::election::next_election(ne, &country.slug, days, next_compass.as_deref()))
+            }
             // Identity, key facts and the in-country navigation, all in one
             // compact hero card so the page opens short.
             header class="op-card mb-6 p-6 sm:p-7" {

@@ -1,0 +1,112 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select e.id, p.id as person_id, p.full_name as person_name, p.slug as person_slug,\n               e.kind, e.stance, e.quote, e.occurred_on\n        from position_evidence e\n        join people p on p.id = e.person_id\n        where e.thesis_id = $1\n        order by p.full_name collate \"name_sort\", e.id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "person_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "person_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "person_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "stance",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "stance"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "quote",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "quote"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "occurred_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "occurred_on"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "103fcd0ed2792991b40e2f5d07887d4c2c383d06575a388801fe723f6d356ded"
+}

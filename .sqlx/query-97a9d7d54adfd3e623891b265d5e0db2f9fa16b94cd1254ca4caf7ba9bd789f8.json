@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select count(*) as \"count!\" from theses where country_id = $1",
+  "query": "select count(*) as \"count!\" from theses where country_id = $1 and scope = $2",
   "describe": {
     "columns": [
       {
@@ -12,12 +12,13 @@
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Int8",
+        "Text"
       ]
     },
     "nullable": [
       null
     ]
   },
-  "hash": "2ec51cce98c0c42b40a58959e95dc1ff49f1d3a7ae889447f11e530cbafae0c3"
+  "hash": "97a9d7d54adfd3e623891b265d5e0db2f9fa16b94cd1254ca4caf7ba9bd789f8"
 }

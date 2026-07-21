@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.id, coalesce(ntr.text, e.name) as \"name!\", e.slug, e.held_on, e.kind,\n               e.description, e.electorate, e.votes_cast, e.valid_votes\n        from elections e\n        left join translations ntr on ntr.entity_type = 'election' and ntr.entity_id = e.id\n            and ntr.field = 'name' and ntr.lang = $2 and ntr.status = 'published'\n        where e.country_id = $1\n        order by e.held_on desc nulls last, e.id desc\n        ",
+  "query": "select id, name, slug, held_on, kind, description, electorate, votes_cast, valid_votes, expected_note from elections where slug = $1",
   "describe": {
     "columns": [
       {
@@ -16,9 +16,14 @@
       },
       {
         "ordinal": 1,
-        "name": "name!",
+        "name": "name",
         "type_info": "Text",
-        "origin": "Expression"
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "name"
+          }
+        }
       },
       {
         "ordinal": 2,
@@ -96,18 +101,29 @@
             "name": "valid_votes"
           }
         }
+      },
+      {
+        "ordinal": 9,
+        "name": "expected_note",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "elections",
+            "name": "expected_note"
+          }
+        }
       }
     ],
     "parameters": {
       "Left": [
-        "Int8",
         "Text"
       ]
     },
     "nullable": [
       false,
-      null,
       false,
+      false,
+      true,
       true,
       true,
       true,
@@ -116,5 +132,5 @@
       true
     ]
   },
-  "hash": "2e8a4ffc9fb1cdc552629a32bc7f4948ef71926b869aa6997f2d0550a67eb7e0"
+  "hash": "0f90e137a601706cf2af8c5e066a5cf3d74e60ca17ad2d134299e697162fef8e"
 }
