@@ -1,0 +1,21 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into roles\n               (person_id, role_type, title, org, district, start_date, end_date, source_id)\n             values ($1, $2, $3, $4, $5, $6, $7, $8)\n             on conflict (person_id, role_type, org, start_date) do update set\n               title = excluded.title, district = excluded.district,\n               end_date = excluded.end_date",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "706f9df58cd9f10285e224d516bece431138fc26f13845c656daf2fd46650027"
+}

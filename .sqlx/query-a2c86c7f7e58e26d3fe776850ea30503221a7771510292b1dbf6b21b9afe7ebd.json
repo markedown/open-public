@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into position_evidence\n               (thesis_id, party_id, person_id, kind, stance, quote, locator,\n                occurred_on, source_id)\n             values ($1, $2, $3, $4, $5, $6, $7, $8, $9)\n             on conflict (thesis_id, party_id, person_id, kind, source_id) do update set\n               stance = excluded.stance, quote = excluded.quote,\n               locator = excluded.locator, occurred_on = excluded.occurred_on",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Text",
+        "Int2",
+        "Text",
+        "Text",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a2c86c7f7e58e26d3fe776850ea30503221a7771510292b1dbf6b21b9afe7ebd"
+}

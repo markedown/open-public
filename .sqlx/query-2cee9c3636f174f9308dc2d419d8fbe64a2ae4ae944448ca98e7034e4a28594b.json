@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into alliances\n               (slug, name, country_id, founded_date, dissolved_date, summary, source_id)\n             values ($1, $2, $3, $4, $5, $6, $7)\n             on conflict (slug) do update set name = excluded.name,\n               summary = excluded.summary\n             returning id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "alliances",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Int8",
+        "Date",
+        "Date",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "2cee9c3636f174f9308dc2d419d8fbe64a2ae4ae944448ca98e7034e4a28594b"
+}

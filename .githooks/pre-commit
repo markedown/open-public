@@ -27,11 +27,14 @@ if [ -n "$staged" ]; then
   fi
 fi
 
-# 3. Never commit private ingest code or local data/notes. The public repo ships
-#    only the ingest stub (main.rs); the real ingest, the fixtures, and any local
-#    data dump or notes file stay local.
+# 3. Never commit private ingest code or local data/notes. The fixtures and any
+#    local dump or notes file stay local. Under the ingest crate the rule is an
+#    allowlist, not a pattern: the harvesting that reaches out to the world is
+#    private, so only the files named here may be committed, and adding one is a
+#    deliberate edit of this hook rather than a side effect of adding a file.
 private_files=$(printf '%s\n' "$staged" | grep -E '^fixtures/|(^|/)[^/]+\.local\.(sql|md)$' || true)
-private_ingest=$(printf '%s\n' "$staged" | grep -E '^crates/ingest/src/' | grep -vx 'crates/ingest/src/main.rs' || true)
+public_ingest='crates/ingest/src/(main|lib|import)\.rs'
+private_ingest=$(printf '%s\n' "$staged" | grep -E '^crates/ingest/src/' | grep -vE "^$public_ingest$" || true)
 if [ -n "$private_files$private_ingest" ]; then
   fail "refusing to commit private code/data: $(printf '%s %s' "$private_files" "$private_ingest" | xargs)"
 fi
