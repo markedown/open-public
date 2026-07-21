@@ -1859,8 +1859,8 @@
     "start_date": null
   },
   {
-    "degree": "Doctor of Medicine",
-    "end_date": "1983-01-01",
+    "degree": "Bachelor of Science",
+    "end_date": "1979-01-01",
     "field": null,
     "institution": "Louisiana State University",
     "institution_wikidata_id": "Q1521725",
@@ -1870,8 +1870,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Science",
-    "end_date": "1979-01-01",
+    "degree": "Doctor of Medicine",
+    "end_date": "1983-01-01",
     "field": null,
     "institution": "Louisiana State University",
     "institution_wikidata_id": "Q1521725",
@@ -3498,8 +3498,8 @@
     "start_date": null
   },
   {
-    "degree": "Juris Doctor",
-    "end_date": "1987-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1984-01-01",
     "field": null,
     "institution": "Southern University",
     "institution_wikidata_id": "Q627271",
@@ -3509,8 +3509,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1984-01-01",
+    "degree": "Juris Doctor",
+    "end_date": "1987-01-01",
     "field": null,
     "institution": "Southern University",
     "institution_wikidata_id": "Q627271",
@@ -3575,8 +3575,8 @@
     "start_date": null
   },
   {
-    "degree": "master's degree",
-    "end_date": "1992-01-01",
+    "degree": "bachelor's degree",
+    "end_date": "1991-01-01",
     "field": null,
     "institution": "Stanford University",
     "institution_wikidata_id": "Q41506",
@@ -3586,8 +3586,8 @@
     "start_date": null
   },
   {
-    "degree": "bachelor's degree",
-    "end_date": "1991-01-01",
+    "degree": "master's degree",
+    "end_date": "1992-01-01",
     "field": null,
     "institution": "Stanford University",
     "institution_wikidata_id": "Q41506",
@@ -4169,8 +4169,8 @@
     "start_date": null
   },
   {
-    "degree": "Juris Doctor",
-    "end_date": "1992-01-01",
+    "degree": "Bachelor in Business Administration",
+    "end_date": "1989-01-01",
     "field": null,
     "institution": "University of Memphis",
     "institution_wikidata_id": "Q2094177",
@@ -4180,8 +4180,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor in Business Administration",
-    "end_date": "1989-01-01",
+    "degree": "Juris Doctor",
+    "end_date": "1992-01-01",
     "field": null,
     "institution": "University of Memphis",
     "institution_wikidata_id": "Q2094177",
@@ -4224,8 +4224,8 @@
     "start_date": null
   },
   {
-    "degree": "Juris Doctor",
-    "end_date": "1982-01-01",
+    "degree": "Bachelor of Science",
+    "end_date": "1979-01-01",
     "field": null,
     "institution": "University of Dayton",
     "institution_wikidata_id": "Q2092392",
@@ -4235,8 +4235,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Science",
-    "end_date": "1979-01-01",
+    "degree": "Juris Doctor",
+    "end_date": "1982-01-01",
     "field": null,
     "institution": "University of Dayton",
     "institution_wikidata_id": "Q2092392",
@@ -4466,8 +4466,8 @@
     "start_date": null
   },
   {
-    "degree": "doctorate",
-    "end_date": "2011-01-01",
+    "degree": "Diploma of Business Administration",
+    "end_date": "2004-01-01",
     "field": null,
     "institution": "University of Bayreuth",
     "institution_wikidata_id": "Q702482",
@@ -4477,8 +4477,8 @@
     "start_date": null
   },
   {
-    "degree": "Diploma of Business Administration",
-    "end_date": "2004-01-01",
+    "degree": "doctorate",
+    "end_date": "2011-01-01",
     "field": null,
     "institution": "University of Bayreuth",
     "institution_wikidata_id": "Q702482",
@@ -4829,8 +4829,8 @@
     "start_date": null
   },
   {
-    "degree": "Master of Arts",
-    "end_date": "1990-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1988-01-01",
     "field": null,
     "institution": "University of Florida",
     "institution_wikidata_id": "Q501758",
@@ -4840,8 +4840,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1988-01-01",
+    "degree": "Master of Arts",
+    "end_date": "1990-01-01",
     "field": null,
     "institution": "University of Florida",
     "institution_wikidata_id": "Q501758",
@@ -16060,8 +16060,8 @@
     "start_date": null
   },
   {
-    "degree": "Doctor of Philosophy",
-    "end_date": "1998-01-01",
+    "degree": "Juris Doctor",
+    "end_date": "1981-01-01",
     "field": null,
     "institution": "University of Texas at Austin",
     "institution_wikidata_id": "Q49213",
@@ -16071,8 +16071,8 @@
     "start_date": null
   },
   {
-    "degree": "Juris Doctor",
-    "end_date": "1981-01-01",
+    "degree": "Doctor of Philosophy",
+    "end_date": "1998-01-01",
     "field": null,
     "institution": "University of Texas at Austin",
     "institution_wikidata_id": "Q49213",
@@ -17941,8 +17941,8 @@
     "start_date": null
   },
   {
-    "degree": "Master of Arts",
-    "end_date": "1997-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1994-01-01",
     "field": null,
     "institution": "Texas Tech University",
     "institution_wikidata_id": "Q1423756",
@@ -17952,8 +17952,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1994-01-01",
+    "degree": "Master of Arts",
+    "end_date": "1997-01-01",
     "field": null,
     "institution": "Texas Tech University",
     "institution_wikidata_id": "Q1423756",
@@ -18788,8 +18788,8 @@
     "start_date": null
   },
   {
-    "degree": "Master of Arts",
-    "end_date": "1992-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1989-01-01",
     "field": null,
     "institution": "University of Dayton",
     "institution_wikidata_id": "Q2092392",
@@ -18799,8 +18799,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1989-01-01",
+    "degree": "Master of Arts",
+    "end_date": "1992-01-01",
     "field": null,
     "institution": "University of Dayton",
     "institution_wikidata_id": "Q2092392",
@@ -22429,8 +22429,8 @@
     "start_date": null
   },
   {
-    "degree": "Master in Public Administration",
-    "end_date": "1984-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1981-01-01",
     "field": null,
     "institution": "Jacksonville State University",
     "institution_wikidata_id": "Q957995",
@@ -22440,8 +22440,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1981-01-01",
+    "degree": "Master in Public Administration",
+    "end_date": "1984-01-01",
     "field": null,
     "institution": "Jacksonville State University",
     "institution_wikidata_id": "Q957995",
@@ -23969,8 +23969,8 @@
     "start_date": null
   },
   {
-    "degree": "Master of Public Health",
-    "end_date": "2007-01-01",
+    "degree": "Doctor of Medicine",
+    "end_date": "2001-01-01",
     "field": null,
     "institution": "Harvard University",
     "institution_wikidata_id": "Q13371",
@@ -23980,8 +23980,8 @@
     "start_date": null
   },
   {
-    "degree": "Doctor of Medicine",
-    "end_date": "2001-01-01",
+    "degree": "Master of Public Health",
+    "end_date": "2007-01-01",
     "field": null,
     "institution": "Harvard University",
     "institution_wikidata_id": "Q13371",
@@ -24640,8 +24640,8 @@
     "start_date": null
   },
   {
-    "degree": "Master of Arts",
-    "end_date": "1982-01-01",
+    "degree": "Bachelor of Arts",
+    "end_date": "1977-01-01",
     "field": null,
     "institution": "Bradley University",
     "institution_wikidata_id": "Q897052",
@@ -24651,8 +24651,8 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Arts",
-    "end_date": "1977-01-01",
+    "degree": "Master of Arts",
+    "end_date": "1982-01-01",
     "field": null,
     "institution": "Bradley University",
     "institution_wikidata_id": "Q897052",
@@ -27434,7 +27434,7 @@
     "start_date": null
   },
   {
-    "degree": "Master of Science",
+    "degree": "Bachelor of Science",
     "end_date": "1999-01-01",
     "field": null,
     "institution": "D'Youville University",
@@ -27445,7 +27445,7 @@
     "start_date": null
   },
   {
-    "degree": "Bachelor of Science",
+    "degree": "Master of Science",
     "end_date": "1999-01-01",
     "field": null,
     "institution": "D'Youville University",

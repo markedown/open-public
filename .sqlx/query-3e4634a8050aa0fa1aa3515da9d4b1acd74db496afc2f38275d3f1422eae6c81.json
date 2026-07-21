@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into translations\n               (entity_type, entity_id, field, lang, text, origin, status, source_lang)\n             values ($1, $2, $3, $4, $5, coalesce($6, 'machine'), 'published', $7)\n             on conflict do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3e4634a8050aa0fa1aa3515da9d4b1acd74db496afc2f38275d3f1422eae6c81"
+}

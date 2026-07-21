@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into poll_options (poll_id, label, position)\n             values ($1, $2, $3) on conflict do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6e1459cc3b4f4faa890335ecae3b11a02ddae39665775df3db63a0b953f89aa5"
+}

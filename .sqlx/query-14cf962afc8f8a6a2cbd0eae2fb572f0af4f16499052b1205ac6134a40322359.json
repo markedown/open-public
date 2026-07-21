@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update sources set title = $2, content_sha256 = $3,\n                       snapshot_url = $4 where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "14cf962afc8f8a6a2cbd0eae2fb572f0af4f16499052b1205ac6134a40322359"
+}

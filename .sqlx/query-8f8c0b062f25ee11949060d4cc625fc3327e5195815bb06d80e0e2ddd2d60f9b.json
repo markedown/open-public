@@ -1,0 +1,37 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into countries\n               (slug, name, capital, government_type, legislature_name,\n                founded_date, population, summary, flag_url, source_id)\n             values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)\n             on conflict (slug) do update set name = excluded.name,\n               capital = excluded.capital, government_type = excluded.government_type,\n               legislature_name = excluded.legislature_name,\n               founded_date = excluded.founded_date, population = excluded.population,\n               summary = excluded.summary, flag_url = excluded.flag_url\n             returning id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Int8",
+        "Text",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "8f8c0b062f25ee11949060d4cc625fc3327e5195815bb06d80e0e2ddd2d60f9b"
+}
