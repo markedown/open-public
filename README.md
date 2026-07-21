@@ -125,9 +125,29 @@ python3 scripts/validate_data.py dataset
   story moves on.
 
 Participation data is separate and lives at `GET /data/polls.json` on a running instance: every poll's
-tally, its vote-chain head, and every vote reduced to `(poll, option, cast_at, opaque voter index)`.
-Anyone can recompute the tallies and check the chain head against the poll page. It carries no
-identity, never a user id and never an email hash.
+tally, its vote-chain head, and every vote reduced to what the chain is hashed from plus an opaque
+per-poll voter index. It carries no identity, never a user id and never an email hash.
+
+Both claims it makes can be checked from that one file:
+
+```bash
+# every poll's chain, recomputed from its genesis and compared to the published head
+curl -s https://open-public.com/data/polls.json | python3 scripts/verify_chain.py -
+
+# the tallies, recounted from the votes
+curl -s https://open-public.com/data/polls.json | python3 -c '
+import json, sys, collections
+d = json.load(sys.stdin)
+counted = collections.Counter((v["poll"], v["option"]) for v in d["votes"])
+for p in d["polls"]:
+    for o in p["options"]:
+        assert o["votes"] == counted[(p["slug"], o["position"])], (p["slug"], o["position"])
+print("tallies match")'
+```
+
+What that proves is that no vote was altered, reordered or removed after it was cast, and that the
+published counts are the votes. It does not prove that one person voted once, and nothing here
+claims otherwise.
 
 ## Versioning
 

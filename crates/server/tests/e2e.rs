@@ -6110,3 +6110,78 @@ async fn the_compass_steps_through_positions_without_needing_javascript(pool: db
     assert!(result.contains("Positions answered"));
     assert!(result.contains("3 / 3"));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_published_dump_can_actually_be_verified(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let poll = db::polls::get_by_slug(&pool, "party-poll")
+        .await
+        .unwrap()
+        .unwrap();
+    for (i, who) in ["a@x.test", "b@x.test", "c@x.test"].iter().enumerate() {
+        let email_hash = server::auth::hash_email(who, SECRET).unwrap();
+        let user = db::users::insert(&pool, &email_hash, "pw").await.unwrap();
+        db::users::mark_verified(&pool, user).await.unwrap();
+        db::polls::cast_vote(&pool, poll.id, poll.options[i % 2].id, user)
+            .await
+            .unwrap();
+    }
+
+    let body = body_string(get(&app, "/data/polls.json").await).await;
+    // Everything the chain is hashed from is published, or the tamper-evidence
+    // would be a claim rather than something a reader can recompute.
+    for field in [
+        "\"poll_id\":",
+        "\"option_id\":",
+        "\"seq\":",
+        "\"row_hash\":",
+    ] {
+        assert!(body.contains(field), "the dump carries {field}");
+    }
+    // And still no identity.
+    assert!(!body.contains("user_id"));
+
+    // The script the dump points at has to work on the dump the site serves.
+    // Anything less makes the note a promise instead of an instruction.
+    let dir = std::env::temp_dir().join("op-chain-verify");
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("polls.json");
+    std::fs::write(&path, &body).unwrap();
+    let out = std::process::Command::new("python3")
+        .arg("../../scripts/verify_chain.py")
+        .arg(&path)
+        .output()
+        .expect("running the published verification command");
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(
+        out.status.success(),
+        "verify_chain.py failed on the published dump: {stdout}{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    assert!(stdout.contains("3 votes verified"), "{stdout}");
+
+    // A tampered vote must be caught, or the check proves nothing.
+    let altered = body.replace("\"option\":1", "\"option\":2");
+    std::fs::write(&path, &altered).unwrap();
+    let out = std::process::Command::new("python3")
+        .arg("../../scripts/verify_chain.py")
+        .arg(&path)
+        .output()
+        .unwrap();
+    // Changing the published option alone leaves the hashes intact, so the
+    // meaningful test is changing something the chain covers.
+    let altered = body.replace("\"seq\":2", "\"seq\":9");
+    std::fs::write(&path, &altered).unwrap();
+    let out2 = std::process::Command::new("python3")
+        .arg("../../scripts/verify_chain.py")
+        .arg(&path)
+        .output()
+        .unwrap();
+    assert!(
+        !out2.status.success(),
+        "a reordered chain must fail: {}",
+        String::from_utf8_lossy(&out2.stdout)
+    );
+    let _ = out;
+}

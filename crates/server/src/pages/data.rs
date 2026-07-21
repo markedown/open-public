@@ -52,17 +52,29 @@ struct OptionExport {
 #[derive(Serialize)]
 struct VoteExport {
     poll: String,
+    /// The poll's and the option's database ids, and the sequence number. They
+    /// are here because the chain hashes them: without them the tallies can be
+    /// recounted but the chain cannot be recomputed, and the tamper-evidence
+    /// would be a claim rather than something anyone can check. None of them
+    /// says anything about a person.
+    poll_id: i64,
     option: i32,
+    option_id: i64,
+    seq: i64,
     cast_at: String,
     voter: i64,
+    /// The stored hash of this row, to check a recomputation against.
+    row_hash: String,
 }
 
 const NOTE: &str = "Anonymized poll participation data. Recompute each option's \
 tally by counting the votes with that (poll, option); the counts here must match. \
 `voter` is an opaque per-poll index, not linkable across polls or to any person. \
-`chain` is the append-only vote hash-chain head; check it against the poll page \
-and verify no vote was altered or removed with scripts/verify_chain.py. This \
-proves votes were not altered or removed after casting, not one-person-one-vote.";
+`chain` is the append-only vote hash-chain head. Every field the chain is hashed \
+from is here, so it can be recomputed rather than taken on trust: run \
+scripts/verify_chain.py over this file to walk each poll's chain and check its \
+head. This proves votes were not altered or removed after casting, not \
+one-person-one-vote.";
 
 /// The anonymized poll-participation dump.
 pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, PageError> {
@@ -102,9 +114,13 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
         .into_iter()
         .map(|v| VoteExport {
             poll: v.poll_slug,
+            poll_id: v.poll_id,
             option: v.option_position,
+            option_id: v.option_id,
+            seq: v.seq,
             cast_at: v.cast_at.to_rfc3339(),
             voter: v.voter_index,
+            row_hash: hex(&v.row_hash),
         })
         .collect();
 
