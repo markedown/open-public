@@ -22,14 +22,23 @@ pub struct PollTally {
     pub head_hash: Option<Vec<u8>>,
 }
 
-/// One anonymized vote: the poll, the option, when it was cast, and the opaque
-/// per-poll voter index. No identity is present.
+/// One anonymized vote, carrying everything the hash chain is computed from and
+/// nothing else. No identity is present: `voter_index` is opaque and per poll,
+/// and the ids below are the poll's and the option's, never a person's.
+///
+/// The ids and the sequence number are here because the chain hashes them. A
+/// dump without them can be counted but not verified, which would make the
+/// tamper-evidence a claim rather than something a reader can check.
 #[derive(Debug, Clone)]
 pub struct AnonVote {
     pub poll_slug: String,
+    pub poll_id: i64,
     pub option_position: i32,
+    pub option_id: i64,
+    pub seq: i64,
     pub cast_at: DateTime<Utc>,
     pub voter_index: i64,
+    pub row_hash: Vec<u8>,
 }
 
 /// Every poll's per-option tally and chain head, deterministically ordered so
@@ -59,12 +68,13 @@ pub async fn anonymized_votes(pool: &Pool) -> Result<Vec<AnonVote>> {
     let rows = sqlx::query_as!(
         AnonVote,
         r#"
-        select p.slug as "poll_slug!", o.position as "option_position!",
-               v.cast_at, v.voter_index
+        select p.slug as "poll_slug!", v.poll_id, o.position as "option_position!",
+               v.option_id, v.seq, v.cast_at, v.voter_index, v.row_hash
         from poll_votes v
         join polls p on p.id = v.poll_id
         join poll_options o on o.id = v.option_id
-        order by p.slug, v.voter_index, o.position
+        -- In chain order, so a reader can walk it straight from the file.
+        order by p.slug, v.seq
         "#,
     )
     .fetch_all(pool)

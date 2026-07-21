@@ -163,8 +163,12 @@ Votes are additionally tamper-evident. Each poll has a hash chain: every vote ha
 together with the previous row's hash, so altering or removing a vote after the fact breaks every hash
 after it. The chain head is shown on the poll page, and `GET /data/polls.json` publishes the
 participation record it can be checked against: each poll's tally, its chain head, and every vote
-reduced to `(poll, option, cast_at, opaque per-poll voter index)`. Anyone can recompute the tallies
-from the votes and compare the head against the running site. The dump carries no identity, never a
+reduced to everything the chain is hashed from plus an opaque per-poll voter index. The ids and the
+sequence number are published for that reason: a dump without them can be recounted but not
+recomputed, which would leave the tamper-evidence as a claim rather than something anyone can check.
+`scripts/verify_chain.py` walks every chain in the file and compares each head, and the test suite
+runs that script against a dump the server actually served, so the instruction cannot rot into a
+promise. The dump carries no identity, never a
 user id and never an email hash. What this proves is that votes have not been altered, not that one
 person cast one vote, and the difference is never blurred.
 
