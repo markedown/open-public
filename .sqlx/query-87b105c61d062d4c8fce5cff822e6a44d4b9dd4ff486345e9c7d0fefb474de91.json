@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.id, p.id as person_id, p.full_name as person_name, p.slug as person_slug,\n               e.kind, e.stance, e.quote, e.occurred_on\n        from position_evidence e\n        join people p on p.id = e.person_id\n        where e.thesis_id = $1\n        order by p.full_name collate \"name_sort\", e.id\n        ",
+  "query": "\n        select e.id, p.id as person_id, p.full_name as person_name, p.slug as person_slug,\n               e.kind, e.stance, e.quote, e.locator, e.occurred_on\n        from position_evidence e\n        join people p on p.id = e.person_id\n        where e.thesis_id = $1\n        order by p.full_name collate \"name_sort\", e.id\n        ",
   "describe": {
     "columns": [
       {
@@ -82,6 +82,17 @@
       },
       {
         "ordinal": 7,
+        "name": "locator",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "position_evidence",
+            "name": "locator"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
         "name": "occurred_on",
         "type_info": "Date",
         "origin": {
@@ -105,8 +116,9 @@
       false,
       false,
       true,
+      true,
       true
     ]
   },
-  "hash": "103fcd0ed2792991b40e2f5d07887d4c2c383d06575a388801fe723f6d356ded"
+  "hash": "87b105c61d062d4c8fce5cff822e6a44d4b9dd4ff486345e9c7d0fefb474de91"
 }

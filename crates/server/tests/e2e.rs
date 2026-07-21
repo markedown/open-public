@@ -4703,6 +4703,7 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
             stance,
             None,
             None,
+            None,
             src,
         )
         .await
@@ -4716,6 +4717,7 @@ async fn compass_scores_and_ranks_parties(pool: db::Pool) {
             other,
             "manifesto",
             stance,
+            None,
             None,
             None,
             src,
@@ -5032,6 +5034,7 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
         "manifesto",
         2,
         Some("beyanname s.10"),
+        None,
         NaiveDate::from_ymd_opt(2023, 5, 1),
         src,
     )
@@ -5045,6 +5048,7 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
         "law",
         -2,
         Some("Kanun 7000"),
+        None,
         NaiveDate::from_ymd_opt(2024, 3, 1),
         src,
     )
@@ -5105,6 +5109,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
         "manifesto",
         -2,
         Some("beyanname"),
+        None,
         NaiveDate::from_ymd_opt(2023, 1, 1),
         src,
     )
@@ -5118,6 +5123,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
         "court",
         2,
         Some("iptal davası"),
+        None,
         NaiveDate::from_ymd_opt(2024, 1, 1),
         src,
     )
@@ -5131,6 +5137,7 @@ async fn compass_counts_opposition_acts_as_record_too(pool: db::Pool) {
         "bill",
         2,
         Some("kanun teklifi"),
+        None,
         NaiveDate::from_ymd_opt(2024, 1, 1),
         src,
     )
@@ -5304,6 +5311,7 @@ async fn compass_ranks_candidates_in_a_person_scope(pool: db::Pool) {
         2,
         Some("Kampanya konusmasi"),
         None,
+        None,
         src,
     )
     .await
@@ -5315,6 +5323,7 @@ async fn compass_ranks_candidates_in_a_person_scope(pool: db::Pool) {
         mehmet,
         "statement",
         -2,
+        None,
         None,
         None,
         src,
@@ -5435,4 +5444,105 @@ async fn compass_admin_authors_a_candidate_position(pool: db::Pool) {
     )
     .await;
     assert_eq!(res.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_shows_where_a_quote_is_and_offers_the_archive(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, _) = two_parties(&pool, country_id, src).await;
+
+    // A source that has been archived, because the originals do not last.
+    sqlx::query("update sources set snapshot_url = $1 where id = $2")
+        .bind("https://web.archive.org/web/2026/https://example.test/compass")
+        .bind(src)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let t = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        t,
+        db::compass::SCOPE_PARTY,
+        tp,
+        "manifesto",
+        2,
+        Some("Program: vergiler dusurulecek"),
+        Some("s. 42"),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+
+    let body =
+        body_string(post_form(&app, "/tr/compass", &format!("a{t}=2"), Some("lang=en")).await)
+            .await;
+    assert!(body.contains("s. 42"), "the page says where the quote is");
+    assert!(
+        body.contains("web.archive.org"),
+        "the archived copy is offered"
+    );
+    assert!(body.contains("archived"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn compass_admin_records_where_a_quote_is(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cookie = admin_cookie(&pool).await;
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, _) = two_parties(&pool, country_id, src).await;
+    let t = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir onerme.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+
+    let res = post_form(
+        &app,
+        &format!("/admin/compass/thesis/{t}/evidence"),
+        &format!(
+            "contestant_id={tp}&kind=manifesto&stance=2&quote=Program&locator=s.+7             &source_url=https://example.org/p"
+        ),
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(res.status(), StatusCode::SEE_OTHER);
+    let locator: Option<String> =
+        sqlx::query_scalar("select locator from position_evidence where thesis_id = $1")
+            .bind(t)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(locator.as_deref(), Some("s. 7"));
+
+    let page = body_string(
+        get_cookie(
+            &app,
+            &format!("/admin/compass/thesis/{t}"),
+            &format!("{cookie}; lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(page.contains("s. 7"), "the grid shows the locator");
 }

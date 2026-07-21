@@ -113,8 +113,15 @@ pub struct Evidence {
     pub kind: String,
     pub stance: i16,
     pub quote: Option<String>,
+    /// Where in the cited document the quote is: a page, an article, a decree
+    /// number, a roll call. Two readings can cite different pages of the same
+    /// document, so this belongs to the citation and not to the source.
+    pub locator: Option<String>,
     pub occurred_on: Option<chrono::NaiveDate>,
     pub source_url: String,
+    /// An archived copy of the source, where one has been recorded. Political
+    /// documents rot, and a dead link takes the evidence with it.
+    pub snapshot_url: Option<String>,
 }
 
 /// All evidence for a country's theses of one scope, strongest first.
@@ -128,7 +135,8 @@ pub async fn evidence_for_country(
         r#"
         select e.thesis_id,
                coalesce(e.person_id, e.party_id) as "contestant_id!",
-               e.kind, e.stance, e.quote, e.occurred_on, s.url as source_url
+               e.kind, e.stance, e.quote, e.locator, e.occurred_on,
+               s.url as source_url, s.snapshot_url
         from position_evidence e
         join theses t on t.id = e.thesis_id
         join sources s on s.id = e.source_id
@@ -214,6 +222,7 @@ pub async fn add_evidence(
     kind: &str,
     stance: i16,
     quote: Option<&str>,
+    locator: Option<&str>,
     occurred_on: Option<chrono::NaiveDate>,
     source_id: i64,
 ) -> Result<()> {
@@ -223,17 +232,19 @@ pub async fn add_evidence(
     };
     sqlx::query!(
         "insert into position_evidence
-           (thesis_id, party_id, person_id, kind, stance, quote, occurred_on, source_id)
-         values ($1, $2, $3, $4, $5, $6, $7, $8)
+           (thesis_id, party_id, person_id, kind, stance, quote, locator,
+            occurred_on, source_id)
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          on conflict (thesis_id, party_id, person_id, kind, source_id) do update set
            stance = excluded.stance, quote = excluded.quote,
-           occurred_on = excluded.occurred_on",
+           locator = excluded.locator, occurred_on = excluded.occurred_on",
         thesis_id,
         party_id,
         person_id,
         kind,
         stance,
         quote,
+        locator,
         occurred_on,
         source_id,
     )
@@ -261,6 +272,7 @@ pub struct EvidenceRow {
     pub kind: Option<String>,
     pub stance: Option<i16>,
     pub quote: Option<String>,
+    pub locator: Option<String>,
     pub occurred_on: Option<chrono::NaiveDate>,
 }
 
@@ -271,7 +283,7 @@ pub async fn evidence_for_thesis(pool: &Pool, thesis_id: i64) -> Result<Vec<Evid
         r#"
         select e.id as "id?", p.id as party_id, p.name as party_name, p.short_name,
                p.color, e.kind as "kind?", e.stance as "stance?", e.quote,
-               e.occurred_on
+               e.locator, e.occurred_on
         from theses t
         join parties p on p.country_id = t.country_id
         left join position_evidence e on e.thesis_id = t.id and e.party_id = p.id
@@ -328,6 +340,7 @@ pub struct PersonEvidenceRow {
     pub kind: String,
     pub stance: i16,
     pub quote: Option<String>,
+    pub locator: Option<String>,
     pub occurred_on: Option<chrono::NaiveDate>,
 }
 
@@ -340,7 +353,7 @@ pub async fn person_evidence_for_thesis(
         PersonEvidenceRow,
         r#"
         select e.id, p.id as person_id, p.full_name as person_name, p.slug as person_slug,
-               e.kind, e.stance, e.quote, e.occurred_on
+               e.kind, e.stance, e.quote, e.locator, e.occurred_on
         from position_evidence e
         join people p on p.id = e.person_id
         where e.thesis_id = $1

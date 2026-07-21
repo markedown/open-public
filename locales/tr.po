@@ -936,3 +936,9 @@ msgstr "Adaylar nasıl ayrışıyor"
 
 msgid "Date not fixed"
 msgstr "Tarih belirlenmedi"
+
+msgid "Page or article"
+msgstr "Sayfa veya madde"
+
+msgid "archived"
+msgstr "arşiv"

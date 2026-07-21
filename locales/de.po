@@ -924,3 +924,9 @@ msgstr "Wie die Kandidaten sich unterscheiden"
 
 msgid "Date not fixed"
 msgstr "Termin noch offen"
+
+msgid "Page or article"
+msgstr "Seite oder Artikel"
+
+msgid "archived"
+msgstr "Archiv"

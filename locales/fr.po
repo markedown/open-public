@@ -924,3 +924,9 @@ msgstr "Comment les candidats se comparent"
 
 msgid "Date not fixed"
 msgstr "Date non fixée"
+
+msgid "Page or article"
+msgstr "Page ou article"
+
+msgid "archived"
+msgstr "archive"
