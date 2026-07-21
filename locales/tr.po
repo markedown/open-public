@@ -942,3 +942,36 @@ msgstr "Sayfa veya madde"
 
 msgid "archived"
 msgstr "arşiv"
+
+msgid "Set a new password"
+msgstr "Yeni parola belirleyin"
+
+msgid "Use this link to set a new password:"
+msgstr "Yeni bir parola belirlemek için bu bağlantıyı kullanın:"
+
+msgid "If you did not ask for this, ignore this message and your password stays as it is. The link expires in one hour."
+msgstr "Bunu siz istemediyseniz bu mesajı yok sayın; parolanız olduğu gibi kalır. Bağlantı bir saat sonra geçersiz olur."
+
+msgid "If that address has an account, a link to set a new password is on its way."
+msgstr "Bu adrese ait bir hesap varsa, yeni parola belirleme bağlantısı yola çıktı."
+
+msgid "This link is invalid or has expired."
+msgstr "Bu bağlantı geçersiz veya süresi dolmuş."
+
+msgid "Your password has been changed. You can log in with it now."
+msgstr "Parolanız değiştirildi. Artık onunla giriş yapabilirsiniz."
+
+msgid "Enter the address you registered with and we will send a link."
+msgstr "Kayıt olduğunuz adresi girin, size bir bağlantı gönderelim."
+
+msgid "Send the link"
+msgstr "Bağlantıyı gönder"
+
+msgid "Back to log in"
+msgstr "Girişe dön"
+
+msgid "Forgotten your password?"
+msgstr "Parolanızı mı unuttunuz?"
+
+msgid "New password"
+msgstr "Yeni parola"

@@ -16,6 +16,7 @@ pub mod follows;
 pub mod news;
 pub mod outlets;
 pub mod parties;
+pub mod password_resets;
 pub mod people;
 pub mod polls;
 pub mod search;

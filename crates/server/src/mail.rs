@@ -75,6 +75,35 @@ impl Mailer {
             }
         }
     }
+
+    /// Send a link that sets a new password. Same shape as verification: the
+    /// address is used to send and then discarded.
+    pub async fn send_password_reset(&self, to_email: &str, token: &str) -> anyhow::Result<()> {
+        let link = format!("{}/reset?token={}", self.base_url, token);
+        let subject = i18n::t("Set a new password");
+        let intro = i18n::t("Use this link to set a new password:");
+        let outro = i18n::t(
+            "If you did not ask for this, ignore this message and your password stays as it is. The link expires in one hour.",
+        );
+        let body = format!("{intro}\n\n{link}\n\n{outro}\n");
+
+        match &self.kind {
+            Kind::Console => {
+                tracing::info!(target: "mail", %link, "password reset link (console transport, not sent)");
+                Ok(())
+            }
+            Kind::Smtp(transport) => {
+                let email = Message::builder()
+                    .from(self.from.parse()?)
+                    .to(to_email.parse()?)
+                    .subject(subject)
+                    .header(ContentType::TEXT_PLAIN)
+                    .body(body)?;
+                transport.send(email).await?;
+                Ok(())
+            }
+        }
+    }
 }
 
 #[cfg(test)]

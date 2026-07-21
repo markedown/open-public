@@ -930,3 +930,36 @@ msgstr "Seite oder Artikel"
 
 msgid "archived"
 msgstr "Archiv"
+
+msgid "Set a new password"
+msgstr "Neues Passwort festlegen"
+
+msgid "Use this link to set a new password:"
+msgstr "Mit diesem Link können Sie ein neues Passwort festlegen:"
+
+msgid "If you did not ask for this, ignore this message and your password stays as it is. The link expires in one hour."
+msgstr "Wenn Sie das nicht angefordert haben, ignorieren Sie diese Nachricht; Ihr Passwort bleibt unverändert. Der Link läuft nach einer Stunde ab."
+
+msgid "If that address has an account, a link to set a new password is on its way."
+msgstr "Falls zu dieser Adresse ein Konto gehört, ist ein Link zum Festlegen eines neuen Passworts unterwegs."
+
+msgid "This link is invalid or has expired."
+msgstr "Dieser Link ist ungültig oder abgelaufen."
+
+msgid "Your password has been changed. You can log in with it now."
+msgstr "Ihr Passwort wurde geändert. Sie können sich jetzt damit anmelden."
+
+msgid "Enter the address you registered with and we will send a link."
+msgstr "Geben Sie die Adresse an, mit der Sie sich registriert haben, und wir senden einen Link."
+
+msgid "Send the link"
+msgstr "Link senden"
+
+msgid "Back to log in"
+msgstr "Zurück zur Anmeldung"
+
+msgid "Forgotten your password?"
+msgstr "Passwort vergessen?"
+
+msgid "New password"
+msgstr "Neues Passwort"
