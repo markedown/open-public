@@ -5324,6 +5324,8 @@ async fn compass_ranks_candidates_in_a_person_scope(pool: db::Pool) {
 
     let form = body_string(get_cookie(&app, "/tr/compass/person", "lang=en").await).await;
     assert!(form.contains("Aday onermesi."));
+    // Both sets exist, so each questionnaire offers the other.
+    assert!(form.contains("/tr/compass\"") || form.contains("href=\"/tr/compass\""));
     assert!(!form.contains("Parti onermesi."), "scopes are separate");
     assert!(form.contains("not statements by the candidates themselves"));
 
@@ -5352,6 +5354,10 @@ async fn compass_ranks_candidates_in_a_person_scope(pool: db::Pool) {
     // The party compass still answers about parties only.
     let party_form = body_string(get_cookie(&app, "/tr/compass", "lang=en").await).await;
     assert!(party_form.contains("Parti onermesi."));
+    assert!(
+        party_form.contains("/tr/compass/person"),
+        "offers the candidate set"
+    );
     assert!(!party_form.contains("Aday onermesi."));
 
     // An unknown scope is not a silent fallback to parties.
