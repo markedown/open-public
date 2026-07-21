@@ -5582,3 +5582,78 @@ async fn compass_admin_records_where_a_quote_is(pool: db::Pool) {
     .await;
     assert!(page.contains("s. 7"), "the grid shows the locator");
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_first_administrator_is_appointed_from_the_server(pool: db::Pool) {
+    use server::admin_account::{ensure_admin, Outcome};
+
+    // A fresh instance has nobody at all.
+    let none: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(none, 0);
+
+    let out = ensure_admin(&pool, SECRET, "founder@test.invalid", "a-long-password")
+        .await
+        .unwrap();
+    assert_eq!(out, Outcome::Created);
+
+    // Verified, so the account can sign in without a mail round trip, and an
+    // admin, so it can reach the review queues.
+    let (is_admin, verified): (bool, bool) = sqlx::query_as(
+        "select is_admin, verified_at is not null from users
+         where email_hash = $1",
+    )
+    .bind(server::auth::hash_email("founder@test.invalid", SECRET).unwrap())
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert!(is_admin && verified);
+
+    // The address itself is not in the database, only its keyed hash.
+    let leaked: i64 = sqlx::query_scalar(
+        "select count(*) from users where email_hash like '%founder@test.invalid%'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(leaked, 0, "the address is hashed, never stored");
+
+    // Running it again promotes rather than duplicating, and leaves the
+    // password alone.
+    let before: String = sqlx::query_scalar("select password_hash from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let out = ensure_admin(&pool, SECRET, "founder@test.invalid", "a-different-one")
+        .await
+        .unwrap();
+    assert_eq!(out, Outcome::Promoted);
+    let after: String = sqlx::query_scalar("select password_hash from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(before, after, "an existing password is never overwritten");
+
+    let total: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(total, 1);
+
+    // A password too short to be worth hashing is refused, and nothing is made.
+    assert!(ensure_admin(&pool, SECRET, "other@test.invalid", "short")
+        .await
+        .is_err());
+    assert!(
+        ensure_admin(&pool, SECRET, "not-an-address", "a-long-password")
+            .await
+            .is_err()
+    );
+    let still_one: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(still_one, 1);
+}

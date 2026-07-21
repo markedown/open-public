@@ -21,6 +21,28 @@ async fn main() -> anyhow::Result<()> {
         .await
         .context("connecting to database")?;
 
+    // A one-off command rather than the server: a fresh instance has no
+    // accounts, and every route that could make one is behind sign-in or behind
+    // the construction gate, so the first administrator has to be appointed
+    // from the server itself.
+    if let Some(email) = create_admin_arg() {
+        let password = read_password()?;
+        let outcome = server::admin_account::ensure_admin(
+            &pool,
+            config.app_secret.as_bytes(),
+            &email,
+            &password,
+        )
+        .await?;
+        // The address is never printed back: it is not stored, and echoing it
+        // would put it in a shell history or a log.
+        match outcome {
+            server::admin_account::Outcome::Created => println!("admin account created"),
+            server::admin_account::Outcome::Promoted => println!("existing account promoted"),
+        }
+        return Ok(());
+    }
+
     let mailer = Mailer::new(
         &config.mail_transport,
         config.mail_from.clone(),
@@ -69,6 +91,27 @@ async fn main() -> anyhow::Result<()> {
         .await
         .context("server error")?;
     Ok(())
+}
+
+/// `server create-admin <email>`, or nothing.
+fn create_admin_arg() -> Option<String> {
+    let mut args = std::env::args().skip(1);
+    (args.next().as_deref() == Some("create-admin")).then(|| args.next())?
+}
+
+/// The password, read from standard input so it never reaches a shell history
+/// or a process listing.
+fn read_password() -> anyhow::Result<String> {
+    use std::io::Read;
+    let mut buf = String::new();
+    std::io::stdin()
+        .read_to_string(&mut buf)
+        .context("reading the password from stdin")?;
+    let password = buf.trim_end_matches(['\n', '\r']).to_string();
+    if password.is_empty() {
+        anyhow::bail!("no password on stdin; pipe one in");
+    }
+    Ok(password)
 }
 
 fn init_tracing() {
