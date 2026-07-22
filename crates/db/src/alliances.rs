@@ -32,6 +32,9 @@ pub struct AllianceMember {
     pub party_short_name: Option<String>,
     pub party_slug: String,
     pub party_color: Option<String>,
+    /// The party's current member count, so the coalition page can show each
+    /// party's size and a combined total, the way the country seat bar reads.
+    pub seats: i64,
 }
 
 /// Fetch an alliance by slug.
@@ -104,7 +107,9 @@ pub async fn members(pool: &Pool, alliance_id: i64) -> Result<Vec<AllianceMember
         AllianceMember,
         r#"
         select p.name as party_name, p.short_name as party_short_name,
-               p.slug as party_slug, p.color as party_color
+               p.slug as party_slug, p.color as party_color,
+               (select count(*) from party_memberships m
+                where m.party_id = p.id and m.end_date is null) as "seats!"
         from party_alliances pa
         join parties p on p.id = pa.party_id
         where pa.alliance_id = $1 and pa.end_date is null

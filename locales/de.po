@@ -1041,3 +1041,6 @@ msgstr "E-Mail bestätigen"
 
 msgid "members"
 msgstr "Mitglieder"
+
+msgid "combined members"
+msgstr "Mitglieder insgesamt"

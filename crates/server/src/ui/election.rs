@@ -437,7 +437,12 @@ fn vote_share_list(
                             (ui::badge::party_chip(sn, r.party_color.as_deref()))
                         }
                     } @else if let Some(lbl) = r.label.as_deref() {
-                        span class="w-28 shrink-0 truncate text-xs font-medium text-ink" { (lbl) }
+                        // A label row (a coalition, or a presidential candidate)
+                        // has no page to link to, so its name must stay readable
+                        // here: it wraps rather than being cut off at a fixed
+                        // width, which mattered most for long candidate names on
+                        // a phone.
+                        span class="w-28 shrink-0 text-xs font-medium leading-tight text-ink" { (lbl) }
                     }
                     span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
                         // The previous share sits behind the current one, so when
