@@ -1032,3 +1032,6 @@ msgstr "Zurück"
 
 msgid "Next elections"
 msgstr "Nächste Wahlen"
+
+msgid "The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."
+msgstr "Die erfasste Handlung bestimmt die Wertung, auch wenn das Versprechen jünger ist: Was eine Partei getan hat, wiegt schwerer als das, was sie angekündigt hat."

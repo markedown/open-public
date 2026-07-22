@@ -570,6 +570,16 @@ fn party_stance(
                 }
             }
         }
+        @if diverges {
+            // The rule that decides the stance, said where the disagreement is
+            // seen rather than only in the schema: a recorded act outranks a
+            // pledge, and it does so even when the pledge is more recent,
+            // because what a party did is stronger evidence than what it said
+            // it would do.
+            p class="mt-1 max-w-prose text-[11px] italic text-ink-muted" {
+                (i18n::t("The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."))
+            }
+        }
         ul class="mt-1 space-y-0.5 pl-1" {
             @for e in &items {
                 li class="flex flex-wrap items-baseline gap-x-2 text-xs text-ink-muted" {
