@@ -21,6 +21,9 @@ pub async fn detail(
         .await?
         .ok_or(PageError::NotFound)?;
     let members = db::alliances::members(&pool, alliance.id).await?;
+    // The coalition's combined size, so the page has a headline figure of its
+    // own rather than only echoing the chips already on the country page.
+    let combined_seats: i64 = members.iter().map(|m| m.seats).sum();
     let loc = crate::content::Localized::load(&pool, "alliance", alliance.id).await?;
     let name = loc
         .get("name", Some(alliance.name.as_str()))
@@ -56,6 +59,14 @@ pub async fn detail(
                 @if alliance.founded_date.is_some() || alliance.dissolved_date.is_some() {
                     p class="mt-2 font-mono text-xs text-ink-muted" {
                         (fmt::date_range(alliance.founded_date, alliance.dissolved_date))
+                    }
+                }
+                @if combined_seats > 0 {
+                    div class="mt-5" {
+                        div class="font-mono text-3xl font-semibold text-ink" { (combined_seats) }
+                        div class="mt-0.5 text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
+                            (i18n::t("combined members"))
+                        }
                     }
                 }
                 // The member party chips, each linking to its party page.
@@ -97,6 +108,11 @@ pub async fn detail(
                                 a href={"/" (country_model.slug) "/parties/" (m.party_slug)}
                                   class="grow text-sm font-medium text-ink transition-colors hover:text-accent" {
                                     (m.party_name)
+                                }
+                                @if m.seats > 0 {
+                                    span class="shrink-0 font-mono text-xs text-ink-muted" {
+                                        (m.seats) " " (i18n::t("members"))
+                                    }
                                 }
                             }
                         }

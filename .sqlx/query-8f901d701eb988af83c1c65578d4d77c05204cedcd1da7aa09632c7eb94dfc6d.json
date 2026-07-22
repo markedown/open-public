@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.name as party_name, p.short_name as party_short_name,\n               p.slug as party_slug, p.color as party_color\n        from party_alliances pa\n        join parties p on p.id = pa.party_id\n        where pa.alliance_id = $1 and pa.end_date is null\n        order by p.name collate \"name_sort\"\n        ",
+  "query": "\n        select p.name as party_name, p.short_name as party_short_name,\n               p.slug as party_slug, p.color as party_color,\n               (select count(*) from party_memberships m\n                where m.party_id = p.id and m.end_date is null) as \"seats!\"\n        from party_alliances pa\n        join parties p on p.id = pa.party_id\n        where pa.alliance_id = $1 and pa.end_date is null\n        order by p.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -46,6 +46,12 @@
             "name": "color"
           }
         }
+      },
+      {
+        "ordinal": 4,
+        "name": "seats!",
+        "type_info": "Int8",
+        "origin": "Expression"
       }
     ],
     "parameters": {
@@ -57,8 +63,9 @@
       false,
       true,
       false,
-      true
+      true,
+      null
     ]
   },
-  "hash": "e9a90bce228ba8a48e7b59462dfdddb0a2f49bebacf67aca3618951569c87687"
+  "hash": "8f901d701eb988af83c1c65578d4d77c05204cedcd1da7aa09632c7eb94dfc6d"
 }
