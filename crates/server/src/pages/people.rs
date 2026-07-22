@@ -30,6 +30,15 @@ pub async fn list(
     let page = params.page.unwrap_or(1).max(1);
     let offset = (page - 1) * PAGE_SIZE;
     let people = db::people::list_filtered(&pool, country.id, &query, PAGE_SIZE, offset).await?;
+    // The party each person currently sits in, so a visitor scanning the list
+    // sees affiliation without opening each page. Absent for anyone with no
+    // current membership (a head of state, a former member).
+    let party_of: std::collections::HashMap<i64, db::people::PersonParty> =
+        db::people::current_parties(&pool, country.id)
+            .await?
+            .into_iter()
+            .map(|pp| (pp.person_id, pp))
+            .collect();
     let total = db::people::count_filtered(&pool, country.id, &query).await?;
     let list_url = format!("/{}/people", country.slug);
 
@@ -62,8 +71,13 @@ pub async fn list(
                                     span class="grow text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                         (p.full_name)
                                     }
+                                    @if let Some(pp) = party_of.get(&p.id) {
+                                        @if let Some(ref sn) = pp.short_name {
+                                            span class="shrink-0" { (ui::badge::party_chip(sn, pp.color.as_deref())) }
+                                        }
+                                    }
                                     @if let Some(ref place) = p.birth_place {
-                                        span class="shrink-0 text-xs text-ink-muted" { (place) }
+                                        span class="hidden shrink-0 text-xs text-ink-muted sm:inline" { (place) }
                                     }
                                 }
                             }

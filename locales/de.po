@@ -1038,3 +1038,6 @@ msgstr "Die erfasste Handlung bestimmt die Wertung, auch wenn das Versprechen jÃ
 
 msgid "Verify email"
 msgstr "E-Mail bestÃ¤tigen"
+
+msgid "members"
+msgstr "Mitglieder"

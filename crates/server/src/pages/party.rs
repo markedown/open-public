@@ -221,7 +221,7 @@ pub async fn detail(
 
             (ui::election::party_history_chart(&electoral_history, party.color.as_deref()))
 
-            (ui::election::party_history(&electoral_history))
+            (ui::election::party_history(&electoral_history, &country_model.slug))
 
             (ui::event::timeline(&events, None))
 

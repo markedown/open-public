@@ -1465,6 +1465,12 @@ async fn alliance_page_renders(pool: db::Pool) {
     assert!(body.contains("Test Partisi")); // a member party
     assert!(body.contains("/tr/parties/test-partisi")); // linking to the party
     assert!(body.contains("Aktif")); // active (not dissolved) status
+                                     // The breadcrumb goes back to the alliances index, not just the country, so
+                                     // an alliance page is not a one-way leaf.
+    assert!(
+        body.contains("/tr/alliances"),
+        "the breadcrumb returns to the alliances index"
+    );
 
     // An unknown alliance is a 404.
     assert_eq!(
@@ -1799,6 +1805,9 @@ async fn people_pages_render_seeded_data(pool: db::Pool) {
     let body = body_string(get(&app, "/tr/people").await).await;
     assert!(body.contains("Ayse Yilmaz"));
     assert!(body.contains("Mehmet Demir"));
+    // The index now shows current party affiliation: Ayse sits in Test Partisi
+    // (chip TP), so a visitor sees who belongs where without opening the page.
+    assert!(body.contains(">TP<"), "the people index shows a party chip");
 
     // Full profile: photo, birth place, role title, and party badge.
     let body = body_string(get(&app, "/tr/people/ayse-yilmaz").await).await;
@@ -1836,6 +1845,11 @@ async fn party_pages_render_members(pool: db::Pool) {
 
     let body = body_string(get(&app, "/tr/parties").await).await;
     assert!(body.contains("Test Partisi"));
+    // The index conveys each party's size, so a visitor sees who is large.
+    assert!(
+        body.contains("üye"),
+        "the parties index shows a member count"
+    );
 
     let body = body_string(get(&app, "/tr/parties/test-partisi").await).await;
     assert!(body.contains("Test Partisi"));
@@ -1844,6 +1858,12 @@ async fn party_pages_render_members(pool: db::Pool) {
     assert!(body.contains("example.test/s"));
     assert!(body.contains("Seçim geçmişi")); // electoral history heading
     assert!(body.contains("Test Secimi 2024")); // the party's election result
+                                                // Each electoral-history row links to the election it belongs to, so the
+                                                // record is a way into every election the party contested.
+    assert!(
+        body.contains("/tr/election/test-secimi-2024"),
+        "electoral history links to the election"
+    );
     assert!(body.contains("Parti kuruldu")); // party timeline event
 }
 
