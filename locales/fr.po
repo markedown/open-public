@@ -1035,3 +1035,6 @@ msgstr "Prochaines élections"
 
 msgid "The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."
 msgstr "L'acte enregistré fixe le score, même si la promesse est plus récente : ce qu'un parti a fait l'emporte sur ce qu'il a annoncé."
+
+msgid "Verify email"
+msgstr "Vérifier l'e-mail"
