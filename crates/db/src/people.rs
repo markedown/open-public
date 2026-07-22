@@ -402,3 +402,34 @@ pub async fn upsert_role(
     .await?;
     Ok(())
 }
+
+/// The party each person currently sits in, for the people index, so a row can
+/// show party affiliation the way a party page shows its members. Returned as
+/// `(person_id, party_slug, short_name, color)`; a person with no current
+/// membership is absent. When someone sits in more than one party (rare, and a
+/// data artefact), the alphabetically first is taken so the result is stable.
+pub struct PersonParty {
+    pub person_id: i64,
+    pub party_slug: String,
+    pub short_name: Option<String>,
+    pub color: Option<String>,
+}
+
+pub async fn current_parties(pool: &Pool, country_id: i64) -> Result<Vec<PersonParty>> {
+    let rows = sqlx::query_as!(
+        PersonParty,
+        r#"
+        select distinct on (m.person_id)
+               m.person_id, pa.slug as party_slug, pa.short_name, pa.color
+        from party_memberships m
+        join parties pa on pa.id = m.party_id
+        join people pe on pe.id = m.person_id
+        where pe.country_id = $1 and m.end_date is null
+        order by m.person_id, pa.name collate "name_sort"
+        "#,
+        country_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}

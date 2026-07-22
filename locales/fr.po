@@ -1038,3 +1038,6 @@ msgstr "L'acte enregistré fixe le score, même si la promesse est plus récente
 
 msgid "Verify email"
 msgstr "Vérifier l'e-mail"
+
+msgid "members"
+msgstr "membres"

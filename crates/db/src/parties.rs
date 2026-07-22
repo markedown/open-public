@@ -343,3 +343,23 @@ pub async fn discard_summary_draft(pool: &Pool, id: i64) -> Result<()> {
         .await?;
     Ok(())
 }
+
+/// Current member count per party in a country, for the parties index, so each
+/// row can show the party's size the way the country seat bar already does.
+/// Returned as `(party_id, members)` pairs; a party with no current members is
+/// absent, which the caller reads as zero.
+pub async fn member_counts(pool: &Pool, country_id: i64) -> Result<Vec<(i64, i64)>> {
+    let rows = sqlx::query!(
+        r#"
+        select p.id as "id!", count(m.id) as "members!"
+        from parties p
+        join party_memberships m on m.party_id = p.id and m.end_date is null
+        where p.country_id = $1
+        group by p.id
+        "#,
+        country_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows.into_iter().map(|r| (r.id, r.members)).collect())
+}

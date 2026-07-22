@@ -111,7 +111,7 @@ pub fn party_history_chart(
 }
 
 /// A party's electoral history: seats (and votes, when known) across elections.
-pub fn party_history(entries: &[db::elections::PartyHistoryEntry]) -> Markup {
+pub fn party_history(entries: &[db::elections::PartyHistoryEntry], country: &str) -> Markup {
     if entries.is_empty() {
         return html! {};
     }
@@ -121,7 +121,11 @@ pub fn party_history(entries: &[db::elections::PartyHistoryEntry]) -> Markup {
             ul class="op-card divide-y divide-hairline-light px-5" {
                 @for e in entries {
                     li class="flex items-baseline justify-between gap-3 py-2.5" {
-                        span class="text-sm font-medium text-ink" {
+                        // Each result links to the election it belongs to, so a
+                        // party's own record is a way into every election it
+                        // contested rather than a list of plain names.
+                        a href={"/" (country) "/election/" (e.election_slug)}
+                          class="text-sm font-medium text-ink transition-colors hover:text-accent" {
                             (e.election_name)
                             @if let Some(d) = e.held_on {
                                 " "

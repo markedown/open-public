@@ -1050,3 +1050,6 @@ msgstr "Kaydedilen eylem, taahhüt daha yeni olsa bile puanı belirler: bir part
 
 msgid "Verify email"
 msgstr "E-postayı doğrula"
+
+msgid "members"
+msgstr "üye"

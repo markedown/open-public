@@ -26,6 +26,13 @@ pub async fn list(
     let query = params.q.unwrap_or_default();
     let parties = db::parties::list_filtered(&pool, country.id, &query).await?;
     let total = parties.len();
+    // Each row shows the party's current size, the same figure the country
+    // seat bar computes, so the index conveys who is large and who is small.
+    let members: std::collections::HashMap<i64, i64> =
+        db::parties::member_counts(&pool, country.id)
+            .await?
+            .into_iter()
+            .collect();
     let list_url = format!("/{}/parties", country.slug);
 
     let content = html! {
@@ -57,6 +64,12 @@ pub async fn list(
                                 }
                                 span class="text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                     (p.name)
+                                }
+                                @let n = members.get(&p.id).copied().unwrap_or(0);
+                                @if n > 0 {
+                                    span class="ml-auto shrink-0 font-mono text-xs text-ink-muted" {
+                                        (n) " " (i18n::t("members"))
+                                    }
                                 }
                             }
                         }
