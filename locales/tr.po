@@ -1044,3 +1044,6 @@ msgstr "Geri"
 
 msgid "Next elections"
 msgstr "Sonraki seçimler"
+
+msgid "The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."
+msgstr "Kaydedilen eylem, taahhüt daha yeni olsa bile puanı belirler: bir partinin yaptığı, yapacağını söylediğinden daha ağır basar."

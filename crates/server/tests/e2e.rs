@@ -5140,6 +5140,9 @@ async fn compass_record_outranks_pledge_and_shows_the_divergence(pool: db::Pool)
     assert!(body.contains("Pledge differs from record"));
     assert!(body.contains("Manifesto") && body.contains("Law"));
     assert!(body.contains("beyanname s.10") && body.contains("Kanun 7000"));
+    // And the rule that decides is stated where the disagreement is seen, not
+    // left to a schema comment.
+    assert!(body.contains("The recorded act sets the score"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]
