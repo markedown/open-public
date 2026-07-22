@@ -34,6 +34,12 @@ pub async fn detail(
     crate::content::localize_statements(&pool, &mut statements).await?;
     let loc = crate::content::Localized::load(&pool, "person", person.id).await?;
     let summary = loc.get("summary", person.summary.as_deref());
+    // In a presidential country a person is a compass contestant, so their page
+    // links to the candidate compass that ranks them; a parliamentary politician
+    // is not scored individually and gets no such link.
+    let compass_href = db::compass::person_is_contestant(&pool, person.id)
+        .await?
+        .then(|| format!("/{}/compass/{}", country.slug, db::compass::SCOPE_PERSON));
 
     // Empty content sections stay hidden for readers; an admin edits from the
     // dedicated backoffice page for this entity, not inline on the public page.
@@ -121,6 +127,7 @@ pub async fn detail(
                     }
                     div class="mt-5 flex flex-wrap items-center gap-2" {
                         (ui::follow::button("person", person.id, follow_state, &follow_next))
+                        (ui::election::compass_cta(compass_href.as_deref()))
                         @if let Some(ref href) = manage_href {
                             a href=(href)
                               class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
