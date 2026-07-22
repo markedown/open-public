@@ -513,6 +513,22 @@ fn thousands(n: i64) -> String {
     }
 }
 
+/// A "compare your positions" link into the compass, for the pages the compass
+/// scores. `href` is the scope-appropriate URL, already resolved by the caller
+/// (the party set for a party page, the candidate set for a presidential one);
+/// when there is no matching thesis set the caller passes None and nothing
+/// renders, so a page never links to an empty compass.
+pub fn compass_cta(href: Option<&str>) -> Markup {
+    html! {
+        @if let Some(href) = href {
+            a href=(href)
+              class="inline-block rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                (i18n::t("Compare your positions"))
+            }
+        }
+    }
+}
+
 /// The country's next election, shown above its data because an election is the
 /// event that makes the rest of the page matter.
 ///

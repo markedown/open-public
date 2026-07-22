@@ -394,3 +394,20 @@ pub async fn person_contestants(pool: &Pool, country_id: i64) -> Result<Vec<Pers
     .await?;
     Ok(rows)
 }
+
+/// Whether a person is scored by their country's candidate compass, meaning
+/// they have at least one piece of evidence on a person-scope thesis. Their
+/// page uses this to decide whether to link to the compass that ranks them.
+pub async fn person_is_contestant(pool: &Pool, person_id: i64) -> Result<bool> {
+    let exists = sqlx::query_scalar!(
+        r#"select exists(
+            select 1 from position_evidence e
+            join theses t on t.id = e.thesis_id
+            where e.person_id = $1 and t.scope = 'person'
+        ) as "exists!""#,
+        person_id,
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(exists)
+}

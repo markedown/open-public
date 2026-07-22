@@ -88,6 +88,18 @@ pub async fn detail(
     // full history (Timeline) lives on its own page and is reached from here,
     // not rendered inline on the country page.
     let theses = db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PARTY).await?;
+    // The compass chip should appear whenever the country has any compass at
+    // all, party or candidate. A presidential-only country still has one.
+    let person_theses_count =
+        db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PERSON).await?;
+    let compass_count = theses + person_theses_count;
+    // The chip points at whichever set exists; the party set is the default
+    // entry, and a presidential-only country goes straight to the candidates.
+    let compass_path = if theses > 0 {
+        "compass".to_string()
+    } else {
+        format!("compass/{}", db::compass::SCOPE_PERSON)
+    };
     // The next election is the reason most of this page matters, so it sits
     // above the data rather than inside the elections box.
     let next_elections =
@@ -122,7 +134,7 @@ pub async fn detail(
         (i18n::t("Elections"), "elections", counts.elections),
         (i18n::t("News"), "news", counts.news),
         (i18n::t("Polls"), "polls", counts.polls),
-        (i18n::t("Compass"), "compass", theses),
+        (i18n::t("Compass"), compass_path.as_str(), compass_count),
         (i18n::t("Timeline"), "history", counts.events),
     ];
 

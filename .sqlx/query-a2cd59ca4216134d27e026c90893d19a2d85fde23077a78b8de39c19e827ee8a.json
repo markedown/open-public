@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select exists(\n            select 1 from position_evidence e\n            join theses t on t.id = e.thesis_id\n            where e.person_id = $1 and t.scope = 'person'\n        ) as \"exists!\"",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "exists!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "a2cd59ca4216134d27e026c90893d19a2d85fde23077a78b8de39c19e827ee8a"
+}

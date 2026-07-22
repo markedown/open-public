@@ -150,6 +150,18 @@ pub async fn detail(
     // round.
     let prev = db::elections::previous_comparable(&pool, election.id).await?;
     let source = db::elections::source_url(&pool, election.id).await?;
+    // A link into the compass that matches what this election is contested by:
+    // the candidate set for a presidential election, the party set otherwise,
+    // and only when that set has questions. This is the same reasoning the
+    // country page's next-election card uses, extended to the election's own
+    // page so an upcoming election is not a dead end.
+    let compass_href = if election.kind.as_deref() == Some("presidential") {
+        (db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PERSON).await? > 0)
+            .then(|| format!("/{}/compass/{}", country.slug, db::compass::SCOPE_PERSON))
+    } else {
+        (db::compass::count_theses(&pool, country.id, db::compass::SCOPE_PARTY).await? > 0)
+            .then(|| format!("/{}/compass", country.slug))
+    };
 
     let content = html! {
         article class="mx-auto max-w-2xl" {
@@ -159,6 +171,10 @@ pub async fn detail(
                 Crumb { label: election.name.clone(), href: None },
             ]))
             (ui::election::election_detail(&election, &rows, prev.as_ref(), &country.slug))
+
+            @if compass_href.is_some() {
+                div class="mt-6" { (ui::election::compass_cta(compass_href.as_deref())) }
+            }
 
             @if let Some(url) = source {
                 p class="mt-4" {

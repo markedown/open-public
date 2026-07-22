@@ -6229,3 +6229,107 @@ async fn lists_are_read_in_the_reader_s_language_too(pool: db::Pool) {
     let tr = body_string(get_cookie(&app, "/tr/polls", "lang=tr").await).await;
     assert!(!tr.contains("How do you rate this party?"));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_pages_the_compass_scores_link_into_it(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+
+    // With no positions yet, none of the pages invents a link to an empty
+    // compass.
+    let party = body_string(get_cookie(&app, "/tr/parties/test-partisi", "lang=en").await).await;
+    assert!(
+        !party.contains("Compare your positions"),
+        "no empty-compass link"
+    );
+
+    // A party thesis makes the party page and the election page link to the
+    // party compass.
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir parti onermesi.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let party = body_string(get_cookie(&app, "/tr/parties/test-partisi", "lang=en").await).await;
+    assert!(party.contains("Compare your positions"));
+    assert!(party.contains("/tr/compass"));
+
+    // An election's own page is no longer a dead end.
+    sqlx::query(
+        "insert into elections (country_id, name, slug, held_on, kind, source_id) \
+         values ($1,'Bir Secim','bir-secim',current_date - 10,'parliamentary',$2)",
+    )
+    .bind(country_id)
+    .bind(src)
+    .execute(&pool)
+    .await
+    .unwrap();
+    let election = body_string(get_cookie(&app, "/tr/election/bir-secim", "lang=en").await).await;
+    assert!(election.contains("Compare your positions"));
+    assert!(election.contains("/tr/compass"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_candidate_page_links_to_the_compass_that_ranks_them(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Before there is any candidate content, a person page links to no compass.
+    let before = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(!before.contains("compass/person"));
+
+    // Make her a contestant on a candidate thesis.
+    let t = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Bir aday onermesi.",
+        None,
+        1,
+        db::compass::SCOPE_PERSON,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        &pool,
+        t,
+        db::compass::SCOPE_PERSON,
+        ayse,
+        "statement",
+        2,
+        None,
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+
+    // Now her page links to the candidate compass, and the country's Compass
+    // chip appears even though there are no party positions.
+    let person = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(person.contains("Compare your positions"));
+    assert!(person.contains("/tr/compass/person"));
+
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(
+        country.contains("/tr/compass/person"),
+        "the chip points at the candidate set"
+    );
+
+    // A person with no recorded stance still gets no link.
+    let other = body_string(get_cookie(&app, "/tr/people/mehmet-demir", "lang=en").await).await;
+    assert!(!other.contains("compass/person"));
+}
