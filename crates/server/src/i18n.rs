@@ -55,6 +55,22 @@ pub async fn with_url<F: std::future::Future>(url: String, f: F) -> F::Output {
 /// The absolute URL of the current request, when one is known. `None` outside a
 /// request, and when the deployment has not been told its own origin: a
 /// canonical address is worth omitting rather than guessing at.
+/// The origin this instance is served from, taken from the current request's
+/// own address. `None` outside a request, and when the deployment has not been
+/// told its origin.
+pub fn site_origin() -> Option<String> {
+    let url = request_url()?;
+    // Everything up to the third slash: scheme, then host.
+    let mut parts = url.splitn(4, '/');
+    let scheme = parts.next()?;
+    let empty = parts.next()?;
+    let host = parts.next()?;
+    if !empty.is_empty() || host.is_empty() {
+        return None;
+    }
+    Some(format!("{scheme}//{host}"))
+}
+
 pub fn request_url() -> Option<String> {
     REQUEST_URL
         .try_with(|u| u.clone())

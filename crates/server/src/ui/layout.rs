@@ -34,6 +34,10 @@ pub fn document_described(
     // The page's own address, so a search engine is told which URL is the one
     // to index and a shared link resolves to the same place it was copied from.
     let canonical = i18n::request_url();
+    // The card image, absolute because a platform rendering the preview has no
+    // page to resolve a relative path against. Omitted, like the canonical URL,
+    // when the deployment has not been told its own origin.
+    let og_image = i18n::site_origin().map(|o| format!("{o}/static/brand/og.png"));
     // Nav links share one monospace, uppercase, underline-on-hover style: the
     // register has no coloured controls.
     let link = "text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
@@ -48,10 +52,11 @@ pub fn document_described(
                 @if let Some(ref url) = canonical {
                     link rel="canonical" href=(url);
                 }
-                // What a shared link shows: a title, a description and the site
-                // it came from. No image is referenced, because there is no
-                // hosted one to reference and pointing at a third party would
-                // load something from elsewhere.
+                // What a shared link shows: a title, a description, a card
+                // image and the site it came from. The image is our own file on
+                // our own origin; a preview is fetched by the platform that
+                // renders the card, never by the page, so nothing here makes a
+                // visitor load anything from elsewhere.
                 meta property="og:type" content="website";
                 meta property="og:site_name" content=(SITE_NAME);
                 meta property="og:title" content=(title);
@@ -60,7 +65,20 @@ pub fn document_described(
                 @if let Some(ref url) = canonical {
                     meta property="og:url" content=(url);
                 }
-                meta name="twitter:card" content="summary";
+                @if let Some(ref img) = og_image {
+                    meta property="og:image" content=(img);
+                    meta property="og:image:width" content="1200";
+                    meta property="og:image:height" content="630";
+                    meta property="og:image:alt" content=(SITE_NAME);
+                    meta name="twitter:image" content=(img);
+                }
+                // A large card once there is an image worth showing; the plain
+                // summary card is what a platform falls back to without one.
+                meta name="twitter:card" content=(if og_image.is_some() {
+                    "summary_large_image"
+                } else {
+                    "summary"
+                });
                 meta name="twitter:title" content=(title);
                 meta name="twitter:description" content=(description);
                 link rel="stylesheet" href="/static/app.css";

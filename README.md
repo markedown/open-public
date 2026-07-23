@@ -230,6 +230,10 @@ privacy:
   without the font.
 - **Accent:** a desaturated ink-blue (`#33527a`), used sparingly for links, focus, and the wordmark
   hyphen. Party colors appear only inside data elements, never as interface chrome.
+- **Social card:** `crates/server/static/brand/og.png`, the image a shared link shows. It is served
+  from this origin like every other asset, and regenerated with
+  [`scripts/make_og_image.py`](./scripts/make_og_image.py) from the same palette and fonts the pages
+  use, so it is a rebuildable artefact rather than an opaque binary.
 
 ## License
 
