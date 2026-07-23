@@ -6386,9 +6386,16 @@ async fn pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
     let body = body_string(get_cookie(&app, "/search", "lang=en").await).await;
     assert!(body.contains("source-backed record"));
 
-    // No image is referenced: there is no hosted one, and pointing at a third
-    // party would make a page load something from elsewhere.
-    assert!(!body.contains("og:image"));
+    // The card image is our own file on our own origin, absolute because the
+    // platform rendering a preview has no page to resolve a relative path
+    // against. A preview is fetched by that platform, never by the page.
+    assert!(body
+        .contains(r#"property="og:image" content="https://open-public.test/static/brand/og.png""#));
+    assert!(body.contains(r#"content="summary_large_image""#));
+    assert!(
+        !body.contains("://cdn."),
+        "the card is not on someone else's host"
+    );
 
     // Each page names its own address, so a search engine is told which URL to
     // index and a shared link resolves where it was copied from.
