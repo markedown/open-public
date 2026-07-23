@@ -6632,3 +6632,99 @@ async fn the_bio_queue_settles_a_draft_without_losing_your_place(pool: db::Pool)
         "the plain form still returns to the queue"
     );
 }
+
+/// A request the router turns away before any handler runs used to be answered
+/// by the framework itself, in plain text written for whoever wrote the code:
+/// a mistyped number in a path came back as ``Invalid URL: Cannot parse value
+/// at index 1 with value `abc` to a `i64` `` and a route with no such method
+/// came back empty. Those are replies visitors actually meet.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_refused_request_gets_our_page_and_never_the_frameworks(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    for (uri, status) in [
+        // a number that is not one
+        (format!("/{COUNTRY}/news/abc"), StatusCode::BAD_REQUEST),
+        (
+            format!("/{COUNTRY}/people?page=abc"),
+            StatusCode::BAD_REQUEST,
+        ),
+        // a route that exists, for a method it does not answer
+        ("/admin/news".to_string(), StatusCode::METHOD_NOT_ALLOWED),
+    ] {
+        let resp = get_cookie(&app, &uri, "lang=en").await;
+        assert_eq!(resp.status(), status, "{uri}");
+        assert_eq!(
+            resp.headers()
+                .get("content-type")
+                .and_then(|v| v.to_str().ok())
+                .map(|v| v.starts_with("text/html")),
+            Some(true),
+            "{uri} should render a page"
+        );
+        let body = body_string(resp).await;
+        // Nothing about the code that refused it reaches the visitor.
+        for leak in ["i64", "Invalid URL", "deserialize", "invalid digit"] {
+            assert!(!body.contains(leak), "{uri} leaked {leak:?}");
+        }
+        assert!(
+            body.contains("Back to home"),
+            "{uri} offers no way out: {body}"
+        );
+    }
+}
+
+/// A mail client that breaks a long link across two lines delivers the address
+/// without its token. That is a link that does not work, and it is answered
+/// with the same words as one that has expired.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_mail_link_that_lost_its_token_is_answered_like_an_expired_one(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    for (uri, expected) in [
+        (
+            "/verify",
+            "This verification link is invalid or has expired.",
+        ),
+        ("/reset", "This link is invalid or has expired."),
+    ] {
+        let resp = get_cookie(&app, uri, "lang=en").await;
+        assert_eq!(resp.status(), StatusCode::OK, "{uri}");
+        let body = body_string(resp).await;
+        assert!(body.contains(expected), "{uri} said something else");
+        assert!(
+            !body.contains("missing field"),
+            "{uri} leaked the rejection"
+        );
+    }
+}
+
+/// The replacement must not reach into replies that already carry a page, or a
+/// fragment, or a file. A whole document pasted into part of a page by HTMX is
+/// worse than the plain answer it replaces.
+#[sqlx::test(migrations = "../../migrations")]
+async fn replies_that_speak_for_themselves_are_left_alone(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // An HTMX swap keeps the framework's terse answer rather than a document.
+    let req = Request::builder()
+        .uri(format!("/{COUNTRY}/news/abc"))
+        .header("hx-request", "true")
+        .body(Body::empty())
+        .unwrap();
+    let resp = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+    assert!(!body_string(resp).await.contains("<html"));
+
+    // A handler's own 404 already renders, and keeps its own words.
+    let body = body_string(get(&app, &format!("/{COUNTRY}/poll/no-such-poll")).await).await;
+    assert!(body.contains("404"));
+
+    // Files that are not pages stay as they are.
+    let resp = get(&app, "/robots.txt").await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert!(body_string(resp).await.starts_with("User-agent:"));
+}
