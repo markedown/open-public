@@ -1,4 +1,4 @@
-use domain::models::{SearchHit, SearchKind};
+use domain::models::{SearchCountry, SearchHit, SearchKind};
 
 use crate::{Pool, Result};
 
@@ -10,12 +10,15 @@ pub async fn search(pool: &Pool, query: &str, limit: i64) -> Result<Vec<SearchHi
         return Ok(Vec::new());
     }
 
+    // Left joins: a row with no country still belongs in the results, it just
+    // has nowhere to link to, and dropping it would quietly hide data.
     let people = sqlx::query!(
         r#"
-        select full_name, slug
-        from people
-        where fts @@ to_tsquery('simple', $1)
-        order by full_name collate "name_sort"
+        select p.full_name, p.slug, c.slug as "country_slug?", c.name as "country_name?"
+        from people p
+        left join countries c on c.id = p.country_id
+        where p.fts @@ to_tsquery('simple', $1)
+        order by p.full_name collate "name_sort"
         limit $2
         "#,
         ts,
@@ -26,10 +29,11 @@ pub async fn search(pool: &Pool, query: &str, limit: i64) -> Result<Vec<SearchHi
 
     let parties = sqlx::query!(
         r#"
-        select name, slug
-        from parties
-        where fts @@ to_tsquery('simple', $1)
-        order by name collate "name_sort"
+        select p.name, p.slug, c.slug as "country_slug?", c.name as "country_name?"
+        from parties p
+        left join countries c on c.id = p.country_id
+        where p.fts @@ to_tsquery('simple', $1)
+        order by p.name collate "name_sort"
         limit $2
         "#,
         ts,
@@ -44,14 +48,25 @@ pub async fn search(pool: &Pool, query: &str, limit: i64) -> Result<Vec<SearchHi
             kind: SearchKind::Person,
             name: r.full_name,
             slug: r.slug,
+            country: country_of(r.country_slug, r.country_name),
         })
         .collect();
     hits.extend(parties.into_iter().map(|r| SearchHit {
         kind: SearchKind::Party,
         name: r.name,
         slug: r.slug,
+        country: country_of(r.country_slug, r.country_name),
     }));
     Ok(hits)
+}
+
+/// Both halves come from the same left-joined row, so they are present or
+/// absent together.
+fn country_of(slug: Option<String>, name: Option<String>) -> Option<SearchCountry> {
+    Some(SearchCountry {
+        slug: slug?,
+        name: name?,
+    })
 }
 
 /// Turn a user query into a prefix tsquery: "rece tay" becomes "rece:* & tay:*".

@@ -1,0 +1,65 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.full_name, p.slug, c.slug as \"country_slug?\", c.name as \"country_name?\"\n        from people p\n        left join countries c on c.id = p.country_id\n        where p.fts @@ to_tsquery('simple', $1)\n        order by p.full_name collate \"name_sort\"\n        limit $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "full_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "country_slug?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "country_name?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "name"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "4b16438fc8e18cceffb4fa3faddcb8eb49c3f010239b06dfa3b36d28084b62cb"
+}

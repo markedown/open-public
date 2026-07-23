@@ -124,6 +124,18 @@ pub struct SearchHit {
     pub kind: SearchKind,
     pub name: String,
     pub slug: String,
+    /// The country this row belongs to, since every page that shows it lives
+    /// under one. `None` where the row has no country: the schema allows it,
+    /// and such a row has no page to link to rather than a page under some
+    /// other country.
+    pub country: Option<SearchCountry>,
+}
+
+/// Just enough of a country to link to a result and to tell two results apart.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchCountry {
+    pub slug: String,
+    pub name: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
