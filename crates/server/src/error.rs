@@ -17,7 +17,17 @@ pub enum PageError {
 }
 
 impl From<db::Error> for PageError {
-    fn from(_: db::Error) -> Self {
+    /// Every database failure in a page handler arrives here, because handlers
+    /// use `?` rather than matching. That makes this the one place where the
+    /// cause still exists, so it is recorded before it is turned into a status
+    /// code: without it a production 500 leaves nothing behind to explain
+    /// itself, and there are over two hundred `?` sites that would all fail
+    /// silently.
+    ///
+    /// The message goes to the log, never to the response. What went wrong with
+    /// a query is an operational detail, not something a visitor is told.
+    fn from(e: db::Error) -> Self {
+        tracing::error!(error = %e, "a database call failed while rendering a page");
         PageError::Server
     }
 }
@@ -57,7 +67,15 @@ fn server_error() -> Markup {
         false,
         false,
         html! {
-            p class="text-ink" { (i18n::t("Something went wrong. Please try again.")) }
+            div class="flex flex-col items-center py-20 text-center" {
+                p class="font-mono text-4xl font-semibold text-ink" { "500" }
+                p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                    (i18n::t("Something went wrong. Please try again."))
+                }
+                a href="/" class="mt-6 text-sm text-accent hover:underline" {
+                    (i18n::t("Back to home"))
+                }
+            }
         },
     )
 }
@@ -80,5 +98,17 @@ mod tests {
             PageError::Server.into_response().status(),
             StatusCode::INTERNAL_SERVER_ERROR
         );
+    }
+
+    #[test]
+    fn a_database_failure_becomes_a_server_error_and_says_nothing_to_the_visitor() {
+        let e: PageError = db::Error::UniqueViolation.into();
+        assert!(matches!(e, PageError::Server));
+        // The page a visitor gets carries no detail about the query that
+        // failed: that belongs in the log, which the conversion above writes.
+        let body = server_error().into_string();
+        assert!(body.contains("500"));
+        assert!(!body.to_lowercase().contains("sql"));
+        assert!(!body.to_lowercase().contains("database"));
     }
 }
