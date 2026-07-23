@@ -22,7 +22,12 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, voted: &[i64]) ->
 
     html! {
         article id={"poll-" (poll.slug)} class="op-card p-6 sm:p-8" {
-            h3 class="text-2xl font-bold leading-snug tracking-tight text-ink" { (poll.question) }
+            // The question is what this page is, so it is the page's heading.
+            // As an h3 the document began at the third level and had no top
+            // heading at all, which leaves a reader navigating by heading with
+            // nothing to land on. The cards that show a poll among others live
+            // in `poll_previews` and keep their own smaller heading.
+            h1 class="text-2xl font-bold leading-snug tracking-tight text-ink" { (poll.question) }
 
             @if let Some(ref url) = poll.media_url {
                 figure class="mt-4" {

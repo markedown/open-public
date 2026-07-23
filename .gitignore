@@ -16,6 +16,11 @@ CLAUDE.local.md
 # Uploaded image assets (ASSET_DIR default); runtime data, never committed
 /data/
 
+# Python bytecode from the scripts in scripts/, which CI and the docs both
+# run. Importing one writes this next to it, and it is not ours to publish.
+__pycache__/
+*.pyc
+
 # Editor and OS files
 .DS_Store
 *.swp
