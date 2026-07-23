@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.full_name as person_name, p.slug as person_slug, r.title, r.role_type\n        from roles r\n        join people p on p.id = r.person_id\n        where r.role_type in\n            ('monarch', 'president', 'chancellor', 'prime_minister',\n             'vice_president', 'minister')\n          and r.end_date is null\n          and p.country_id = $1\n        -- Head of state first, then head of government. A monarch is a head of\n        -- state like a president, and sorts with one: a constitutional monarchy\n        -- has both, and listing the head of government above the head of state\n        -- would misdescribe the arrangement.\n        order by case r.role_type\n                   when 'monarch' then 0\n                   when 'president' then 0\n                   when 'chancellor' then 1\n                   when 'prime_minister' then 1\n                   when 'vice_president' then 2\n                   else 3\n                 end,\n                 r.title\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "person_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "role_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "role_type"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "8509eb54ffb62bfb04883ed4ad44498763eab16d55fa9cfe993cb4573174f20b"
+}

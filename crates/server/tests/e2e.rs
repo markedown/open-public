@@ -6849,3 +6849,85 @@ async fn a_poll_page_leads_with_its_question(pool: db::Pool) {
         &h1[..h1.len().min(60)]
     );
 }
+
+/// A monarch is a head of state, and belongs in the government section above
+/// the head of government.
+///
+/// The section listed presidents, chancellors, prime ministers, vice
+/// presidents and ministers, so in a constitutional monarchy the head of state
+/// was simply absent while the prime minister appeared as though there were
+/// none.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_monarch_is_shown_as_head_of_state(pool: db::Pool) {
+    seed(&pool).await;
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
+        .bind(COUNTRY)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src =
+        db::sources::insert_source(&pool, "manual", "https://example.test/s3", None, Some("h3"))
+            .await
+            .unwrap();
+
+    let mut ids = Vec::new();
+    for (name, slug, role, title) in [
+        ("Kral Test", "kral-test", "monarch", "Monarch"),
+        (
+            "Basbakan Test",
+            "basbakan-test",
+            "prime_minister",
+            "Prime Minister",
+        ),
+    ] {
+        let id = db::people::upsert_person(
+            &pool,
+            &domain::models::NewPerson {
+                wikidata_id: None,
+                full_name: name.to_string(),
+                slug: slug.to_string(),
+                birth_date: None,
+                birth_place: None,
+                photo_url: None,
+                photo_license: None,
+                summary: None,
+                source_id: src,
+                country_id: Some(country_id),
+            },
+        )
+        .await
+        .unwrap();
+        db::people::upsert_role(
+            &pool,
+            id,
+            role,
+            Some(title),
+            None,
+            None,
+            NaiveDate::from_ymd_opt(2022, 9, 8),
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+        ids.push(id);
+    }
+
+    let gov = db::country::government(&pool, country_id).await.unwrap();
+    let names: Vec<&str> = gov.iter().map(|m| m.person_name.as_str()).collect();
+    assert!(
+        names.contains(&"Kral Test"),
+        "the monarch is missing: {names:?}"
+    );
+    let monarch = names.iter().position(|n| *n == "Kral Test").unwrap();
+    let pm = names.iter().position(|n| *n == "Basbakan Test").unwrap();
+    assert!(
+        monarch < pm,
+        "the head of state must come before the head of government: {names:?}"
+    );
+
+    // And the country page shows them.
+    let app = router(pool.clone());
+    let body = body_string(get(&app, &format!("/{COUNTRY}")).await).await;
+    assert!(body.contains("Kral Test"), "the monarch is not on the page");
+}

@@ -128,6 +128,9 @@ msgstr "Dahili hata. Lütfen tekrar deneyin."
 msgid "This address is not complete. A link may have been broken on the way here."
 msgstr "Bu adres eksik. Buraya gelirken bir bağlantı bölünmüş olabilir."
 
+msgid "Constitutional monarchy"
+msgstr "Anayasal monarşi"
+
 msgid "Back to home"
 msgstr "Ana sayfaya dön"
 

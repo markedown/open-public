@@ -121,6 +121,9 @@ msgstr "Erreur interne. Veuillez réessayer."
 msgid "This address is not complete. A link may have been broken on the way here."
 msgstr "Cette adresse est incomplète. Un lien a peut-être été coupé en chemin."
 
+msgid "Constitutional monarchy"
+msgstr "Monarchie constitutionnelle"
+
 msgid "Back to home"
 msgstr "Retour à l'accueil"
 
