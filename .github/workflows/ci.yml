@@ -37,10 +37,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      # The export the last commit published, to compare row counts against. The
+      # validator can only tell a correction from an accident by looking at what
+      # was there before, and without this its shrink check never runs at all.
+      - name: the previously published manifest
+        run: |
+          git fetch --depth=1 origin "${{ github.event.pull_request.base.sha || github.event.before }}" \
+            && git show FETCH_HEAD:dataset/manifest.json > "$RUNNER_TEMP/before.json" \
+            || echo "no previous manifest to compare against"
       # The published dataset claims that every fact cites a source, that no
-      # personal or unreviewed field is in it, and that every reference
-      # resolves. This is that claim, checked.
-      - run: python3 scripts/validate_data.py dataset
+      # personal or unreviewed field is in it, that every reference resolves,
+      # and that it holds the files it says it holds. This is that claim,
+      # checked.
+      - run: |
+          if [ -f "$BEFORE" ]; then
+            python3 scripts/validate_data.py dataset --baseline "$BEFORE"
+          else
+            echo "no previous manifest; checking this export on its own"
+            python3 scripts/validate_data.py dataset
+          fi
+        env:
+          BEFORE: ${{ runner.temp }}/before.json
 
   clippy:
     name: clippy

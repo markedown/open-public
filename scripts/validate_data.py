@@ -87,6 +87,41 @@ def main():
             descriptors.append(name)
 
     failures = []
+
+    # 0. The export must be what it says it is.
+    #
+    # Every check below reads the files that are present, so on its own it would
+    # report a clean export for one that had lost a file entirely: nothing to
+    # read is not the same as nothing wrong. The export describes itself in
+    # datapackage.json and manifest.json, and holding it to that description is
+    # what turns "these rows are fine" into "these are the rows".
+    #
+    # It also closes the gap in the check below it. FORBIDDEN_FIELDS is a list
+    # of what may not be published, so a column nobody thought to add to it
+    # travels. Requiring every field to be one the datapackage declares reverses
+    # that: a new column has to be declared, in a reviewed file, before it can
+    # reach anyone.
+    declared, counts = {}, {}
+    try:
+        with open(os.path.join(args.dir, "datapackage.json"), encoding="utf-8") as fh:
+            declared = {r["name"]: {f["name"] for f in r["schema"]["fields"]}
+                        for r in json.load(fh)["resources"]}
+        with open(os.path.join(args.dir, "manifest.json"), encoding="utf-8") as fh:
+            counts = json.load(fh)["counts"]
+    except (OSError, KeyError, ValueError) as e:
+        failures.append(f"the export does not describe itself: {e}")
+    for name in sorted(set(declared) - set(files)):
+        failures.append(f"{name}: declared in datapackage.json, no such file")
+    for name in sorted(set(files) - set(declared)):
+        failures.append(f"{name}: published but not declared in datapackage.json")
+    for name in sorted(set(declared) & set(files)):
+        if name in counts and len(files[name]) != counts[name]:
+            failures.append(f"{name}: {counts[name]} rows in the manifest, "
+                            f"{len(files[name])} in the file")
+        undeclared = {k for r in files[name] for k in r} - declared[name]
+        if undeclared:
+            failures.append(f"{name}: field(s) not declared in datapackage.json "
+                            f"{sorted(undeclared)}")
     # News is not part of the dataset. Every other file states a structural fact
     # sourced to a document; a news summary is our own prose about what someone
     # is accused of, and it decays: the story moves on, the dataset should not.
