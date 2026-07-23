@@ -25,7 +25,11 @@ pub struct Credentials {
 
 #[derive(Deserialize)]
 pub struct VerifyQuery {
-    token: String,
+    /// Absent when the link arrived without it, which is what a mail client
+    /// that breaks a long URL across two lines produces. A link with no token
+    /// is a link that does not work, so it is answered with the same words as
+    /// one that has expired rather than with a refusal from the framework.
+    token: Option<String>,
 }
 
 pub async fn register_form() -> Markup {
@@ -89,7 +93,13 @@ async fn send_verification(
 }
 
 pub async fn verify(State(state): State<AppState>, Query(query): Query<VerifyQuery>) -> Markup {
-    let code_hash = auth::hash_token(&query.token);
+    let Some(token) = query.token.as_deref() else {
+        return notice_page(
+            "Verify your email",
+            i18n::t("This verification link is invalid or has expired."),
+        );
+    };
+    let code_hash = auth::hash_token(token);
     match db::email_verifications::consume_and_verify(&state.pool, &code_hash).await {
         Ok(Some(_)) => verified_page(),
         Ok(None) => notice_page(
@@ -363,8 +373,14 @@ async fn send_reset(state: &AppState, user_id: i64, email: &str) -> anyhow::Resu
 
 /// GET `/reset`: the form that sets a new password, if the link is still good.
 pub async fn reset_form(State(state): State<AppState>, Query(query): Query<VerifyQuery>) -> Markup {
-    match db::password_resets::user_for_token(&state.pool, &auth::hash_token(&query.token)).await {
-        Ok(Some(_)) => reset_page(&query.token, None),
+    let Some(token) = query.token.as_deref() else {
+        return notice_page(
+            "Set a new password",
+            i18n::t("This link is invalid or has expired."),
+        );
+    };
+    match db::password_resets::user_for_token(&state.pool, &auth::hash_token(token)).await {
+        Ok(Some(_)) => reset_page(token, None),
         Ok(None) => notice_page(
             "Set a new password",
             i18n::t("This link is invalid or has expired."),

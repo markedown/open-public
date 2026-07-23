@@ -61,6 +61,33 @@ pub fn not_found() -> Markup {
     )
 }
 
+/// The page for a request the framework refused before any handler ran.
+///
+/// Axum answers a malformed request itself, with a message written for whoever
+/// wrote the code: a mistyped number in a path produced `Invalid URL: Cannot
+/// parse value at index 1 with value \`abc\` to a \`i64\``, as plain text, in
+/// English whatever the visitor is reading, saying nothing they can act on.
+/// These are replies people genuinely meet, because a mail client that breaks a
+/// link across two lines produces exactly this.
+pub fn malformed_request(status: StatusCode) -> Markup {
+    ui::layout::document(
+        Some("Error"),
+        false,
+        false,
+        html! {
+            div class="flex flex-col items-center py-20 text-center" {
+                p class="font-mono text-4xl font-semibold text-ink" { (status.as_u16()) }
+                p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                    (i18n::t("This address is not complete. A link may have been broken on the way here."))
+                }
+                a href="/" class="mt-6 text-sm text-accent hover:underline" {
+                    (i18n::t("Back to home"))
+                }
+            }
+        },
+    )
+}
+
 fn server_error() -> Markup {
     ui::layout::document(
         Some("Error"),

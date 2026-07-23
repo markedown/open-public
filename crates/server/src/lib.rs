@@ -260,11 +260,51 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/logout", post(pages::auth::logout))
         .route("/lang/{code}", get(set_language))
         .nest_service("/static", ServeDir::new(static_dir))
+        // Inside the locale layer, so the page it renders is in the visitor's
+        // language rather than the framework's.
+        .layer(middleware::from_fn(own_the_refusals))
         // The locale layer runs before every handler, so `i18n::t` in the
         // templates reads the request's chosen language.
         .layer(middleware::from_fn_with_state(state.clone(), locale))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
+}
+
+/// Answer a refused request with our own page instead of the framework's.
+///
+/// A request the router turns away before a handler runs is answered by axum
+/// itself: a mistyped number in a path came back as plain text reading `Invalid
+/// URL: Cannot parse value at index 1 with value \`abc\` to a \`i64\``, and a
+/// method it has no route for came back with no body at all. A visitor who
+/// typed a URL badly, or followed a link a mail client broke, got that. Every
+/// refusal a handler produces already renders the site's page, so this closes
+/// the gap between the two, in one place rather than in each extractor, where a
+/// new route cannot forget it.
+///
+/// Only replies that carry no page of their own are replaced, so a handler's
+/// own 404 and anything already rendered pass through untouched.
+async fn own_the_refusals(
+    req: axum::extract::Request,
+    next: middleware::Next,
+) -> axum::response::Response {
+    // An HTMX request swaps the reply into part of a page, so answering it with
+    // a whole document would paste one page inside another.
+    let fragment = req.headers().contains_key("hx-request");
+    let response = next.run(req).await;
+    let status = response.status();
+    let renders_already = response
+        .headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .is_some_and(|v| v.starts_with("text/html") || v.starts_with("application/json"));
+    if fragment || renders_already || !status.is_client_error() {
+        return response;
+    }
+    let page = match status {
+        StatusCode::NOT_FOUND => error::not_found(),
+        other => error::malformed_request(other),
+    };
+    (status, page).into_response()
 }
 
 /// Resolve the request's locale (a `lang` cookie, else `Accept-Language`, else
