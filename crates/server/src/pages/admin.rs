@@ -1,4 +1,5 @@
 use axum::extract::{Path, Query, State};
+use axum::http::HeaderMap;
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::Form;
 use chrono::NaiveDate;
@@ -251,8 +252,12 @@ pub async fn bios(
             a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
                 "← " (i18n::t("Admin panel"))
             }
-            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
+            h1 class="mt-2 flex flex-wrap items-baseline gap-3 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review biographies"))
+                // How many are waiting, so a long queue shows its own size.
+                @if !drafts.is_empty() {
+                    span class="font-mono text-base font-medium text-ink-muted" { (drafts.len()) }
+                }
             }
             p class="mt-2 max-w-prose text-sm text-ink-muted" {
                 (i18n::t("Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."))
@@ -265,11 +270,41 @@ pub async fn bios(
             } @else {
                 ul class="mt-6 space-y-4" {
                     @for d in &drafts {
-                        li class="op-card p-4" {
+                        (bio_card(d))
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Review biographies")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// One draft awaiting review.
+///
+/// Its own element with its own id, so approving it can replace just this card
+/// rather than reloading a list of fifty and losing the reviewer's place. The
+/// form still posts normally without JavaScript, in which case the handler
+/// redirects back to the list as before.
+fn bio_card(d: &db::parties::SummaryDraft) -> Markup {
+    let target = format!("#bio-{}", d.id);
+    html! {
+                        li id={"bio-" (d.id)} class="op-card p-4" {
                             div class="flex items-baseline justify-between gap-3" {
-                                a href={"/" (d.country_slug) "/parties/" (d.slug)}
-                                  class="text-sm font-semibold text-ink transition-colors hover:text-accent" {
-                                    (d.name)
+                                span class="flex flex-wrap items-baseline gap-2" {
+                                    a href={"/" (d.country_slug) "/parties/" (d.slug)}
+                                      class="text-sm font-semibold text-ink transition-colors hover:text-accent" {
+                                        (d.name)
+                                    }
+                                    // Which country, since a queue spans several
+                                    // and a party name does not always say.
+                                    span class="font-mono text-[10px] uppercase tracking-wide text-ink-faint" {
+                                        (d.country_slug)
+                                    }
                                 }
                                 @if let Some(ref qid) = d.wikidata_id {
                                     a href={"https://www.wikidata.org/wiki/" (qid)} target="_blank" rel="noopener noreferrer"
@@ -284,6 +319,8 @@ pub async fn bios(
                                 }
                             }
                             form method="post" action={"/admin/bios/" (d.id) "/publish"}
+                                 hx-post={"/admin/bios/" (d.id) "/publish"}
+                                 hx-target=(target) hx-swap="outerHTML"
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="summary" rows="4"
                                   class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
@@ -296,51 +333,68 @@ pub async fn bios(
                                     }
                                     button type="submit" formaction={"/admin/bios/" (d.id) "/discard"}
                                       formnovalidate
+                                      hx-post={"/admin/bios/" (d.id) "/discard"}
+                                      hx-target=(target) hx-swap="outerHTML"
                                       class="rounded-lg border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                                         (i18n::t("Discard"))
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-    };
-    Ok(ui::layout::document(
-        Some(i18n::t("Review biographies")),
-        true,
-        true,
-        content,
-    ))
+    }
 }
 
 /// Approve a reviewed party summary (as edited); an empty text discards instead.
 pub async fn bio_publish(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
+    headers: HeaderMap,
     Path(id): Path<i64>,
     Form(form): Form<SummaryForm>,
-) -> Result<Redirect, PageError> {
+) -> Result<Response, PageError> {
     require_admin(&session)?;
     let text = form.summary.trim();
-    if text.is_empty() {
-        db::parties::discard_summary_draft(&pool, id).await?;
-    } else {
+    let published = !text.is_empty();
+    if published {
         db::parties::publish_summary_draft(&pool, id, text).await?;
+    } else {
+        // An emptied summary is a discard: there is nothing to publish.
+        db::parties::discard_summary_draft(&pool, id).await?;
     }
-    Ok(Redirect::to("/admin/bios"))
+    Ok(decided(&headers, published))
+}
+
+/// What a decision leaves behind.
+///
+/// Answering an in-page request with the settled card keeps the reviewer where
+/// they were, which matters when there are fifty to work through. Without
+/// JavaScript the form posts normally and the redirect returns the list, as
+/// before.
+fn decided(headers: &HeaderMap, published: bool) -> Response {
+    if !headers.contains_key("hx-request") {
+        return Redirect::to("/admin/bios").into_response();
+    }
+    let label = if published {
+        i18n::t("Published")
+    } else {
+        i18n::t("Discarded")
+    };
+    html! {
+        li class="op-card px-4 py-3 text-xs text-ink-muted" { (label) }
+    }
+    .into_response()
 }
 
 /// Discard a party summary draft, leaving the public summary untouched.
 pub async fn bio_discard(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
+    headers: HeaderMap,
     Path(id): Path<i64>,
-) -> Result<Redirect, PageError> {
+) -> Result<Response, PageError> {
     require_admin(&session)?;
     db::parties::discard_summary_draft(&pool, id).await?;
-    Ok(Redirect::to("/admin/bios"))
+    Ok(decided(&headers, false))
 }
 
 /// The translation review queue: draft translations shown against their source
