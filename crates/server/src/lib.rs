@@ -324,7 +324,11 @@ fn same_site_path(referer: &str) -> Option<String> {
         return Some(rest[rest.find('/').unwrap_or(rest.len())..].to_string())
             .filter(|p| p.starts_with('/'));
     }
-    referer.starts_with('/').then(|| referer.to_string())
+    // A path, but not a protocol-relative one: `//elsewhere/x` starts with a
+    // slash and is still another origin. Browsers send absolute referers, so
+    // this is not a reachable attack so much as making the guarantee above
+    // actually true.
+    (referer.starts_with('/') && !referer.starts_with("//")).then(|| referer.to_string())
 }
 
 /// Liveness probe for load balancers and uptime checks.
@@ -412,4 +416,47 @@ async fn version() -> Json<Version> {
         built_at: option_env!("BUILD_TIME").unwrap_or("unknown"),
         image_digest: std::env::var("IMAGE_DIGEST").ok().filter(|s| !s.is_empty()),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_referer_only_ever_redirects_within_this_site() {
+        // An ordinary same-origin referer keeps its path.
+        assert_eq!(
+            same_site_path("https://open-public.com/tr/people"),
+            Some("/tr/people".to_string())
+        );
+        // Another origin collapses to its path, never to that origin.
+        assert_eq!(
+            same_site_path("https://elsewhere.example/tr"),
+            Some("/tr".to_string())
+        );
+        // A bare path is already same-site.
+        assert_eq!(same_site_path("/tr"), Some("/tr".to_string()));
+        // A protocol-relative reference starts with a slash and is still
+        // another origin, so it is refused rather than followed.
+        assert_eq!(same_site_path("//elsewhere.example/x"), None);
+        // Anything else is not a redirect target.
+        assert_eq!(same_site_path("javascript:alert(1)"), None);
+        assert_eq!(same_site_path("https://elsewhere.example"), None);
+    }
+
+    #[test]
+    fn a_colour_cannot_escape_the_attribute_it_is_written_into() {
+        assert_eq!(ui::css_color(Some("#abc"), "#000"), "#abc");
+        assert_eq!(ui::css_color(Some("#A1B2C3"), "#000"), "#A1B2C3");
+        // Anything that is not a plain hex colour becomes the fallback, so a
+        // value from the database cannot break out of the SVG the hemicycle
+        // builds by hand.
+        assert_eq!(ui::css_color(Some("red"), "#000"), "#000");
+        assert_eq!(
+            ui::css_color(Some("#fff\"/><script>alert(1)</script>"), "#000"),
+            "#000"
+        );
+        assert_eq!(ui::css_color(Some("url(x)"), "#000"), "#000");
+        assert_eq!(ui::css_color(None, "#000"), "#000");
+    }
 }

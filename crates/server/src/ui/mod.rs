@@ -74,3 +74,27 @@ pub fn initials(name: &str) -> String {
         .and_then(|w| w.chars().next());
     first.into_iter().chain(last).collect()
 }
+
+/// A party colour narrowed to something that cannot escape the attribute it is
+/// written into.
+///
+/// Colours come from the database as free text, and one of them is written into
+/// an SVG built by string concatenation, which does not go through the template
+/// escaping the rest of the interface relies on. Nothing user-facing sets a
+/// colour today, so this closes no known hole; it makes the assumption explicit
+/// instead of leaving a trusted-by-accident value one careless edit away from
+/// mattering.
+///
+/// Anything that is not a plain `#rgb` or `#rrggbb` becomes the fallback.
+pub fn css_color(color: Option<&str>, fallback: &'static str) -> String {
+    match color {
+        Some(c)
+            if (c.len() == 4 || c.len() == 7)
+                && c.starts_with('#')
+                && c[1..].bytes().all(|b| b.is_ascii_hexdigit()) =>
+        {
+            c.to_string()
+        }
+        _ => fallback.to_string(),
+    }
+}

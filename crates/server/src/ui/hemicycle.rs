@@ -62,6 +62,9 @@ pub fn hemicycle(
     let mut paths = String::new();
     let mut cum = 0i64;
     for (count, color) in &segs {
+        // This SVG is assembled as a string and emitted unescaped, so the one
+        // value that comes from the database is narrowed before it goes in.
+        let color = crate::ui::css_color(Some(color.as_str()), "#171717");
         let a0 = cum as f64 / total as f64;
         let a1 = (cum + count) as f64 / total as f64;
         let (ox0, oy0) = pt(outer, a0);
