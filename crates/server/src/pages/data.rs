@@ -90,23 +90,27 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
             label: t.label,
             votes: t.votes,
         };
-        if polls.last().is_some_and(|p| p.slug == t.slug) {
-            let p = polls.last_mut().expect("just checked non-empty");
-            p.total_votes += opt.votes;
-            p.options.push(opt);
-        } else {
-            let chain = t.head_seq.filter(|s| *s > 0).map(|seq| ChainHead {
-                seq,
-                hash: hex(t.head_hash.as_deref().unwrap_or(&[])),
-            });
-            polls.push(PollExport {
-                slug: t.slug,
-                question: t.question,
-                kind: t.kind,
-                total_votes: opt.votes,
-                chain,
-                options: vec![opt],
-            });
+        // Matching on the last entry expresses "same poll as the row before"
+        // directly, so there is no separately-checked invariant to assert.
+        match polls.last_mut() {
+            Some(p) if p.slug == t.slug => {
+                p.total_votes += opt.votes;
+                p.options.push(opt);
+            }
+            _ => {
+                let chain = t.head_seq.filter(|s| *s > 0).map(|seq| ChainHead {
+                    seq,
+                    hash: hex(t.head_hash.as_deref().unwrap_or(&[])),
+                });
+                polls.push(PollExport {
+                    slug: t.slug,
+                    question: t.question,
+                    kind: t.kind,
+                    total_votes: opt.votes,
+                    chain,
+                    options: vec![opt],
+                });
+            }
         }
     }
 

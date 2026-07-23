@@ -156,7 +156,17 @@ where
         parts: &mut Parts,
         state: &S,
     ) -> Result<Option<Self>, Self::Rejection> {
-        Ok(Self::load(parts, state).await.unwrap_or(None))
+        // An optional session degrades to "signed out" rather than failing the
+        // page, which is right: a reader should still see public content. It is
+        // recorded though, because a session silently disappearing is otherwise
+        // indistinguishable from a visitor who was never signed in.
+        Ok(match Self::load(parts, state).await {
+            Ok(session) => session,
+            Err(_) => {
+                tracing::warn!("resolving the session failed; treating the request as signed out");
+                None
+            }
+        })
     }
 }
 
