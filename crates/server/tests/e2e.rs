@@ -6566,3 +6566,69 @@ async fn controls_and_decoration_are_reachable_by_a_screen_reader(pool: db::Pool
     let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
     assert!(home.contains(r#"<span aria-hidden="true" class="text-[7px]"#));
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_bio_queue_settles_a_draft_without_losing_your_place(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cookie = admin_cookie(&pool).await;
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    db::parties::set_summary_draft(&pool, party_id, "A draft to review.")
+        .await
+        .unwrap();
+
+    // The queue says how many are waiting and which country each belongs to,
+    // because a real queue spans several and party names do not always say.
+    let queue =
+        body_string(get_cookie(&app, "/admin/bios", &format!("{cookie}; lang=en")).await).await;
+    assert!(queue.contains("Review biographies"));
+    assert!(
+        queue.contains(&format!(r#"id="bio-{party_id}""#)),
+        "each card is addressable"
+    );
+    assert!(queue.contains(">tr<"), "the country is shown");
+
+    // Deciding from within the page answers with just that card, so a reviewer
+    // working through fifty is not thrown back to the top of the list.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/admin/bios/{party_id}/publish"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", format!("{cookie}; lang=en"))
+        .header("hx-request", "true")
+        .body(Body::from("summary=An+approved+summary."))
+        .unwrap();
+    let resp = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(resp.status(), StatusCode::OK, "a fragment, not a redirect");
+    let fragment = body_string(resp).await;
+    assert!(fragment.contains("Published"));
+    assert!(!fragment.contains("<html"), "only the card comes back");
+
+    let party = db::parties::get_by_slug(&pool, "test-partisi")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(party.summary.as_deref(), Some("An approved summary."));
+
+    // Without JavaScript the same form posts normally and still returns the
+    // list, which is the behaviour this replaced and must keep working.
+    db::parties::set_summary_draft(&pool, party_id, "Another draft.")
+        .await
+        .unwrap();
+    let resp = post_form(
+        &app,
+        &format!("/admin/bios/{party_id}/discard"),
+        "",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(
+        resp.headers().get("location").unwrap(),
+        "/admin/bios",
+        "the plain form still returns to the queue"
+    );
+}

@@ -1056,3 +1056,6 @@ msgstr "en baisse"
 
 msgid "unchanged"
 msgstr "stable"
+
+msgid "Discarded"
+msgstr "Écarté"

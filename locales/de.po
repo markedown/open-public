@@ -1056,3 +1056,6 @@ msgstr "verloren"
 
 msgid "unchanged"
 msgstr "unverändert"
+
+msgid "Discarded"
+msgstr "Verworfen"
