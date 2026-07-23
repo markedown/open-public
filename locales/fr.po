@@ -40,6 +40,9 @@ msgstr "partis répertoriés"
 msgid "No parties found."
 msgstr "Aucun parti trouvé."
 
+msgid "Role"
+msgstr "Fonction"
+
 msgid "Roles"
 msgstr "Fonctions"
 

@@ -40,6 +40,9 @@ msgstr "Parteien aufgeführt"
 msgid "No parties found."
 msgstr "Keine Parteien gefunden."
 
+msgid "Role"
+msgstr "Amt"
+
 msgid "Roles"
 msgstr "Ämter"
 

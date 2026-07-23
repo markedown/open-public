@@ -154,7 +154,14 @@ pub async fn detail(
                     (ui::section_header(i18n::t("Roles"), None))
                     (ui::timeline_entry::timeline_list(
                         roles.iter().map(|r| ui::timeline_entry::Entry {
-                            kind: r.role_type.clone(),
+                            // The category, the way a membership row says
+                            // "Party". The role's own name is the title below
+                            // it, so putting `role_type` here showed a visitor
+                            // the identifier the database happens to use, in
+                            // English whatever they were reading, and called a
+                            // member of an upper house a "senator" wherever
+                            // that country does not use the word.
+                            kind: i18n::t("Role").to_string(),
                             title: r.title.clone().unwrap_or_else(|| r.role_type.clone()),
                             subtitle: role_subtitle(r),
                             date_range: fmt::date_range(r.start_date, r.end_date),
