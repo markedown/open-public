@@ -8,10 +8,32 @@ pub fn document(
     is_admin: bool,
     content: Markup,
 ) -> Markup {
+    document_described(page_title, None, logged_in, is_admin, content)
+}
+
+/// The same page with a description of its own.
+///
+/// The description is what a search result and a shared link show underneath
+/// the title, so it is worth writing per page rather than leaving a crawler to
+/// pick an arbitrary sentence. Pages that have something specific to say pass
+/// it; the rest fall back to describing the site.
+pub fn document_described(
+    page_title: Option<&str>,
+    description: Option<&str>,
+    logged_in: bool,
+    is_admin: bool,
+    content: Markup,
+) -> Markup {
     let title = match page_title {
         Some(t) => format!("{t} · {SITE_NAME}"),
         None => SITE_NAME.to_string(),
     };
+    let description = description.unwrap_or(i18n::t(
+        "An open, source-backed record of public political life: who holds office, the parties they belong to, and where they stand. Every fact links to the source it came from.",
+    ));
+    // The page's own address, so a search engine is told which URL is the one
+    // to index and a shared link resolves to the same place it was copied from.
+    let canonical = i18n::request_url();
     // Nav links share one monospace, uppercase, underline-on-hover style: the
     // register has no coloured controls.
     let link = "text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
@@ -22,6 +44,25 @@ pub fn document(
                 meta charset="utf-8";
                 meta name="viewport" content="width=device-width, initial-scale=1";
                 title { (title) }
+                meta name="description" content=(description);
+                @if let Some(ref url) = canonical {
+                    link rel="canonical" href=(url);
+                }
+                // What a shared link shows: a title, a description and the site
+                // it came from. No image is referenced, because there is no
+                // hosted one to reference and pointing at a third party would
+                // load something from elsewhere.
+                meta property="og:type" content="website";
+                meta property="og:site_name" content=(SITE_NAME);
+                meta property="og:title" content=(title);
+                meta property="og:description" content=(description);
+                meta property="og:locale" content=(i18n::lang_code());
+                @if let Some(ref url) = canonical {
+                    meta property="og:url" content=(url);
+                }
+                meta name="twitter:card" content="summary";
+                meta name="twitter:title" content=(title);
+                meta name="twitter:description" content=(description);
                 link rel="stylesheet" href="/static/app.css";
                 link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml";
                 link rel="icon" href="/static/brand/favicon-32.png" sizes="32x32" type="image/png";

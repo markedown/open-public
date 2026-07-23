@@ -1044,3 +1044,6 @@ msgstr "Mitglieder"
 
 msgid "combined members"
 msgstr "Mitglieder insgesamt"
+
+msgid "An open, source-backed record of public political life: who holds office, the parties they belong to, and where they stand. Every fact links to the source it came from."
+msgstr "Ein offenes, quellenbasiertes Verzeichnis des politischen Lebens: wer im Amt ist, welcher Partei sie angehören und wofür sie stehen. Jede Angabe verweist auf ihre Quelle."

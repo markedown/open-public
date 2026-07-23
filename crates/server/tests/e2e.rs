@@ -328,6 +328,7 @@ fn router(pool: db::Pool) -> Router {
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: None,
         construction: false,
+        base_url: "https://open-public.test".into(),
     };
     server::app(state, Path::new("static"))
 }
@@ -348,6 +349,7 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: Some(Arc::from(notice)),
         construction: false,
+        base_url: "https://open-public.test".into(),
     };
     server::app(state, Path::new("static"))
 }
@@ -374,6 +376,7 @@ fn router_broken_mail(pool: db::Pool) -> Router {
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: None,
         construction: false,
+        base_url: "https://open-public.test".into(),
     };
     server::app(state, Path::new("static"))
 }
@@ -394,6 +397,7 @@ fn router_construction(pool: db::Pool) -> Router {
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
         site_notice: None,
         construction: true,
+        base_url: "https://open-public.test".into(),
     };
     server::app(state, Path::new("static"))
 }
@@ -6352,4 +6356,90 @@ async fn a_candidate_page_links_to_the_compass_that_ranks_them(pool: db::Pool) {
     // A person with no recorded stance still gets no link.
     let other = body_string(get_cookie(&app, "/tr/people/mehmet-demir", "lang=en").await).await;
     assert!(!other.contains("compass/person"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // A person page says who they are, so a search result and a shared link
+    // show their role and party rather than an arbitrary sentence.
+    let body = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(body.contains(r#"<meta name="description""#));
+    assert!(body.contains("Ayse Yilmaz"));
+    assert!(
+        body.contains("Test Partisi"),
+        "the description names her party"
+    );
+    // The same text drives what a shared link shows.
+    assert!(body.contains(r#"property="og:title""#));
+    assert!(body.contains(r#"property="og:description""#));
+    assert!(body.contains(r#"name="twitter:card""#));
+
+    // A party page describes itself by country and size.
+    let body = body_string(get_cookie(&app, "/tr/parties/test-partisi", "lang=en").await).await;
+    assert!(body.contains(r#"<meta name="description""#));
+
+    // A page with nothing specific to say still describes the site rather than
+    // leaving a crawler to guess.
+    let body = body_string(get_cookie(&app, "/search", "lang=en").await).await;
+    assert!(body.contains("source-backed record"));
+
+    // No image is referenced: there is no hosted one, and pointing at a third
+    // party would make a page load something from elsewhere.
+    assert!(!body.contains("og:image"));
+
+    // Each page names its own address, so a search engine is told which URL to
+    // index and a shared link resolves where it was copied from.
+    let body = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(body.contains(
+        r#"<link rel="canonical" href="https://open-public.test/tr/people/ayse-yilmaz""#
+    ));
+    assert!(body.contains(r#"content="https://open-public.test/tr/people/ayse-yilmaz""#));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn crawlers_are_told_what_is_here(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    let robots = body_string(get(&app, "/robots.txt").await).await;
+    assert!(robots.contains("User-agent: *"));
+    // Nothing behind sign-in is content.
+    for path in ["/admin", "/login", "/register"] {
+        assert!(robots.contains(&format!("Disallow: {path}")), "{path}");
+    }
+    assert!(robots.contains("Allow: /"));
+    // And it points at the sitemap, so a crawler finds the map without guessing.
+    assert!(robots.contains("Sitemap: https://open-public.test/sitemap.xml"));
+
+    // The sitemap is built from the database, so a country added tomorrow is
+    // discoverable without anyone editing a file.
+    let sitemap = body_string(get(&app, "/sitemap.xml").await).await;
+    assert!(sitemap.contains("<urlset"));
+    assert!(sitemap.contains("/tr</loc>") || sitemap.contains("/tr<"));
+    assert!(sitemap.contains("https://open-public.test/tr/people/ayse-yilmaz"));
+    assert!(sitemap.contains("/tr/parties/test-partisi"));
+    assert!(sitemap.contains("/tr/compass"));
+    // It lists what a visitor can read, never the admin area.
+    assert!(!sitemap.contains("/admin"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_gated_site_asks_not_to_be_indexed(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_construction(pool);
+
+    // While the whole site is a placeholder, indexing it would leave the search
+    // result wrong long after the site opened.
+    let robots = body_string(get(&app, "/robots.txt").await).await;
+    assert!(robots.contains("Disallow: /"));
+    assert!(!robots.contains("Allow: /"));
+
+    // And the sitemap lists nothing, rather than mapping pages that all serve
+    // the same coming-soon page.
+    let sitemap = body_string(get(&app, "/sitemap.xml").await).await;
+    assert!(sitemap.contains("<urlset"));
+    assert!(!sitemap.contains("<loc>"));
 }
