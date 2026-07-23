@@ -123,7 +123,8 @@ pub async fn get_by_slug(pool: &Pool, slug: &str) -> Result<Option<Country>> {
     Ok(country)
 }
 
-/// The current executive, ordered president, vice-president, then ministers.
+/// The current executive, head of state first (a monarch or a president),
+/// then the head of government, then ministers.
 pub async fn government(pool: &Pool, country_id: i64) -> Result<Vec<GovMember>> {
     let rows = sqlx::query_as!(
         GovMember,
@@ -132,10 +133,16 @@ pub async fn government(pool: &Pool, country_id: i64) -> Result<Vec<GovMember>> 
         from roles r
         join people p on p.id = r.person_id
         where r.role_type in
-            ('president', 'chancellor', 'prime_minister', 'vice_president', 'minister')
+            ('monarch', 'president', 'chancellor', 'prime_minister',
+             'vice_president', 'minister')
           and r.end_date is null
           and p.country_id = $1
+        -- Head of state first, then head of government. A monarch is a head of
+        -- state like a president, and sorts with one: a constitutional monarchy
+        -- has both, and listing the head of government above the head of state
+        -- would misdescribe the arrangement.
         order by case r.role_type
+                   when 'monarch' then 0
                    when 'president' then 0
                    when 'chancellor' then 1
                    when 'prime_minister' then 1
