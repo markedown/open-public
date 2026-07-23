@@ -13,7 +13,8 @@ pub fn source_marker(url: &str) -> Markup {
            class="inline-flex items-center gap-0.5 text-[10px] uppercase tracking-wide text-ink-muted/70 transition-colors hover:text-accent"
            target="_blank"
            rel="noopener noreferrer" {
-            (i18n::t("source")) " ↗"
+            (i18n::t("source"))
+            span aria-hidden="true" { " ↗" }
         }
     }
 }

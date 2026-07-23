@@ -1403,11 +1403,17 @@ async fn election_detail_compares_with_the_previous_election(pool: db::Pool) {
     // swing figure.
     let detail = body_string(get(&app, "/tr/election/test-secimi-2024").await).await;
     assert!(detail.contains("Test Secimi 2019")); // the "previous" legend
-    assert!(detail.contains("▼11.9")); // the swing figure (62.5% -> 50.6%)
+                                                  // The swing figure (62.5% -> 50.6%). The direction is carried twice on
+                                                  // purpose: an arrow for a sighted reader, hidden from assistive technology,
+                                                  // and the same direction in words for a screen reader, hidden visually.
+    assert!(detail.contains(r#"<span aria-hidden="true">▼</span>"#));
+    assert!(detail.contains(r#"<span class="sr-only">kayb"#) || detail.contains("sr-only"));
+    assert!(detail.contains("11.9"));
 
     // The compact election card on the country page carries the same comparison.
     let country = body_string(get(&app, "/tr").await).await;
-    assert!(country.contains("▼11.9"));
+    assert!(country.contains(r#"<span aria-hidden="true">▼</span>"#));
+    assert!(country.contains("11.9"));
 
     // The earlier election has no predecessor, so it names no previous election
     // and shows no swing figure (the later 2024 election is not a "previous").
@@ -6524,4 +6530,39 @@ async fn without_a_known_origin_nothing_is_invented(pool: db::Pool) {
     let robots = body_string(get(&app, "/robots.txt").await).await;
     assert!(robots.contains("Disallow: /admin"));
     assert!(!robots.contains("Sitemap:"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn controls_and_decoration_are_reachable_by_a_screen_reader(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // A search box needs a name of its own. A placeholder is not one: it
+    // vanishes as soon as anything is typed and is not reliably announced.
+    let body = body_string(get_cookie(&app, "/tr/people", "lang=en").await).await;
+    assert!(
+        body.contains(r#"aria-label="Search""#),
+        "the index search is named"
+    );
+    let body = body_string(get_cookie(&app, "/search", "lang=en").await).await;
+    assert!(
+        body.contains("aria-label=\"Search people and parties"),
+        "the search page input is named"
+    );
+
+    // Decoration is hidden rather than announced as an unnamed graphic: the
+    // text beside these icons already carries their meaning.
+    let body = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(body.contains(r#"aria-hidden="true""#));
+    assert!(
+        body.contains(r#"focusable="false""#),
+        "icons are not tab stops"
+    );
+
+    // The external-link arrow is decoration; the link is still called "source".
+    assert!(body.contains(r#"<span aria-hidden="true"> ↗</span>"#));
+
+    // The language chevron likewise: the language name is the accessible label.
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    assert!(home.contains(r#"<span aria-hidden="true" class="text-[7px]"#));
 }

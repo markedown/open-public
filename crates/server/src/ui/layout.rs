@@ -100,7 +100,7 @@ pub fn document_described(
                             details class="group relative" {
                                 summary class="flex cursor-pointer list-none items-center gap-1 text-ink-muted transition-colors hover:text-ink [&::-webkit-details-marker]:hidden" {
                                     (i18n::current().label())
-                                    span class="text-[7px] leading-none transition-transform group-open:rotate-180" { "▼" }
+                                    span aria-hidden="true" class="text-[7px] leading-none transition-transform group-open:rotate-180" { "▼" }
                                 }
                                 div class="absolute right-0 z-30 mt-2 min-w-[9rem] border border-hairline bg-paper-raised py-1" {
                                     @for lang in i18n::Lang::ALL {

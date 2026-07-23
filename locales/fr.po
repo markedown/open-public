@@ -1047,3 +1047,12 @@ msgstr "membres au total"
 
 msgid "An open, source-backed record of public political life: who holds office, the parties they belong to, and where they stand. Every fact links to the source it came from."
 msgstr "Un registre ouvert et sourcé de la vie politique : qui exerce un mandat, dans quel parti, et quelles positions. Chaque information renvoie à sa source."
+
+msgid "gained"
+msgstr "en hausse"
+
+msgid "lost"
+msgstr "en baisse"
+
+msgid "unchanged"
+msgstr "stable"
