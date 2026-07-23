@@ -32,6 +32,10 @@ tokio::task_local! {
     /// for the duration of handling, so every `i18n::t()` call site reads it
     /// without threading a language argument through.
     static REQUEST_LANG: Lang;
+    /// The absolute URL of the current request, set by the same middleware. The
+    /// layout uses it as the page's canonical address without every handler
+    /// having to pass its own down.
+    static REQUEST_URL: String;
 }
 
 fn active() -> Lang {
@@ -41,6 +45,21 @@ fn active() -> Lang {
 /// Run a request handler with `lang` as the active locale for its task.
 pub async fn with_lang<F: std::future::Future>(lang: Lang, f: F) -> F::Output {
     REQUEST_LANG.scope(lang, f).await
+}
+
+/// Run a request handler with `url` recorded as the request's own address.
+pub async fn with_url<F: std::future::Future>(url: String, f: F) -> F::Output {
+    REQUEST_URL.scope(url, f).await
+}
+
+/// The absolute URL of the current request, when one is known. `None` outside a
+/// request, and when the deployment has not been told its own origin: a
+/// canonical address is worth omitting rather than guessing at.
+pub fn request_url() -> Option<String> {
+    REQUEST_URL
+        .try_with(|u| u.clone())
+        .ok()
+        .filter(|u| !u.is_empty())
 }
 
 /// Resolve the request locale: an explicit `lang` cookie wins (the visitor

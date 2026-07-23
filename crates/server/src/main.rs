@@ -77,6 +77,7 @@ async fn main() -> anyhow::Result<()> {
         asset_dir: Arc::new(config.asset_dir),
         site_notice: config.site_notice.map(Arc::from),
         construction: config.construction,
+        base_url: config.base_url.clone().into(),
     };
 
     let router = server::app(state, &config.static_dir);

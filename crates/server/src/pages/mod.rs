@@ -5,6 +5,7 @@ pub mod auth;
 pub mod compass;
 pub mod country;
 pub mod data;
+pub mod discovery;
 pub mod elections;
 pub mod feed;
 pub mod follow;

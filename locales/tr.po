@@ -1056,3 +1056,6 @@ msgstr "üye"
 
 msgid "combined members"
 msgstr "toplam üye"
+
+msgid "An open, source-backed record of public political life: who holds office, the parties they belong to, and where they stand. Every fact links to the source it came from."
+msgstr "Kamusal siyasi yaşamın açık, kaynağa dayalı kaydı: kim görevde, hangi partide ve nerede duruyor. Her bilgi geldiği kaynağa bağlanır."

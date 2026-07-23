@@ -303,8 +303,22 @@ pub async fn detail(
         }
     };
 
-    Ok(ui::layout::document(
+    // The country's own summary is already neutral prose about it, so it is the
+    // natural description; otherwise say what the page actually contains.
+    let description = summary.map(str::to_string).unwrap_or_else(|| {
+        format!(
+            "{} · {} {} · {} {}",
+            country.name,
+            counts.people,
+            i18n::t("People"),
+            counts.parties,
+            i18n::t("Parties")
+        )
+    });
+
+    Ok(ui::layout::document_described(
         Some(&country.name),
+        Some(&description),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

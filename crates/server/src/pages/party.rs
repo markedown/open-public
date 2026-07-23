@@ -235,8 +235,23 @@ pub async fn detail(
         }
     };
 
-    Ok(ui::layout::document(
+    // A party is searched by name; the description says where it sits and how
+    // large it is, which is what distinguishes it in a list of results.
+    let description = if seats > 0 {
+        format!(
+            "{} · {} · {} {}",
+            party.name,
+            country_model.name,
+            seats,
+            i18n::t("members")
+        )
+    } else {
+        format!("{} · {}", party.name, country_model.name)
+    };
+
+    Ok(ui::layout::document_described(
         Some(&party.name),
+        Some(&description),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

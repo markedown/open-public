@@ -59,7 +59,19 @@ pub fn app(state: AppState, static_dir: &Path) -> Router {
 fn open_while_gated(path: &str) -> bool {
     matches!(
         path,
-        "/health" | "/readyz" | "/version" | "/login" | "/logout"
+        "/health"
+            | "/readyz"
+            | "/version"
+            | "/login"
+            | "/logout"
+            // A crawler has to be able to read the file that asks it not to
+            // index. Serving the coming-soon page here would be an invalid
+            // robots file, which is read as "index everything", and the
+            // placeholder would sit in search results long after the site
+            // opened. The sitemap answers with an empty list for the same
+            // reason: it says there is nothing to crawl yet.
+            | "/robots.txt"
+            | "/sitemap.xml"
     ) || path.starts_with("/static/")
 }
 
@@ -112,6 +124,8 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}/outlet/{slug}", get(pages::outlets::detail))
         .route("/search", get(pages::search::page))
         .route("/privacy", get(pages::privacy::page))
+        .route("/robots.txt", get(pages::discovery::robots))
+        .route("/sitemap.xml", get(pages::discovery::sitemap))
         .route("/{country}/polls", get(pages::polls::list))
         .route(
             "/{country}/polls/submit",
@@ -248,14 +262,18 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .nest_service("/static", ServeDir::new(static_dir))
         // The locale layer runs before every handler, so `i18n::t` in the
         // templates reads the request's chosen language.
-        .layer(middleware::from_fn(locale))
+        .layer(middleware::from_fn_with_state(state.clone(), locale))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
 }
 
 /// Resolve the request's locale (a `lang` cookie, else `Accept-Language`, else
 /// the deployment default) and run the handler with it active.
-async fn locale(req: axum::extract::Request, next: middleware::Next) -> axum::response::Response {
+async fn locale(
+    State(state): State<AppState>,
+    req: axum::extract::Request,
+    next: middleware::Next,
+) -> axum::response::Response {
     let jar = CookieJar::from_headers(req.headers());
     let cookie_lang = jar.get("lang").map(|c| c.value().to_string());
     let accept = req
@@ -264,7 +282,16 @@ async fn locale(req: axum::extract::Request, next: middleware::Next) -> axum::re
         .and_then(|v| v.to_str().ok())
         .map(str::to_string);
     let lang = i18n::resolve(cookie_lang.as_deref(), accept.as_deref());
-    i18n::with_lang(lang, next.run(req)).await
+    // The page's own address travels with the request, so a page can name its
+    // canonical URL without every handler passing it down. Empty when the
+    // deployment has not been told its origin, which the layout reads as
+    // "do not claim a canonical address".
+    let url = if state.base_url.is_empty() {
+        String::new()
+    } else {
+        format!("{}{}", state.base_url, req.uri().path())
+    };
+    i18n::with_lang(lang, i18n::with_url(url, next.run(req))).await
 }
 
 /// Set the visitor's language cookie and return to the page they were on.

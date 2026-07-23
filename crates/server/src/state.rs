@@ -20,6 +20,10 @@ pub struct AppState {
     pub site_notice: Option<Arc<str>>,
     /// When true, the whole site is gated behind a single "coming soon" page.
     pub construction: bool,
+    /// The public origin this instance is served from, used to build the
+    /// canonical URL of a page and the absolute URLs in the sitemap. Empty when
+    /// unknown, in which case neither is emitted rather than guessed at.
+    pub base_url: Arc<str>,
 }
 
 impl FromRef<AppState> for Pool {

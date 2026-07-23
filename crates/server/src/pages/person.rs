@@ -191,8 +191,32 @@ pub async fn detail(
         }
     };
 
-    Ok(ui::layout::document(
+    // What a search result or a shared link should say about this person: their
+    // current role and party, which is what someone searching their name wants
+    // to see, falling back to our own summary and then to the country.
+    let current_role = roles.iter().find(|r| r.end_date.is_none());
+    let current_party = memberships.iter().find(|m| m.end_date.is_none());
+    let description = match (current_role, current_party) {
+        (Some(r), Some(m)) => format!(
+            "{} · {} · {}",
+            person.full_name,
+            r.title.as_deref().unwrap_or(&r.role_type),
+            m.party_name
+        ),
+        (Some(r), None) => format!(
+            "{} · {}",
+            person.full_name,
+            r.title.as_deref().unwrap_or(&r.role_type)
+        ),
+        (None, Some(m)) => format!("{} · {}", person.full_name, m.party_name),
+        (None, None) => summary
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("{} · {}", person.full_name, country.name)),
+    };
+
+    Ok(ui::layout::document_described(
         Some(&person.full_name),
+        Some(&description),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,
