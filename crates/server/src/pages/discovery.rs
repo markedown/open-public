@@ -27,6 +27,12 @@ const DISALLOWED: [&str; 6] = [
     "/forgot",
 ];
 
+/// The most URLs one sitemap file may contain, per the sitemap protocol. The
+/// dataset is far below this, and it is enforced anyway: a file over the limit
+/// is rejected whole, so the failure would be silent and total. Growing past it
+/// calls for a sitemap index, not a bigger file.
+const MAX_URLS: usize = 50_000;
+
 pub async fn robots(State(state): State<AppState>) -> Response {
     let body = if state.construction {
         // One page, and it is a placeholder. Nothing here should be indexed.
@@ -74,7 +80,7 @@ pub async fn sitemap(State(state): State<AppState>) -> Result<Response, PageErro
             ] {
                 urls.push(format!("{base}/{section}"));
             }
-            for p in db::people::list(&state.pool, c.id, 100_000, 0).await? {
+            for p in db::people::list(&state.pool, c.id, MAX_URLS as i64, 0).await? {
                 urls.push(format!("{base}/people/{}", p.slug));
             }
             for p in db::parties::list(&state.pool, c.id).await? {
@@ -87,6 +93,15 @@ pub async fn sitemap(State(state): State<AppState>) -> Result<Response, PageErro
                 urls.push(format!("{base}/alliance/{}", a.slug));
             }
         }
+    }
+
+    if urls.len() > MAX_URLS {
+        tracing::warn!(
+            urls = urls.len(),
+            limit = MAX_URLS,
+            "sitemap is over the protocol limit and was truncated; it needs a sitemap index"
+        );
+        urls.truncate(MAX_URLS);
     }
 
     let mut body =

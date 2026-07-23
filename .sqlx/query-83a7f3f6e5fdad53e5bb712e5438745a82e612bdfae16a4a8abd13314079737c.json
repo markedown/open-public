@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select distinct on (m.person_id)\n               m.person_id, pa.slug as party_slug, pa.short_name, pa.color\n        from party_memberships m\n        join parties pa on pa.id = m.party_id\n        join people pe on pe.id = m.person_id\n        where pe.country_id = $1 and m.end_date is null\n        order by m.person_id, pa.name collate \"name_sort\"\n        ",
+  "query": "\n        select distinct on (m.person_id)\n               m.person_id, pa.slug as party_slug, pa.short_name, pa.color\n        from party_memberships m\n        join parties pa on pa.id = m.party_id\n        where m.person_id = any($1) and m.end_date is null\n        order by m.person_id, pa.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -50,7 +50,7 @@
     ],
     "parameters": {
       "Left": [
-        "Int8"
+        "Int8Array"
       ]
     },
     "nullable": [
@@ -60,5 +60,5 @@
       true
     ]
   },
-  "hash": "83d652b200ebb406efa4d12cebd1159e513d9773b440b7799d19d9d79df00271"
+  "hash": "83a7f3f6e5fdad53e5bb712e5438745a82e612bdfae16a4a8abd13314079737c"
 }
