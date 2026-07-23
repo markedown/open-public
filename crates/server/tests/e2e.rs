@@ -381,6 +381,28 @@ fn router_broken_mail(pool: db::Pool) -> Router {
     server::app(state, Path::new("static"))
 }
 
+/// Build the router for a deployment that has not been told its public origin,
+/// which is what a bare local run looks like.
+fn router_no_origin(pool: db::Pool) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: false,
+        base_url: "".into(),
+    };
+    server::app(state, Path::new("static"))
+}
+
 /// Build the router in construction mode, gating the whole site.
 fn router_construction(pool: db::Pool) -> Router {
     let mailer = Mailer::new(
@@ -6449,4 +6471,57 @@ async fn a_gated_site_asks_not_to_be_indexed(pool: db::Pool) {
     let sitemap = body_string(get(&app, "/sitemap.xml").await).await;
     assert!(sitemap.contains("<urlset"));
     assert!(!sitemap.contains("<loc>"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_people_search_with_no_matches_asks_for_nothing(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // A search that matches nobody renders an empty state, and looks up party
+    // affiliation for nobody: with no rows on the page there is nothing to
+    // annotate, so the query is skipped rather than run against an empty list.
+    let body = body_string(get_cookie(&app, "/tr/people?q=zzzznobody", "lang=en").await).await;
+    assert!(body.contains("No people found"));
+    assert!(!body.contains("Ayse Yilmaz"));
+
+    // The same path through the repository, asserted directly.
+    let none = db::people::current_parties(&pool, &[]).await.unwrap();
+    assert!(none.is_empty());
+
+    // And with rows, it answers only about those rows.
+    let ayse: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let some = db::people::current_parties(&pool, &[ayse]).await.unwrap();
+    assert_eq!(some.len(), 1);
+    assert_eq!(some[0].person_id, ayse);
+    assert_eq!(some[0].party_slug, "test-partisi");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn without_a_known_origin_nothing_is_invented(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_no_origin(pool.clone());
+
+    // A canonical address, a card image and a sitemap line are all absolute, so
+    // a deployment that has not been told its own origin omits them rather than
+    // guessing at one and publishing a wrong URL.
+    let body = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(!body.contains("rel=\"canonical\""));
+    assert!(!body.contains("og:url"));
+    assert!(!body.contains("og:image"));
+    // The card is what makes the large layout worth asking for; without it the
+    // plain summary card is the honest choice.
+    assert!(body.contains(r#"content="summary""#));
+    assert!(!body.contains("summary_large_image"));
+    // The page still describes itself: that needs no origin.
+    assert!(body.contains(r#"<meta name="description""#));
+
+    // robots is still served and still keeps crawlers out of what is not
+    // content; it just cannot point at a sitemap it cannot address.
+    let robots = body_string(get(&app, "/robots.txt").await).await;
+    assert!(robots.contains("Disallow: /admin"));
+    assert!(!robots.contains("Sitemap:"));
 }

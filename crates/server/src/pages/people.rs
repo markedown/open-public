@@ -33,8 +33,9 @@ pub async fn list(
     // The party each person currently sits in, so a visitor scanning the list
     // sees affiliation without opening each page. Absent for anyone with no
     // current membership (a head of state, a former member).
+    let ids: Vec<i64> = people.iter().map(|p| p.id).collect();
     let party_of: std::collections::HashMap<i64, db::people::PersonParty> =
-        db::people::current_parties(&pool, country.id)
+        db::people::current_parties(&pool, &ids)
             .await?
             .into_iter()
             .map(|pp| (pp.person_id, pp))

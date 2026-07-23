@@ -403,11 +403,14 @@ pub async fn upsert_role(
     Ok(())
 }
 
-/// The party each person currently sits in, for the people index, so a row can
-/// show party affiliation the way a party page shows its members. Returned as
-/// `(person_id, party_slug, short_name, color)`; a person with no current
-/// membership is absent. When someone sits in more than one party (rare, and a
-/// data artefact), the alphabetically first is taken so the result is stable.
+/// The party each of `person_ids` currently sits in, so a list row can show
+/// party affiliation the way a party page shows its members. A person with no
+/// current membership is absent. When someone sits in more than one party
+/// (rare, and a data artefact), the alphabetically first is taken so the result
+/// is stable.
+///
+/// Scoped to the people actually being rendered rather than to the whole
+/// country: a page shows fifty, and a country holds thousands.
 pub struct PersonParty {
     pub person_id: i64,
     pub party_slug: String,
@@ -415,7 +418,10 @@ pub struct PersonParty {
     pub color: Option<String>,
 }
 
-pub async fn current_parties(pool: &Pool, country_id: i64) -> Result<Vec<PersonParty>> {
+pub async fn current_parties(pool: &Pool, person_ids: &[i64]) -> Result<Vec<PersonParty>> {
+    if person_ids.is_empty() {
+        return Ok(Vec::new());
+    }
     let rows = sqlx::query_as!(
         PersonParty,
         r#"
@@ -423,11 +429,10 @@ pub async fn current_parties(pool: &Pool, country_id: i64) -> Result<Vec<PersonP
                m.person_id, pa.slug as party_slug, pa.short_name, pa.color
         from party_memberships m
         join parties pa on pa.id = m.party_id
-        join people pe on pe.id = m.person_id
-        where pe.country_id = $1 and m.end_date is null
+        where m.person_id = any($1) and m.end_date is null
         order by m.person_id, pa.name collate "name_sort"
         "#,
-        country_id,
+        person_ids,
     )
     .fetch_all(pool)
     .await?;
