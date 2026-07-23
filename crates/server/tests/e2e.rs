@@ -6728,3 +6728,75 @@ async fn replies_that_speak_for_themselves_are_left_alone(pool: db::Pool) {
     assert_eq!(resp.status(), StatusCode::OK);
     assert!(body_string(resp).await.starts_with("User-agent:"));
 }
+
+/// Global search spans every country, so a result has to link into its own.
+///
+/// It used to prefix every result with whichever country came back first, which
+/// was exact only while there was one. With several, most results pointed at a
+/// country the person does not belong to, and those links 404.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_search_result_links_into_the_country_it_belongs_to(pool: db::Pool) {
+    seed(&pool).await;
+    let src =
+        db::sources::insert_source(&pool, "manual", "https://example.test/s2", None, Some("h2"))
+            .await
+            .unwrap();
+    // Sorts ahead of the seeded country, so anything that picks "the first
+    // country" rather than the row's own sends both results here.
+    let other: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Baska Ulke', 'bu', $1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let person = db::people::upsert_person(
+        &pool,
+        &domain::models::NewPerson {
+            wikidata_id: None,
+            full_name: "Ayten Yilmazoglu".to_string(),
+            slug: "ayten-yilmazoglu".to_string(),
+            birth_date: None,
+            birth_place: None,
+            photo_url: None,
+            photo_license: None,
+            summary: None,
+            source_id: src,
+            country_id: Some(other),
+        },
+    )
+    .await
+    .unwrap();
+    let _ = person;
+
+    let app = router(pool.clone());
+    let body = body_string(get_cookie(&app, "/search?q=yilmaz", "lang=en").await).await;
+
+    // Each result goes to its own country, and both addresses are real.
+    assert!(
+        body.contains(&format!("/{COUNTRY}/people/ayse-yilmaz")),
+        "the seeded country's person did not link into it: {body}"
+    );
+    assert!(
+        body.contains("/bu/people/ayten-yilmazoglu"),
+        "the other country's person did not link into it: {body}"
+    );
+    assert!(
+        !body.contains("/bu/people/ayse-yilmaz"),
+        "a person was linked into a country they do not belong to"
+    );
+
+    for uri in [
+        format!("/{COUNTRY}/people/ayse-yilmaz"),
+        "/bu/people/ayten-yilmazoglu".to_string(),
+    ] {
+        assert_eq!(get(&app, &uri).await.status(), StatusCode::OK, "{uri}");
+    }
+
+    // The country is named on each row, because the same name occurs in more
+    // than one and otherwise two results are indistinguishable.
+    assert!(
+        body.contains("Baska Ulke") && body.contains("Test Ulke"),
+        "{body}"
+    );
+}

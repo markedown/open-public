@@ -12,20 +12,17 @@ pub struct Params {
     q: Option<String>,
 }
 
-/// Global search across people and parties. Result links are prefixed with the
-/// primary country's slug; while the platform holds a single country this is
-/// exact. A multi-country search would carry each result's own country instead.
+/// Global search across people and parties.
+///
+/// Each result links into its own country, because the platform holds several
+/// and a person only has a page under theirs. The country is shown as well: the
+/// same name occurs in more than one of them, and without it two results look
+/// identical.
 pub async fn page(
     State(pool): State<db::Pool>,
     session: Option<AuthSession>,
     Query(params): Query<Params>,
 ) -> Result<Markup, PageError> {
-    let country_slug = db::country::list(&pool)
-        .await?
-        .first()
-        .map(|c| c.slug.clone())
-        .unwrap_or_default();
-
     let query_str = params.q.as_deref().unwrap_or("");
     let has_query = !query_str.trim().is_empty();
 
@@ -82,21 +79,39 @@ pub async fn page(
                         }
                         ul class="op-card divide-y divide-hairline-light" {
                             @for hit in &hits {
-                                @let (href, label) = match hit.kind {
-                                    domain::models::SearchKind::Person => (format!("/{}/people/{}", country_slug, hit.slug), i18n::t("Person")),
-                                    domain::models::SearchKind::Party => (format!("/{}/parties/{}", country_slug, hit.slug), i18n::t("Party")),
+                                @let (section, label) = match hit.kind {
+                                    domain::models::SearchKind::Person => ("people", i18n::t("Person")),
+                                    domain::models::SearchKind::Party => ("parties", i18n::t("Party")),
                                 };
+                                @let href = hit.country.as_ref().map(|c|
+                                    format!("/{}/{}/{}", c.slug, section, hit.slug));
                                 li class="group" {
-                                    a href=(href) class="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-paper-sunken" {
+                                    // A row with no country has no page to link
+                                    // to, so it is listed rather than linked.
+                                    @let row = html! {
                                         span class="w-14 shrink-0 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted" {
                                             (label)
                                         }
                                         span class="text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                             (hit.name)
                                         }
-                                        svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="ml-auto h-4 w-4 shrink-0 text-hairline transition-colors group-hover:text-ink-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
-                                            path d="M9 18l6-6-6-6" {}
+                                        @if let Some(country) = &hit.country {
+                                            span class="ml-auto shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink-muted" {
+                                                (country.name)
+                                            }
                                         }
+                                        @if href.is_some() {
+                                            svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="ml-3 h-4 w-4 shrink-0 text-hairline transition-colors group-hover:text-ink-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
+                                                path d="M9 18l6-6-6-6" {}
+                                            }
+                                        }
+                                    };
+                                    @if let Some(href) = &href {
+                                        a href=(href) class="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-paper-sunken" {
+                                            (row)
+                                        }
+                                    } @else {
+                                        div class="flex items-center gap-4 px-5 py-4" { (row) }
                                     }
                                 }
                             }
