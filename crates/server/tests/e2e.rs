@@ -6238,6 +6238,29 @@ async fn the_published_dump_can_actually_be_verified(pool: db::Pool) {
         "a reordered chain must fail: {}",
         String::from_utf8_lossy(&out2.stdout)
     );
+
+    // Removing a poll's votes altogether has to fail too, and it is the one
+    // alteration that used to pass. The check walked the votes it found, so a
+    // poll left with none had nothing to walk: the run printed nothing at all
+    // and exited successfully, while the file still published a head computed
+    // over votes that were no longer in it.
+    // rfind, because each option carries its own "votes" tally: the top-level
+    // array is the last one, and matching the first truncates the file mid-poll.
+    let start = body.rfind("\"votes\":").expect("the dump lists its votes");
+    let emptied = format!("{}\"votes\":[]}}", &body[..start]);
+    std::fs::write(&path, &emptied).unwrap();
+    let out3 = std::process::Command::new("python3")
+        .arg("../../scripts/verify_chain.py")
+        .arg(&path)
+        .output()
+        .unwrap();
+    let stdout3 = String::from_utf8_lossy(&out3.stdout);
+    assert!(
+        !out3.status.success(),
+        "a poll whose votes were all removed must fail: {stdout3}"
+    );
+    // And it has to say so, rather than succeed in silence.
+    assert!(stdout3.contains("no votes for this poll"), "{stdout3}");
     let _ = out;
 }
 
