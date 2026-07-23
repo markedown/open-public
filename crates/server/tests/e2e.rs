@@ -6823,3 +6823,29 @@ async fn a_search_result_links_into_the_country_it_belongs_to(pool: db::Pool) {
         "{body}"
     );
 }
+
+/// A poll's own page is about one question, so that question is its heading.
+///
+/// It was rendered as an h3, the level it takes when a poll is one card among
+/// others, so the document started at the third level with no top heading at
+/// all and a reader navigating by heading had nothing to land on. Every other
+/// page here carries exactly one h1.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_poll_page_leads_with_its_question(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    let body = body_string(get(&app, &format!("/{COUNTRY}/poll/party-poll")).await).await;
+    assert_eq!(body.matches("<h1").count(), 1, "expected exactly one h1");
+    let h1 = body
+        .split("<h1")
+        .nth(1)
+        .and_then(|rest| rest.split_once('>'))
+        .map(|(_, after)| after)
+        .expect("an h1 with content");
+    assert!(
+        h1.starts_with("Nasil buluyorsunuz?"),
+        "the heading is not the question: {}",
+        &h1[..h1.len().min(60)]
+    );
+}
