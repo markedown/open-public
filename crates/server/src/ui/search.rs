@@ -19,7 +19,11 @@ pub fn matches(name: &str, query: &str) -> bool {
 pub fn bar(action: &str, target: &str, value: &str) -> Markup {
     html! {
         form method="get" action=(action) role="search" class="mb-8" {
+            // A placeholder is not an accessible name: it disappears as soon as
+            // anything is typed and is not reliably announced, so the control
+            // carries a label of its own.
             input type="search" name="q" value=(value) autocomplete="off"
+                aria-label=(i18n::t("Search"))
                 placeholder=(i18n::t("Search"))
                 hx-get=(action) hx-trigger="keyup changed delay:250ms, search"
                 hx-target=(target) hx-select=(target) hx-swap="outerHTML" hx-push-url="true"

@@ -489,13 +489,21 @@ fn vote_share_list(
 /// triangle and a one-decimal magnitude ("▲2.6", "▼1.3", "±0.0"). Kept
 /// monochrome so it never reads as a party colour; direction carries the sign.
 fn swing(delta: i64) -> Markup {
-    let (glyph, mag) = match delta {
-        d if d > 0 => ("▲", d),
-        d if d < 0 => ("▼", -d),
-        _ => ("±", 0),
+    let (glyph, label, mag) = match delta {
+        d if d > 0 => ("▲", i18n::t("gained"), d),
+        d if d < 0 => ("▼", i18n::t("lost"), -d),
+        _ => ("±", i18n::t("unchanged"), 0),
     };
     html! {
-        span class="text-ink-muted" { (glyph) (mag / 10) "." (mag % 10) }
+        // The arrow is the whole meaning for a sighted reader, and nothing at
+        // all for a screen reader, so the direction is also said in words. The
+        // words are visually hidden, and the arrow hidden from assistive
+        // technology, so neither reader gets the other's version twice.
+        span class="text-ink-muted" {
+            span aria-hidden="true" { (glyph) }
+            span class="sr-only" { (label) " " }
+            (mag / 10) "." (mag % 10)
+        }
     }
 }
 

@@ -47,6 +47,7 @@ pub async fn page(
                         type="search"
                         name="q"
                         value=(query_str)
+                        aria-label=(i18n::t("Search people and parties..."))
                         placeholder=(i18n::t("Search people and parties..."))
                         class="flex-1 rounded-lg border border-hairline bg-paper-raised px-4 py-2.5 text-sm text-ink placeholder-ink-muted transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         autofocus
@@ -58,7 +59,7 @@ pub async fn page(
                     button
                         type="submit"
                         class="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
-                        svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
+                        svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
                             circle cx="11" cy="11" r="8" {}
                             path d="M21 21l-4.35-4.35" {}
                         }
@@ -93,7 +94,7 @@ pub async fn page(
                                         span class="text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                             (hit.name)
                                         }
-                                        svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-4 w-4 shrink-0 text-hairline transition-colors group-hover:text-ink-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
+                                        svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="ml-auto h-4 w-4 shrink-0 text-hairline transition-colors group-hover:text-ink-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
                                             path d="M9 18l6-6-6-6" {}
                                         }
                                     }
