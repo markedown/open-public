@@ -79,7 +79,11 @@ def votes_of(data):
     for poll in data.get("polls", []):
         chain = poll.get("chain") or {}
         heads[poll["slug"]] = (chain.get("hash"), chain.get("seq"))
-    out = {}
+    # Start from every poll the file declares, not only those that still have
+    # votes in it. Grouping by the votes present meant a poll whose votes had
+    # all been removed simply had nothing to iterate over, so the strongest
+    # alteration of the lot passed without a word.
+    out = {slug: [] for slug in heads}
     for v in data.get("votes", []):
         out.setdefault(v["poll"], []).append(v)
     return {slug: (rows, heads.get(slug)) for slug, rows in out.items()}
@@ -88,7 +92,15 @@ def votes_of(data):
 def verify(rows, published_head, label) -> bool:
     rows = sorted(rows, key=lambda v: v["seq"])
     if not rows:
-        print(f"OK  {label}: empty chain")
+        # A poll that never had a vote publishes no chain head, and there is
+        # nothing to check. One that publishes a head has votes by definition,
+        # so a file without them is missing what the head was computed over.
+        head_hash, head_seq = published_head or (None, None)
+        if head_hash or head_seq:
+            print(f"FAIL {label}: published head is at seq {head_seq}, "
+                  f"the file has no votes for this poll")
+            return False
+        print(f"OK  {label}: no votes")
         return True
 
     prev = genesis(rows[0]["poll_id"])
@@ -124,12 +136,19 @@ def main() -> int:
         data = json.load(fh)
 
     ok = True
-    for slug, (rows, head) in sorted(votes_of(data).items(), key=lambda kv: kv[0] or ""):
+    chains = votes_of(data)
+    for slug, (rows, head) in sorted(chains.items(), key=lambda kv: kv[0] or ""):
         # An explicit head on the command line still wins, for the bare-array
         # case where the file itself carries none.
         if slug is None and len(sys.argv) > 2:
             head = (sys.argv[2], None)
         ok = verify(rows, head, slug or "chain") and ok
+
+    # Say what was checked. A run that verified nothing at all should not look
+    # the same as one that verified everything, which is exactly how this read
+    # when it printed nothing and exited 0.
+    counted = sum(len(rows) for rows, _ in chains.values())
+    print(f"{'checked' if ok else 'FAILED'}: {len(chains)} chain(s), {counted} vote(s)")
     return 0 if ok else 1
 
 
