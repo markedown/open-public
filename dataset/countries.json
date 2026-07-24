@@ -39,6 +39,19 @@
     "summary": "Türkiye, 1923'te kurulan ve 2018'den bu yana cumhurbaşkanlığı hükümet sistemiyle yönetilen bir cumhuriyettir. Yasama yetkisi 600 sandalyeli Türkiye Büyük Millet Meclisi'ndedir; yürütme cumhurbaşkanı ve kabinesindedir."
   },
   {
+    "capital": "London",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Flag_of_the_United_Kingdom.svg",
+    "founded_date": "1801-01-01",
+    "government_type": "Constitutional monarchy",
+    "legislature_name": "Parliament",
+    "name": "United Kingdom",
+    "population": null,
+    "slug": "united-kingdom",
+    "source_hash": "uk-country",
+    "source_url": "https://www.wikidata.org/wiki/Q145",
+    "summary": "The United Kingdom is a constitutional monarchy with a parliamentary system of government. Parliament has two chambers: the House of Commons, whose members are elected from single-member constituencies, and the House of Lords, whose members are appointed or sit by virtue of office. The monarch is head of state and the Prime Minister is head of government."
+  },
+  {
     "capital": "Washington, D.C.",
     "flag_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg",
     "founded_date": "1776-07-04",
