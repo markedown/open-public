@@ -47,6 +47,9 @@ msgstr "parti listelendi"
 msgid "No parties found."
 msgstr "Parti bulunamadı."
 
+msgid "Role"
+msgstr "Görev"
+
 msgid "Roles"
 msgstr "Görevler"
 

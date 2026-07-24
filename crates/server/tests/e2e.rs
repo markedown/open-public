@@ -6931,3 +6931,67 @@ async fn a_monarch_is_shown_as_head_of_state(pool: db::Pool) {
     let body = body_string(get(&app, &format!("/{COUNTRY}")).await).await;
     assert!(body.contains("Kral Test"), "the monarch is not on the page");
 }
+
+/// A person's roles are listed by their own name, not by the identifier the
+/// database uses to classify them.
+///
+/// The row's category label carried `role_type` verbatim, so a visitor saw
+/// `prime_minister` in English whatever they were reading, and a member of an
+/// upper house was labelled `senator` in countries that do not use the word.
+/// The membership rows beside them already said simply "Party".
+#[sqlx::test(migrations = "../../migrations")]
+async fn roles_are_listed_by_name_not_by_their_internal_type(pool: db::Pool) {
+    seed(&pool).await;
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
+        .bind(COUNTRY)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src =
+        db::sources::insert_source(&pool, "manual", "https://example.test/s4", None, Some("h4"))
+            .await
+            .unwrap();
+    let id = db::people::upsert_person(
+        &pool,
+        &domain::models::NewPerson {
+            wikidata_id: None,
+            full_name: "Deniz Aydin".to_string(),
+            slug: "deniz-aydin".to_string(),
+            birth_date: None,
+            birth_place: None,
+            photo_url: None,
+            photo_license: None,
+            summary: None,
+            source_id: src,
+            country_id: Some(country_id),
+        },
+    )
+    .await
+    .unwrap();
+    db::people::upsert_role(
+        &pool,
+        id,
+        "vice_president",
+        Some("Vice President"),
+        None,
+        None,
+        NaiveDate::from_ymd_opt(2024, 1, 1),
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+
+    let app = router(pool.clone());
+    let body =
+        body_string(get_cookie(&app, &format!("/{COUNTRY}/people/deniz-aydin"), "lang=en").await)
+            .await;
+    assert!(
+        body.contains("Vice President"),
+        "the role's own name is missing"
+    );
+    assert!(
+        !body.contains("vice_president"),
+        "the internal role type reached the page"
+    );
+}
