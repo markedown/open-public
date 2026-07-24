@@ -238,6 +238,20 @@
     "votes_cast": null
   },
   {
+    "country": "united-kingdom",
+    "description": "Election of all 650 members of the House of Commons, one for each constituency, each won by whoever received the most votes there. The figures are the sum of every declared constituency result.",
+    "electorate": 48253162,
+    "expected_note": null,
+    "held_on": "2024-07-04",
+    "kind": "general",
+    "name": "2024 General Election",
+    "slug": "uk-general-election-2024",
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/Latest",
+    "valid_votes": 28808652,
+    "votes_cast": 28808652
+  },
+  {
     "country": "usa",
     "description": "8 Kasım 2022'de yapılan ara dönem Temsilciler Meclisi seçimlerinde Cumhuriyetçiler 222, Demokratlar 213 sandalye kazandı.",
     "electorate": null,

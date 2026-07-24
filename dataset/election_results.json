@@ -889,5 +889,887 @@
     "source_hash": "de-elec-2025-bundestagswahl",
     "source_url": "https://www.bundeswahlleiterin.de",
     "votes": 76138
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-alliance",
+    "seats": 1,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 117191
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-conservative",
+    "seats": 121,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 6828925
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-democratic-unionist-party",
+    "seats": 5,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 172058
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-green-party",
+    "seats": 4,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1842436
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-labour",
+    "seats": 411,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 9708716
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-liberal-democrat",
+    "seats": 72,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 3519143
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-plaid-cymru",
+    "seats": 4,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 194811
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-reform-uk",
+    "seats": 5,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 4117610
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-scottish-national-party",
+    "seats": 9,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 724758
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-sinn-fein",
+    "seats": 7,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 210891
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-social-democratic-labour-party",
+    "seats": 2,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 86861
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-traditional-unionist-voice",
+    "seats": 1,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 48685
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": null,
+    "party": "uk-party-ulster-unionist-party",
+    "seats": 1,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 94779
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Abolish the Welsh Assembly Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1521
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Alba Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 11784
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Alliance for Democracy and Freedom",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1769
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Alliance For Green Socialism",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 378
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Animal Welfare Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1486
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Aontú",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 7466
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Ashfield Independents",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 6276
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Blue Revolution",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 397
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "British Democratic Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1860
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "British Unionist Party B.U.P.",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 614
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Chesterfield And North Derbyshire Independents (CANDI)",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 363
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Christian Party, Proclaiming Christ's Lordship",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 806
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Christian Peoples Alliance",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 5604
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Climate Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1967
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Common Good",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 215
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Communist Future",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 131
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Communist League Election Campaign",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 230
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Communist Party of Britain",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 2622
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Confelicity",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 750
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Consensus",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1289
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Count Binface Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 308
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Cross-Community Labour Alternative",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 624
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Democracy for Chorley",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 2424
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "English Constitution Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1563
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "English Democrats",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 5182
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Fairer Voting Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 240
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Freedom Alliance",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 895
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Green Party Northern Ireland",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 8692
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Hampshire Independents",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 2872
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Heritage Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 6597
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independence for Scotland Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 678
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independent",
+    "party": null,
+    "seats": 7,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 589280
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independent Alliance (Kent)",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 926
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independent Network",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 13663
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independent Oxford Alliance",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 2381
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Independents for Direct Democracy",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 45
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Kingston Independent Residents Group",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1177
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Liberal",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 6375
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Libertarian Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 113
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Lincolnshire Independents Lincolnshire First",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 4277
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Liverpool Community Independents",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 3294
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "National Health Action Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 247
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Newham Independents Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 7180
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "New Open Non-Political Organised Leadership",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 186
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Official Monster Raving Loony Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 5814
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "One Leicester",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 4008
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Party of Women",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 5077
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "People Before Profit Alliance",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 8438
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Portsmouth Independent Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 733
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Propel",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1041
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Psychedelic Movement",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 99
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Putting Crewe First, Independent Residents Group",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 588
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Rebooting Democracy",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 265
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Rejoin EU",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 9288
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Save Us Now",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 170
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Scottish Family Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 5425
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Scottish Green Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 92685
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Scottish Libertarian Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 536
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Scottish Socialist Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1007
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Social Democratic Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 33811
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Socialist Equality Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 239
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Socialist Labour Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 3609
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Social Justice Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 285
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "South Devon Alliance",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1924
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Sovereignty",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 304
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Stockport Fights Austerity No to Cuts",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 193
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Swale Independents",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 3238
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Taking The Initiative Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 503
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Common People",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 91
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Mitre TW9",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 349
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The North East Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1581
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Peace Party - Non-violence, Justice, Environment",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 531
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Socialist Party of Great Britain",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 193
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Yorkshire Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 17236
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "The Yoruba Party in the UK",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 261
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Trade Unionist and Socialist Coalition",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 12901
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Transform Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 595
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "True & Fair Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1695
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "UK Independence Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 6530
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "UK Voice",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 150
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Volt United Kingdom",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 267
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Women's Equality Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1275
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Workers Party of Britain",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 210252
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Workers Revolutionary Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 1190
+  },
+  {
+    "election": "uk-general-election-2024",
+    "label": "Young People's Party",
+    "party": null,
+    "seats": 0,
+    "source_hash": "uk-ge-2024",
+    "source_url": "https://members-api.parliament.uk/api/Location/Constituency/%7Bid%7D/ElectionResult/422",
+    "votes": 664
   }
 ]

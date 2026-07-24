@@ -531,6 +531,222 @@
     "topic": null
   },
   {
+    "country": "united-kingdom",
+    "position": 1,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Scotland should hold a new referendum on independence.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 2,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The United Kingdom should rejoin the European single market.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 3,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The House of Lords should be replaced by an elected chamber.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 4,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "General elections should be held under proportional representation.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 5,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The voting age should be lowered to 16.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 6,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The two-child limit on benefit payments should be abolished.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 7,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Private school fees should be subject to VAT.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 8,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The state pension triple lock should be kept.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 9,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Rail services should be run in public ownership.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 10,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Water companies should be brought into public ownership.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 11,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "NHS spending should rise faster than inflation.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 12,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "University tuition fees should be abolished.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 13,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Employment rights should be strengthened.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 14,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Asylum seekers who arrive without permission should be removed to a third country.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 15,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Net migration should be reduced substantially.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 16,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The United Kingdom should remain party to the European Convention on Human Rights.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 17,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "New North Sea oil and gas licences should be issued.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 18,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The 2050 net zero target should be kept.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 19,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "New nuclear power stations should be built.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 20,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Defence spending should rise to at least 2.5 per cent of national income.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 21,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Military support for Ukraine should continue.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 22,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "The nuclear deterrent should be renewed.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 23,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Legal gender recognition should be based on self-identification.",
+    "topic": null
+  },
+  {
+    "country": "united-kingdom",
+    "position": 24,
+    "scope": "party",
+    "source_hash": "compass-uk",
+    "source_url": "https://github.com/markedown/open-public",
+    "text": "Assisted dying should be lawful for terminally ill adults.",
+    "topic": null
+  },
+  {
     "country": "usa",
     "position": 1,
     "scope": "party",
