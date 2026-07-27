@@ -1,0 +1,31 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select id from polls\n        where kind = 'approval'\n          and person_id is not distinct from $1\n          and party_id is not distinct from $2\n          and alliance_id is not distinct from $3\n          and approval_period = $4\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Date"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "134b45fa3e80bc1a26431c428d0a20a1055c60971311f72c6eea869b1870e97f"
+}

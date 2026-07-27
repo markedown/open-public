@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select id, question, slug, kind, media_url, media_license from polls\n        where country_id = $1 and person_id is null and party_id is null\n        order by id desc\n        ",
+  "query": "select id, question, slug, kind, media_url, media_license from polls where party_id = $1 and kind <> 'approval' order by id desc",
   "describe": {
     "columns": [
       {
@@ -84,5 +84,5 @@
       true
     ]
   },
-  "hash": "0292ac2cdd8a5fc3a08101dec2ce6edabdf303e2d30b0e5415086dab3822ca48"
+  "hash": "684439c3510cec22572b05bc18317fc3806e19cd3389df3f363de81ba0044fd2"
 }
