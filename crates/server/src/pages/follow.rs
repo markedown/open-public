@@ -47,10 +47,13 @@ pub async fn toggle(
     };
 
     // Only in-site paths are accepted, so the toggle cannot bounce a visitor to
-    // another origin.
+    // another origin. A protocol-relative `//host` is rejected, and so is any
+    // backslash: a browser normalizes `\` to `/` in a Location header, so
+    // `/\host` would otherwise resolve as `//host` and navigate off-origin. Our
+    // own paths never contain a backslash.
     let next = form
         .next
-        .filter(|n| n.starts_with('/') && !n.starts_with("//"))
+        .filter(|n| n.starts_with('/') && !n.starts_with("//") && !n.contains('\\'))
         .unwrap_or_else(|| "/".to_string());
 
     if headers.contains_key("hx-request") {

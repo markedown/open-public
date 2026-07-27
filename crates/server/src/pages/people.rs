@@ -27,7 +27,13 @@ pub async fn list(
         .ok_or(PageError::NotFound)?;
 
     let query = params.q.unwrap_or_default();
-    let page = params.page.unwrap_or(1).max(1);
+    let total = db::people::count_filtered(&pool, country.id, &query).await?;
+    // Clamp the page to the last real page. Without an upper bound a huge
+    // `?page=` value makes `(page - 1) * PAGE_SIZE` overflow to a negative
+    // offset, which Postgres rejects, so the request 500s instead of showing
+    // the last page.
+    let total_pages = ((total + PAGE_SIZE - 1) / PAGE_SIZE).max(1);
+    let page = params.page.unwrap_or(1).clamp(1, total_pages);
     let offset = (page - 1) * PAGE_SIZE;
     let people = db::people::list_filtered(&pool, country.id, &query, PAGE_SIZE, offset).await?;
     // The party each person currently sits in, so a visitor scanning the list
@@ -40,7 +46,6 @@ pub async fn list(
             .into_iter()
             .map(|pp| (pp.person_id, pp))
             .collect();
-    let total = db::people::count_filtered(&pool, country.id, &query).await?;
     let list_url = format!("/{}/people", country.slug);
 
     let content = html! {
