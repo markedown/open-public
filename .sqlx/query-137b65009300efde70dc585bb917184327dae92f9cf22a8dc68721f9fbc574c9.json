@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into poll_options (poll_id, label, position)\n        values ($1, 'Approve', 1), ($1, 'Disapprove', 2), ($1, 'No opinion', 3)\n        on conflict (poll_id, position) do nothing\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "137b65009300efde70dc585bb917184327dae92f9cf22a8dc68721f9fbc574c9"
+}

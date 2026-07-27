@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select id, question, slug, kind, media_url, media_license from polls where party_id = $1 order by id desc",
+  "query": "\n        select p.id, p.question, p.slug, p.kind, p.media_url, p.media_license\n        from polls p\n        where p.slug = $1 and p.kind <> 'approval' and (\n              p.country_id = $2\n              or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $2)\n              or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $2))\n        ",
   "describe": {
     "columns": [
       {
@@ -72,6 +72,7 @@
     ],
     "parameters": {
       "Left": [
+        "Text",
         "Int8"
       ]
     },
@@ -84,5 +85,5 @@
       true
     ]
   },
-  "hash": "f7604f2c3c8633ec02b388a6e4545c9182d302261e90fe1f9317615efb217d25"
+  "hash": "d238f36dfce54881a6e6b64b76971052430b7cabc47eeb8d258f3256da4f706d"
 }

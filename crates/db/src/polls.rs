@@ -38,7 +38,7 @@ pub async fn get_by_slug_in_country(
         r#"
         select p.id, p.question, p.slug, p.kind, p.media_url, p.media_license
         from polls p
-        where p.slug = $1 and (
+        where p.slug = $1 and p.kind <> 'approval' and (
               p.country_id = $2
               or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $2)
               or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $2))
@@ -252,9 +252,10 @@ pub struct PollListItem {
 
 /// The total number of polls, for the home overview.
 pub async fn count(pool: &Pool) -> Result<i64> {
-    let n = sqlx::query_scalar!(r#"select count(*) as "count!" from polls"#)
-        .fetch_one(pool)
-        .await?;
+    let n =
+        sqlx::query_scalar!(r#"select count(*) as "count!" from polls where kind <> 'approval'"#)
+            .fetch_one(pool)
+            .await?;
     Ok(n)
 }
 
@@ -295,9 +296,9 @@ pub async fn list_for_country(
         -- overlaid in the query so a list of a hundred rows stays one query.
         left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id
             and qtr.field = 'question' and qtr.lang = $2 and qtr.status = 'published'
-        where p.country_id = $1
+        where p.kind <> 'approval' and (p.country_id = $1
            or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
-           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)
+           or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))
         group by p.id, qtr.text
         order by p.id desc
         "#,
@@ -333,7 +334,7 @@ pub async fn list_filtered_for_country(
         left join poll_votes v on v.poll_id = p.id
         left join translations qtr on qtr.entity_type = 'poll' and qtr.entity_id = p.id
             and qtr.field = 'question' and qtr.lang = $3 and qtr.status = 'published'
-        where (p.country_id = $1
+        where p.kind <> 'approval' and (p.country_id = $1
            or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
            or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1))
           -- Search still reads the question as written, so a search works
@@ -358,7 +359,8 @@ pub async fn full_for_country(pool: &Pool, country_id: i64) -> Result<Vec<Poll>>
     let heads = sqlx::query!(
         r#"
         select id, question, slug, kind, media_url, media_license from polls
-        where country_id = $1 and person_id is null and party_id is null
+        where kind <> 'approval'
+          and country_id = $1 and person_id is null and party_id is null
         order by id desc
         "#,
         country_id,
@@ -384,7 +386,7 @@ pub async fn full_for_country(pool: &Pool, country_id: i64) -> Result<Vec<Poll>>
 /// the party page can show results inline.
 pub async fn full_for_party(pool: &Pool, party_id: i64) -> Result<Vec<Poll>> {
     let heads = sqlx::query!(
-        r#"select id, question, slug, kind, media_url, media_license from polls where party_id = $1 order by id desc"#,
+        r#"select id, question, slug, kind, media_url, media_license from polls where party_id = $1 and kind <> 'approval' order by id desc"#,
         party_id,
     )
     .fetch_all(pool)
@@ -407,7 +409,7 @@ pub async fn full_for_party(pool: &Pool, party_id: i64) -> Result<Vec<Poll>> {
 /// Full polls (with options and tallies) attached to a person, newest first.
 pub async fn full_for_person(pool: &Pool, person_id: i64) -> Result<Vec<Poll>> {
     let heads = sqlx::query!(
-        r#"select id, question, slug, kind, media_url, media_license from polls where person_id = $1 order by id desc"#,
+        r#"select id, question, slug, kind, media_url, media_license from polls where person_id = $1 and kind <> 'approval' order by id desc"#,
         person_id,
     )
     .fetch_all(pool)

@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        insert into polls\n          (question, slug, kind, approval_period, country_id, person_id, party_id, alliance_id)\n        select\n          'Monthly approval',\n          'approval-'\n            || case\n                 when $1::bigint is not null then 'person-'   || (select slug from people where id = $1)\n                 when $2::bigint is not null then 'party-'    || (select slug from parties where id = $2)\n                 else                             'coalition-' || (select slug from alliances where id = $3)\n               end\n            || '-' || to_char($4::date, 'YYYYMM'),\n          'approval',\n          $4::date,\n          coalesce((select country_id from people where id = $1),\n                   (select country_id from parties where id = $2),\n                   (select country_id from alliances where id = $3)),\n          $1, $2, $3\n        on conflict (person_id, party_id, alliance_id, approval_period) where kind = 'approval'\n        do nothing\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Date"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e883000a9a873133db47fdfa7a05a8b368a0eeea657d62d83043354d5fd37ae5"
+}

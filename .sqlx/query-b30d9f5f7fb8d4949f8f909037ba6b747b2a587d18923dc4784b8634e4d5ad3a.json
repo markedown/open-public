@@ -1,0 +1,32 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select o.position\n        from poll_votes v\n        join poll_options o on o.id = v.option_id\n        join polls p on p.id = v.poll_id\n        where p.kind = 'approval'\n          and p.person_id is not distinct from $1\n          and p.party_id is not distinct from $2\n          and p.alliance_id is not distinct from $3\n          and p.approval_period = $4\n          and v.user_id = $5\n        limit 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "position",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "poll_options",
+            "name": "position"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b30d9f5f7fb8d4949f8f909037ba6b747b2a587d18923dc4784b8634e4d5ad3a"
+}

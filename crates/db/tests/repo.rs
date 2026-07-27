@@ -2324,3 +2324,191 @@ async fn service_and_search_reachable_branches(pool: sqlx::PgPool) {
     assert_eq!(create_poll(&pool, mk("???")).await.unwrap(), "poll");
     assert_eq!(create_poll(&pool, mk("!!!")).await.unwrap(), "poll-2");
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn monthly_entity_approval(pool: sqlx::PgPool) {
+    use chrono::{Datelike, NaiveDate};
+    use db::approvals::{self, Entity, APPROVE, DISAPPROVE, NO_OPINION};
+
+    let src =
+        db::sources::insert_source(&pool, "manual", "https://example.test/a", None, Some("h1"))
+            .await
+            .unwrap();
+    let country: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Ulke', 'ulke', $1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let person: i64 = sqlx::query_scalar(
+        "insert into people (full_name, slug, source_id, country_id) values ('Aday', 'aday', $1, $2) returning id",
+    )
+    .bind(src).bind(country)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let party: i64 = sqlx::query_scalar(
+        "insert into parties (name, slug, source_id, country_id) values ('Parti', 'parti', $1, $2) returning id",
+    )
+    .bind(src).bind(country)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let coalition: i64 = sqlx::query_scalar(
+        "insert into alliances (name, slug, source_id, country_id) values ('Ittifak', 'ittifak', $1, $2) returning id",
+    )
+    .bind(src).bind(country)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let user = |email: &str| {
+        let pool = pool.clone();
+        let email = email.to_string();
+        async move {
+            sqlx::query_scalar::<_, i64>(
+                "insert into users (email_hash, password_hash, verified_at) values ($1, 'ph', now()) returning id",
+            )
+            .bind(email)
+            .fetch_one(&pool)
+            .await
+            .unwrap()
+        }
+    };
+    let (u1, u2, u3) = (user("a").await, user("b").await, user("c").await);
+
+    let now = approvals::current_period();
+
+    // Nobody has voted: the tally is all zeros, and the poll does not exist yet.
+    let t = approvals::tally(&pool, Entity::Person(person), now)
+        .await
+        .unwrap();
+    assert_eq!((t.approve, t.disapprove, t.no_opinion), (0, 0, 0));
+    assert_eq!(
+        approvals::my_choice(&pool, Entity::Person(person), now, u1)
+            .await
+            .unwrap(),
+        None
+    );
+
+    // u1 approves. The month's poll is created on demand and the vote lands.
+    assert!(
+        approvals::cast(&pool, Entity::Person(person), now, u1, APPROVE)
+            .await
+            .unwrap()
+    );
+    let t = approvals::tally(&pool, Entity::Person(person), now)
+        .await
+        .unwrap();
+    assert_eq!(
+        (t.approve, t.disapprove, t.no_opinion, t.total()),
+        (1, 0, 0, 1)
+    );
+    assert_eq!(
+        approvals::my_choice(&pool, Entity::Person(person), now, u1)
+            .await
+            .unwrap(),
+        Some(APPROVE)
+    );
+
+    // u1 cannot change or add a second approval this month: refused, not replaced.
+    assert!(
+        !approvals::cast(&pool, Entity::Person(person), now, u1, DISAPPROVE)
+            .await
+            .unwrap()
+    );
+    let t = approvals::tally(&pool, Entity::Person(person), now)
+        .await
+        .unwrap();
+    assert_eq!(
+        (t.approve, t.disapprove),
+        (1, 0),
+        "the second choice must not count"
+    );
+
+    // u2 disapproves, u3 has no opinion: all three counts are distinct signals.
+    assert!(
+        approvals::cast(&pool, Entity::Person(person), now, u2, DISAPPROVE)
+            .await
+            .unwrap()
+    );
+    assert!(
+        approvals::cast(&pool, Entity::Person(person), now, u3, NO_OPINION)
+            .await
+            .unwrap()
+    );
+    let t = approvals::tally(&pool, Entity::Person(person), now)
+        .await
+        .unwrap();
+    assert_eq!(
+        (t.approve, t.disapprove, t.no_opinion, t.total()),
+        (1, 1, 1, 3)
+    );
+
+    // Next month is a fresh poll, so u1 can approve again.
+    let next = {
+        let (y, m) = (now.year(), now.month());
+        let (y, m) = if m == 12 { (y + 1, 1) } else { (y, m + 1) };
+        NaiveDate::from_ymd_opt(y, m, 1).unwrap()
+    };
+    assert!(
+        approvals::cast(&pool, Entity::Person(person), next, u1, APPROVE)
+            .await
+            .unwrap()
+    );
+    assert_eq!(
+        approvals::tally(&pool, Entity::Person(person), next)
+            .await
+            .unwrap()
+            .approve,
+        1
+    );
+    // ...and last month is untouched.
+    assert_eq!(
+        approvals::tally(&pool, Entity::Person(person), now)
+            .await
+            .unwrap()
+            .approve,
+        1
+    );
+
+    // A party and a coalition approve through the same path.
+    assert!(
+        approvals::cast(&pool, Entity::Party(party), now, u1, APPROVE)
+            .await
+            .unwrap()
+    );
+    assert!(
+        approvals::cast(&pool, Entity::Coalition(coalition), now, u1, DISAPPROVE)
+            .await
+            .unwrap()
+    );
+    assert_eq!(
+        approvals::tally(&pool, Entity::Party(party), now)
+            .await
+            .unwrap()
+            .approve,
+        1
+    );
+    assert_eq!(
+        approvals::tally(&pool, Entity::Coalition(coalition), now)
+            .await
+            .unwrap()
+            .disapprove,
+        1
+    );
+
+    // An out-of-range choice is refused outright, recording nothing.
+    assert!(!approvals::cast(&pool, Entity::Person(person), now, u2, 99)
+        .await
+        .unwrap());
+
+    // Approval polls never appear in the country's ordinary poll list.
+    let listed = db::polls::list_for_country(&pool, country, "en")
+        .await
+        .unwrap();
+    assert!(
+        listed.is_empty(),
+        "approval polls must be hidden from the poll index"
+    );
+}
