@@ -134,6 +134,27 @@ msgstr "Bu adres eksik. Buraya gelirken bir bağlantı bölünmüş olabilir."
 msgid "Constitutional monarchy"
 msgstr "Anayasal monarşi"
 
+msgid "Approval"
+msgstr "Onay"
+
+msgid "Disapprove"
+msgstr "Onaylamıyorum"
+
+msgid "No opinion"
+msgstr "Fikrim yok"
+
+msgid "took part"
+msgstr "katıldı"
+
+msgid "You said"
+msgstr "Şunu belirttiniz"
+
+msgid "Log in to take part"
+msgstr "Katılmak için giriş yapın"
+
+msgid "Counts among verified participants here, not a representative sample."
+msgstr "Buradaki doğrulanmış katılımcılar arasındaki sayımlar; temsili bir örneklem değildir."
+
 msgid "Back to home"
 msgstr "Ana sayfaya dön"
 

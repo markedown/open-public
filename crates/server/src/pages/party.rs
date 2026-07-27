@@ -57,6 +57,15 @@ pub async fn detail(
         None => ui::follow::FollowState::Anonymous,
     };
     let follow_next = format!("/{}/parties/{}", country_model.slug, party.slug);
+    let approval = crate::pages::approve::panel_for(
+        &pool,
+        db::approvals::Entity::Party(party.id),
+        "party",
+        party.id,
+        session.as_ref(),
+        &follow_next,
+    )
+    .await?;
 
     let current_members: Vec<_> = members.iter().filter(|m| m.end_date.is_none()).collect();
     let former_members: Vec<_> = members.iter().filter(|m| m.end_date.is_some()).collect();
@@ -153,6 +162,8 @@ pub async fn detail(
                     ))
                 }
             }
+
+            section class="mb-8" { (approval) }
 
             // Alliance membership: the coalition and its full roster, this party
             // ringed.

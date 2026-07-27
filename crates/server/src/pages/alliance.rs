@@ -29,6 +29,16 @@ pub async fn detail(
         .get("name", Some(alliance.name.as_str()))
         .unwrap_or(&alliance.name);
     let summary = loc.get("summary", alliance.summary.as_deref());
+    let approval_next = format!("/{}/alliance/{}", country_model.slug, alliance.slug);
+    let approval = crate::pages::approve::panel_for(
+        &pool,
+        db::approvals::Entity::Coalition(alliance.id),
+        "coalition",
+        alliance.id,
+        session.as_ref(),
+        &approval_next,
+    )
+    .await?;
 
     let content = html! {
         article {
@@ -92,6 +102,8 @@ pub async fn detail(
                     ))
                 }
             }
+
+            section class="mb-8" { (approval) }
 
             @if !members.is_empty() {
                 section class="mb-8" {

@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select coalesce(\n          (select true from people where id = $1),\n          (select true from parties where id = $2),\n          (select true from alliances where id = $3),\n          false) as \"exists!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "exists!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "09515b38ec38cd9fcc6ace6094c962d01f0dd2e9d114de8948ec02bb22021c08"
+}

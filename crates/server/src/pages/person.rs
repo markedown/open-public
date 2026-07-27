@@ -59,6 +59,15 @@ pub async fn detail(
         None => ui::follow::FollowState::Anonymous,
     };
     let follow_next = format!("/{}/people/{}", country.slug, person.slug);
+    let approval = crate::pages::approve::panel_for(
+        &pool,
+        db::approvals::Entity::Person(person.id),
+        "person",
+        person.id,
+        session.as_ref(),
+        &follow_next,
+    )
+    .await?;
 
     let current_party = memberships.iter().find(|m| m.end_date.is_none());
     let current_role = roles
@@ -146,6 +155,8 @@ pub async fn detail(
                     ))
                 }
             }
+
+            section class="mb-8" { (approval) }
 
             (ui::background::section(&education, &attributes))
 

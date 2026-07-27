@@ -127,6 +127,27 @@ msgstr "Diese Adresse ist unvollständig. Möglicherweise wurde ein Link auf dem
 msgid "Constitutional monarchy"
 msgstr "Konstitutionelle Monarchie"
 
+msgid "Approval"
+msgstr "Zustimmung"
+
+msgid "Disapprove"
+msgstr "Ablehnen"
+
+msgid "No opinion"
+msgstr "Keine Meinung"
+
+msgid "took part"
+msgstr "haben teilgenommen"
+
+msgid "You said"
+msgstr "Sie sagten"
+
+msgid "Log in to take part"
+msgstr "Zum Teilnehmen anmelden"
+
+msgid "Counts among verified participants here, not a representative sample."
+msgstr "Zählungen unter den hier verifizierten Teilnehmenden, keine repräsentative Stichprobe."
+
 msgid "Back to home"
 msgstr "Zurück zur Startseite"
 

@@ -1,6 +1,7 @@
 pub mod admin;
 pub mod alliance;
 pub mod alliances;
+pub mod approve;
 pub mod auth;
 pub mod compass;
 pub mod country;
