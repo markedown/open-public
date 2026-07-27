@@ -2,6 +2,7 @@ use maud::{html, Markup};
 
 use crate::i18n;
 
+pub mod approval;
 pub mod background;
 pub mod badge;
 pub mod breadcrumb;

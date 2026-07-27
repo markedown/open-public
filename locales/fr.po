@@ -127,6 +127,27 @@ msgstr "Cette adresse est incomplète. Un lien a peut-être été coupé en chem
 msgid "Constitutional monarchy"
 msgstr "Monarchie constitutionnelle"
 
+msgid "Approval"
+msgstr "Approbation"
+
+msgid "Disapprove"
+msgstr "Désapprouver"
+
+msgid "No opinion"
+msgstr "Sans opinion"
+
+msgid "took part"
+msgstr "ont participé"
+
+msgid "You said"
+msgstr "Vous avez dit"
+
+msgid "Log in to take part"
+msgstr "Connectez-vous pour participer"
+
+msgid "Counts among verified participants here, not a representative sample."
+msgstr "Comptages parmi les participants vérifiés ici, pas un échantillon représentatif."
+
 msgid "Back to home"
 msgstr "Retour à l'accueil"
 

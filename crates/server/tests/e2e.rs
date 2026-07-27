@@ -7065,3 +7065,120 @@ async fn a_giant_page_number_clamps_instead_of_faulting(pool: db::Pool) {
         assert_eq!(get(&app, &uri).await.status(), StatusCode::OK, "{uri}");
     }
 }
+
+/// Monthly approval: anyone sees the counts, only a verified user can register
+/// one, and a second registration that month is refused rather than replacing
+/// the first.
+#[sqlx::test(migrations = "../../migrations")]
+async fn approval_counts_are_open_and_voting_needs_a_verified_account(pool: db::Pool) {
+    use db::approvals::{self, Entity};
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Anonymous: the panel and its counts are visible, with the honest frame and
+    // an invitation to sign in, no vote control.
+    let anon =
+        body_string(get_cookie(&app, &format!("/{COUNTRY}/people/ayse-yilmaz"), "lang=en").await)
+            .await;
+    assert!(anon.contains("Approval"));
+    assert!(anon.contains("Log in to take part"));
+    assert!(anon.contains("not a representative sample"));
+
+    // A verified user approves. Without JavaScript the response redirects back.
+    let (_uid, cookie) = verified_user(&pool, "app@x.test", "tok-approve").await;
+    let resp = post_form(
+        &app,
+        &format!("/approve/person/{person_id}"),
+        &format!("choice=approve&next=/{COUNTRY}/people/ayse-yilmaz"),
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(
+        resp.headers().get("location").unwrap(),
+        &format!("/{COUNTRY}/people/ayse-yilmaz")
+    );
+
+    let period = approvals::current_period();
+    let t = approvals::tally(&pool, Entity::Person(person_id), period)
+        .await
+        .unwrap();
+    assert_eq!((t.approve, t.disapprove), (1, 0));
+
+    // Their own page now shows the recorded choice.
+    let mine =
+        body_string(get_cookie(&app, &format!("/{COUNTRY}/people/ayse-yilmaz"), &cookie).await)
+            .await;
+    assert!(mine.contains("You said"));
+
+    // A second, different choice this month is refused: the count does not move.
+    post_form(
+        &app,
+        &format!("/approve/person/{person_id}"),
+        "choice=disapprove&next=/",
+        Some(&cookie),
+    )
+    .await;
+    let t = approvals::tally(&pool, Entity::Person(person_id), period)
+        .await
+        .unwrap();
+    assert_eq!(
+        (t.approve, t.disapprove),
+        (1, 0),
+        "the second choice must not count"
+    );
+
+    // An HTMX cast returns the updated panel fragment, not a redirect.
+    let (_u2, cookie2) = verified_user(&pool, "app2@x.test", "tok-approve-2").await;
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/approve/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie2)
+        .header("hx-request", "true")
+        .body(Body::from("choice=disapprove&next=/"))
+        .unwrap();
+    let frag = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(frag.status(), StatusCode::OK);
+    assert!(body_string(frag).await.contains("Approval"));
+
+    // The panel is on party and coalition pages too.
+    for uri in [
+        format!("/{COUNTRY}/parties/test-partisi"),
+        format!("/{COUNTRY}/alliance/test-ittifaki"),
+    ] {
+        let body = body_string(get_cookie(&app, &uri, "lang=en").await).await;
+        assert!(
+            body.contains("Log in to take part"),
+            "no approval panel on {uri}"
+        );
+    }
+
+    // A made-up entity, or an unknown kind, is not found.
+    assert_eq!(
+        post_form(
+            &app,
+            "/approve/person/999999",
+            "choice=approve&next=/",
+            Some(&cookie)
+        )
+        .await
+        .status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        post_form(
+            &app,
+            "/approve/banana/1",
+            "choice=approve&next=/",
+            Some(&cookie)
+        )
+        .await
+        .status(),
+        StatusCode::NOT_FOUND
+    );
+}

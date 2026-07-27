@@ -46,6 +46,27 @@ pub fn current_period() -> NaiveDate {
         .expect("the first of the month is always a valid date")
 }
 
+/// Whether the entity an approval would target actually exists, so a cast for a
+/// made-up id is refused rather than creating a poll pointing at nothing.
+pub async fn exists(pool: &Pool, entity: Entity) -> Result<bool> {
+    let (person, party, alliance) = entity.ids();
+    let ok = sqlx::query_scalar!(
+        r#"
+        select coalesce(
+          (select true from people where id = $1),
+          (select true from parties where id = $2),
+          (select true from alliances where id = $3),
+          false) as "exists!"
+        "#,
+        person,
+        party,
+        alliance,
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(ok)
+}
+
 /// The approve / disapprove / no-opinion counts for an entity in a month.
 #[derive(Debug, Clone)]
 pub struct Tally {

@@ -146,6 +146,10 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
             "/follow/{entity_type}/{entity_id}",
             post(pages::follow::toggle),
         )
+        .route(
+            "/approve/{entity_type}/{entity_id}",
+            post(pages::approve::cast),
+        )
         .route("/media/{sha}", get(media::serve))
         .route(
             "/register",
