@@ -148,6 +148,9 @@ msgstr "Zum Teilnehmen anmelden"
 msgid "Counts among verified participants here, not a representative sample."
 msgstr "Zählungen unter den hier verifizierten Teilnehmenden, keine repräsentative Stichprobe."
 
+msgid "Approval over time"
+msgstr "Zustimmung im Zeitverlauf"
+
 msgid "Back to home"
 msgstr "Zurück zur Startseite"
 

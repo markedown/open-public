@@ -68,6 +68,8 @@ pub async fn detail(
         &follow_next,
     )
     .await?;
+    let approval_history =
+        crate::pages::approve::history_for(&pool, db::approvals::Entity::Person(person.id)).await?;
 
     let current_party = memberships.iter().find(|m| m.end_date.is_none());
     let current_role = roles
@@ -157,6 +159,8 @@ pub async fn detail(
             }
 
             section class="mb-8" { (approval) }
+
+            (approval_history)
 
             (ui::background::section(&education, &attributes))
 

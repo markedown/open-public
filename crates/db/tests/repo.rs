@@ -2498,6 +2498,15 @@ async fn monthly_entity_approval(pool: sqlx::PgPool) {
         1
     );
 
+    // The over-time history has both months, newest first.
+    let hist = approvals::history(&pool, Entity::Person(person), 12)
+        .await
+        .unwrap();
+    assert_eq!(hist.len(), 2);
+    assert_eq!(hist[0].period, next);
+    assert_eq!(hist[1].period, now);
+    assert_eq!(hist[1].total(), 3);
+
     // An out-of-range choice is refused outright, recording nothing.
     assert!(!approvals::cast(&pool, Entity::Person(person), now, u2, 99)
         .await
