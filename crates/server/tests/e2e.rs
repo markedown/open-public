@@ -6995,3 +6995,73 @@ async fn roles_are_listed_by_name_not_by_their_internal_type(pool: db::Pool) {
         "the internal role type reached the page"
     );
 }
+
+/// The follow toggle only ever redirects to an in-site path. A protocol-relative
+/// `//host` was already rejected, but `/\host` slipped through: a browser
+/// normalizes the backslash to a slash in a Location header, so it would resolve
+/// as `//host` and navigate off-origin. The guard now rejects any backslash.
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_follow_toggle_cannot_be_used_as_an_open_redirect(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_id, cookie) = verified_user(&pool, "f@x.test", "tok-follow").await;
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    for evil in [
+        "/\\evil.com",
+        "//evil.com",
+        "/\\/\\evil.com",
+        "https://evil.com",
+    ] {
+        let resp = post_form(
+            &app,
+            &format!("/follow/person/{person_id}"),
+            &format!("next={evil}"),
+            Some(&cookie),
+        )
+        .await;
+        assert_eq!(resp.status(), StatusCode::SEE_OTHER, "{evil}");
+        let loc = resp.headers().get("location").unwrap().to_str().unwrap();
+        assert_eq!(loc, "/", "off-origin next {evil:?} was not rejected");
+        // Undo so the next iteration starts from not-following again.
+        post_form(
+            &app,
+            &format!("/follow/person/{person_id}"),
+            "next=/",
+            Some(&cookie),
+        )
+        .await;
+    }
+
+    // A legitimate in-site path still round-trips.
+    let resp = post_form(
+        &app,
+        &format!("/follow/person/{person_id}"),
+        "next=/tr/people/ayse-yilmaz",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(
+        resp.headers().get("location").unwrap(),
+        "/tr/people/ayse-yilmaz"
+    );
+}
+
+/// A huge `?page=` value must show the last page, not 500. Without an upper
+/// clamp `(page - 1) * PAGE_SIZE` overflowed to a negative offset, which
+/// Postgres rejects.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_giant_page_number_clamps_instead_of_faulting(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    for uri in [
+        format!("/{COUNTRY}/people?page={}", i64::MAX),
+        format!("/{COUNTRY}/people?page=999999999"),
+        format!("/{COUNTRY}/people?page=1"),
+    ] {
+        assert_eq!(get(&app, &uri).await.status(), StatusCode::OK, "{uri}");
+    }
+}
