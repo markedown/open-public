@@ -39,6 +39,9 @@ pub async fn detail(
         &approval_next,
     )
     .await?;
+    let approval_history =
+        crate::pages::approve::history_for(&pool, db::approvals::Entity::Coalition(alliance.id))
+            .await?;
 
     let content = html! {
         article {
@@ -104,6 +107,8 @@ pub async fn detail(
             }
 
             section class="mb-8" { (approval) }
+
+            (approval_history)
 
             @if !members.is_empty() {
                 section class="mb-8" {

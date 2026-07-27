@@ -42,6 +42,13 @@ pub async fn panel_for(
     ))
 }
 
+/// The approval-over-time chart for an entity, ready to drop into its page.
+/// Renders nothing until there are two months to compare.
+pub async fn history_for(pool: &db::Pool, entity: Entity) -> Result<Markup, PageError> {
+    let months = approvals::history(pool, entity, 12).await?;
+    Ok(ui::approval::history_chart(&months))
+}
+
 #[derive(Deserialize)]
 pub struct CastForm {
     /// `approve` | `disapprove` | `no_opinion`.

@@ -87,6 +87,74 @@ pub fn panel(
     }
 }
 
+/// Approval month by month: one bar per month, its height the number who took
+/// part, split into approve / disapprove / no-opinion. Counts over time, not a
+/// rate, and monochrome, for the same reasons as the panel. Hidden until there
+/// are two months to compare, so it stays out of the way until it has something
+/// to show.
+pub fn history_chart(entries: &[db::approvals::MonthTally]) -> Markup {
+    if entries.len() < 2 {
+        return html! {};
+    }
+    // Arrives newest-first; a timeline reads oldest-to-newest.
+    let mut months: Vec<&db::approvals::MonthTally> = entries.iter().collect();
+    months.reverse();
+    let max = months.iter().map(|m| m.total()).max().unwrap_or(1).max(1);
+
+    let slot = 56.0_f64;
+    let bar_w = 30.0_f64;
+    let chart_h = 96.0_f64;
+    let width = slot * months.len() as f64;
+    let height = chart_h + 30.0;
+
+    html! {
+        section class="mb-8" {
+            (crate::ui::section_header(i18n::t("Approval over time"), None))
+            div class="op-card overflow-x-auto p-5" {
+                svg viewBox={"0 0 " (width) " " (height)}
+                    class="h-40 w-full min-w-[240px]" preserveAspectRatio="xMidYMax meet"
+                    role="img" aria-label=(i18n::t("Approval over time")) {
+                    line x1="0" y1=(chart_h) x2=(width) y2=(chart_h)
+                         class="text-hairline" stroke="currentColor" stroke-width="1" {}
+                    @for (i, m) in months.iter().enumerate() {
+                        @let total = m.total();
+                        @let full = (total as f64 / max as f64) * (chart_h - 20.0);
+                        @let x = i as f64 * slot + (slot - bar_w) / 2.0;
+                        // Segments stack from the baseline up: approve, then
+                        // disapprove, then no-opinion, dark to light.
+                        @let seg = |count: i64| if total > 0 { (count as f64 / total as f64) * full } else { 0.0 };
+                        @let h_a = seg(m.approve);
+                        @let h_d = seg(m.disapprove);
+                        @let h_n = full - h_a - h_d;
+                        rect x=(x) y=(chart_h - h_a) width=(bar_w) height=(h_a)
+                             class="text-ink" fill="currentColor" {}
+                        rect x=(x) y=(chart_h - h_a - h_d) width=(bar_w) height=(h_d)
+                             class="text-ink-muted" fill="currentColor" {}
+                        rect x=(x) y=(chart_h - full) width=(bar_w) height=(h_n)
+                             class="text-hairline" fill="currentColor" {}
+                        text x=(x + bar_w / 2.0) y=(chart_h - full - 5.0) text-anchor="middle"
+                             class="text-ink-muted" fill="currentColor"
+                             style="font:600 11px ui-monospace,monospace" {
+                            (total)
+                        }
+                        text x=(x + bar_w / 2.0) y=(chart_h + 20.0) text-anchor="middle"
+                             class="text-ink-muted" fill="currentColor"
+                             style="font:11px ui-monospace,monospace" {
+                            (i18n::month_abbr(m.period.month()))
+                        }
+                    }
+                }
+                // Which shade is which, since the bars are monochrome.
+                p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-ink-muted" {
+                    span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-ink" {} (i18n::t("Approve")) }
+                    span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-ink-muted" {} (i18n::t("Disapprove")) }
+                    span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-hairline" {} (i18n::t("No opinion")) }
+                }
+            }
+        }
+    }
+}
+
 fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
     match viewer {
         Viewer::Anonymous => html! {
@@ -131,4 +199,43 @@ fn dom_target(action: &str) -> String {
     // action is "/approve/<type>/<id>"
     let rest = action.strip_prefix("/approve/").unwrap_or_default();
     format!("approval-{}", rest.replace('/', "-"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::NaiveDate;
+
+    fn month(y: i32, m: u32, a: i64, d: i64, n: i64) -> db::approvals::MonthTally {
+        db::approvals::MonthTally {
+            period: NaiveDate::from_ymd_opt(y, m, 1).unwrap(),
+            approve: a,
+            disapprove: d,
+            no_opinion: n,
+        }
+    }
+
+    #[test]
+    fn the_history_chart_needs_two_months_to_draw() {
+        // Nothing to compare yet: the chart stays out of the way.
+        assert!(history_chart(&[]).into_string().is_empty());
+        assert!(history_chart(&[month(2026, 7, 3, 1, 0)])
+            .into_string()
+            .is_empty());
+    }
+
+    #[test]
+    fn the_history_chart_draws_a_bar_per_month() {
+        let svg = history_chart(&[month(2026, 8, 5, 2, 1), month(2026, 7, 3, 1, 0)]).into_string();
+        // Assert on the language-independent SVG structure, not the localized
+        // heading (a unit test has no active locale set).
+        assert!(svg.contains("<svg"));
+        // Three stacked segments per month, two months.
+        assert_eq!(svg.matches("<rect").count(), 6);
+        // A month with no participants would divide by zero; the guard keeps the
+        // bars flat instead. Confirm that path still renders.
+        let with_empty =
+            history_chart(&[month(2026, 8, 0, 0, 0), month(2026, 7, 3, 1, 0)]).into_string();
+        assert!(with_empty.contains("<svg"));
+    }
 }

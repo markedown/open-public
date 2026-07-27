@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.approval_period as \"period!\",\n          coalesce(count(v.id) filter (where o.position = 1), 0) as \"approve!\",\n          coalesce(count(v.id) filter (where o.position = 2), 0) as \"disapprove!\",\n          coalesce(count(v.id) filter (where o.position = 3), 0) as \"no_opinion!\"\n        from polls p\n        join poll_options o on o.poll_id = p.id\n        left join poll_votes v on v.option_id = o.id\n        where p.kind = 'approval'\n          and p.person_id is not distinct from $1\n          and p.party_id is not distinct from $2\n          and p.alliance_id is not distinct from $3\n        group by p.approval_period\n        order by p.approval_period desc\n        limit $4\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "period!",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "approval_period"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "approve!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "disapprove!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "no_opinion!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      true,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "a4699aa2d842c519d35fc8482795aebe94618d8860466e010e36280d15fe3431"
+}

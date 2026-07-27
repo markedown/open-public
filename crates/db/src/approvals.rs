@@ -115,6 +115,61 @@ pub async fn tally(pool: &Pool, entity: Entity, period: NaiveDate) -> Result<Tal
     })
 }
 
+/// One month's approval counts, for the over-time chart.
+#[derive(Debug, Clone)]
+pub struct MonthTally {
+    pub period: NaiveDate,
+    pub approve: i64,
+    pub disapprove: i64,
+    pub no_opinion: i64,
+}
+
+impl MonthTally {
+    pub fn total(&self) -> i64 {
+        self.approve + self.disapprove + self.no_opinion
+    }
+}
+
+/// An entity's approval month by month, most recent first, up to `limit`
+/// months. Only months that have an approval poll appear (a poll exists only
+/// once someone has voted), so a month with no participation is simply absent.
+pub async fn history(pool: &Pool, entity: Entity, limit: i64) -> Result<Vec<MonthTally>> {
+    let (person, party, alliance) = entity.ids();
+    let rows = sqlx::query!(
+        r#"
+        select p.approval_period as "period!",
+          coalesce(count(v.id) filter (where o.position = 1), 0) as "approve!",
+          coalesce(count(v.id) filter (where o.position = 2), 0) as "disapprove!",
+          coalesce(count(v.id) filter (where o.position = 3), 0) as "no_opinion!"
+        from polls p
+        join poll_options o on o.poll_id = p.id
+        left join poll_votes v on v.option_id = o.id
+        where p.kind = 'approval'
+          and p.person_id is not distinct from $1
+          and p.party_id is not distinct from $2
+          and p.alliance_id is not distinct from $3
+        group by p.approval_period
+        order by p.approval_period desc
+        limit $4
+        "#,
+        person,
+        party,
+        alliance,
+        limit,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows
+        .into_iter()
+        .map(|r| MonthTally {
+            period: r.period,
+            approve: r.approve,
+            disapprove: r.disapprove,
+            no_opinion: r.no_opinion,
+        })
+        .collect())
+}
+
 /// Which choice a user made for an entity this month, if any (so the panel can
 /// mark their pick). One of `APPROVE` / `DISAPPROVE` / `NO_OPINION`.
 pub async fn my_choice(

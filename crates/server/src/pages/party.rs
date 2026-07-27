@@ -66,6 +66,8 @@ pub async fn detail(
         &follow_next,
     )
     .await?;
+    let approval_history =
+        crate::pages::approve::history_for(&pool, db::approvals::Entity::Party(party.id)).await?;
 
     let current_members: Vec<_> = members.iter().filter(|m| m.end_date.is_none()).collect();
     let former_members: Vec<_> = members.iter().filter(|m| m.end_date.is_some()).collect();
@@ -164,6 +166,8 @@ pub async fn detail(
             }
 
             section class="mb-8" { (approval) }
+
+            (approval_history)
 
             // Alliance membership: the coalition and its full roster, this party
             // ringed.
