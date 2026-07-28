@@ -347,12 +347,15 @@ fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
 /// A proportional seat-composition bar from the per-party seat counts.
 fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
     html! {
-        div class="flex h-6 w-full overflow-hidden rounded-md border border-hairline" {
+        // Decorative: the composition list beside the bar names each party and
+        // its seats as text, so the bar is hidden from assistive tech rather than
+        // repeating that as a native tooltip.
+        div class="flex h-6 w-full overflow-hidden rounded-md border border-hairline"
+            aria-hidden="true" {
             @for r in rows {
                 @if let Some(s) = r.seats.filter(|s| *s > 0) {
                     div class="h-full border-r border-r-paper-raised last:border-r-0"
-                        style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or("#171717"))}
-                        title={(r.party_name.as_deref().unwrap_or("")) " · " (s)} {}
+                        style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or("#171717"))} {}
                 }
             }
         }
