@@ -1110,3 +1110,6 @@ msgstr "Lütfen doğrulamayı tamamlayıp tekrar deneyin."
 
 msgid "This form needs JavaScript enabled to verify your request."
 msgstr "Bu formun isteğinizi doğrulaması için JavaScript'in etkin olması gerekir."
+
+msgid "Please use a non-disposable email address."
+msgstr "Lütfen tek kullanımlık olmayan bir e-posta adresi kullanın."
