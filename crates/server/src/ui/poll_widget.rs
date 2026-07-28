@@ -52,6 +52,13 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, voted: &[i64]) ->
             p class="mt-4 font-mono text-xs text-ink-muted" {
                 (format!("{} {}", total, i18n::t("votes")))
             }
+            // The honest base tier: results are the people who answered here,
+            // never a sample of a population. Same frame as the approval panel.
+            @if total > 0 {
+                p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                    (i18n::t("Counts among verified participants here, not a representative sample."))
+                }
+            }
             @match viewer {
                 Viewer::Voted => p class="mt-1 font-mono text-xs text-ink-muted" { (i18n::t("You have voted.")) },
                 Viewer::CanVote => p class="mt-1 text-xs text-ink-muted" {
