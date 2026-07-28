@@ -7430,3 +7430,22 @@ async fn submission_without_a_captcha_is_refused(pool: db::Pool) {
         .unwrap();
     assert_eq!(subs, 0, "no submission is stored without a captcha");
 }
+
+/// Registration with a disposable-inbox domain is refused and stores nothing.
+#[sqlx::test(migrations = "../../migrations")]
+async fn register_rejects_a_disposable_email_domain(pool: db::Pool) {
+    let app = router(pool.clone());
+    let resp = post_form_captcha(
+        &app,
+        "/register",
+        "email=throwaway@mailinator.com&password=longenough",
+        None,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK); // form re-rendered, not check-email
+    let users: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(users, 0, "no account is created for a disposable domain");
+}

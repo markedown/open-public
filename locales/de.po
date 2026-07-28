@@ -1098,3 +1098,6 @@ msgstr "Bitte schließen Sie die Verifizierung ab und versuchen Sie es erneut."
 
 msgid "This form needs JavaScript enabled to verify your request."
 msgstr "Dieses Formular benötigt aktiviertes JavaScript, um Ihre Anfrage zu verifizieren."
+
+msgid "Please use a non-disposable email address."
+msgstr "Bitte verwenden Sie eine nicht wegwerfbare E-Mail-Adresse."

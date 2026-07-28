@@ -58,6 +58,11 @@ pub async fn register_submit(
     if !email.contains('@') || email.len() > 254 {
         return Err(register_page(Some(i18n::t("Enter a valid email address."))));
     }
+    if crate::email_blocklist::is_disposable_email(email) {
+        return Err(register_page(Some(i18n::t(
+            "Please use a non-disposable email address.",
+        ))));
+    }
     if form.password.chars().count() < 8 {
         return Err(register_page(Some(i18n::t(
             "Password must be at least 8 characters.",
