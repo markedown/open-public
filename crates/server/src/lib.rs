@@ -4,6 +4,7 @@
 
 pub mod admin_account;
 pub mod auth;
+pub mod captcha;
 pub mod config;
 pub mod content;
 pub mod error;
@@ -62,6 +63,7 @@ fn open_while_gated(path: &str) -> bool {
         "/health"
             | "/readyz"
             | "/version"
+            | "/altcha/challenge"
             | "/login"
             | "/logout"
             // A crawler has to be able to read the file that asks it not to
@@ -97,6 +99,7 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/health", get(health))
         .route("/readyz", get(readyz))
         .route("/version", get(version))
+        .route("/altcha/challenge", get(captcha::challenge_endpoint))
         .route("/data/polls.json", get(pages::data::polls))
         .route("/{country}", get(pages::country::detail))
         .route("/{country}/people", get(pages::people::list))

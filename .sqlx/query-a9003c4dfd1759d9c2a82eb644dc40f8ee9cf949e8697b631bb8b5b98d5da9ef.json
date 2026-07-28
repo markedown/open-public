@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from captcha_used where expires_at < now()",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "a9003c4dfd1759d9c2a82eb644dc40f8ee9cf949e8697b631bb8b5b98d5da9ef"
+}

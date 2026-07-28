@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into captcha_used (signature, expires_at) values ($1, $2) on conflict (signature) do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "3278f3bc374e6022d19b7ed4877e74b37f20fe302499cb49c7ff1070fd6d61a8"
+}
