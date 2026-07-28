@@ -7182,3 +7182,56 @@ async fn approval_counts_are_open_and_voting_needs_a_verified_account(pool: db::
         StatusCode::NOT_FOUND
     );
 }
+
+/// The captcha verify path end to end against a real database: a solved
+/// challenge is accepted once and refused on replay, and a challenge for a
+/// different secret is refused.
+#[sqlx::test(migrations = "../../migrations")]
+async fn captcha_accepts_a_solution_once_and_refuses_a_replay(pool: db::Pool) {
+    use base64::Engine;
+    use sha2::{Digest, Sha256};
+
+    // Solve a server-issued challenge the way the browser would.
+    fn solve(challenge_json: &str) -> String {
+        let v: serde_json::Value = serde_json::from_str(challenge_json).unwrap();
+        let salt = v["salt"].as_str().unwrap();
+        let target = v["challenge"].as_str().unwrap();
+        let maxnumber = v["maxnumber"].as_u64().unwrap();
+        let number = (0..=maxnumber)
+            .find(|n| {
+                let mut h = Sha256::new();
+                h.update(salt.as_bytes());
+                h.update(n.to_string().as_bytes());
+                let hex: String = h.finalize().iter().map(|b| format!("{b:02x}")).collect();
+                hex == target
+            })
+            .expect("solvable");
+        let sol = serde_json::json!({
+            "algorithm": "SHA-256",
+            "challenge": target,
+            "number": number,
+            "salt": salt,
+            "signature": v["signature"],
+        });
+        base64::engine::general_purpose::STANDARD.encode(serde_json::to_vec(&sol).unwrap())
+    }
+
+    let secret = b"a-server-secret-of-some-length!!";
+    let payload = solve(&server::captcha::challenge(secret).unwrap());
+
+    // First submission: accepted.
+    assert!(server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
+    // Same solution again: refused as a replay.
+    assert!(!server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
+
+    // A solution for a challenge minted under a different secret is refused
+    // (the signature is not ours).
+    let other = solve(&server::captcha::challenge(b"a-different-secret-different-x!!").unwrap());
+    assert!(!server::captcha::verify(&pool, secret, &other)
+        .await
+        .unwrap());
+}
