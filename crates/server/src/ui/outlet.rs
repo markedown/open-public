@@ -26,7 +26,14 @@ pub fn leaning_bar(leaning: &str, compact: bool) -> Markup {
     let active = leaning_index(leaning);
     html! {
         div class="inline-flex flex-col gap-1" {
-            div class="flex gap-0.5" title=(leaning_label(leaning)) {
+            // The filled cell's position encodes the leaning. When the caption
+            // below is shown it names the leaning as text, so the track is hidden
+            // from assistive tech; in the compact list variant there is no
+            // caption, so the track carries the name itself, never a native tooltip.
+            div class="flex gap-0.5"
+                role=[compact.then_some("img")]
+                aria-label=[compact.then(|| leaning_label(leaning))]
+                aria-hidden=[(!compact).then_some("true")] {
                 @for i in 0..db::outlets::LEANINGS.len() {
                     div class={
                         "h-2 w-5 rounded-sm border border-hairline "

@@ -25,22 +25,23 @@ pub fn composition(
 ) -> Markup {
     html! {
         // Proportional flex segments fill the bar exactly; integer width
-        // percentages truncated small parties to 0 and left a gap.
-        div class="mb-4 flex h-7 w-full overflow-hidden rounded-md border border-hairline" {
+        // percentages truncated small parties to 0 and left a gap. The bar is a
+        // visual encoding of the legend below, which carries every party name and
+        // seat count as text, so the bar itself is hidden from assistive tech
+        // rather than repeating that as a native tooltip on each segment.
+        div class="mb-4 flex h-7 w-full overflow-hidden rounded-md border border-hairline"
+            aria-hidden="true" {
             @for s in seats {
                 div class="h-full border-r border-r-paper-raised last:border-r-0"
-                    style={"flex:" (s.seats) " 0 0; background-color:" (s.color.as_deref().unwrap_or("#171717"))}
-                    title={(s.name) " · " (s.seats)} {}
+                    style={"flex:" (s.seats) " 0 0; background-color:" (s.color.as_deref().unwrap_or("#171717"))} {}
             }
             @if independents > 0 {
                 div class="h-full"
-                    style={"flex:" (independents) " 0 0; background-color:" (INDEPENDENT_COLOR)}
-                    title={(i18n::t("Independent")) " · " (independents)} {}
+                    style={"flex:" (independents) " 0 0; background-color:" (INDEPENDENT_COLOR)} {}
             }
             @if let Some(v) = vacant {
                 div class="h-full"
-                    style={"flex:" (v) " 0 0; " (VACANT_FILL)}
-                    title={(i18n::t("Vacant")) " · " (v)} {}
+                    style={"flex:" (v) " 0 0; " (VACANT_FILL)} {}
             }
         }
         div class="flex flex-wrap gap-x-5 gap-y-2" {
