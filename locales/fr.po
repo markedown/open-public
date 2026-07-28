@@ -1092,3 +1092,9 @@ msgstr "stable"
 
 msgid "Discarded"
 msgstr "Écarté"
+
+msgid "Please complete the verification and try again."
+msgstr "Veuillez compléter la vérification et réessayer."
+
+msgid "This form needs JavaScript enabled to verify your request."
+msgstr "Ce formulaire nécessite l'activation de JavaScript pour vérifier votre demande."

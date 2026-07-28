@@ -1092,3 +1092,9 @@ msgstr "unverändert"
 
 msgid "Discarded"
 msgstr "Verworfen"
+
+msgid "Please complete the verification and try again."
+msgstr "Bitte schließen Sie die Verifizierung ab und versuchen Sie es erneut."
+
+msgid "This form needs JavaScript enabled to verify your request."
+msgstr "Dieses Formular benötigt aktiviertes JavaScript, um Ihre Anfrage zu verifizieren."
