@@ -89,6 +89,12 @@ pub fn document_described(
                 script src="/static/htmx.min.js" defer {}
             }
             body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased" {
+                // The first thing a keyboard user reaches: a way past the nav
+                // straight to the page content. Off-screen until focused.
+                a href="#main"
+                  class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:font-mono focus:text-[11px] focus:uppercase focus:tracking-wide focus:text-paper" {
+                    (i18n::t("Skip to content"))
+                }
                 header class="sticky top-0 z-20 border-b border-hairline-strong bg-paper" {
                     nav class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" {
                         a href="/" class="inline-flex shrink-0 items-center" {
@@ -136,7 +142,7 @@ pub fn document_described(
                         }
                     }
                 }
-                main class="mx-auto w-full max-w-6xl grow px-4 py-8 sm:px-6 sm:py-12" {
+                main id="main" class="mx-auto w-full max-w-6xl grow px-4 py-8 sm:px-6 sm:py-12" {
                     (content)
                 }
                 footer class="mt-16 border-t border-hairline-strong" {
