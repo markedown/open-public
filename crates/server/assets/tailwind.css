@@ -110,6 +110,21 @@
   }
 }
 
+/* Respect a reduced-motion preference: the interface uses small colour and
+   transform transitions (card borders, the language chevron, hover fades) that
+   are decorative. For a visitor who asks for less motion, near-instant them all
+   rather than animate. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer components {
   /* The compass, one question at a time.
    *

@@ -1113,3 +1113,6 @@ msgstr "Bu formun isteğinizi doğrulaması için JavaScript'in etkin olması ge
 
 msgid "Please use a non-disposable email address."
 msgstr "Lütfen tek kullanımlık olmayan bir e-posta adresi kullanın."
+
+msgid "Skip to content"
+msgstr "İçeriğe geç"

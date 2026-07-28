@@ -1101,3 +1101,6 @@ msgstr "Ce formulaire nécessite l'activation de JavaScript pour vérifier votre
 
 msgid "Please use a non-disposable email address."
 msgstr "Veuillez utiliser une adresse e-mail non jetable."
+
+msgid "Skip to content"
+msgstr "Aller au contenu"
