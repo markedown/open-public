@@ -21,11 +21,67 @@ type HmacSha256 = Hmac<Sha256>;
 const SESSION_COOKIE: &str = "op_session";
 const SESSION_TTL_HOURS: i64 = 72;
 
+/// Providers that document `+tag` addressing, where everything from the first
+/// `+` in the local part is a label on one mailbox. Only these are collapsed,
+/// because on most domains a `+` is an ordinary, significant character.
+const PLUS_TAG_PROVIDERS: &[&str] = &[
+    "gmail.com",
+    "outlook.com",
+    "hotmail.com",
+    "live.com",
+    "msn.com",
+    "icloud.com",
+    "me.com",
+    "mac.com",
+    "proton.me",
+    "protonmail.com",
+    "fastmail.com",
+];
+
+/// Canonicalize an email for keying: lowercase it, and for providers with
+/// documented alias rules collapse the aliases that resolve to one mailbox, so
+/// a single inbox cannot mint many distinct accounts. Domains not on the list
+/// are only lowercased, because a dot or a `+` is significant on most of them,
+/// and merging distinct real accounts would be worse than missing an alias.
+///
+/// This decides the account key, so it must be settled before real accounts
+/// exist: changing it later would strand anyone who registered under the old
+/// form. The platform is gated until launch, which is when that holds.
+pub fn canonicalize_email(email: &str) -> String {
+    let email = email.trim().to_lowercase();
+    let Some((local, domain)) = email.rsplit_once('@') else {
+        return email; // not an address shape; leave it as the plain form
+    };
+    // googlemail.com is Gmail under another name.
+    let domain = if domain == "googlemail.com" {
+        "gmail.com"
+    } else {
+        domain
+    };
+    let mut local = local.to_string();
+    if PLUS_TAG_PROVIDERS.contains(&domain) {
+        if let Some(i) = local.find('+') {
+            local.truncate(i);
+        }
+    }
+    // Gmail ignores dots in the local part.
+    if domain == "gmail.com" {
+        local = local.replace('.', "");
+    }
+    // A canonical form that emptied the local part (e.g. "+tag@gmail.com") is
+    // degenerate; fall back to the plain lowercased address rather than key on it.
+    if local.is_empty() {
+        return email;
+    }
+    format!("{local}@{domain}")
+}
+
 /// HMAC-hash an email so we can key users on it without storing the plaintext.
+/// The address is canonicalized first, so provider aliases resolve to one key.
 /// Returns `None` only if the HMAC cannot accept the key, which does not happen
 /// for HMAC-SHA256 (any key length is valid); handlers treat `None` as an error.
 pub fn hash_email(email: &str, secret: &[u8]) -> Option<String> {
-    let normalized = email.trim().to_lowercase();
+    let normalized = canonicalize_email(email);
     let mut mac = HmacSha256::new_from_slice(secret).ok()?;
     mac.update(normalized.as_bytes());
     Some(hex_encode(mac.finalize().into_bytes()))
@@ -218,6 +274,48 @@ mod tests {
         assert_eq!(a, b);
         // A different secret yields a different hash.
         assert_ne!(a, hash_email("user@example.com", b"other").unwrap());
+    }
+
+    #[test]
+    fn gmail_aliases_canonicalize_to_one_mailbox() {
+        // Dots are ignored and a +tag is dropped; googlemail is gmail.
+        assert_eq!(
+            canonicalize_email("First.Last+promo@Gmail.com"),
+            "firstlast@gmail.com"
+        );
+        assert_eq!(
+            canonicalize_email("f.i.r.s.t@googlemail.com"),
+            "first@gmail.com"
+        );
+        // So the aliases all key to the same account.
+        let base = hash_email("firstlast@gmail.com", b"k").unwrap();
+        assert_eq!(
+            hash_email("First.Last+anything@gmail.com", b"k").unwrap(),
+            base
+        );
+        assert_eq!(hash_email("firstlast@googlemail.com", b"k").unwrap(), base);
+    }
+
+    #[test]
+    fn plus_tags_drop_only_for_listed_providers() {
+        // A listed provider drops the +tag but keeps dots (dots are significant there).
+        assert_eq!(
+            canonicalize_email("first.last+news@outlook.com"),
+            "first.last@outlook.com"
+        );
+        // An unlisted domain is left as-is: a dot or a + may be a real address there.
+        assert_eq!(
+            canonicalize_email("first.last+x@example.com"),
+            "first.last+x@example.com"
+        );
+    }
+
+    #[test]
+    fn canonicalize_handles_degenerate_input() {
+        // No @ shape: just the trimmed, lowercased form.
+        assert_eq!(canonicalize_email("  NotAnEmail "), "notanemail");
+        // A local part that canonicalizes to empty falls back to the plain form.
+        assert_eq!(canonicalize_email("+tag@gmail.com"), "+tag@gmail.com");
     }
 
     #[test]
