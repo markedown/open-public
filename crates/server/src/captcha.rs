@@ -158,6 +158,23 @@ fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
     diff == 0
 }
 
+/// Convenience for a handler: whether a form's captcha field is present and
+/// valid. A missing or malformed solution is a failure, and a verify error is
+/// logged and treated as a failure rather than a server error, so a captcha
+/// hiccup fails closed on a protected form.
+pub async fn ok(pool: &db::Pool, secret: &[u8], token: Option<&str>) -> bool {
+    match token {
+        Some(t) if !t.is_empty() => match verify(pool, secret, t).await {
+            Ok(v) => v,
+            Err(e) => {
+                tracing::warn!(?e, "captcha verification errored");
+                false
+            }
+        },
+        _ => false,
+    }
+}
+
 /// `GET /altcha/challenge`: a fresh challenge for the widget to solve. Must stay
 /// reachable while the construction gate is on, since the sign-in page (open
 /// while gated) carries the widget.

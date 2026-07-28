@@ -470,6 +470,58 @@ async fn post_form(app: &Router, uri: &str, form: &str, cookie: Option<&str>) ->
     app.clone().oneshot(req).await.expect("response")
 }
 
+/// Fetch a captcha challenge and solve it the way the widget would, returning
+/// the base64 solution the form field carries. Single-use, so call it fresh for
+/// each protected POST.
+async fn solved_captcha(app: &Router) -> String {
+    use base64::Engine;
+    use sha2::{Digest, Sha256};
+    let body = get(app, "/altcha/challenge")
+        .await
+        .into_body()
+        .collect()
+        .await
+        .unwrap()
+        .to_bytes();
+    let d: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    let salt = d["salt"].as_str().unwrap();
+    let target = d["challenge"].as_str().unwrap();
+    let maxnumber = d["maxnumber"].as_u64().unwrap();
+    let number = (0..=maxnumber)
+        .find(|n| {
+            let mut h = Sha256::new();
+            h.update(salt.as_bytes());
+            h.update(n.to_string().as_bytes());
+            let hex: String = h.finalize().iter().map(|b| format!("{b:02x}")).collect();
+            hex == target
+        })
+        .expect("solvable");
+    let sol = serde_json::json!({
+        "algorithm": "SHA-256",
+        "challenge": target,
+        "number": number,
+        "salt": salt,
+        "signature": d["signature"],
+    });
+    base64::engine::general_purpose::STANDARD.encode(serde_json::to_vec(&sol).unwrap())
+}
+
+/// Like `post_form`, but solves a captcha and appends it, for the urlencoded
+/// forms that require one (register, login).
+async fn post_form_captcha(app: &Router, uri: &str, form: &str, cookie: Option<&str>) -> Response {
+    let cap = solved_captcha(app)
+        .await
+        .replace('+', "%2B")
+        .replace('/', "%2F")
+        .replace('=', "%3D");
+    let joined = if form.is_empty() {
+        format!("altcha={cap}")
+    } else {
+        format!("{form}&altcha={cap}")
+    };
+    post_form(app, uri, &joined, cookie).await
+}
+
 async fn body_string(resp: Response) -> String {
     let bytes = resp.into_body().collect().await.expect("body").to_bytes();
     String::from_utf8_lossy(&bytes).into_owned()
@@ -1620,7 +1672,7 @@ async fn register_then_verify_then_login(pool: db::Pool) {
     let password = "supersecret";
 
     // Registration succeeds and creates an unverified account.
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/register",
         &format!("email={email}&password={password}"),
@@ -1637,7 +1689,7 @@ async fn register_then_verify_then_login(pool: db::Pool) {
     assert!(user.verified_at.is_none());
 
     // Login is refused while unverified: no session cookie is issued.
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/login",
         &format!("email={email}&password={password}"),
@@ -1673,7 +1725,7 @@ async fn register_then_verify_then_login(pool: db::Pool) {
     );
 
     // Now login succeeds: redirect plus a session cookie.
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/login",
         &format!("email={email}&password={password}"),
@@ -1694,7 +1746,7 @@ async fn register_then_verify_then_login(pool: db::Pool) {
 #[sqlx::test(migrations = "../../migrations")]
 async fn wrong_password_is_rejected(pool: db::Pool) {
     let app = router(pool.clone());
-    post_form(
+    post_form_captcha(
         &app,
         "/register",
         "email=a@example.com&password=rightpassword",
@@ -1709,7 +1761,7 @@ async fn wrong_password_is_rejected(pool: db::Pool) {
         .unwrap();
     db::users::mark_verified(&pool, user.id).await.unwrap();
 
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/login",
         "email=a@example.com&password=wrongpassword",
@@ -1723,7 +1775,7 @@ async fn wrong_password_is_rejected(pool: db::Pool) {
 #[sqlx::test(migrations = "../../migrations")]
 async fn short_password_is_rejected(pool: db::Pool) {
     let app = router(pool.clone());
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/register",
         "email=b@example.com&password=short",
@@ -1773,7 +1825,7 @@ async fn logout_with_a_session_clears_it_and_redirects(pool: db::Pool) {
 async fn register_rejects_an_invalid_email(pool: db::Pool) {
     let app = router(pool.clone());
     // No '@': the form is redisplayed with an error and no account is created.
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/register",
         "email=notanemail&password=longenough",
@@ -1790,11 +1842,11 @@ async fn register_is_silent_on_a_duplicate_email(pool: db::Pool) {
     let app = router(pool.clone());
     let form = "email=dup@example.com&password=longenough";
     // First registration creates the account.
-    let resp = post_form(&app, "/register", form, None).await;
+    let resp = post_form_captcha(&app, "/register", form, None).await;
     assert_eq!(resp.status(), StatusCode::OK);
     // A second registration for the same address returns the same
     // check-your-email page, revealing nothing about whether it already exists.
-    let resp = post_form(&app, "/register", form, None).await;
+    let resp = post_form_captcha(&app, "/register", form, None).await;
     assert_eq!(resp.status(), StatusCode::OK);
     // Exactly one account exists.
     let email_hash = server::auth::hash_email("dup@example.com", SECRET).unwrap();
@@ -1818,7 +1870,7 @@ async fn login_rejects_an_unknown_email(pool: db::Pool) {
     let app = router(pool);
     // No account for this address: rejected without a session, and the dummy
     // verification path (stored = None) still runs.
-    let resp = post_form(
+    let resp = post_form_captcha(
         &app,
         "/login",
         "email=nobody@example.com&password=whatever12",
@@ -3043,33 +3095,36 @@ enum Part {
     File(&'static str, &'static str, &'static str, Vec<u8>),
 }
 
-fn multipart(boundary: &str, parts: &[Part]) -> Vec<u8> {
-    let mut b = Vec::new();
-    for p in parts {
-        b.extend_from_slice(format!("--{boundary}\r\n").as_bytes());
-        match p {
-            Part::Text(name, val) => {
-                b.extend_from_slice(
-                    format!("Content-Disposition: form-data; name=\"{name}\"\r\n\r\n").as_bytes(),
-                );
-                b.extend_from_slice(val.as_bytes());
-            }
-            Part::File(name, filename, ctype, bytes) => {
-                b.extend_from_slice(
-                    format!("Content-Disposition: form-data; name=\"{name}\"; filename=\"{filename}\"\r\nContent-Type: {ctype}\r\n\r\n").as_bytes(),
-                );
-                b.extend_from_slice(bytes);
-            }
+fn write_part(b: &mut Vec<u8>, boundary: &str, p: &Part) {
+    b.extend_from_slice(format!("--{boundary}\r\n").as_bytes());
+    match p {
+        Part::Text(name, val) => {
+            b.extend_from_slice(
+                format!("Content-Disposition: form-data; name=\"{name}\"\r\n\r\n").as_bytes(),
+            );
+            b.extend_from_slice(val.as_bytes());
         }
-        b.extend_from_slice(b"\r\n");
+        Part::File(name, filename, ctype, bytes) => {
+            b.extend_from_slice(
+                format!("Content-Disposition: form-data; name=\"{name}\"; filename=\"{filename}\"\r\nContent-Type: {ctype}\r\n\r\n").as_bytes(),
+            );
+            b.extend_from_slice(bytes);
+        }
     }
-    b.extend_from_slice(format!("--{boundary}--\r\n").as_bytes());
-    b
+    b.extend_from_slice(b"\r\n");
 }
 
 async fn post_multipart(app: &Router, uri: &str, parts: &[Part], cookie: &str) -> Response {
     let boundary = "OPBOUNDARYtest";
-    let body = multipart(boundary, parts);
+    // The submission form requires a captcha; solve a fresh one and add it as a
+    // part, so every submit test exercises the real protected path.
+    let captcha = Part::Text("altcha", solved_captcha(app).await);
+    let mut body = Vec::new();
+    for p in parts {
+        write_part(&mut body, boundary, p);
+    }
+    write_part(&mut body, boundary, &captcha);
+    body.extend_from_slice(format!("--{boundary}--\r\n").as_bytes());
     let req = Request::builder()
         .method("POST")
         .uri(uri)
@@ -3269,7 +3324,8 @@ async fn a_ban_invalidates_the_session_and_blocks_relogin(pool: db::Pool) {
         .is_redirection());
 
     // Re-login is refused (the form is re-rendered, not a redirect to home).
-    let resp = post_form(&app, "/login", "email=ban%40x.test&password=pw123456", None).await;
+    let resp =
+        post_form_captcha(&app, "/login", "email=ban%40x.test&password=pw123456", None).await;
     assert_eq!(resp.status(), StatusCode::OK);
     assert!(resp
         .headers()
@@ -5858,7 +5914,7 @@ async fn a_forgotten_password_can_be_reset(pool: db::Pool) {
     );
 
     // The new password works and the old one does not.
-    let ok = post_form(
+    let ok = post_form_captcha(
         &app,
         "/login",
         "email=forgetful@test.invalid&password=a-fresh-password",
@@ -5867,7 +5923,7 @@ async fn a_forgotten_password_can_be_reset(pool: db::Pool) {
     .await;
     assert_eq!(ok.status(), StatusCode::SEE_OTHER, "the new password works");
     let old = body_string(
-        post_form(
+        post_form_captcha(
             &app,
             "/login",
             "email=forgetful@test.invalid&password=pw123456",
@@ -6044,7 +6100,7 @@ async fn a_mail_outage_does_not_change_what_a_visitor_is_told(pool: db::Pool) {
     // has to: the response is already shaped so it cannot reveal whether an
     // address is known, and a mail failure must not leak that either.
     let page = body_string(
-        post_form(
+        post_form_captcha(
             &app,
             "/register",
             "email=new@test.invalid&password=a-long-password",

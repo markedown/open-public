@@ -21,6 +21,15 @@ const RESET_TTL_HOURS: i64 = 1;
 pub struct Credentials {
     email: String,
     password: String,
+    /// The proof-of-work solution from the ALTCHA widget. Absent without
+    /// JavaScript, which is why these forms carry the widget and require it.
+    #[serde(default)]
+    altcha: Option<String>,
+}
+
+/// Whether a submitted captcha solution is present and valid.
+async fn captcha_ok(state: &AppState, token: Option<&str>) -> bool {
+    crate::captcha::ok(&state.pool, &state.secret, token).await
 }
 
 #[derive(Deserialize)]
@@ -40,6 +49,11 @@ pub async fn register_submit(
     State(state): State<AppState>,
     Form(form): Form<Credentials>,
 ) -> Result<Response, Markup> {
+    if !captcha_ok(&state, form.altcha.as_deref()).await {
+        return Err(register_page(Some(i18n::t(
+            "Please complete the verification and try again.",
+        ))));
+    }
     let email = form.email.trim();
     if !email.contains('@') || email.len() > 254 {
         return Err(register_page(Some(i18n::t("Enter a valid email address."))));
@@ -125,6 +139,11 @@ pub async fn login_submit(
     jar: CookieJar,
     Form(form): Form<Credentials>,
 ) -> Result<Response, Markup> {
+    if !captcha_ok(&state, form.altcha.as_deref()).await {
+        return Err(login_page(Some(i18n::t(
+            "Please complete the verification and try again.",
+        ))));
+    }
     let email_hash = auth::hash_email(form.email.trim(), &state.secret)
         .ok_or_else(|| login_page(Some(i18n::t("Something went wrong. Please try again."))))?;
 
@@ -237,6 +256,7 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                                 class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                         }
                     }
+                    (ui::captcha::widget())
                     (ui::button::primary(i18n::t(title)))
                 }
                 @if login {

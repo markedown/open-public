@@ -7,6 +7,7 @@ pub mod background;
 pub mod badge;
 pub mod breadcrumb;
 pub mod button;
+pub mod captcha;
 pub mod citation;
 pub mod election;
 pub mod event;

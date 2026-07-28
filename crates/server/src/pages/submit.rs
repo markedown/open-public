@@ -137,6 +137,7 @@ fn submit_page(
                     class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
                     "+ " (i18n::t("Add option"))
                 }
+                (ui::captcha::widget())
                 (ui::button::primary(i18n::t("Submit for review")))
             }
         }
@@ -170,6 +171,7 @@ pub async fn create(
     let mut question_asset: Option<i64> = None;
     let mut options: Vec<PendingOption> = Vec::new();
     let mut reject: Option<String> = None;
+    let mut altcha: Option<String> = None;
 
     loop {
         let field = match multipart.next_field().await {
@@ -183,6 +185,7 @@ pub async fn create(
         match name.as_deref() {
             Some("question") => question = field.text().await.unwrap_or_default(),
             Some("kind") => kind = field.text().await.unwrap_or_default(),
+            Some("altcha") => altcha = Some(field.text().await.unwrap_or_default()),
             Some("option") => options.push(PendingOption {
                 label: field.text().await.unwrap_or_default(),
                 asset_id: None,
@@ -217,6 +220,16 @@ pub async fn create(
     };
     let labels: Vec<String> = options.iter().map(|o| o.label.trim().to_string()).collect();
 
+    if !crate::captcha::ok(&state.pool, &state.secret, altcha.as_deref()).await {
+        return re_render(
+            &c,
+            &question,
+            &kind,
+            &labels,
+            i18n::t("Please complete the verification and try again."),
+            session.is_admin,
+        );
+    }
     if let Some(msg) = reject {
         return re_render(&c, &question, &kind, &labels, &msg, session.is_admin);
     }
