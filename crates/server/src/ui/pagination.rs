@@ -10,7 +10,7 @@ pub fn controls(base: &str, page: i64, total_pages: i64) -> Markup {
         return html! {};
     }
     let link = "border border-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent";
-    let disabled = "border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-hairline";
+    let disabled = "border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-faint";
     html! {
         nav class="mt-8 flex items-center justify-between gap-3" aria-label=(i18n::t("Pagination")) {
             @if page > 1 {

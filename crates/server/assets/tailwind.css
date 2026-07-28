@@ -125,6 +125,20 @@
   }
 }
 
+/* HTMX pending feedback. During a request htmx adds .htmx-request to the element
+   that triggered it. Give actions a clear "working" state and block a double
+   submit; leave text inputs alone so search-as-you-type does not flicker. */
+.htmx-request:not(input):not(textarea) {
+  cursor: progress;
+}
+button.htmx-request,
+a.htmx-request,
+.htmx-request button,
+.htmx-request [type="submit"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 @layer components {
   /* The compass, one question at a time.
    *

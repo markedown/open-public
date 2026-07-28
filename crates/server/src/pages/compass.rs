@@ -264,17 +264,17 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
             div class="flex flex-wrap gap-2" {
                 // Skip is the default so an unanswered position is simply left
                 // out of the score.
-                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink-muted has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-accent" {
+                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-accent" {
                     input type="radio" name=(name) value="skip" checked class="sr-only";
                     (i18n::t("Skip"))
                 }
                 @for (value, label) in scale() {
-                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-accent" {
+                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-accent" {
                         input type="radio" name=(name) value=(value) class="sr-only";
                         (label)
                     }
                 }
-                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-ink-muted has-[:checked]:text-accent" {
+                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-accent" {
                     input type="checkbox" name={"w" (t.id)} value="1"
                       class="h-3.5 w-3.5 rounded border-hairline text-accent";
                     (i18n::t("Important"))

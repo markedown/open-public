@@ -416,6 +416,7 @@ main{width:100%;max-width:640px}
 .status{font-size:clamp(30px,9vw,56px);font-weight:600;letter-spacing:-.03em;line-height:1.02}
 .cursor{display:inline-block;width:.5em;height:.92em;background:var(--ink);vertical-align:-.06em;margin-left:.14em;animation:blink 1.1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cursor{animation:none}}
 .desc{margin-top:1.5rem;max-width:48ch;color:var(--muted);font-size:14px}
 .foot{display:flex;justify-content:space-between;gap:1rem;padding-top:1.1rem;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 </style>

@@ -1116,3 +1116,6 @@ msgstr "Lütfen tek kullanımlık olmayan bir e-posta adresi kullanın."
 
 msgid "Skip to content"
 msgstr "İçeriğe geç"
+
+msgid "Remove"
+msgstr "Kaldır"

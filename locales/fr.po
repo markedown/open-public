@@ -1104,3 +1104,6 @@ msgstr "Veuillez utiliser une adresse e-mail non jetable."
 
 msgid "Skip to content"
 msgstr "Aller au contenu"
+
+msgid "Remove"
+msgstr "Retirer"

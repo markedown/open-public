@@ -10,7 +10,7 @@ pub fn breadcrumbs(items: &[Crumb]) -> Markup {
         return html! {};
     }
     html! {
-        nav class="mb-8 flex items-center gap-1.5 text-sm text-ink-muted" aria-label="Breadcrumb" {
+        nav class="mb-8 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-ink-muted" aria-label="Breadcrumb" {
             @for (i, item) in items.iter().enumerate() {
                 @if i > 0 {
                     span { "/" }
@@ -20,7 +20,7 @@ pub fn breadcrumbs(items: &[Crumb]) -> Markup {
                         (item.label)
                     }
                 } @else {
-                    span class="text-ink" { (item.label) }
+                    span class="min-w-0 break-words text-ink" { (item.label) }
                 }
             }
         }
