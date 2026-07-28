@@ -62,7 +62,7 @@ pub async fn list(
                                         (ui::badge::party_chip(sn, p.color.as_deref()))
                                     }
                                 }
-                                span class="text-sm font-medium text-ink transition-colors group-hover:text-accent" {
+                                span class="min-w-0 truncate text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                     (p.name)
                                 }
                                 @let n = members.get(&p.id).copied().unwrap_or(0);

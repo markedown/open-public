@@ -74,7 +74,7 @@ pub async fn list(
                                     span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline bg-paper-sunken font-mono text-[10px] font-semibold text-ink-muted" {
                                         (ui::initials(&p.full_name))
                                     }
-                                    span class="grow text-sm font-medium text-ink transition-colors group-hover:text-accent" {
+                                    span class="grow truncate text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                         (p.full_name)
                                     }
                                     @if let Some(pp) = party_of.get(&p.id) {
@@ -129,8 +129,7 @@ fn pagination(page: i64, total: i64, country_slug: &str, query: &str) -> Markup 
         format!("&q={}", percent_encode(query))
     };
     let box_active = "rounded-lg border border-hairline px-4 py-2 text-ink-muted transition-colors hover:border-accent hover:text-accent";
-    let box_disabled =
-        "rounded-lg border border-hairline px-4 py-2 text-ink-muted/40 cursor-default";
+    let box_disabled = "rounded-lg border border-hairline px-4 py-2 text-ink-faint cursor-default";
     html! {
         nav class="mt-8 flex items-center justify-center gap-4 text-sm" {
             @if page > 1 {

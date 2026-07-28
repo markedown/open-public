@@ -1091,7 +1091,7 @@ pub async fn news_edit(
                                 form method="post" action={"/admin/news/" (id) "/unlink"} {
                                     input type="hidden" name="kind" value=(kind);
                                     input type="hidden" name="id" value=(e.id);
-                                    button type="submit" class="text-ink-muted transition-colors hover:text-accent" { "×" }
+                                    button type="submit" aria-label=(i18n::t("Remove")) class="-my-1 inline-flex h-7 w-7 items-center justify-center rounded text-ink-muted transition-colors hover:text-accent" { "×" }
                                 }
                             }
                         }

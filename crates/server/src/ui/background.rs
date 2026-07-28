@@ -35,7 +35,7 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
                                     }
                                     @if let Some(ref f) = e.field { span { (f) } }
                                     a href=(e.source_url) target="_blank" rel="noopener noreferrer"
-                                      class="uppercase tracking-wide text-ink-muted/70 transition-colors hover:text-accent" {
+                                      class="uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
                                         (i18n::t("source")) " ↗"
                                     }
                                 }

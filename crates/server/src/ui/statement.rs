@@ -35,7 +35,7 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
                                     }
                                 }
                                 a href=(s.url) target="_blank" rel="noopener noreferrer"
-                                  class="uppercase tracking-wide text-ink-muted/70 transition-colors hover:text-accent" {
+                                  class="uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
                                     (i18n::t("source")) " ↗"
                                 }
                             }

@@ -1104,3 +1104,6 @@ msgstr "Bitte verwenden Sie eine nicht wegwerfbare E-Mail-Adresse."
 
 msgid "Skip to content"
 msgstr "Zum Inhalt springen"
+
+msgid "Remove"
+msgstr "Entfernen"
