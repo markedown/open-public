@@ -7235,3 +7235,37 @@ async fn captcha_accepts_a_solution_once_and_refuses_a_replay(pool: db::Pool) {
         .await
         .unwrap());
 }
+
+/// The challenge endpoint serves a solvable, correctly shaped ALTCHA challenge.
+#[sqlx::test(migrations = "../../migrations")]
+async fn altcha_challenge_endpoint_serves_a_solvable_challenge(pool: db::Pool) {
+    use sha2::{Digest, Sha256};
+    let app = router(pool);
+    let res = app
+        .oneshot(
+            Request::builder()
+                .uri("/altcha/challenge")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(res.status(), StatusCode::OK);
+    let body = res.into_body().collect().await.unwrap().to_bytes();
+    let d: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(d["algorithm"], "SHA-256");
+    let salt = d["salt"].as_str().unwrap();
+    let target = d["challenge"].as_str().unwrap();
+    let maxnumber = d["maxnumber"].as_u64().unwrap();
+    let solved = (0..=maxnumber).any(|n| {
+        let mut h = Sha256::new();
+        h.update(salt.as_bytes());
+        h.update(n.to_string().as_bytes());
+        let hex: String = h.finalize().iter().map(|b| format!("{b:02x}")).collect();
+        hex == target
+    });
+    assert!(
+        solved,
+        "the served challenge must be solvable within maxnumber"
+    );
+}
