@@ -7325,3 +7325,108 @@ async fn altcha_challenge_endpoint_serves_a_solvable_challenge(pool: db::Pool) {
         "the served challenge must be solvable within maxnumber"
     );
 }
+
+/// A multipart POST that deliberately carries NO captcha, for the failure path.
+async fn post_multipart_no_captcha(
+    app: &Router,
+    uri: &str,
+    parts: &[Part],
+    cookie: &str,
+) -> Response {
+    let boundary = "OPBOUNDARYnocap";
+    let mut body = Vec::new();
+    for p in parts {
+        write_part(&mut body, boundary, p);
+    }
+    body.extend_from_slice(format!("--{boundary}--\r\n").as_bytes());
+    let req = Request::builder()
+        .method("POST")
+        .uri(uri)
+        .header(
+            "content-type",
+            format!("multipart/form-data; boundary={boundary}"),
+        )
+        .header("cookie", cookie)
+        .body(Body::from(body))
+        .expect("request");
+    app.clone().oneshot(req).await.expect("response")
+}
+
+/// Registration without a solved captcha is refused: the form comes back and no
+/// account is created.
+#[sqlx::test(migrations = "../../migrations")]
+async fn register_without_a_captcha_is_refused(pool: db::Pool) {
+    let app = router(pool.clone());
+    let resp = post_form(
+        &app,
+        "/register",
+        "email=nocap@example.com&password=longenough",
+        None,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    let body = String::from_utf8(
+        resp.into_body()
+            .collect()
+            .await
+            .unwrap()
+            .to_bytes()
+            .to_vec(),
+    )
+    .unwrap();
+    // The form is re-rendered (widget present), not the check-your-email page.
+    assert!(body.contains("altcha-widget"));
+    let users: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(users, 0, "no account is created without a captcha");
+}
+
+/// Login without a solved captcha is refused before any credential check.
+#[sqlx::test(migrations = "../../migrations")]
+async fn login_without_a_captcha_is_refused(pool: db::Pool) {
+    // A real, verified account exists.
+    let email_hash = server::auth::hash_email("known@example.com", SECRET).unwrap();
+    let pw = server::auth::hash_password("rightpassword").unwrap();
+    let uid = db::users::insert(&pool, &email_hash, &pw).await.unwrap();
+    db::users::mark_verified(&pool, uid).await.unwrap();
+
+    let app = router(pool);
+    let resp = post_form(
+        &app,
+        "/login",
+        "email=known@example.com&password=rightpassword",
+        None,
+    )
+    .await;
+    // The form is returned (200), not a redirect with a session cookie.
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert!(resp.headers().get("set-cookie").is_none());
+}
+
+/// A poll submission without a solved captcha is refused and stores nothing.
+#[sqlx::test(migrations = "../../migrations")]
+async fn submission_without_a_captcha_is_refused(pool: db::Pool) {
+    seed(&pool).await;
+    let (_uid, cookie) = user_cookie(&pool, "nocap@x.test").await;
+    let app = router(pool.clone());
+    let resp = post_multipart_no_captcha(
+        &app,
+        &format!("/{COUNTRY}/polls/submit"),
+        &[
+            Part::Text("question", "Which colour is best?".into()),
+            Part::Text("kind", "single".into()),
+            Part::Text("option", "Red".into()),
+            Part::Text("option", "Blue".into()),
+        ],
+        &cookie,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK); // form re-rendered, not a redirect
+    let subs: i64 = sqlx::query_scalar("select count(*) from poll_submissions")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(subs, 0, "no submission is stored without a captcha");
+}
