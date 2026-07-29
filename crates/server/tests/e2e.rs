@@ -7622,3 +7622,161 @@ fn pct(b64: &str) -> String {
         .replace('/', "%2F")
         .replace('=', "%3D")
 }
+
+/// A blind-signed token casts exactly one anonymous ballot, cannot be
+/// double-spent, and a forged token is refused.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_token_casts_one_anonymous_ballot_and_no_more(pool: db::Pool) {
+    use base64::engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD};
+    use base64::Engine;
+    use blind_rsa_signatures::{BlindSignature, DefaultRng, PublicKey, Randomized, Sha384, PSS};
+    seed(&pool).await;
+    let (_uid, cookie) = user_cookie(&pool, "voter@x.test").await;
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let option_id: i64 = sqlx::query_scalar(
+        "select id from poll_options where poll_id = $1 order by position limit 1",
+    )
+    .bind(poll_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    // Issue a token through the real endpoint.
+    server::voting::ensure_issuer_key(&pool, poll_id)
+        .await
+        .unwrap();
+    let pk_der = db::voting::public_key(&pool, poll_id)
+        .await
+        .unwrap()
+        .unwrap();
+    let pk = PublicKey::<Sha384, PSS, Randomized>::from_der(&pk_der).unwrap();
+    let token = [5u8; 32];
+    let blinding = pk.blind(&mut DefaultRng, token).unwrap();
+    let app = router(pool.clone());
+    let issue = post_form(
+        &app,
+        "/tr/poll/party-poll/token",
+        &format!(
+            "blinded={}",
+            pct(&STANDARD.encode(AsRef::<[u8]>::as_ref(&blinding.blind_message)))
+        ),
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(issue.status(), StatusCode::OK);
+    let bs = issue.into_body().collect().await.unwrap().to_bytes();
+    let blind_sig = BlindSignature(
+        STANDARD
+            .decode(String::from_utf8(bs.to_vec()).unwrap().trim())
+            .unwrap(),
+    );
+    let sig = pk.finalize(&blind_sig, &blinding, token).unwrap();
+    let rnd = blinding.msg_randomizer.map(|r| r.0.to_vec());
+
+    // Cast anonymously (no cookie): url-safe base64 fields.
+    let cast_body = |t: &[u8], s: &[u8]| {
+        let mut b = format!(
+            "token={}&signature={}&option_id={}",
+            URL_SAFE_NO_PAD.encode(t),
+            URL_SAFE_NO_PAD.encode(s),
+            option_id
+        );
+        if let Some(r) = &rnd {
+            b.push_str(&format!("&randomizer={}", URL_SAFE_NO_PAD.encode(r)));
+        }
+        b
+    };
+    let resp = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        &cast_body(&token, &sig.0),
+        None,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    let ballots: i64 = sqlx::query_scalar("select count(*) from vote_ballots where poll_id = $1")
+        .bind(poll_id)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(ballots, 1);
+
+    // The same token cannot be spent again.
+    let again = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        &cast_body(&token, &sig.0),
+        None,
+    )
+    .await;
+    assert_eq!(again.status(), StatusCode::CONFLICT);
+    let ballots: i64 = sqlx::query_scalar("select count(*) from vote_ballots where poll_id = $1")
+        .bind(poll_id)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(ballots, 1);
+
+    // A forged token (never signed by the poll key) is refused.
+    let forged = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        &cast_body(&[9u8; 32], &[9u8; 256]),
+        None,
+    )
+    .await;
+    assert_eq!(forged.status(), StatusCode::FORBIDDEN);
+}
+
+/// The anonymous cast endpoint refuses a request with no token, a request with
+/// no valid option, and a well-formed request for a poll that has no issuer key.
+#[sqlx::test(migrations = "../../migrations")]
+async fn cast_refusals(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let opt: i64 = sqlx::query_scalar(
+        "select id from poll_options where poll_id = $1 order by position limit 1",
+    )
+    .bind(poll_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    // No token: bad request.
+    let r = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        &format!("signature=AAAA&option_id={opt}"),
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::BAD_REQUEST);
+
+    // Token and signature present but no option belongs to the poll: bad request.
+    let r = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        "token=AAAA&signature=AAAA&option_id=999999",
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::BAD_REQUEST);
+
+    // Well-formed, but the poll never issued a token, so it has no key: refused.
+    let r = post_form(
+        &app,
+        "/tr/poll/party-poll/cast",
+        &format!("token=AAAA&signature=AAAA&option_id={opt}"),
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::CONFLICT);
+}

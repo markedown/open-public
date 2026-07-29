@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into ballot_options (ballot_id, option_id) values ($1, $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6bdf875484072b35b8b6a9e4a7466295979f68ca118e1e16095c7b3b3c368105"
+}
