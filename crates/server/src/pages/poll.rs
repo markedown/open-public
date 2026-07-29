@@ -1,11 +1,12 @@
 use axum::{
     extract::{Path, State},
-    http::HeaderMap,
+    http::{header, HeaderMap, StatusCode},
     response::{IntoResponse, Redirect, Response},
-    Json,
+    Form, Json,
 };
+use base64::Engine;
 use maud::{html, Markup};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::auth::AuthSession;
 use crate::error::PageError;
@@ -96,6 +97,68 @@ pub async fn chain(
         votes,
         head_hash,
     }))
+}
+
+/// The blinded token request a client submits to be blind-signed. `blinded` is
+/// base64 of the client's blinded message (it hides the real token from us).
+#[derive(Deserialize)]
+pub struct TokenRequest {
+    blinded: String,
+}
+
+/// Issue one blind-signed voting token to a verified account for a poll. The
+/// server signs the blinded message without ever seeing the token inside it, and
+/// records the entitlement (one per account per poll). It learns that the account
+/// participated, never how it will vote, and cannot link the two. See
+/// docs/anonymous-voting.md.
+pub async fn issue_token(
+    session: AuthSession,
+    State(state): State<AppState>,
+    Path((_country, slug)): Path<(String, String)>,
+    Form(req): Form<TokenRequest>,
+) -> Result<Response, PageError> {
+    let poll = db::polls::get_by_slug(&state.pool, &slug)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    if !db::polls::is_open(&state.pool, poll.id).await? {
+        return Ok(StatusCode::CONFLICT.into_response());
+    }
+
+    // Validate the blinded message before consuming the entitlement: it must be
+    // base64 and exactly the RSA-2048 modulus length. A malformed request must
+    // not burn the account's single token.
+    let Ok(blinded) = base64::engine::general_purpose::STANDARD.decode(req.blinded.trim()) else {
+        return Ok(StatusCode::BAD_REQUEST.into_response());
+    };
+    if blinded.len() != crate::voting::MODULUS_BYTES {
+        return Ok(StatusCode::BAD_REQUEST.into_response());
+    }
+
+    crate::voting::ensure_issuer_key(&state.pool, poll.id)
+        .await
+        .map_err(|_| PageError::Server)?;
+    let Some(private_key) = db::voting::private_key(&state.pool, poll.id).await? else {
+        // No usable key (poll closed and key destroyed).
+        return Ok(StatusCode::CONFLICT.into_response());
+    };
+
+    // The entitlement insert is the atomic one-token-per-account gate.
+    if !db::voting::record_entitlement(&state.pool, poll.id, session.user_id).await? {
+        return Ok(StatusCode::CONFLICT.into_response());
+    }
+
+    match crate::voting::blind_sign(&private_key, &blinded) {
+        Ok(blind_sig) => {
+            let body = base64::engine::general_purpose::STANDARD.encode(blind_sig);
+            Ok(([(header::CONTENT_TYPE, "text/plain; charset=utf-8")], body).into_response())
+        }
+        Err(e) => {
+            tracing::error!(?e, "blind sign failed");
+            // Give the token back so the account can retry.
+            let _ = db::voting::delete_entitlement(&state.pool, poll.id, session.user_id).await;
+            Err(PageError::Server)
+        }
+    }
 }
 
 pub async fn vote(

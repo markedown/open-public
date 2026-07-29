@@ -20,6 +20,9 @@ type IssuerSecretKey = SecretKey<Sha384, PSS, Randomized>;
 /// small signatures, fast verify, ample security for a per-poll, per-close key.
 const MODULUS_BITS: usize = 2048;
 
+/// The modulus in bytes: a blinded message and a signature are exactly this long.
+pub const MODULUS_BYTES: usize = MODULUS_BITS / 8;
+
 /// Generate a fresh per-poll issuer keypair, returned DER-encoded as
 /// `(public, private)`. Keygen is ~85 ms of CPU, so callers run it off the async
 /// runtime (see `ensure_issuer_key`).
