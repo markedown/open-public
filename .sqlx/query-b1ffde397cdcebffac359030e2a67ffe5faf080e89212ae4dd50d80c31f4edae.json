@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select public_key from poll_issuer_keys where poll_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "public_key",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "poll_issuer_keys",
+            "name": "public_key"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b1ffde397cdcebffac359030e2a67ffe5faf080e89212ae4dd50d80c31f4edae"
+}

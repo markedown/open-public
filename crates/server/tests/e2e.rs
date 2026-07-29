@@ -7449,3 +7449,31 @@ async fn register_rejects_a_disposable_email_domain(pool: db::Pool) {
         .unwrap();
     assert_eq!(users, 0, "no account is created for a disposable domain");
 }
+
+/// A poll gets an issuer keypair on demand, and asking again keeps the same key.
+#[sqlx::test(migrations = "../../migrations")]
+async fn ensure_issuer_key_creates_once_and_is_idempotent(pool: db::Pool) {
+    let poll: i64 =
+        sqlx::query_scalar("insert into polls (question, slug) values ('Q?', 'p') returning id")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert!(!db::voting::has_issuer_key(&pool, poll).await.unwrap());
+
+    server::voting::ensure_issuer_key(&pool, poll)
+        .await
+        .unwrap();
+    let pk1 = db::voting::public_key(&pool, poll).await.unwrap().unwrap();
+    assert!(!pk1.is_empty());
+    assert!(db::voting::private_key(&pool, poll)
+        .await
+        .unwrap()
+        .is_some());
+
+    // Idempotent: the key is unchanged on a second call.
+    server::voting::ensure_issuer_key(&pool, poll)
+        .await
+        .unwrap();
+    let pk2 = db::voting::public_key(&pool, poll).await.unwrap().unwrap();
+    assert_eq!(pk1, pk2);
+}

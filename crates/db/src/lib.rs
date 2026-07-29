@@ -29,6 +29,7 @@ pub mod statements;
 pub mod submissions;
 pub mod translations;
 pub mod users;
+pub mod voting;
 
 /// A Postgres connection pool.
 pub type Pool = PgPool;

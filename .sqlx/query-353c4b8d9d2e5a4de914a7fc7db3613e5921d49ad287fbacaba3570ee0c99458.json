@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update poll_issuer_keys set private_key = null where poll_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "353c4b8d9d2e5a4de914a7fc7db3613e5921d49ad287fbacaba3570ee0c99458"
+}
