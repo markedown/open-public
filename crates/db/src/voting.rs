@@ -125,6 +125,30 @@ mod tests {
             .unwrap()
     }
 
+    async fn a_user(pool: &Pool) -> i64 {
+        sqlx::query_scalar(
+            "insert into users (email_hash, password_hash) values ('h', 'p') returning id",
+        )
+        .fetch_one(pool)
+        .await
+        .unwrap()
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn entitlements_record_once_and_delete(pool: Pool) {
+        let poll = a_poll(&pool).await;
+        let user = a_user(&pool).await;
+
+        assert!(!has_entitlement(&pool, poll, user).await.unwrap());
+        // First record inserts; a repeat is the one-per-account refusal.
+        assert!(record_entitlement(&pool, poll, user).await.unwrap());
+        assert!(has_entitlement(&pool, poll, user).await.unwrap());
+        assert!(!record_entitlement(&pool, poll, user).await.unwrap());
+        // Delete lets the account request again (the sign-failure compensation).
+        delete_entitlement(&pool, poll, user).await.unwrap();
+        assert!(!has_entitlement(&pool, poll, user).await.unwrap());
+    }
+
     #[sqlx::test(migrations = "../../migrations")]
     async fn issuer_key_is_stored_read_and_its_private_half_destroyed(pool: Pool) {
         let poll = a_poll(&pool).await;

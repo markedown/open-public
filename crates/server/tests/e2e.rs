@@ -7584,6 +7584,32 @@ async fn token_issuance_refusals(pool: db::Pool) {
         .await
         .unwrap());
 
+    // Not valid base64 at all: bad request.
+    let resp = post_form(
+        &app,
+        "/tr/poll/party-poll/token",
+        "blinded=not%20base64%21",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+
+    // A poll whose private key was destroyed at close issues nothing, even with a
+    // well-formed request.
+    use base64::Engine;
+    server::voting::ensure_issuer_key(&pool, poll_id)
+        .await
+        .unwrap();
+    db::voting::destroy_private_key(&pool, poll_id)
+        .await
+        .unwrap();
+    let ok_len = format!(
+        "blinded={}",
+        pct(&base64::engine::general_purpose::STANDARD.encode([0u8; 256]))
+    );
+    let resp = post_form(&app, "/tr/poll/party-poll/token", &ok_len, Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::CONFLICT);
+
     // Anonymous: redirected to sign in.
     let resp = post_form(&app, "/tr/poll/party-poll/token", "blinded=AAAA", None).await;
     assert_eq!(resp.status(), StatusCode::SEE_OTHER);
