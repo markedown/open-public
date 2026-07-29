@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into poll_issuer_keys (poll_id, public_key, private_key) values ($1, $2, $3) on conflict (poll_id) do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Bytea",
+        "Bytea"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ba4e324561357651682b8db6343f5c92f261dc1e5483cb295f895e6ce7f17e6e"
+}

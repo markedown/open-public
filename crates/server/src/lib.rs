@@ -17,6 +17,7 @@ pub mod pages;
 pub mod reviewer;
 pub mod state;
 pub mod ui;
+pub mod voting;
 
 use std::path::Path;
 
