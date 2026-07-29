@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into vote_entitlements (poll_id, user_id) values ($1, $2) on conflict (poll_id, user_id) do nothing",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "da1b78b9caf7a60db84931dbc8d025e59b49c95daba0513e697b7078d8a472e5"
+}

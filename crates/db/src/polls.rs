@@ -447,3 +447,15 @@ async fn options_for(pool: &Pool, poll_id: i64) -> Result<Vec<PollOption>> {
     .await?;
     Ok(rows)
 }
+
+/// Whether a poll is open for participation: no close time, or it has not passed.
+/// A poll that does not exist is not open.
+pub async fn is_open(pool: &Pool, poll_id: i64) -> Result<bool> {
+    let open = sqlx::query_scalar!(
+        r#"select (closes_at is null or closes_at > now()) as "open!" from polls where id = $1"#,
+        poll_id
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(open.unwrap_or(false))
+}

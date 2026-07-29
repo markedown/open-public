@@ -144,6 +144,10 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         )
         .route("/{country}/poll/{slug}", get(pages::poll::detail))
         .route("/{country}/poll/{slug}/vote", post(pages::poll::vote))
+        .route(
+            "/{country}/poll/{slug}/token",
+            post(pages::poll::issue_token),
+        )
         .route("/{country}/poll/{slug}/chain", get(pages::poll::chain))
         .route("/submissions", get(pages::submit::mine))
         .route("/feed", get(pages::feed::page))

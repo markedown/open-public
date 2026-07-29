@@ -73,6 +73,47 @@ pub async fn destroy_private_key(pool: &Pool, poll_id: i64) -> Result<()> {
     Ok(())
 }
 
+/// Whether an account already holds an entitlement (a token) for a poll.
+pub async fn has_entitlement(pool: &Pool, poll_id: i64, user_id: i64) -> Result<bool> {
+    let e = sqlx::query_scalar!(
+        "select exists(select 1 from vote_entitlements where poll_id = $1 and user_id = $2)",
+        poll_id,
+        user_id
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(e.unwrap_or(false))
+}
+
+/// Record that an account was issued a token for a poll. Returns `true` if this
+/// is the first (the insert happened), `false` if one already existed. The unique
+/// constraint makes this the atomic one-token-per-account gate under a race.
+pub async fn record_entitlement(pool: &Pool, poll_id: i64, user_id: i64) -> Result<bool> {
+    let n = sqlx::query!(
+        "insert into vote_entitlements (poll_id, user_id) values ($1, $2) \
+         on conflict (poll_id, user_id) do nothing",
+        poll_id,
+        user_id
+    )
+    .execute(pool)
+    .await?
+    .rows_affected();
+    Ok(n == 1)
+}
+
+/// Remove an entitlement, to compensate if signing fails after it was recorded,
+/// so the account can request its token again.
+pub async fn delete_entitlement(pool: &Pool, poll_id: i64, user_id: i64) -> Result<()> {
+    sqlx::query!(
+        "delete from vote_entitlements where poll_id = $1 and user_id = $2",
+        poll_id,
+        user_id
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -82,6 +123,30 @@ mod tests {
             .fetch_one(pool)
             .await
             .unwrap()
+    }
+
+    async fn a_user(pool: &Pool) -> i64 {
+        sqlx::query_scalar(
+            "insert into users (email_hash, password_hash) values ('h', 'p') returning id",
+        )
+        .fetch_one(pool)
+        .await
+        .unwrap()
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn entitlements_record_once_and_delete(pool: Pool) {
+        let poll = a_poll(&pool).await;
+        let user = a_user(&pool).await;
+
+        assert!(!has_entitlement(&pool, poll, user).await.unwrap());
+        // First record inserts; a repeat is the one-per-account refusal.
+        assert!(record_entitlement(&pool, poll, user).await.unwrap());
+        assert!(has_entitlement(&pool, poll, user).await.unwrap());
+        assert!(!record_entitlement(&pool, poll, user).await.unwrap());
+        // Delete lets the account request again (the sign-failure compensation).
+        delete_entitlement(&pool, poll, user).await.unwrap();
+        assert!(!has_entitlement(&pool, poll, user).await.unwrap());
     }
 
     #[sqlx::test(migrations = "../../migrations")]

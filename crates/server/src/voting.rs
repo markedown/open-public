@@ -20,6 +20,9 @@ type IssuerSecretKey = SecretKey<Sha384, PSS, Randomized>;
 /// small signatures, fast verify, ample security for a per-poll, per-close key.
 const MODULUS_BITS: usize = 2048;
 
+/// The modulus in bytes: a blinded message and a signature are exactly this long.
+pub const MODULUS_BYTES: usize = MODULUS_BITS / 8;
+
 /// Generate a fresh per-poll issuer keypair, returned DER-encoded as
 /// `(public, private)`. Keygen is ~85 ms of CPU, so callers run it off the async
 /// runtime (see `ensure_issuer_key`).
@@ -117,5 +120,24 @@ mod tests {
         // A signature under a different poll's key does not verify.
         let (other_pk_der, _) = generate_issuer_keypair().unwrap();
         assert!(!verify_token(&other_pk_der, &token, &sig.0, rnd.as_deref()));
+    }
+
+    #[test]
+    fn verify_rejects_malformed_inputs() {
+        // A public key that does not decode is simply invalid.
+        assert!(!verify_token(b"not-a-key", &[0u8; 32], &[0u8; 256], None));
+        // A valid key with a randomizer of the wrong length is invalid.
+        let (pk_der, _) = generate_issuer_keypair().unwrap();
+        assert!(!verify_token(
+            &pk_der,
+            &[0u8; 32],
+            &[0u8; 256],
+            Some(&[1u8; 5])
+        ));
+    }
+
+    #[test]
+    fn blind_sign_rejects_a_bad_key() {
+        assert!(blind_sign(b"not-a-key", &[0u8; 256]).is_err());
     }
 }

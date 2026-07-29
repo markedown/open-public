@@ -7477,3 +7477,148 @@ async fn ensure_issuer_key_creates_once_and_is_idempotent(pool: db::Pool) {
     let pk2 = db::voting::public_key(&pool, poll).await.unwrap().unwrap();
     assert_eq!(pk1, pk2);
 }
+
+/// A verified account is issued exactly one blind-signed, verifiable token per
+/// poll; the token verifies under the poll's key, the entitlement is recorded,
+/// and a second request is refused.
+#[sqlx::test(migrations = "../../migrations")]
+async fn token_issuance_is_one_per_account_and_verifiable(pool: db::Pool) {
+    use base64::Engine;
+    use blind_rsa_signatures::{BlindSignature, DefaultRng, PublicKey, Randomized, Sha384, PSS};
+    seed(&pool).await;
+    let (uid, cookie) = user_cookie(&pool, "voter@x.test").await;
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Simulate the poll page having the public key: ensure it, then read it.
+    server::voting::ensure_issuer_key(&pool, poll_id)
+        .await
+        .unwrap();
+    let pk_der = db::voting::public_key(&pool, poll_id)
+        .await
+        .unwrap()
+        .unwrap();
+    let pk = PublicKey::<Sha384, PSS, Randomized>::from_der(&pk_der).unwrap();
+
+    // Client: blind a random token and post the blinded message.
+    let token = [3u8; 32];
+    let blinding = pk.blind(&mut DefaultRng, token).unwrap();
+    let blinded = base64::engine::general_purpose::STANDARD
+        .encode(AsRef::<[u8]>::as_ref(&blinding.blind_message));
+    let app = router(pool.clone());
+    let form = format!("blinded={}", pct(&blinded));
+    let resp = post_form(&app, "/tr/poll/party-poll/token", &form, Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+
+    // Finalize the returned blind signature and confirm the token verifies.
+    let body = resp.into_body().collect().await.unwrap().to_bytes();
+    let blind_sig = BlindSignature(
+        base64::engine::general_purpose::STANDARD
+            .decode(String::from_utf8(body.to_vec()).unwrap().trim())
+            .unwrap(),
+    );
+    let sig = pk.finalize(&blind_sig, &blinding, token).unwrap();
+    let rnd = blinding.msg_randomizer.map(|r| r.0.to_vec());
+    assert!(server::voting::verify_token(
+        &pk_der,
+        &token,
+        &sig.0,
+        rnd.as_deref()
+    ));
+
+    // The entitlement is recorded, and a second request is refused.
+    assert!(db::voting::has_entitlement(&pool, poll_id, uid)
+        .await
+        .unwrap());
+    let b2 = pk.blind(&mut DefaultRng, [4u8; 32]).unwrap();
+    let form2 = format!(
+        "blinded={}",
+        pct(&base64::engine::general_purpose::STANDARD
+            .encode(AsRef::<[u8]>::as_ref(&b2.blind_message)))
+    );
+    let resp2 = post_form(&app, "/tr/poll/party-poll/token", &form2, Some(&cookie)).await;
+    assert_eq!(resp2.status(), StatusCode::CONFLICT);
+}
+
+/// A closed poll issues no token; a malformed request is refused without burning
+/// the account's entitlement; an anonymous request is sent to sign in.
+#[sqlx::test(migrations = "../../migrations")]
+async fn token_issuance_refusals(pool: db::Pool) {
+    seed(&pool).await;
+    let (uid, cookie) = user_cookie(&pool, "voter@x.test").await;
+    let app = router(pool.clone());
+
+    // Closed poll: refused.
+    let closed: i64 = sqlx::query_scalar(
+        "insert into polls (question, slug, closes_at) values ('C', 'closed-poll', now() - interval '1 day') returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let resp = post_form(
+        &app,
+        "/tr/poll/closed-poll/token",
+        "blinded=AAAA",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::CONFLICT);
+    let _ = closed;
+
+    // Malformed blinded message on an open poll: bad request, no entitlement used.
+    let resp = post_form(
+        &app,
+        "/tr/poll/party-poll/token",
+        "blinded=AAAA",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert!(!db::voting::has_entitlement(&pool, poll_id, uid)
+        .await
+        .unwrap());
+
+    // Not valid base64 at all: bad request.
+    let resp = post_form(
+        &app,
+        "/tr/poll/party-poll/token",
+        "blinded=not%20base64%21",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+
+    // A poll whose private key was destroyed at close issues nothing, even with a
+    // well-formed request.
+    use base64::Engine;
+    server::voting::ensure_issuer_key(&pool, poll_id)
+        .await
+        .unwrap();
+    db::voting::destroy_private_key(&pool, poll_id)
+        .await
+        .unwrap();
+    let ok_len = format!(
+        "blinded={}",
+        pct(&base64::engine::general_purpose::STANDARD.encode([0u8; 256]))
+    );
+    let resp = post_form(&app, "/tr/poll/party-poll/token", &ok_len, Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::CONFLICT);
+
+    // Anonymous: redirected to sign in.
+    let resp = post_form(&app, "/tr/poll/party-poll/token", "blinded=AAAA", None).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(resp.headers().get("location").unwrap(), "/login");
+}
+
+/// Percent-encode base64 for a urlencoded form value.
+fn pct(b64: &str) -> String {
+    b64.replace('+', "%2B")
+        .replace('/', "%2F")
+        .replace('=', "%3D")
+}
