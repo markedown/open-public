@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into vote_ballots (poll_id, token, signature, msg_randomizer, seq, content_hash, prev_hash) values ($1, $2, $3, $4, $5, $6, $7) on conflict (poll_id, token) do nothing returning id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Bytea",
+        "Bytea",
+        "Bytea",
+        "Int8",
+        "Bytea",
+        "Bytea"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "09116354b2c89caf3e79f3940e59187ff2fd98ff05971f6dafd5dcf901e09be1"
+}

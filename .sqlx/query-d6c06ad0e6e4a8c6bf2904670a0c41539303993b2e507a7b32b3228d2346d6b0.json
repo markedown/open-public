@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select seq, content_hash from vote_ballots where poll_id = $1 order by seq desc limit 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "seq",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "seq"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "content_hash",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "content_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "d6c06ad0e6e4a8c6bf2904670a0c41539303993b2e507a7b32b3228d2346d6b0"
+}

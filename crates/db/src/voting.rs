@@ -114,6 +114,111 @@ pub async fn delete_entitlement(pool: &Pool, poll_id: i64, user_id: i64) -> Resu
     Ok(())
 }
 
+use sha2::{Digest, Sha256};
+
+/// The outcome of trying to spend a token as an anonymous ballot.
+pub enum CastOutcome {
+    /// Recorded; carries the new chain position and the poll's new head hash.
+    Cast { seq: i64, head_hash: Vec<u8> },
+    /// The token was already spent for this poll; nothing changed.
+    AlreadySpent,
+}
+
+/// The genesis hash that seeds a poll's ballot chain.
+fn ballot_genesis(poll_id: i64) -> Vec<u8> {
+    let mut h = Sha256::new();
+    h.update(b"open-public/ballot/");
+    h.update(poll_id.to_string().as_bytes());
+    h.finalize().to_vec()
+}
+
+/// One ballot's chained hash: over the previous head, the poll, the token, the
+/// selected options (sorted), and the sequence number.
+fn ballot_hash(prev: &[u8], poll_id: i64, token: &[u8], options: &[i64], seq: i64) -> Vec<u8> {
+    let mut h = Sha256::new();
+    h.update(prev);
+    h.update(poll_id.to_be_bytes());
+    h.update(token);
+    for o in options {
+        h.update(o.to_be_bytes());
+    }
+    h.update(seq.to_be_bytes());
+    h.finalize().to_vec()
+}
+
+/// Spend a token as an anonymous ballot: append it to the poll's hash chain and
+/// record its options, all under an advisory lock so the chain stays linear and
+/// gap-free. The unique (poll, token) constraint makes a replay a no-op
+/// (`AlreadySpent`). The signature is verified by the caller; this layer only
+/// stores it for public verification and never sees an account.
+pub async fn cast_ballot(
+    pool: &Pool,
+    poll_id: i64,
+    token: &[u8],
+    signature: &[u8],
+    msg_randomizer: Option<&[u8]>,
+    option_ids: &[i64],
+) -> Result<CastOutcome> {
+    let mut options = option_ids.to_vec();
+    options.sort_unstable();
+    options.dedup();
+
+    let mut tx = pool.begin().await?;
+    // Serialize spends on this poll so the chain is linear.
+    sqlx::query!("select pg_advisory_xact_lock($1)", poll_id)
+        .execute(&mut *tx)
+        .await?;
+
+    let prev = sqlx::query!(
+        "select seq, content_hash from vote_ballots where poll_id = $1 order by seq desc limit 1",
+        poll_id
+    )
+    .fetch_optional(&mut *tx)
+    .await?;
+    let (prev_seq, prev_hash) = match prev {
+        Some(r) => (r.seq, r.content_hash),
+        None => (0, ballot_genesis(poll_id)),
+    };
+    let seq = prev_seq + 1;
+    let content = ballot_hash(&prev_hash, poll_id, token, &options, seq);
+
+    let ballot_id: Option<i64> = sqlx::query_scalar!(
+        "insert into vote_ballots \
+           (poll_id, token, signature, msg_randomizer, seq, content_hash, prev_hash) \
+         values ($1, $2, $3, $4, $5, $6, $7) \
+         on conflict (poll_id, token) do nothing returning id",
+        poll_id,
+        token,
+        signature,
+        msg_randomizer,
+        seq,
+        content,
+        prev_hash
+    )
+    .fetch_optional(&mut *tx)
+    .await?;
+
+    let Some(ballot_id) = ballot_id else {
+        tx.rollback().await?;
+        return Ok(CastOutcome::AlreadySpent);
+    };
+
+    for option_id in &options {
+        sqlx::query!(
+            "insert into ballot_options (ballot_id, option_id) values ($1, $2)",
+            ballot_id,
+            option_id
+        )
+        .execute(&mut *tx)
+        .await?;
+    }
+    tx.commit().await?;
+    Ok(CastOutcome::Cast {
+        seq,
+        head_hash: content,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -132,6 +237,60 @@ mod tests {
         .fetch_one(pool)
         .await
         .unwrap()
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn ballots_chain_and_reject_a_replay(pool: Pool) {
+        let poll = a_poll(&pool).await;
+        let opt: i64 = sqlx::query_scalar(
+            "insert into poll_options (poll_id, label, position) values ($1, 'A', 0) returning id",
+        )
+        .bind(poll)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+        // First ballot: seq 1.
+        let head1 = match cast_ballot(&pool, poll, b"token-a", b"sig-a", None, &[opt])
+            .await
+            .unwrap()
+        {
+            CastOutcome::Cast { seq, head_hash } => {
+                assert_eq!(seq, 1);
+                head_hash
+            }
+            CastOutcome::AlreadySpent => panic!("first ballot should be cast"),
+        };
+
+        // Second ballot: seq 2, chained onto the first.
+        match cast_ballot(&pool, poll, b"token-b", b"sig-b", None, &[opt])
+            .await
+            .unwrap()
+        {
+            CastOutcome::Cast { seq, .. } => assert_eq!(seq, 2),
+            CastOutcome::AlreadySpent => panic!("second ballot should be cast"),
+        }
+        let prev2: Vec<u8> =
+            sqlx::query_scalar("select prev_hash from vote_ballots where poll_id = $1 and seq = 2")
+                .bind(poll)
+                .fetch_one(&pool)
+                .await
+                .unwrap();
+        assert_eq!(prev2, head1, "each ballot chains onto the previous head");
+
+        // Re-spending token-a is a no-op.
+        assert!(matches!(
+            cast_ballot(&pool, poll, b"token-a", b"sig-a", None, &[opt])
+                .await
+                .unwrap(),
+            CastOutcome::AlreadySpent
+        ));
+        let count: i64 = sqlx::query_scalar("select count(*) from vote_ballots where poll_id = $1")
+            .bind(poll)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        assert_eq!(count, 2);
     }
 
     #[sqlx::test(migrations = "../../migrations")]

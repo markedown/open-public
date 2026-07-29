@@ -161,6 +161,83 @@ pub async fn issue_token(
     }
 }
 
+/// Cast an anonymous ballot by spending a blind-signed token. No account is
+/// involved: the token proves the voter is eligible, and the ballot cannot be
+/// linked to whoever the token was issued to. `token`, `signature`, and the
+/// optional `randomizer` are URL-safe base64 (no padding); `option_id` fields
+/// carry the chosen options. See docs/anonymous-voting.md.
+pub async fn cast(
+    State(state): State<AppState>,
+    Path((country, slug)): Path<(String, String)>,
+    body: String,
+) -> Result<Response, PageError> {
+    use base64::engine::general_purpose::URL_SAFE_NO_PAD;
+
+    let poll = db::polls::get_by_slug(&state.pool, &slug)
+        .await?
+        .ok_or(PageError::NotFound)?;
+    if !db::polls::is_open(&state.pool, poll.id).await? {
+        return Ok(StatusCode::CONFLICT.into_response());
+    }
+
+    let (mut token, mut signature, mut randomizer) = (None, None, None);
+    let mut options: Vec<i64> = Vec::new();
+    for kv in body.split('&') {
+        let Some((key, value)) = kv.split_once('=') else {
+            continue;
+        };
+        match key {
+            "token" => token = URL_SAFE_NO_PAD.decode(value).ok(),
+            "signature" => signature = URL_SAFE_NO_PAD.decode(value).ok(),
+            "randomizer" => randomizer = URL_SAFE_NO_PAD.decode(value).ok(),
+            "option_id" => {
+                if let Ok(id) = value.parse::<i64>() {
+                    if poll.options.iter().any(|o| o.id == id) {
+                        options.push(id);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    let (Some(token), Some(signature)) = (token, signature) else {
+        return Ok(StatusCode::BAD_REQUEST.into_response());
+    };
+    // A single-choice poll records one option; multi records all chosen.
+    if poll.kind != "multi" {
+        options.truncate(1);
+    }
+    if options.is_empty() {
+        return Ok(StatusCode::BAD_REQUEST.into_response());
+    }
+
+    // The token must be validly signed by this poll's issuer key.
+    let Some(public_key) = db::voting::public_key(&state.pool, poll.id).await? else {
+        return Ok(StatusCode::CONFLICT.into_response());
+    };
+    if !crate::voting::verify_token(&public_key, &token, &signature, randomizer.as_deref()) {
+        return Ok(StatusCode::FORBIDDEN.into_response());
+    }
+
+    match db::voting::cast_ballot(
+        &state.pool,
+        poll.id,
+        &token,
+        &signature,
+        randomizer.as_deref(),
+        &options,
+    )
+    .await?
+    {
+        db::voting::CastOutcome::Cast { .. } => {
+            Ok(Redirect::to(&format!("/{country}/poll/{slug}")).into_response())
+        }
+        // The token was already spent: the ballot stands, this is a no-op.
+        db::voting::CastOutcome::AlreadySpent => Ok(StatusCode::CONFLICT.into_response()),
+    }
+}
+
 pub async fn vote(
     session: AuthSession,
     State(state): State<AppState>,
