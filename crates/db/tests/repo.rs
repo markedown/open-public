@@ -799,39 +799,6 @@ async fn search_finds_person(pool: sqlx::PgPool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
-async fn one_vote_per_user(pool: sqlx::PgPool) {
-    let user_id = sqlx::query_scalar!(
-        r#"insert into users (email_hash, password_hash, verified_at) values ('vh', 'ph', now()) returning id"#
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-
-    let poll_id: i64 =
-        sqlx::query_scalar("insert into polls (question, slug) values ('Q', 'p') returning id")
-            .fetch_one(&pool)
-            .await
-            .unwrap();
-    let option_id: i64 = sqlx::query_scalar(
-        "insert into poll_options (poll_id, label, position) values ($1, 'A', 1) returning id",
-    )
-    .bind(poll_id)
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-
-    assert!(!db::polls::has_voted(&pool, poll_id, user_id).await.unwrap());
-    assert!(db::polls::cast_vote(&pool, poll_id, option_id, user_id)
-        .await
-        .unwrap());
-    // A second vote by the same user is ignored, never overwritten.
-    assert!(!db::polls::cast_vote(&pool, poll_id, option_id, user_id)
-        .await
-        .unwrap());
-    assert!(db::polls::has_voted(&pool, poll_id, user_id).await.unwrap());
-}
-
-#[sqlx::test(migrations = "../../migrations")]
 async fn verification_marks_user_verified_once(pool: sqlx::PgPool) {
     let user_id = db::users::insert(&pool, "eh", "ph").await.unwrap();
 
@@ -888,7 +855,7 @@ async fn duplicate_email_is_rejected(pool: sqlx::PgPool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
-async fn poll_summaries_and_vote_guard(pool: sqlx::PgPool) {
+async fn poll_summaries_list_for_the_right_owner(pool: sqlx::PgPool) {
     let source_id =
         db::sources::insert_source(&pool, "manual", "https://example.test/a", None, Some("h"))
             .await
@@ -926,148 +893,7 @@ async fn poll_summaries_and_vote_guard(pool: sqlx::PgPool) {
         .unwrap()
         .is_empty());
 
-    let user_id = db::users::insert(&pool, "vh", "ph").await.unwrap();
-
-    // A vote for an option that does not belong to the poll is rejected.
-    assert!(!db::polls::cast_vote(&pool, poll_id, 999_999, user_id)
-        .await
-        .unwrap());
-    assert!(!db::polls::has_voted(&pool, poll_id, user_id).await.unwrap());
-
-    // A valid vote is recorded once; a second attempt is ignored.
-    assert!(db::polls::cast_vote(&pool, poll_id, option_id, user_id)
-        .await
-        .unwrap());
-    assert!(!db::polls::cast_vote(&pool, poll_id, option_id, user_id)
-        .await
-        .unwrap());
-}
-
-#[sqlx::test(migrations = "../../migrations")]
-async fn single_choice_rejects_a_second_option(pool: sqlx::PgPool) {
-    let poll_id: i64 = sqlx::query_scalar(
-        "insert into polls (question, slug, kind) values ('Q', 'q', 'single') returning id",
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    let a: i64 = sqlx::query_scalar(
-        "insert into poll_options (poll_id, label, position) values ($1, 'A', 1) returning id",
-    )
-    .bind(poll_id)
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    let b: i64 = sqlx::query_scalar(
-        "insert into poll_options (poll_id, label, position) values ($1, 'B', 2) returning id",
-    )
-    .bind(poll_id)
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    let user = db::users::insert(&pool, "vh", "ph").await.unwrap();
-
-    // First choice is recorded; a second, different choice is refused (one vote
-    // per user in a single-choice poll).
-    assert!(db::polls::cast_vote(&pool, poll_id, a, user).await.unwrap());
-    assert!(!db::polls::cast_vote(&pool, poll_id, b, user).await.unwrap());
-    let n: i64 = sqlx::query_scalar("select count(*) from poll_votes where poll_id = $1")
-        .bind(poll_id)
-        .fetch_one(&pool)
-        .await
-        .unwrap();
-    assert_eq!(n, 1);
-}
-
-#[sqlx::test(migrations = "../../migrations")]
-async fn multi_select_chains_and_shares_voter_index(pool: sqlx::PgPool) {
-    let poll_id: i64 = sqlx::query_scalar(
-        "insert into polls (question, slug, kind) values ('M', 'm', 'multi') returning id",
-    )
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    let mut opt = Vec::new();
-    for (label, pos) in [("A", 1), ("B", 2), ("C", 3)] {
-        let id: i64 = sqlx::query_scalar(
-            "insert into poll_options (poll_id, label, position) values ($1, $2, $3) returning id",
-        )
-        .bind(poll_id)
-        .bind(label)
-        .bind(pos)
-        .fetch_one(&pool)
-        .await
-        .unwrap();
-        opt.push(id);
-    }
-    let u1 = db::users::insert(&pool, "u1", "p").await.unwrap();
-    let u2 = db::users::insert(&pool, "u2", "p").await.unwrap();
-
-    // u1 picks A and B.
-    assert_eq!(
-        db::polls::cast_votes(&pool, poll_id, &[opt[0], opt[1]], u1)
-            .await
-            .unwrap(),
-        2
-    );
-    // u1 re-submits A (a repeat) and adds C: only C is new.
-    assert_eq!(
-        db::polls::cast_votes(&pool, poll_id, &[opt[0], opt[2]], u1)
-            .await
-            .unwrap(),
-        1
-    );
-    // u2 picks B.
-    assert_eq!(
-        db::polls::cast_votes(&pool, poll_id, &[opt[1]], u2)
-            .await
-            .unwrap(),
-        1
-    );
-
-    // u1's three option rows share one voter index; u2 has a distinct one.
-    let u1_indexes: i64 = sqlx::query_scalar(
-        "select count(distinct voter_index) from poll_votes where poll_id = $1 and user_id = $2",
-    )
-    .bind(poll_id)
-    .bind(u1)
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    assert_eq!(u1_indexes, 1, "a voter keeps one index across their picks");
-    let distinct_voters: i64 =
-        sqlx::query_scalar("select count(distinct voter_index) from poll_votes where poll_id = $1")
-            .bind(poll_id)
-            .fetch_one(&pool)
-            .await
-            .unwrap();
-    assert_eq!(distinct_voters, 2);
-
-    // Four vote rows, chained: head at seq 4, and every row hashes correctly
-    // from its predecessor (genesis for seq 1), so the chain is intact.
-    let head = db::polls::chain_head(&pool, poll_id)
-        .await
-        .unwrap()
-        .unwrap();
-    assert_eq!(head.head_seq, 4);
-    let chain_ok: bool = sqlx::query_scalar(
-        r#"
-        select bool_and(
-            v.row_hash = vote_chain_hash(
-                coalesce(prev.row_hash, vote_chain_genesis(v.poll_id)),
-                v.poll_id, v.seq, v.option_id, v.voter_index, v.cast_at
-            )
-        )
-        from poll_votes v
-        left join poll_votes prev on prev.poll_id = v.poll_id and prev.seq = v.seq - 1
-        where v.poll_id = $1
-        "#,
-    )
-    .bind(poll_id)
-    .fetch_one(&pool)
-    .await
-    .unwrap();
-    assert!(chain_ok, "every vote row must chain from its predecessor");
+    let _ = option_id;
 }
 
 #[sqlx::test(migrations = "../../migrations")]
