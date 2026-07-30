@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select o.id, o.label, o.position, o.media_url, count(v.id) as \"votes!\"\n        from poll_options o\n        left join poll_votes v on v.option_id = o.id\n        where o.poll_id = $1\n        group by o.id\n        order by o.position\n        ",
+  "query": "\n        select o.id, o.label, o.position, o.media_url, count(bo.ballot_id) as \"votes!\"\n        from poll_options o\n        left join ballot_options bo on bo.option_id = o.id\n        where o.poll_id = $1\n        group by o.id\n        order by o.position\n        ",
   "describe": {
     "columns": [
       {
@@ -67,5 +67,5 @@
       null
     ]
   },
-  "hash": "2d9d885462456b55956fb8954448a9b278a23ddc64f527aee4fc0825ebe2d1cf"
+  "hash": "94c5f84cdd3415c4d5dd06ca4f1d0fc1a6059425c1fb3a9f28b09bc51329687e"
 }

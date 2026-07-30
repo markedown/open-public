@@ -1107,3 +1107,12 @@ msgstr "Aller au contenu"
 
 msgid "Remove"
 msgstr "Retirer"
+
+msgid "Voting needs JavaScript enabled."
+msgstr "Voter nécessite l'activation de JavaScript."
+
+msgid "Something went wrong casting your vote. Please try again."
+msgstr "Un problème est survenu lors de l'enregistrement de votre vote. Veuillez réessayer."
+
+msgid "A ballot for this poll was already issued to your account."
+msgstr "Un bulletin pour ce sondage a déjà été délivré à votre compte."
