@@ -48,9 +48,11 @@ client-side framework.
 Full detail is in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 
 - **Web:** [Axum](https://github.com/tokio-rs/axum) serves server-rendered HTML built with
-  [`maud`](https://maud.lambda.xyz), a macro that turns Rust into type-checked templates. Pages work
-  without JavaScript. [HTMX](https://htmx.org) (vendored, never loaded from a CDN) adds progressive
-  enhancement for actions like voting and search, and every enhanced action has a plain-form fallback.
+  [`maud`](https://maud.lambda.xyz), a macro that turns Rust into type-checked templates. Reading needs
+  no JavaScript, and [HTMX](https://htmx.org) (vendored, never loaded from a CDN) enhances actions like
+  search and following that also work as a plain form. Two actions do require JavaScript and say so:
+  casting an anonymous vote (the token is blinded in the browser to keep it anonymous) and the
+  captcha-gated actions (register, sign in, propose a poll).
 - **Styling:** [Tailwind CSS](https://tailwindcss.com) built with the standalone Tailwind CLI. No CSS
   component library.
 - **Data:** PostgreSQL for both relational data and full-text search.
@@ -152,8 +154,15 @@ print("tallies match")'
 
 What that proves is that every ballot was issued for its poll, no token was spent twice, no ballot was
 altered, reordered or removed after casting, and no poll cast more ballots than it issued tokens, all
-without ever linking a ballot to a voter, which is impossible here even for the operator. It does not
-prove that one person voted once, and nothing here claims otherwise.
+without ever linking a ballot to a voter, which the operator cannot do either, even with full database
+access: the anonymity is what the cryptography protects regardless.
+
+What you still trust the operator on is narrower, and it is stated rather than hidden. The operator
+holds each poll's signing key, so it could issue extra tokens; that is ballot-stuffing, never
+deanonymization, and it is bounded and public. Issuance is tied to verified accounts, and the dump
+publishes how many tokens each poll issued, so anyone can check that no poll cast more ballots than it
+issued and that the count is in the range the account base allows. None of this proves that one person
+voted once, an account is not a person, and nothing here claims otherwise.
 
 ## Versioning
 

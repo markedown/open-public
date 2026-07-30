@@ -32,9 +32,11 @@ flowchart LR
     db --> pg
 ```
 
-The client runs no application code of ours. HTMX (a single vendored script) turns ordinary links and
-forms into partial-page requests; the server answers those with small HTML fragments instead of a full
-page. Nothing depends on JavaScript being present.
+HTMX (a single vendored script) turns ordinary links and forms into partial-page requests; the server
+answers those with small HTML fragments instead of a full page. Reading the site depends on no
+JavaScript, and most actions fall back to a normal form POST. Two need JavaScript of our own, and the
+page says so: casting an anonymous poll vote (the token is blinded in the browser, which is what keeps
+it anonymous) and the actions behind the proof-of-work captcha (register, sign in, propose a poll).
 
 ## Crates and dependency direction
 
@@ -126,8 +128,9 @@ A request enters the `server` binary and is routed to a handler. The handler val
 fetches data through `db` repository functions (compile-time-checked queries against Postgres), and
 renders a `maud` template into HTML. A normal navigation returns a complete page; an HTMX-driven
 interaction returns just the fragment that changed, which HTMX swaps into the DOM. Because every page
-is fully rendered server-side and every enhanced interaction has a plain-form fallback, the site works
-without JavaScript.
+is fully rendered server-side, reading needs no JavaScript, and most enhanced actions fall back to a
+plain form POST. The exceptions are deliberate: casting an anonymous vote and the captcha-gated actions
+require client-side code and say so on the page.
 
 ## Styling and assets
 

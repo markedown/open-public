@@ -5,10 +5,10 @@ This is the working brief for anyone building on open-public, whether a coding a
 1. Every fact in the database references a source row. No source, no insert. This includes seed data.
 2. Anything that changes over time (party membership, roles, positions) is stored as a time-ranged relation with start and end dates, never as a flat column.
 
-The core promise is trustworthy participation data. There are two tiers of data with different guarantees:
+The aim is participation data that can be checked rather than taken on trust. There are two tiers of data, held to different rules:
 
 - **Political content** (people, parties, roles, memberships, statements, news) is curated editorial data with provenance. It is correctable: a `sources` row of kind `manual` records an admin edit, and sources are provenance, not locks.
-- **Participation data** (poll votes) is append-only and immutable: never updated or deleted, by anyone.
+- **Participation data** (cast ballots) is append-only: never updated or deleted, by anyone.
 
 The platform is country-agnostic. The first datasets carry non-ASCII, locale-sensitive names, so text handling (casing, transliteration, sort order) is locale-aware from the start (see the Text handling section).
 
@@ -16,7 +16,7 @@ The platform is country-agnostic. The first datasets carry non-ASCII, locale-sen
 
 - Rust, stable toolchain, pinned in `rust-toolchain.toml`. No nightly features.
 - Axum is the web server. HTML is server-rendered with `maud` templates (type-checked Rust; templates are plain functions). No client-side framework, no WASM, no build step for JS.
-- Interactivity via HTMX 2.x, vendored into the server's static assets (never a CDN). Every page is complete, valid HTML without JavaScript; HTMX only enhances (e.g. poll voting, search-as-you-type), and every enhanced interaction has a working non-JS fallback via a normal form POST.
+- Interactivity via HTMX 2.x, vendored into the server's static assets (never a CDN). Pages are server-rendered, so reading needs no JavaScript, and most actions (search, follow, approval, the compass) degrade to a normal form POST. Two do require JavaScript, and the page says so: casting an anonymous poll vote (the token is blinded in the browser, which is what keeps the vote anonymous) and the actions behind the proof-of-work captcha (register, sign in, propose a poll).
 - Styling with Tailwind CSS built by the standalone Tailwind CLI, wired into the dev workflow and CI. No CSS component library.
 - Reusable UI is our own `maud` component functions in a `ui` module (layout, button, card, form_field, badge, timeline_entry, poll_widget, source_link, page_meta). One definition per component; pages compose them and never restyle ad hoc.
 - PostgreSQL 18. One database for relational data and full text search. No extra search engine.
@@ -290,8 +290,9 @@ These are product rules, treat them like compiler errors:
 - Polls are participatory, not statistical: email verification de-duplicates voters but does not sample a population, so poll results are never presented as a representative survey. No feature may claim or imply representativeness until verified participation exists (see the roadmap). Every poll is treated this way; there is no formal/informal flag.
 - Users register with email and password. Registration sends a one-time verification link; login is refused until the account is verified. Only the salted HMAC hash of the email is persisted, never the plaintext address. Registration, verification, and login are rate limited at the edge (reverse proxy), not in the application.
 - Transactional mail (verification, password reset) is plain text. There is nothing to design but a short explanation and a link, and plain text is the better choice for it: it loads nothing from the network so it cannot report when it was opened, it renders the same in every client, the recipient sees the real URL rather than a button hiding one, and it has the best chance of the inbox rather than the spam folder for a young sending domain. No mail carries a remote image, a tracking pixel, a web font, or an analytics link, and none has open or click tracking, in the message or at the provider, because a mail that reports when it was opened is surveillance of the person confirming an address.
-- `poll_votes` rows are never updated or deleted, not even by admins. Corrections to a poll happen by closing it and opening a new one, never by touching votes. No admin write path to `poll_votes` exists in the codebase.
-- Admins (users with `is_admin = true`) can create and edit political content (people, parties, roles, memberships, statements, news, polls), but cannot modify votes.
+- A cast vote is anonymous. A verified account is issued one blind-signed token per poll (RFC 9474 blind RSA) and spends it to cast a ballot; the server signs the token without seeing it, so a ballot cannot be linked to a voter even with full database access. Claim exactly this, and never "trustless" and never one person, one vote: the operator still holds each poll's signing key and could over-issue tokens, which is ballot-stuffing, not deanonymization, and is bounded and public (the dump publishes the issued-token count, so anyone can check ballots never exceed issued tokens and that issuance is tied to verified accounts). An account is not a person.
+- Cast ballots (`vote_ballots`) are never updated or deleted, not even by admins. Corrections to a poll happen by closing it and opening a new one, never by touching a ballot. No admin write path to a cast ballot exists in the codebase.
+- Admins (users with `is_admin = true`) can create and edit political content (people, parties, roles, memberships, statements, news, polls), but cannot modify a cast ballot.
 - User-submitted polls pass a two-tier gate before they are public: an automated content pre-screen, then an admin approval. Nothing a user wrote or uploaded is visible to anyone else until it clears both. The pre-screen provider is pluggable (a `PollReviewer` trait); with none configured, submissions still flow to the admin queue rather than auto-publishing. Repeated policy violations suspend the account permanently; a suspension never touches cast votes.
 - Uploaded images are never trusted by their declared type: the format is detected from content, decoded under strict size and dimension limits (a decompression-bomb guard), and re-encoded to a normalized raster format that strips all metadata and defeats polyglot files. Only the re-encoded bytes are stored (content-addressed) and served, with `nosniff`, a restrictive `Content-Security-Policy`, and an inline disposition. SVG is rejected. Images stay visible only to their uploader and admins until the poll is approved.
 - Ingest: rate limit at least 1s per host, descriptive User-Agent with contact info, respect robots.txt, no paywalled content. On conflicts between sources, log to `data_conflicts` instead of overwriting.
@@ -336,7 +337,7 @@ cargo sqlx prepare --workspace   # before committing query changes
 - Conventional commits (feat:, fix:, chore:, docs:), atomic commits per change.
 - One page per handler under `server/src/pages/`; shared UI pieces are `maud` component functions under `server/src/ui/`. Pages compose components.
 - Handlers are thin: validate input, call a `db` function, render a template, map errors. No inline SQL in handlers or templates.
-- Every page is complete, valid HTML without JavaScript. HTMX only enhances, and every HTMX interaction has a non-JS fallback via a normal form POST.
+- Pages are server-rendered, so reading needs no JavaScript. Most actions degrade to a normal form POST (search, follow, approval, the compass). Two require JavaScript and say so on the page: casting an anonymous poll vote (the token is blinded in the browser, which is what keeps it anonymous) and the actions behind the proof-of-work captcha (register, sign in, propose a poll). There is no rule that every interaction must work without JavaScript.
 - Log with `tracing`, never `println!`.
 - db layer gets integration tests via `#[sqlx::test]`. Pure helpers get unit tests.
 

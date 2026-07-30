@@ -38,6 +38,7 @@ ad hoc.
 - **Accessibility:** semantic HTML (`nav`, `main`, `article`, `time`), WCAG AA contrast, visible focus
   states, alt text on every photo (the person's name), forms with proper labels, correct `lang`
   attribute on `<html>`.
-- **Performance:** no JavaScript beyond `htmx.min.js`; images lazy-loaded and size-constrained; pages
-  usable on slow mobile connections.
+- **Performance:** JavaScript kept small and vendored (HTMX, the anonymous-voting island, the
+  proof-of-work captcha), never a client framework or a CDN; images lazy-loaded and size-constrained;
+  pages usable on slow mobile connections.
 - **No dark mode in v1.**

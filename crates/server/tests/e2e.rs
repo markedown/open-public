@@ -6035,6 +6035,11 @@ async fn the_privacy_page_says_what_is_stored_and_what_cannot_be_claimed(pool: d
     assert!(body.contains("never changed and never deleted"));
     assert!(body.contains("not a survey"));
     assert!(body.contains("does not prove that one person voted once"));
+    // Voting is anonymous, and the one thing a voter still trusts us on is stated
+    // rather than hidden.
+    assert!(body.contains("Your vote is anonymous"));
+    assert!(body.contains("cannot be linked back to your account"));
+    assert!(body.contains("bounded and public"));
 
     // Reachable from every page without hunting for it.
     let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
