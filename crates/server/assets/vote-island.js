@@ -73,7 +73,24 @@ async function cast(el, optionIds) {
 function enhance(el) {
   const form = el.querySelector('[data-vote]');
   if (!form) return;
+  const slug = el.dataset.pollSlug;
+  const status = el.querySelector('[data-vote-status]');
   el.hidden = false;
+
+  // The server cannot tell whether this account voted (that is the anonymity),
+  // so whether you have voted is remembered here, on your own device. If you
+  // have, show the note and do not offer the controls again.
+  if (localStorage.getItem(`op-voted:${slug}`)) {
+    form.hidden = true;
+    if (status) {
+      status.hidden = false;
+      status.textContent = el.dataset.msgVoted;
+      status.classList.remove('text-red-600');
+      status.classList.add('text-ink-muted');
+    }
+    return;
+  }
+
   // Warm the token as soon as the page is ready, so casting is instant and the
   // token request and the vote are separated in time.
   ensureToken(el).catch(() => {});
@@ -89,9 +106,9 @@ function enhance(el) {
     }
     if (ids.length === 0) return;
     form.querySelectorAll('button').forEach((b) => (b.disabled = true));
-    const status = el.querySelector('[data-vote-status]');
     const out = await cast(el, ids);
     if (out.ok) {
+      localStorage.setItem(`op-voted:${slug}`, '1');
       location.reload();
     } else if (status) {
       status.hidden = false;

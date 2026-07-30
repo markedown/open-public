@@ -4,10 +4,13 @@ use maud::{html, Markup};
 use crate::i18n;
 
 /// Who is looking at the poll, which decides whether the options are votable.
+///
+/// There is no "already voted" state: a cast ballot is anonymous, so the server
+/// cannot know whether this account voted. Whether the controls or a "you voted"
+/// note show is decided in the browser (the island), from a local record.
 pub enum Viewer {
     Anonymous,
     CanVote,
-    Voted,
 }
 
 /// The poll on its own page. Results are always visible; when the viewer can
@@ -44,6 +47,7 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
                     data-poll-kind=(poll.kind) data-poll-pubkey=(pubkey.unwrap_or_default())
                     data-msg-error=(i18n::t("Something went wrong casting your vote. Please try again."))
                     data-msg-unavailable=(i18n::t("A ballot for this poll was already issued to your account."))
+                    data-msg-voted=(i18n::t("You have cast your anonymous ballot for this poll."))
                     hidden {
                     @match poll.kind.as_str() {
                         "multi" => (multi_options(poll, total)),
@@ -76,10 +80,15 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
                 }
             }
             @match viewer {
-                Viewer::Voted => p class="mt-1 font-mono text-xs text-ink-muted" { (i18n::t("You have voted.")) },
-                Viewer::CanVote => p class="mt-1 text-xs text-ink-muted" {
-                    @if poll.kind == "multi" { (i18n::t("Select one or more options, then vote.")) }
-                    @else { (i18n::t("Tap an option to vote.")) }
+                Viewer::CanVote => {
+                    p class="mt-1 text-xs text-ink-muted" {
+                        @if poll.kind == "multi" { (i18n::t("Select one or more options, then vote.")) }
+                        @else { (i18n::t("Tap an option to vote.")) }
+                    }
+                    // The honest claim, always shown where a vote can happen.
+                    p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                        (i18n::t("Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."))
+                    }
                 },
                 Viewer::Anonymous => p class="mt-1 text-sm text-ink-muted" {
                     a href="/login" class="font-medium text-accent hover:underline" { (i18n::t("Log in to vote.")) }

@@ -1128,3 +1128,9 @@ msgstr "Oyunuz verilirken bir sorun oluştu. Lütfen tekrar deneyin."
 
 msgid "A ballot for this poll was already issued to your account."
 msgstr "Bu anket için hesabınıza zaten bir oy pusulası verildi."
+
+msgid "You have cast your anonymous ballot for this poll."
+msgstr "Bu anket için anonim oy pusulanızı kullandınız."
+
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgstr "Oyunuz anonimdir: kendi sistemlerimize tam erişimimiz olsa bile nasıl oy verdiğinizi göremeyiz. Bu, bir kişi bir oy olduğunu kanıtlamaz."

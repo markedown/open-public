@@ -1116,3 +1116,9 @@ msgstr "Un problème est survenu lors de l'enregistrement de votre vote. Veuille
 
 msgid "A ballot for this poll was already issued to your account."
 msgstr "Un bulletin pour ce sondage a déjà été délivré à votre compte."
+
+msgid "You have cast your anonymous ballot for this poll."
+msgstr "Vous avez déposé votre bulletin anonyme pour ce sondage."
+
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgstr "Votre vote est anonyme : nous ne pouvons pas savoir comment vous avez voté, même avec un accès complet à nos propres systèmes. Cela ne prouve pas une personne, une voix."
