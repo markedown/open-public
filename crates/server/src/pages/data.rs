@@ -1,15 +1,19 @@
 //! Public data dumps. The trust core: sourcing shows where a fact came from and
-//! the vote hash chain makes votes tamper-evident, but neither can be checked
-//! without a public record to check against. This serves that record.
+//! the anonymous-voting scheme makes ballots verifiable, but neither can be
+//! checked without a public record to check against. This serves that record.
 //!
-//! `/data/polls.json` is a deterministic, anonymized dump of the participation
-//! data: every poll's tally, every poll's chain head, and every vote reduced to
-//! `(poll, option, cast_at, opaque voter index)`. Anyone can recompute the
-//! tallies from the votes, and verify the chain head against the running poll
-//! page. It carries no identity: never a user id, never an email hash.
+//! `/data/polls.json` is a deterministic dump of the anonymous participation
+//! data: every poll's tally, its issuer public key, its issued-token count, its
+//! ballot-chain head, and every ballot reduced to `(token, options, cast_at,
+//! seq, hashes, signature)`. Anyone can recompute the tallies, verify each
+//! ballot's blind signature under the poll key, confirm no token was spent
+//! twice, walk the chain, and reconcile that ballots never exceed issued tokens.
+//! It carries no identity: never a user id, never an email hash; a token is a
+//! per-poll nullifier tied to no account.
 
 use axum::extract::State;
 use axum::Json;
+use base64::Engine;
 use serde::Serialize;
 
 use crate::error::PageError;
@@ -23,7 +27,7 @@ pub struct PollsDump {
     /// How to recompute and verify, and what this does and does not prove.
     note: &'static str,
     polls: Vec<PollExport>,
-    votes: Vec<VoteExport>,
+    ballots: Vec<BallotExport>,
 }
 
 #[derive(Serialize)]
@@ -31,7 +35,14 @@ struct PollExport {
     slug: String,
     question: String,
     kind: String,
+    /// The database id, published because the ballot chain hashes it. It says
+    /// nothing about a person.
+    poll_id: i64,
     total_votes: i64,
+    /// The issuer public key (base64 SPKI), for verifying each ballot's token.
+    public_key: Option<String>,
+    /// Tokens issued for this poll. Ballots cast can never exceed this.
+    issued: i64,
     chain: Option<ChainHead>,
     options: Vec<OptionExport>,
 }
@@ -45,41 +56,43 @@ struct ChainHead {
 #[derive(Serialize)]
 struct OptionExport {
     position: i32,
+    id: i64,
     label: String,
     votes: i64,
 }
 
 #[derive(Serialize)]
-struct VoteExport {
+struct BallotExport {
     poll: String,
-    /// The poll's and the option's database ids, and the sequence number. They
-    /// are here because the chain hashes them: without them the tallies can be
-    /// recounted but the chain cannot be recomputed, and the tamper-evidence
-    /// would be a claim rather than something anyone can check. None of them
-    /// says anything about a person.
     poll_id: i64,
-    option: i32,
-    option_id: i64,
     seq: i64,
+    /// The token (nullifier), the signature over it, and the message randomizer,
+    /// all hex. Together they let anyone verify the ballot was issued for this
+    /// poll and was spent only once.
+    token: String,
+    signature: String,
+    randomizer: Option<String>,
+    /// The option ids this ballot selected (sorted), hashed into the chain.
+    options: Vec<i64>,
     cast_at: String,
-    voter: i64,
-    /// The stored hash of this row, to check a recomputation against.
-    row_hash: String,
+    content_hash: String,
+    prev_hash: Option<String>,
 }
 
-const NOTE: &str = "Anonymized poll participation data. Recompute each option's \
-tally by counting the votes with that (poll, option); the counts here must match. \
-`voter` is an opaque per-poll index, not linkable across polls or to any person. \
-`chain` is the append-only vote hash-chain head. Every field the chain is hashed \
-from is here, so it can be recomputed rather than taken on trust: run \
-scripts/verify_chain.py over this file to walk each poll's chain and check its \
-head. This proves votes were not altered or removed after casting, not \
-one-person-one-vote.";
+const NOTE: &str = "Anonymous poll participation data. Recompute each option's \
+tally by counting the ballots that selected it; the counts here must match. A \
+`token` is a per-poll nullifier, tied to no account and not linkable across \
+polls. Verify each ballot with scripts/verify_chain.py, which checks: the blind \
+signature over the token under the poll's public_key (the ballot was issued for \
+this poll), that no token repeats (no double vote), the append-only hash chain, \
+and that ballots never exceed issued tokens. This proves ballots were issued, \
+unaltered, and un-double-voted, and that the operator cannot link a ballot to a \
+voter. It does not prove one person one vote.";
 
-/// The anonymized poll-participation dump.
+/// The anonymous poll-participation dump.
 pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, PageError> {
-    let tallies = db::export::poll_tallies(&pool).await?;
-    let raw_votes = db::export::anonymized_votes(&pool).await?;
+    let tallies = db::export::ballot_tallies(&pool).await?;
+    let raw = db::export::anon_ballots(&pool).await?;
 
     // Tallies arrive ordered by (poll slug, option position), so consecutive
     // rows of one poll collect together.
@@ -87,11 +100,10 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
     for t in tallies {
         let opt = OptionExport {
             position: t.position,
+            id: t.option_id,
             label: t.label,
             votes: t.votes,
         };
-        // Matching on the last entry expresses "same poll as the row before"
-        // directly, so there is no separately-checked invariant to assert.
         match polls.last_mut() {
             Some(p) if p.slug == t.slug => {
                 p.total_votes += opt.votes;
@@ -106,7 +118,12 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
                     slug: t.slug,
                     question: t.question,
                     kind: t.kind,
+                    poll_id: t.poll_id,
                     total_votes: opt.votes,
+                    public_key: t
+                        .public_key
+                        .map(|der| base64::engine::general_purpose::STANDARD.encode(der)),
+                    issued: t.issued,
                     chain,
                     options: vec![opt],
                 });
@@ -114,17 +131,19 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
         }
     }
 
-    let votes = raw_votes
+    let ballots = raw
         .into_iter()
-        .map(|v| VoteExport {
-            poll: v.poll_slug,
-            poll_id: v.poll_id,
-            option: v.option_position,
-            option_id: v.option_id,
-            seq: v.seq,
-            cast_at: v.cast_at.to_rfc3339(),
-            voter: v.voter_index,
-            row_hash: hex(&v.row_hash),
+        .map(|b| BallotExport {
+            poll: b.poll_slug,
+            poll_id: b.poll_id,
+            seq: b.seq,
+            token: hex(&b.token),
+            signature: hex(&b.signature),
+            randomizer: b.msg_randomizer.as_deref().map(hex),
+            options: b.option_ids,
+            cast_at: b.cast_at.to_rfc3339(),
+            content_hash: hex(&b.content_hash),
+            prev_hash: b.prev_hash.as_deref().map(hex),
         })
         .collect();
 
@@ -133,7 +152,7 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
         commit: option_env!("GIT_SHA").unwrap_or("unknown"),
         note: NOTE,
         polls,
-        votes,
+        ballots,
     }))
 }
 

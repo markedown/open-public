@@ -1,0 +1,129 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.slug as \"poll_slug!\", b.poll_id, b.seq, b.token, b.signature,\n               b.msg_randomizer as \"msg_randomizer?\", b.cast_at, b.content_hash,\n               b.prev_hash as \"prev_hash?\",\n               array_agg(bo.option_id order by bo.option_id) as \"option_ids!\"\n        from vote_ballots b\n        join polls p on p.id = b.poll_id\n        join ballot_options bo on bo.ballot_id = b.id\n        where p.kind <> 'approval'\n        group by b.id, p.slug\n        order by p.slug, b.seq\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "poll_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "poll_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "poll_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "seq",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "seq"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "token",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "token"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "signature",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "signature"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "msg_randomizer?",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "msg_randomizer"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "cast_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "cast_at"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "content_hash",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "content_hash"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "prev_hash?",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "prev_hash"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "option_ids!",
+        "type_info": "Int8Array",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "56118a022cf1cd51963fc51f5b12f77d372b2396ee03a8932dd72c8b8d0133b3"
+}

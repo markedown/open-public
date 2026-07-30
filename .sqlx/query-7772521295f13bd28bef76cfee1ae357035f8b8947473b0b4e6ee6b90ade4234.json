@@ -1,0 +1,148 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.slug as \"slug!\", p.question as \"question!\", p.kind as \"kind!\",\n               p.id as \"poll_id!\", o.position as \"position!\", o.id as \"option_id!\", o.label as \"label!\",\n               count(bo.ballot_id) as \"votes!\",\n               k.public_key as \"public_key?\",\n               (select count(*) from vote_entitlements e where e.poll_id = p.id) as \"issued!\",\n               hd.seq as \"head_seq?\", hd.hash as \"head_hash?\"\n        from polls p\n        join poll_options o on o.poll_id = p.id\n        left join ballot_options bo on bo.option_id = o.id\n        left join poll_issuer_keys k on k.poll_id = p.id\n        left join lateral (\n            select b.seq, b.content_hash as hash\n            from vote_ballots b where b.poll_id = p.id order by b.seq desc limit 1\n        ) hd on true\n        where p.kind <> 'approval'\n        group by p.id, o.id, k.public_key, hd.seq, hd.hash\n        order by p.slug, o.position\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "question!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "question"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "kind!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "poll_id!",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "polls",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "position!",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "poll_options",
+            "name": "position"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "option_id!",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "poll_options",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "label!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "poll_options",
+            "name": "label"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "votes!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 8,
+        "name": "public_key?",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "poll_issuer_keys",
+            "name": "public_key"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "issued!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 10,
+        "name": "head_seq?",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "seq"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "head_hash?",
+        "type_info": "Bytea",
+        "origin": {
+          "Table": {
+            "table": "vote_ballots",
+            "name": "content_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      false,
+      null,
+      false,
+      false
+    ]
+  },
+  "hash": "7772521295f13bd28bef76cfee1ae357035f8b8947473b0b4e6ee6b90ade4234"
+}

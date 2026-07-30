@@ -2864,29 +2864,39 @@ async fn alliance_shows_translated_name_and_summary(pool: db::Pool) {
 async fn data_dump_publishes_anonymized_poll_results(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
-    let email_hash = server::auth::hash_email("voter@x.test", SECRET).unwrap();
-    let user = db::users::insert(&pool, &email_hash, "pw").await.unwrap();
-    db::users::mark_verified(&pool, user).await.unwrap();
     let poll = db::polls::get_by_slug(&pool, "party-poll")
         .await
         .unwrap()
         .unwrap();
-    db::polls::cast_vote(&pool, poll.id, poll.options[0].id, user)
-        .await
-        .unwrap();
+    let email_hash = server::auth::hash_email("voter@x.test", SECRET).unwrap();
+    cast_one_ballot(
+        &app,
+        &pool,
+        poll.id,
+        "party-poll",
+        "voter@x.test",
+        1,
+        &[poll.options[0].id],
+    )
+    .await;
 
     let body = body_string(get(&app, "/data/polls.json").await).await;
-    // The dump is public-domain and carries the voted poll's tally and chain.
+    // The dump is public-domain and carries the poll's tally, chain, issuer key
+    // and issued-token count.
     assert!(body.contains("\"license\":\"CC0-1.0\""));
     assert!(body.contains("\"slug\":\"party-poll\""));
     assert!(body.contains("\"total_votes\":1"));
+    assert!(body.contains("\"issued\":1"));
+    assert!(body.contains("\"public_key\":\""));
     assert!(body.contains("\"seq\":")); // the chain head
-                                        // One anonymized vote with an opaque per-poll index.
+                                        // One anonymous ballot, carrying its token (a nullifier) and signature.
     assert!(body.contains("\"poll\":\"party-poll\""));
-    assert!(body.contains("\"voter\":"));
+    assert!(body.contains("\"token\":\""));
+    assert!(body.contains("\"signature\":\""));
+    assert!(body.contains("\"content_hash\":\""));
     // No identity is exposed: no user id, no email hash.
     assert!(!body.contains("user_id"));
-    assert!(!body.contains("user\":"));
+    assert!(!body.contains("\"voter\""));
     assert!(!body.contains(&email_hash));
 }
 
@@ -6102,93 +6112,74 @@ async fn the_published_dump_can_actually_be_verified(pool: db::Pool) {
         .unwrap()
         .unwrap();
     for (i, who) in ["a@x.test", "b@x.test", "c@x.test"].iter().enumerate() {
-        let email_hash = server::auth::hash_email(who, SECRET).unwrap();
-        let user = db::users::insert(&pool, &email_hash, "pw").await.unwrap();
-        db::users::mark_verified(&pool, user).await.unwrap();
-        db::polls::cast_vote(&pool, poll.id, poll.options[i % 2].id, user)
-            .await
-            .unwrap();
+        cast_one_ballot(
+            &app,
+            &pool,
+            poll.id,
+            "party-poll",
+            who,
+            (i + 1) as u8,
+            &[poll.options[i % 2].id],
+        )
+        .await;
     }
 
     let body = body_string(get(&app, "/data/polls.json").await).await;
-    // Everything the chain is hashed from is published, or the tamper-evidence
-    // would be a claim rather than something a reader can recompute.
+    // Everything the chain is hashed from and the signature verified with is
+    // published, or the tamper-evidence would be a claim, not something a reader
+    // can recompute.
     for field in [
         "\"poll_id\":",
-        "\"option_id\":",
+        "\"token\":",
+        "\"signature\":",
+        "\"content_hash\":",
         "\"seq\":",
-        "\"row_hash\":",
+        "\"issued\":",
+        "\"public_key\":",
     ] {
         assert!(body.contains(field), "the dump carries {field}");
     }
-    // And still no identity.
     assert!(!body.contains("user_id"));
 
     // The script the dump points at has to work on the dump the site serves.
-    // Anything less makes the note a promise instead of an instruction.
     let dir = std::env::temp_dir().join("op-chain-verify");
     std::fs::create_dir_all(&dir).unwrap();
     let path = dir.join("polls.json");
+    let run = |p: &std::path::Path| {
+        std::process::Command::new("python3")
+            .arg("../../scripts/verify_chain.py")
+            .arg(p)
+            .output()
+            .expect("running the published verification command")
+    };
+
     std::fs::write(&path, &body).unwrap();
-    let out = std::process::Command::new("python3")
-        .arg("../../scripts/verify_chain.py")
-        .arg(&path)
-        .output()
-        .expect("running the published verification command");
+    let out = run(&path);
     let stdout = String::from_utf8_lossy(&out.stdout);
     assert!(
         out.status.success(),
         "verify_chain.py failed on the published dump: {stdout}{}",
         String::from_utf8_lossy(&out.stderr)
     );
-    assert!(stdout.contains("3 votes verified"), "{stdout}");
+    assert!(stdout.contains("3 ballot(s) verified"), "{stdout}");
 
-    // A tampered vote must be caught, or the check proves nothing.
-    let altered = body.replace("\"option\":1", "\"option\":2");
-    std::fs::write(&path, &altered).unwrap();
-    let out = std::process::Command::new("python3")
-        .arg("../../scripts/verify_chain.py")
-        .arg(&path)
-        .output()
-        .unwrap();
-    // Changing the published option alone leaves the hashes intact, so the
-    // meaningful test is changing something the chain covers.
-    let altered = body.replace("\"seq\":2", "\"seq\":9");
-    std::fs::write(&path, &altered).unwrap();
-    let out2 = std::process::Command::new("python3")
-        .arg("../../scripts/verify_chain.py")
-        .arg(&path)
-        .output()
-        .unwrap();
-    assert!(
-        !out2.status.success(),
-        "a reordered chain must fail: {}",
-        String::from_utf8_lossy(&out2.stdout)
-    );
+    // A reordered chain must be caught.
+    std::fs::write(&path, body.replace("\"seq\":2", "\"seq\":9")).unwrap();
+    assert!(!run(&path).status.success(), "a reordered chain must fail");
 
-    // Removing a poll's votes altogether has to fail too, and it is the one
-    // alteration that used to pass. The check walked the votes it found, so a
-    // poll left with none had nothing to walk: the run printed nothing at all
-    // and exited successfully, while the file still published a head computed
-    // over votes that were no longer in it.
-    // rfind, because each option carries its own "votes" tally: the top-level
-    // array is the last one, and matching the first truncates the file mid-poll.
-    let start = body.rfind("\"votes\":").expect("the dump lists its votes");
-    let emptied = format!("{}\"votes\":[]}}", &body[..start]);
+    // Removing a poll's ballots while it still publishes a head must fail.
+    let start = body
+        .find("\"ballots\":")
+        .expect("the dump lists its ballots");
+    let emptied = format!("{}\"ballots\":[]}}", &body[..start]);
     std::fs::write(&path, &emptied).unwrap();
-    let out3 = std::process::Command::new("python3")
-        .arg("../../scripts/verify_chain.py")
-        .arg(&path)
-        .output()
-        .unwrap();
+    let out3 = run(&path);
     let stdout3 = String::from_utf8_lossy(&out3.stdout);
     assert!(
         !out3.status.success(),
-        "a poll whose votes were all removed must fail: {stdout3}"
+        "a poll whose ballots were all removed must fail: {stdout3}"
     );
-    // And it has to say so, rather than succeed in silence.
-    assert!(stdout3.contains("no votes for this poll"), "{stdout3}");
-    let _ = out;
+    assert!(stdout3.contains("no ballots"), "{stdout3}");
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -7494,6 +7485,66 @@ fn pct(b64: &str) -> String {
         .replace('=', "%3D")
 }
 
+/// Cast one anonymous ballot end to end for the `tr`/`poll` country/slug: issue a
+/// token to `who`, blind it, finalize it, and spend it on `options`. `seed`
+/// distinguishes each voter's token. The poll must be open.
+async fn cast_one_ballot(
+    app: &Router,
+    pool: &db::Pool,
+    poll_id: i64,
+    slug: &str,
+    who: &str,
+    seed: u8,
+    options: &[i64],
+) {
+    use base64::engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD};
+    use base64::Engine;
+    use blind_rsa_signatures::{BlindSignature, DefaultRng, PublicKey, Randomized, Sha384, PSS};
+
+    let (_uid, cookie) = user_cookie(pool, who).await;
+    server::voting::ensure_issuer_key(pool, poll_id)
+        .await
+        .unwrap();
+    let pk_der = db::voting::public_key(pool, poll_id)
+        .await
+        .unwrap()
+        .unwrap();
+    let pk = PublicKey::<Sha384, PSS, Randomized>::from_der(&pk_der).unwrap();
+    let token = [seed; 32];
+    let blinding = pk.blind(&mut DefaultRng, token).unwrap();
+    let issue = post_form(
+        app,
+        &format!("/tr/poll/{slug}/token"),
+        &format!(
+            "blinded={}",
+            pct(&STANDARD.encode(AsRef::<[u8]>::as_ref(&blinding.blind_message)))
+        ),
+        Some(&cookie),
+    )
+    .await;
+    let bs = issue.into_body().collect().await.unwrap().to_bytes();
+    let blind_sig = BlindSignature(
+        STANDARD
+            .decode(String::from_utf8(bs.to_vec()).unwrap().trim())
+            .unwrap(),
+    );
+    let sig = pk.finalize(&blind_sig, &blinding, token).unwrap();
+    let rnd = blinding.msg_randomizer.map(|r| r.0.to_vec());
+    let mut body = format!(
+        "token={}&signature={}",
+        URL_SAFE_NO_PAD.encode(token),
+        URL_SAFE_NO_PAD.encode(&sig.0)
+    );
+    if let Some(r) = &rnd {
+        body.push_str(&format!("&randomizer={}", URL_SAFE_NO_PAD.encode(r)));
+    }
+    for o in options {
+        body.push_str(&format!("&option_id={o}"));
+    }
+    let resp = post_form(app, &format!("/tr/poll/{slug}/cast"), &body, None).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER, "cast should redirect");
+}
+
 /// A blind-signed token casts exactly one anonymous ballot, cannot be
 /// double-spent, and a forged token is refused.
 #[sqlx::test(migrations = "../../migrations")]
@@ -7610,6 +7661,14 @@ async fn a_token_casts_one_anonymous_ballot_and_no_more(pool: db::Pool) {
     )
     .await;
     assert_eq!(forged.status(), StatusCode::FORBIDDEN);
+
+    // The poll page now shows the ballot-chain fingerprint, pointing at the dump.
+    let page = body_string(get(&app, "/tr/poll/party-poll").await).await;
+    assert!(page.contains("#1"), "the chain head sequence shows");
+    assert!(
+        page.contains("/data/polls.json"),
+        "the verify link points at the dump"
+    );
 }
 
 /// The anonymous cast endpoint refuses a request with no token, a request with
