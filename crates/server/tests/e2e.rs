@@ -2025,8 +2025,13 @@ async fn poll_page_renders_and_carries_the_voting_island(pool: db::Pool) {
         "multi checkboxes missing"
     );
 
-    // Once the viewer has taken part (holds an entitlement), the page shows the
-    // "voted" state and drops the island.
+    // The island carries the client-side "voted" message: whether a viewer has
+    // voted is decided in the browser, since the server cannot know (anonymity).
+    assert!(body.contains("data-msg-voted="), "voted message missing");
+
+    // Holding an entitlement (a token was issued) does NOT flip the server into a
+    // "voted" state: the control still shows, because the server cannot tell
+    // whether the account cast its ballot.
     let party_poll: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
         .fetch_one(&pool)
         .await
@@ -2035,10 +2040,10 @@ async fn poll_page_renders_and_carries_the_voting_island(pool: db::Pool) {
     db::voting::record_entitlement(&pool, party_poll, done_uid)
         .await
         .unwrap();
-    let voted = body_string(get_cookie(&app, "/tr/poll/party-poll", &done_cookie).await).await;
+    let after = body_string(get_cookie(&app, "/tr/poll/party-poll", &done_cookie).await).await;
     assert!(
-        !voted.contains("data-poll-pubkey"),
-        "no island once taken part"
+        after.contains("data-poll-pubkey"),
+        "the control still shows even with an entitlement"
     );
 }
 

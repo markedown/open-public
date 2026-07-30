@@ -1116,3 +1116,9 @@ msgstr "Beim Abgeben Ihrer Stimme ist etwas schiefgelaufen. Bitte versuchen Sie 
 
 msgid "A ballot for this poll was already issued to your account."
 msgstr "Für diese Umfrage wurde Ihrem Konto bereits ein Stimmzettel ausgestellt."
+
+msgid "You have cast your anonymous ballot for this poll."
+msgstr "Sie haben Ihren anonymen Stimmzettel für diese Umfrage abgegeben."
+
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgstr "Ihre Stimme ist anonym: Wir können auch mit vollem Zugriff auf unsere eigenen Systeme nicht sehen, wie Sie abgestimmt haben. Das beweist nicht eine Person, eine Stimme."

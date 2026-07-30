@@ -28,7 +28,7 @@ pub async fn detail(
         .ok_or(PageError::NotFound)?;
     crate::content::localize_poll(&state.pool, &mut poll).await?;
 
-    let viewer = viewer_for(&state, session.as_ref(), poll.id).await?;
+    let viewer = viewer_for(session.as_ref());
     let chain = db::voting::ballot_chain_head(&state.pool, poll.id).await?;
 
     // Only a viewer who can vote on an open poll needs the issuer public key and
@@ -229,24 +229,13 @@ pub async fn cast(
     }
 }
 
-async fn viewer_for(
-    state: &AppState,
-    session: Option<&AuthSession>,
-    poll_id: i64,
-) -> Result<Viewer, PageError> {
+/// A cast ballot is anonymous, so the server cannot know whether this account
+/// voted: it always offers the control to a signed-in visitor, and the island
+/// hides it in the browser once this device has voted.
+fn viewer_for(session: Option<&AuthSession>) -> Viewer {
     match session {
-        None => Ok(Viewer::Anonymous),
-        Some(s) => {
-            // Anonymous ballots cannot be linked to an account, so "have you
-            // voted" is derived from the entitlement (were you issued a token),
-            // not from any ballot. A visitor who has their token has taken part.
-            let taken_part = db::voting::has_entitlement(&state.pool, poll_id, s.user_id).await?;
-            Ok(if taken_part {
-                Viewer::Voted
-            } else {
-                Viewer::CanVote
-            })
-        }
+        None => Viewer::Anonymous,
+        Some(_) => Viewer::CanVote,
     }
 }
 
