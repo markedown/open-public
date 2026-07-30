@@ -219,6 +219,19 @@ pub async fn cast_ballot(
     })
 }
 
+/// The ballot-chain head for a poll: the sequence number and content hash of the
+/// most recent ballot, or `None` if none has been cast. This is the fingerprint
+/// shown on the poll page and published in the dump.
+pub async fn ballot_chain_head(pool: &Pool, poll_id: i64) -> Result<Option<(i64, Vec<u8>)>> {
+    let row = sqlx::query!(
+        "select seq, content_hash from vote_ballots where poll_id = $1 order by seq desc limit 1",
+        poll_id
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(row.map(|r| (r.seq, r.content_hash)))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

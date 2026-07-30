@@ -29,6 +29,7 @@ pub async fn detail(
     crate::content::localize_poll(&state.pool, &mut poll).await?;
 
     let viewer = viewer_for(&state, session.as_ref(), poll.id).await?;
+    let chain = db::voting::ballot_chain_head(&state.pool, poll.id).await?;
 
     // Only a viewer who can vote on an open poll needs the issuer public key and
     // the island. Generating the key here (idempotent) means it exists by the
@@ -65,6 +66,25 @@ pub async fn detail(
                     script type="module" src="/static/vote.min.js" defer {}
                 }
 
+                // The ballot-chain fingerprint: anyone can check it against the
+                // published dump to confirm no ballot was altered or removed.
+                @if let Some((seq, ref head)) = chain {
+                    div class="mt-8" {
+                        div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 font-mono text-xs text-ink-muted" {
+                            span class="font-semibold uppercase tracking-wide text-ink" {
+                                (i18n::t("Integrity"))
+                            }
+                            span { "#" (seq) }
+                            span { (hex_prefix(head)) "…" }
+                            a href="/data/polls.json" class="text-accent hover:underline" {
+                                (i18n::t("Verify"))
+                            }
+                        }
+                        p class="mt-2 max-w-prose text-xs text-ink-muted" {
+                            (i18n::t("This fingerprint lets anyone confirm no vote was altered or removed after casting."))
+                        }
+                    }
+                }
             }
         },
     ))
@@ -228,4 +248,13 @@ async fn viewer_for(
             })
         }
     }
+}
+
+/// The first eight bytes of a hash as hex, for the short fingerprint.
+fn hex_prefix(bytes: &[u8]) -> String {
+    use std::fmt::Write;
+    bytes.iter().take(8).fold(String::new(), |mut s, b| {
+        let _ = write!(s, "{b:02x}");
+        s
+    })
 }
