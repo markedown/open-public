@@ -2,7 +2,7 @@
 
 This document is the map of the codebase: the pieces, how they fit, and the invariants that hold them
 together. It is deliberately high-level. For exact table and column names, content rules, the design
-system and conventions, see [`CLAUDE.md`](./CLAUDE.md).
+system and conventions, see [`AGENTS.md`](./AGENTS.md).
 
 ## Shape
 
@@ -153,24 +153,26 @@ verification link is mailed out, and login is refused until it is used. Sessions
 tokens; only their SHA-256 hash is stored server-side, and the cookie is `HttpOnly`, `SameSite=Lax`,
 and `Secure` when the site is served over https.
 
-One vote per account per poll is enforced by a uniqueness constraint, and `poll_votes` rows are never
-updated or deleted, not even by admins. Corrections happen by closing a poll and opening a new one.
-Verification deduplicates accounts; it does not sample a population, so no result is presented as a
-representative survey. Registration, verification, and login are rate limited at the edge (reverse
-proxy), not in the application.
+Poll votes are anonymous. A verified account is issued a blind-signed token per poll (RFC 9474 blind
+RSA, the Privacy Pass primitive), and spends it to cast a ballot. The server signs the token without
+seeing it, so it learns that an account took part but never how it voted, and it cannot link a ballot
+to a voter even with full database access. One token per account per poll is the eligibility gate; the
+token itself is a per-poll nullifier, so a second spend is refused. Ballots are never updated or
+deleted; a correction is a new poll, not an edited vote. Verification deduplicates accounts but does
+not sample a population, so no result is presented as a representative survey. Registration,
+verification, and login are rate limited at the edge (reverse proxy), not in the application.
 
-Votes are additionally tamper-evident. Each poll has a hash chain: every vote hashes its own content
-together with the previous row's hash, so altering or removing a vote after the fact breaks every hash
-after it. The chain head is shown on the poll page, and `GET /data/polls.json` publishes the
-participation record it can be checked against: each poll's tally, its chain head, and every vote
-reduced to everything the chain is hashed from plus an opaque per-poll voter index. The ids and the
-sequence number are published for that reason: a dump without them can be recounted but not
-recomputed, which would leave the tamper-evidence as a claim rather than something anyone can check.
-`scripts/verify_chain.py` walks every chain in the file and compares each head, and the test suite
-runs that script against a dump the server actually served, so the instruction cannot rot into a
-promise. The dump carries no identity, never a
-user id and never an email hash. What this proves is that votes have not been altered, not that one
-person cast one vote, and the difference is never blurred.
+The ballots are tamper-evident and publicly checkable. Each poll has a hash chain: every ballot hashes
+its own content (its token and options) together with the previous head, so altering or removing one
+breaks every hash after it. The chain head is shown on the poll page, and `GET /data/polls.json`
+publishes the record it can be checked against: each poll's tally, its issuer public key, its
+issued-token count, its chain head, and every ballot reduced to what a verifier needs, its token,
+options, and the blind signature. `scripts/verify_chain.py` walks every chain, verifies each ballot's
+signature under the poll key, confirms no token was spent twice, and checks that ballots never exceed
+issued tokens; the test suite runs that script against a dump the server actually served, so the
+instruction cannot rot into a promise. The dump carries no identity, never a user id and never an email
+hash. What this proves is that ballots were issued, unaltered and un-double-voted, and that the operator
+cannot deanonymize a voter, not that one person cast one vote, and the difference is never blurred.
 
 User-submitted polls pass a two-tier gate before anyone else sees them: an automated content
 pre-screen behind a pluggable trait, then admin approval. With no reviewer configured, submissions

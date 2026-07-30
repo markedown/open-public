@@ -65,9 +65,10 @@ Full detail is in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
   and digest (`GET /health` is liveness, `GET /readyz` readiness). See
   [Verifiable deployment](#verifiable-deployment) below.
 
-The database schema lives in [`migrations/`](./migrations), the design system in
-[`DESIGN.md`](./DESIGN.md), architecture and request flow in [`ARCHITECTURE.md`](./ARCHITECTURE.md),
-and contribution conventions in [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md).
+The database schema lives in [`migrations/`](./migrations), the working brief for the whole codebase
+in [`AGENTS.md`](./AGENTS.md), the design system in [`DESIGN.md`](./DESIGN.md), architecture and
+request flow in [`ARCHITECTURE.md`](./ARCHITECTURE.md), and contribution conventions in
+[`CONTRIBUTING.md`](./.github/CONTRIBUTING.md).
 
 ## Verifiable deployment
 
@@ -124,30 +125,35 @@ python3 scripts/validate_data.py dataset
   and no news: a news summary is our own prose about what someone is accused of, and it decays as the
   story moves on.
 
-Participation data is separate and lives at `GET /data/polls.json` on a running instance: every poll's
-tally, its vote-chain head, and every vote reduced to what the chain is hashed from plus an opaque
-per-poll voter index. It carries no identity, never a user id and never an email hash.
+Participation data is separate and lives at `GET /data/polls.json` on a running instance. Votes are
+anonymous: a verified account is issued a blind-signed token per poll, and spends it to cast a ballot
+that the operator cannot link back to it. The dump carries every poll's tally, its issuer public key,
+how many tokens it issued, its ballot-chain head, and every ballot reduced to what a verifier needs: a
+token (a per-poll nullifier tied to no account), the options it chose, and the blind signature that
+proves it was issued for that poll. It carries no identity, never a user id and never an email hash.
 
-Both claims it makes can be checked from that one file:
+Everything it claims can be checked from that one file:
 
 ```bash
-# every poll's chain, recomputed from its genesis and compared to the published head
+# each ballot's signature and chain, no double-spend, and ballots <= issued tokens
+# (signature checks need the `cryptography` package; the rest is standard library)
 curl -s https://open-public.com/data/polls.json | python3 scripts/verify_chain.py -
 
-# the tallies, recounted from the votes
+# the tallies, recounted from the ballots
 curl -s https://open-public.com/data/polls.json | python3 -c '
 import json, sys, collections
 d = json.load(sys.stdin)
-counted = collections.Counter((v["poll"], v["option"]) for v in d["votes"])
+counted = collections.Counter((b["poll"], o) for b in d["ballots"] for o in b["options"])
 for p in d["polls"]:
     for o in p["options"]:
-        assert o["votes"] == counted[(p["slug"], o["position"])], (p["slug"], o["position"])
+        assert o["votes"] == counted[(p["slug"], o["id"])], (p["slug"], o["id"])
 print("tallies match")'
 ```
 
-What that proves is that no vote was altered, reordered or removed after it was cast, and that the
-published counts are the votes. It does not prove that one person voted once, and nothing here
-claims otherwise.
+What that proves is that every ballot was issued for its poll, no token was spent twice, no ballot was
+altered, reordered or removed after casting, and no poll cast more ballots than it issued tokens, all
+without ever linking a ballot to a voter, which is impossible here even for the operator. It does not
+prove that one person voted once, and nothing here claims otherwise.
 
 ## Versioning
 
