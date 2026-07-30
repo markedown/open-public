@@ -1107,3 +1107,12 @@ msgstr "Zum Inhalt springen"
 
 msgid "Remove"
 msgstr "Entfernen"
+
+msgid "Voting needs JavaScript enabled."
+msgstr "Zum Abstimmen muss JavaScript aktiviert sein."
+
+msgid "Something went wrong casting your vote. Please try again."
+msgstr "Beim Abgeben Ihrer Stimme ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+
+msgid "A ballot for this poll was already issued to your account."
+msgstr "Für diese Umfrage wurde Ihrem Konto bereits ein Stimmzettel ausgestellt."

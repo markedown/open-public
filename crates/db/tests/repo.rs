@@ -829,13 +829,6 @@ async fn one_vote_per_user(pool: sqlx::PgPool) {
         .await
         .unwrap());
     assert!(db::polls::has_voted(&pool, poll_id, user_id).await.unwrap());
-
-    let poll = db::polls::get_by_slug(&pool, "p")
-        .await
-        .unwrap()
-        .expect("poll should exist");
-    assert_eq!(poll.options.len(), 1);
-    assert_eq!(poll.options[0].votes, 1);
 }
 
 #[sqlx::test(migrations = "../../migrations")]

@@ -1119,3 +1119,12 @@ msgstr "İçeriğe geç"
 
 msgid "Remove"
 msgstr "Kaldır"
+
+msgid "Voting needs JavaScript enabled."
+msgstr "Oy vermek için JavaScript'in etkin olması gerekir."
+
+msgid "Something went wrong casting your vote. Please try again."
+msgstr "Oyunuz verilirken bir sorun oluştu. Lütfen tekrar deneyin."
+
+msgid "A ballot for this poll was already issued to your account."
+msgstr "Bu anket için hesabınıza zaten bir oy pusulası verildi."

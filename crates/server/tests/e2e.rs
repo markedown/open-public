@@ -1962,177 +1962,84 @@ async fn search_finds_seeded_records(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
-async fn poll_page_and_voting(pool: db::Pool) {
+async fn poll_page_renders_and_carries_the_voting_island(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
 
-    // Anonymous can view the poll, and the party page links to it.
+    // Anyone can view the poll, and the party page links to it.
     assert!(body_string(get(&app, "/tr/poll/party-poll").await)
         .await
         .contains("Nasil buluyorsunuz?"));
     assert!(body_string(get(&app, "/tr/parties/test-partisi").await)
         .await
         .contains("Nasil buluyorsunuz?"));
-
     // A scale-kind poll renders through its own (grid) layout.
     assert!(body_string(get(&app, "/tr/poll/ulke-poll").await)
         .await
         .contains("Ulke gidisati?"));
 
-    // Voting while signed out redirects to /login.
-    let resp = post_form(&app, "/tr/poll/party-poll/vote", "option_id=1", None).await;
-    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
-    assert_eq!(
-        resp.headers().get("location").unwrap().to_str().unwrap(),
-        "/login"
-    );
+    // Signed out: no voting island (cannot vote), only results.
+    let anon = body_string(get(&app, "/tr/poll/party-poll").await).await;
+    assert!(!anon.contains("vote.min.js"));
+    assert!(!anon.contains("data-poll-pubkey"));
 
-    // A verified user with a session cookie (crafted directly).
-    let email_hash = server::auth::hash_email("voter@x.test", SECRET).unwrap();
-    let user = db::users::insert(&pool, &email_hash, "pw").await.unwrap();
-    db::users::mark_verified(&pool, user).await.unwrap();
-    let token = "session-token";
-    db::sessions::create(
-        &pool,
-        user,
-        &server::auth::hash_token(token),
-        chrono::Utc::now() + chrono::Duration::hours(1),
-    )
-    .await
-    .unwrap();
-    let cookie = format!("op_session={token}");
-
-    let poll = db::polls::get_by_slug(&pool, "party-poll")
-        .await
-        .unwrap()
-        .unwrap();
-    let option = poll.options[0].id;
-
-    // The vote is recorded, and a plain POST redirects back to the poll.
-    let resp = post_form(
-        &app,
-        "/tr/poll/party-poll/vote",
-        &format!("option_id={option}"),
-        Some(&cookie),
-    )
-    .await;
-    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
-    assert!(db::polls::has_voted(&pool, poll.id, user).await.unwrap());
-    assert_eq!(total_votes(&pool).await, 1);
-
-    // A second vote by the same user is ignored (one per user).
-    post_form(
-        &app,
-        "/tr/poll/party-poll/vote",
-        &format!("option_id={option}"),
-        Some(&cookie),
-    )
-    .await;
-    assert_eq!(total_votes(&pool).await, 1);
-
-    // An HTMX vote returns the widget fragment, not a redirect.
-    let req = Request::builder()
-        .method("POST")
-        .uri("/tr/poll/party-poll/vote")
-        .header("content-type", "application/x-www-form-urlencoded")
-        .header("cookie", &cookie)
-        .header("hx-request", "true")
-        .body(Body::from(format!("option_id={option}")))
-        .unwrap();
-    let resp = app.clone().oneshot(req).await.unwrap();
-    assert_eq!(resp.status(), StatusCode::OK);
-    assert!(body_string(resp).await.contains("poll-party-poll"));
-
-    // The integrity fingerprint appears once there is a vote, and the chain
-    // endpoint exposes the head.
-    let body = body_string(get(&app, "/tr/poll/party-poll").await).await;
-    assert!(body.contains("Bütünlük")); // the "Integrity" label
-    let chain = body_string(get(&app, "/tr/poll/party-poll/chain").await).await;
-    assert!(chain.contains("\"votes\":1"), "chain json: {chain}");
+    // A verified user gets the anonymous-voting island: the container carrying
+    // the poll's public key, the vote form, and the island script.
+    let (_uid, cookie) = user_cookie(&pool, "voter@x.test").await;
+    let body = body_string(get_cookie(&app, "/tr/poll/party-poll", &cookie).await).await;
     assert!(
-        !chain.contains("\"head_hash\":\"\""),
-        "head hash should be non-empty: {chain}"
+        body.contains("data-poll-pubkey="),
+        "island container missing"
     );
-}
+    assert!(body.contains("data-vote"), "vote form missing");
+    assert!(
+        body.contains("/static/vote.min.js"),
+        "island script missing"
+    );
 
-#[sqlx::test(migrations = "../../migrations")]
-async fn multi_select_poll_records_several_options(pool: db::Pool) {
-    seed(&pool).await;
-    let app = router(pool.clone());
+    // A scale poll renders its votable grid island for a signed-in user.
+    let scale = body_string(get_cookie(&app, "/tr/poll/ulke-poll", &cookie).await).await;
+    assert!(scale.contains("data-vote"), "scale island missing");
 
-    // A multi-select poll attached to the country, with three options.
-    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
-        .bind(COUNTRY)
+    // A multi-select poll renders the checkbox island form.
+    let tr: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
         .fetch_one(&pool)
         .await
         .unwrap();
-    let poll_id: i64 = sqlx::query_scalar(
-        "insert into polls (question, slug, kind, country_id) values ('Cok?', 'cok-secim', 'multi', $1) returning id",
+    let multi: i64 = sqlx::query_scalar(
+        "insert into polls (question, slug, kind, country_id) values ('Multi?', 'multi-poll', 'multi', $1) returning id",
     )
-    .bind(country_id)
+    .bind(tr)
     .fetch_one(&pool)
     .await
     .unwrap();
-    let mut ids = Vec::new();
-    for (label, pos) in [("A", 1), ("B", 2), ("C", 3)] {
-        let id: i64 = sqlx::query_scalar(
-            "insert into poll_options (poll_id, label, position) values ($1, $2, $3) returning id",
-        )
-        .bind(poll_id)
-        .bind(label)
-        .bind(pos)
+    sqlx::query("insert into poll_options (poll_id, label, position) values ($1,'A',0),($1,'B',1)")
+        .bind(multi)
+        .execute(&pool)
+        .await
+        .unwrap();
+    let mbody = body_string(get_cookie(&app, "/tr/poll/multi-poll", &cookie).await).await;
+    assert!(mbody.contains("data-vote"), "multi island missing");
+    assert!(
+        mbody.contains("type=\"checkbox\""),
+        "multi checkboxes missing"
+    );
+
+    // Once the viewer has taken part (holds an entitlement), the page shows the
+    // "voted" state and drops the island.
+    let party_poll: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
         .fetch_one(&pool)
         .await
         .unwrap();
-        ids.push(id);
-    }
-
-    let email_hash = server::auth::hash_email("multi@x.test", SECRET).unwrap();
-    let user = db::users::insert(&pool, &email_hash, "pw").await.unwrap();
-    db::users::mark_verified(&pool, user).await.unwrap();
-    let token = "multi-token";
-    db::sessions::create(
-        &pool,
-        user,
-        &server::auth::hash_token(token),
-        chrono::Utc::now() + chrono::Duration::hours(1),
-    )
-    .await
-    .unwrap();
-    let cookie = format!("op_session={token}");
-
-    // A can-vote viewer sees the checkbox form.
-    let req = Request::builder()
-        .uri("/tr/poll/cok-secim")
-        .header("cookie", &cookie)
-        .body(Body::empty())
-        .unwrap();
-    let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
-    assert!(body.contains("type=\"checkbox\""));
-
-    // Voting two options at once records exactly two votes for this one voter.
-    let resp = post_form(
-        &app,
-        "/tr/poll/cok-secim/vote",
-        &format!("option_id={}&option_id={}", ids[0], ids[1]),
-        Some(&cookie),
-    )
-    .await;
-    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
-    let votes: i64 = sqlx::query_scalar("select count(*) from poll_votes where poll_id = $1")
-        .bind(poll_id)
-        .fetch_one(&pool)
+    let (done_uid, done_cookie) = user_cookie(&pool, "done@x.test").await;
+    db::voting::record_entitlement(&pool, party_poll, done_uid)
         .await
         .unwrap();
-    assert_eq!(votes, 2);
-    // Both rows belong to the same voter index.
-    let voters: i64 =
-        sqlx::query_scalar("select count(distinct voter_index) from poll_votes where poll_id = $1")
-            .bind(poll_id)
-            .fetch_one(&pool)
-            .await
-            .unwrap();
-    assert_eq!(voters, 1);
+    let voted = body_string(get_cookie(&app, "/tr/poll/party-poll", &done_cookie).await).await;
+    assert!(
+        !voted.contains("data-poll-pubkey"),
+        "no island once taken part"
+    );
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -2273,31 +2180,6 @@ async fn following_a_party_builds_the_feed(pool: db::Pool) {
             .status(),
         StatusCode::NOT_FOUND
     );
-}
-
-#[sqlx::test(migrations = "../../migrations")]
-async fn poll_marks_the_voter_own_choice(pool: db::Pool) {
-    seed(&pool).await;
-    let app = router(pool.clone());
-    let (user, cookie) = verified_user(&pool, "voter2@x.test", "vote-token").await;
-
-    let poll = db::polls::get_by_slug(&pool, "party-poll")
-        .await
-        .unwrap()
-        .unwrap();
-    db::polls::cast_vote(&pool, poll.id, poll.options[0].id, user)
-        .await
-        .unwrap();
-
-    // The poll page shows the personal layer: the voter's own pick, named.
-    let page = body_string(get_cookie(&app, "/tr/poll/party-poll", &cookie).await).await;
-    assert!(page.contains("Your pick"));
-    assert!(page.contains(&poll.options[0].label));
-
-    // A visitor who has not voted sees no personal layer.
-    let (_other, other_cookie) = verified_user(&pool, "nonvoter@x.test", "other-token").await;
-    let other = body_string(get_cookie(&app, "/tr/poll/party-poll", &other_cookie).await).await;
-    assert!(!other.contains("Your pick"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -3040,17 +2922,6 @@ async fn nav_reflects_session(pool: db::Pool) {
     let body = body_string(app.clone().oneshot(req).await.unwrap()).await;
     assert!(body.contains("action=\"/logout\""));
     assert!(!body.contains("href=\"/login\""));
-}
-
-async fn total_votes(pool: &db::Pool) -> i64 {
-    db::polls::get_by_slug(pool, "party-poll")
-        .await
-        .unwrap()
-        .unwrap()
-        .options
-        .iter()
-        .map(|o| o.votes)
-        .sum()
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -7705,6 +7576,15 @@ async fn a_token_casts_one_anonymous_ballot_and_no_more(pool: db::Pool) {
         .unwrap();
     assert_eq!(ballots, 1);
 
+    // The result count now reflects the anonymous ballot (counts read from
+    // ballots, not the retired account-keyed votes).
+    let after = db::polls::get_by_slug(&pool, "party-poll")
+        .await
+        .unwrap()
+        .unwrap();
+    let chosen = after.options.iter().find(|o| o.id == option_id).unwrap();
+    assert_eq!(chosen.votes, 1, "the ballot shows in the option tally");
+
     // The same token cannot be spent again.
     let again = post_form(
         &app,
@@ -7771,12 +7651,145 @@ async fn cast_refusals(pool: db::Pool) {
     assert_eq!(r.status(), StatusCode::BAD_REQUEST);
 
     // Well-formed, but the poll never issued a token, so it has no key: refused.
+    // A valueless field and an unknown field in the body are parsed without error.
     let r = post_form(
         &app,
         "/tr/poll/party-poll/cast",
-        &format!("token=AAAA&signature=AAAA&option_id={opt}"),
+        &format!("junk&unknown=x&token=AAAA&signature=AAAA&option_id={opt}"),
         None,
     )
     .await;
     assert_eq!(r.status(), StatusCode::CONFLICT);
+
+    // A closed poll accepts no ballot.
+    let _closed: i64 = sqlx::query_scalar(
+        "insert into polls (question, slug, closes_at) values ('C', 'closed-cast', now() - interval '1 day') returning id",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let r = post_form(
+        &app,
+        "/tr/poll/closed-cast/cast",
+        "token=AAAA&signature=AAAA&option_id=1",
+        None,
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::CONFLICT);
+}
+
+/// A multi-select poll: one token casts a ballot selecting several options, and
+/// each selected option is recorded.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_token_casts_a_multi_select_ballot(pool: db::Pool) {
+    use base64::engine::general_purpose::{STANDARD, URL_SAFE_NO_PAD};
+    use base64::Engine;
+    use blind_rsa_signatures::{BlindSignature, DefaultRng, PublicKey, Randomized, Sha384, PSS};
+    seed(&pool).await;
+    let (_uid, cookie) = user_cookie(&pool, "multi@x.test").await;
+    let tr: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let poll: i64 = sqlx::query_scalar(
+        "insert into polls (question, slug, kind, country_id) values ('M?', 'm-poll', 'multi', $1) returning id",
+    )
+    .bind(tr)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let opts: Vec<i64> = sqlx::query_scalar(
+        "insert into poll_options (poll_id, label, position) values ($1,'A',0),($1,'B',1),($1,'C',2) returning id",
+    )
+    .bind(poll)
+    .fetch_all(&pool)
+    .await
+    .unwrap();
+
+    server::voting::ensure_issuer_key(&pool, poll)
+        .await
+        .unwrap();
+    let pk_der = db::voting::public_key(&pool, poll).await.unwrap().unwrap();
+    let pk = PublicKey::<Sha384, PSS, Randomized>::from_der(&pk_der).unwrap();
+    let token = [6u8; 32];
+    let blinding = pk.blind(&mut DefaultRng, token).unwrap();
+    let app = router(pool.clone());
+    let issue = post_form(
+        &app,
+        "/tr/poll/m-poll/token",
+        &format!(
+            "blinded={}",
+            pct(&STANDARD.encode(AsRef::<[u8]>::as_ref(&blinding.blind_message)))
+        ),
+        Some(&cookie),
+    )
+    .await;
+    let bs = issue.into_body().collect().await.unwrap().to_bytes();
+    let blind_sig = BlindSignature(
+        STANDARD
+            .decode(String::from_utf8(bs.to_vec()).unwrap().trim())
+            .unwrap(),
+    );
+    let sig = pk.finalize(&blind_sig, &blinding, token).unwrap();
+    let rnd = blinding.msg_randomizer.map(|r| r.0.to_vec());
+
+    // Cast two of the three options with one token.
+    let body = format!(
+        "token={}&signature={}&randomizer={}&option_id={}&option_id={}",
+        URL_SAFE_NO_PAD.encode(token),
+        URL_SAFE_NO_PAD.encode(&sig.0),
+        URL_SAFE_NO_PAD.encode(rnd.as_deref().unwrap()),
+        opts[0],
+        opts[2],
+    );
+    let resp = post_form(&app, "/tr/poll/m-poll/cast", &body, None).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+
+    let selected: i64 = sqlx::query_scalar(
+        "select count(*) from ballot_options bo join vote_ballots b on b.id = bo.ballot_id where b.poll_id = $1",
+    )
+    .bind(poll)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(selected, 2, "both chosen options are recorded");
+}
+
+/// If signing fails after the entitlement is recorded, it is rolled back so the
+/// account can request its token again.
+#[sqlx::test(migrations = "../../migrations")]
+async fn issuance_rolls_back_the_entitlement_when_signing_fails(pool: db::Pool) {
+    use base64::engine::general_purpose::STANDARD;
+    use base64::Engine;
+    seed(&pool).await;
+    let (uid, cookie) = user_cookie(&pool, "x@x.test").await;
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    server::voting::ensure_issuer_key(&pool, poll_id)
+        .await
+        .unwrap();
+    // Corrupt the private key so blind-signing fails.
+    sqlx::query("update poll_issuer_keys set private_key = $1 where poll_id = $2")
+        .bind(&b"not-a-key"[..])
+        .bind(poll_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let app = router(pool.clone());
+    let blinded = STANDARD.encode([0u8; 256]);
+    let r = post_form(
+        &app,
+        "/tr/poll/party-poll/token",
+        &format!("blinded={}", pct(&blinded)),
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(r.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    // The entitlement was not consumed, so the account can retry.
+    assert!(!db::voting::has_entitlement(&pool, poll_id, uid)
+        .await
+        .unwrap());
 }
