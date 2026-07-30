@@ -1,9 +1,10 @@
 //! What the platform stores about a person, and what it cannot do with it.
 //!
 //! Every claim here is checkable against the schema and the code, and none of
-//! it is aspirational: an address really is only ever a keyed hash, a vote
-//! really is never updated or deleted, and results really do not sample a
-//! population. If any of that changes, this page changes with it.
+//! it is aspirational: an address really is only ever a keyed hash, a ballot
+//! really cannot be linked to the account that cast it, a ballot really is never
+//! updated or deleted, and results really do not sample a population. If any of
+//! that changes, this page changes with it.
 
 use maud::{html, Markup};
 
@@ -40,9 +41,10 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
             (section(
                 i18n::t("If you vote in a poll"),
                 &[
-                    i18n::t("A vote records which account cast it, so that one account votes once in a poll. It records nothing about who you are, because the platform does not know."),
-                    i18n::t("A vote is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."),
-                    i18n::t("The published participation record contains, for each vote, the poll, the option, the time, and an opaque number that is unique to you within that poll and means nothing outside it. It contains no account reference and no address hash."),
+                    i18n::t("Your vote is anonymous. When you vote, your account is issued a single token for that poll, and the ballot is cast with that token. The token is blinded before the platform ever sees it, so the platform signs it without learning its value. That is what makes the ballot anonymous: it cannot be linked back to your account, not by us and not by anyone holding a copy of the database."),
+                    i18n::t("What is recorded is kept deliberately apart. One record notes that your account was issued a token for this poll, so it cannot be issued a second one. A separate record holds the anonymous ballots. The two share only which poll they belong to, and nothing joins a ballot to the account that cast it."),
+                    i18n::t("A ballot is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."),
+                    i18n::t("The published participation record contains, for each ballot, the poll, the options, the time, and the token it was cast with. It contains no account reference and no address hash, because the platform has none to link to it."),
                 ],
             ))
 
@@ -57,7 +59,8 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
                 i18n::t("What the platform cannot tell you"),
                 &[
                     i18n::t("Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."),
-                    i18n::t("The vote record is tamper-evident, which means it can be shown that votes were not altered after the fact. It does not prove that one person voted once, and that difference is not blurred anywhere on this site."),
+                    i18n::t("The ballot record is tamper-evident: anyone can recompute a poll's count from the published data and confirm that no ballot was altered, removed, or counted twice. It does not prove that one person voted once, an account is not a person, and that difference is not blurred anywhere on this site."),
+                    i18n::t("One limit is worth stating plainly. The platform issues the tokens, so in principle it could issue more of them than there are accounts and inflate a count. It cannot use this to learn how anyone voted, only to pad a total, and even that is bounded and public: the published data records how many tokens each poll issued, so anyone can check that a poll never counted more ballots than it issued and that issuance stays within the number of verified accounts."),
                 ],
             ))
 

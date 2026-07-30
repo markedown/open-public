@@ -92,8 +92,10 @@ Wikidata over party sites over news.
 - Handlers are thin: validate input, call a `db` function, render a template, map errors.
 - No `unwrap()`/`expect()` in request paths. Log with `tracing`, never `println!`.
 - Migrations are **append-only**: never edit a migration that has already been applied.
-- Every page is complete, valid HTML without JavaScript; HTMX only enhances, and every HTMX
-  interaction has a plain-form (non-JS) fallback.
+- Pages are server-rendered, so reading needs no JavaScript, and most actions (search, follow,
+  approval, the compass) degrade to a plain form POST. Casting an anonymous poll vote and the
+  captcha-gated actions (register, sign in, propose a poll) require JavaScript and say so on the page;
+  there is no rule that every interaction must work without it.
 - Text handling: use the locale-aware slug and casing helpers in `domain`; never rely on naive
   `to_lowercase()` for non-ASCII, locale-sensitive text.
 

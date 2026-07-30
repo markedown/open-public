@@ -1,12 +1,13 @@
-# Trustless anonymous voting: design
+# Trust-minimized anonymous voting: design
 
 Status: draft for review. No code yet.
 
-This describes how a vote becomes **anonymous** and **provably one-per-account**,
-in a way that does not require trusting the operator. It is the participation
-half of the "no-trust-needance" goal, and it sits on the same cryptographic
-primitive as the bot-resistance work (Private Access Tokens): **RFC 9474 RSA
-blind signatures**.
+This describes how a vote becomes **anonymous** and **provably one-per-account**
+while minimizing what a voter must trust the operator with. It does not eliminate
+that trust: the operator still holds the signing key and could over-issue tokens,
+a bound that is public and checkable (see section 8). It is the participation half
+of the trust-minimization goal, and it sits on the same cryptographic primitive as
+the bot-resistance work (Private Access Tokens): **RFC 9474 RSA blind signatures**.
 
 ## 1. What this delivers, and what it does not
 
@@ -53,14 +54,14 @@ honest about. It cannot deanonymize regardless.
 ## 3. Why blind RSA (and not zk / Semaphore)
 
 We evaluated Semaphore (Groth16 zk-membership) and chose RFC 9474 blind RSA. On
-the stated priorities, usability first, then no-trust-needance, then professional
+the stated priorities, usability first, then trust minimization, then professional
 engineering:
 
 - **Usability.** Blind RSA needs **no persistent client key** (nothing to lose or
   back up, works on any device by just logging in), is **near-instant**, needs a
   **small pure-JS crypto lib and no WASM**. Semaphore needs a persistent identity
   secret, multi-megabyte WASM proving artifacts, and a 1-3s proof on a phone.
-- **Trustlessness.** Identical: under both, the operator cannot relink a vote.
+- **Trust minimization.** Identical: under both, the operator cannot relink a vote.
 - **Professional / standards.** RFC 9474 is an IETF standard, audited, deployed at
   scale (it is the primitive behind Privacy Pass and PAT). Rust:
   [`blind-rsa-signatures`](https://crates.io/crates/blind-rsa-signatures)
@@ -187,9 +188,10 @@ link real votes to people. And it is **bounded and detectable**:
   fabricate, which is exactly the Sybil bound everyone faces. Over-issuance beyond
   the eligible-account count is publicly visible.
 
-A fully trustless issuer (threshold signing, or a public append-only issuance log
-with distributed keys) is possible later but out of scope now; the reconciliation
-above is the honest, professional bound we ship with, and we document it.
+An issuer that need not be trusted at all (threshold signing, or a public
+append-only issuance log with distributed keys) is possible later but out of scope
+now; the reconciliation above is the honest, professional bound we ship with, and
+we document it.
 
 ## 9. Relationship to PAT (uniqueness, separate layer)
 
@@ -205,13 +207,14 @@ collecting identity.
 ## 10. Client: the voting island
 
 Voting becomes a small **JavaScript island** (blinding, unblinding, submission)
-using a pure-JS blind-RSA implementation, **no WASM**. This is a deliberate,
-documented relaxation of the "voting works without JavaScript" rule: trustless
-anonymity requires client-side crypto, so the client must run code. The rest of
-the site stays server-rendered and works without JS. The poll page renders fully
-(question, options, results) without JS; only *casting* an anonymous vote needs
-the island. A no-JS visitor sees the poll and results and a clear message that
-voting needs JavaScript enabled, rather than a broken control.
+using a pure-JS blind-RSA implementation, **no WASM**. Anonymity requires
+client-side crypto, so casting a vote requires JavaScript: the client blinds the
+token itself, because the moment the server does the blinding it sees what it
+signs and the anonymity is gone. The rest of the site stays server-rendered and
+works without JS. The poll page renders fully (question, options, results) without
+JS; only *casting* an anonymous vote needs the island. A no-JS visitor sees the
+poll and results and a clear message that voting needs JavaScript enabled, rather
+than a broken control.
 
 ## 11. Public verifiability
 
