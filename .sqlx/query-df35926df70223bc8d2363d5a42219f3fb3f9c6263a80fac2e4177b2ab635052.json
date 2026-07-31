@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select case when a_id = $1 then b_id else a_id end as \"other!\"\n           from news_related where a_id = $1 or b_id = $1 order by 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "other!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "df35926df70223bc8d2363d5a42219f3fb3f9c6263a80fac2e4177b2ab635052"
+}

@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into news_related (a_id, b_id, method, similarity) values ($1, $2, $3, $4) on conflict (a_id, b_id) do update set method = excluded.method, similarity = excluded.similarity",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text",
+        "Float4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "674424f3d03fa4838c134ca3e777ab1d68a86675a09216afd6ea9a227cc3785b"
+}
