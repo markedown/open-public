@@ -7721,6 +7721,59 @@ async fn a_token_casts_one_anonymous_ballot_and_no_more(pool: db::Pool) {
         "the three counts are labelled"
     );
     assert!(page.contains("href=\"/participation\""));
+    // With a single ballot, the fine-grained timeline is suppressed.
+    assert!(
+        !page.contains("when votes were cast"),
+        "the timeline is hidden below the participant threshold"
+    );
+}
+
+/// The cast-time timeline appears on the poll page only once a poll has enough
+/// ballots to read as a shape (the min-participants suppression).
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_participation_timeline_shows_once_enough_ballots_exist(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Thirty verified accounts, each issued a token and each casting a ballot,
+    // the ballots spread over time. Inserted directly: this test is about the
+    // display threshold, not the crypto path (covered elsewhere).
+    sqlx::query(
+        "insert into users (email_hash, password_hash, verified_at) \
+         select 'tl' || g, 'p', now() from generate_series(1, 30) g",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    sqlx::query(
+        "insert into vote_entitlements (poll_id, user_id) \
+         select $1, u.id from users u where u.email_hash like 'tl%'",
+    )
+    .bind(poll_id)
+    .execute(&pool)
+    .await
+    .unwrap();
+    sqlx::query(
+        "insert into vote_ballots (poll_id, token, signature, seq, content_hash, cast_at) \
+         select $1, ('t' || g)::bytea, 's'::bytea, g, ('h' || g)::bytea, \
+                now() - (g || ' minutes')::interval \
+         from generate_series(1, 30) g",
+    )
+    .bind(poll_id)
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    let page = body_string(get_cookie(&app, "/tr/poll/party-poll", "lang=en").await).await;
+    assert!(page.contains("Participation"), "the panel shows");
+    assert!(
+        page.contains("when votes were cast"),
+        "the timeline shows once enough ballots exist"
+    );
 }
 
 /// The anonymous cast endpoint refuses a request with no token, a request with

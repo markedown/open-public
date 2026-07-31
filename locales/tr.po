@@ -1194,3 +1194,12 @@ msgstr "Bunlar bir kişi, bir oy olduğunu kanıtlamaz. Bir hesap bir kişi değ
 
 msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
 msgstr "Sayılardan ikisi, istenen ve uygun, bizim tarafımızdan bildirilir ve yayımlanan veriden yeniden hesaplanamaz; çünkü bunları yeniden hesaplamak, bilerek yayımlamadığımız hesap ayrıntılarını gerektirir. Kullanılan yeniden hesaplanabilir: yalnızca o anketin dökümdeki oy sayısıdır."
+
+msgid "when votes were cast"
+msgstr "oyların ne zaman kullanıldığı"
+
+msgid "When the votes were cast"
+msgstr "Oylar ne zaman kullanıldı"
+
+msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
+msgstr "Her anket ayrıca, oylarının ilkinden sonuncusuna kadar ne zaman kullanıldığını gösteren küçük bir grafik sunar; böylece katılımının şekli görünür olur. Düzenli aralıklarla gelen oylar dengeli görünür; hepsi bir anda gelen bir yığılma ise sivri bir çıkıntı gibi görünür. Grafik, bir anket bir şekil olarak okunacak kadar oy topladığında belirir ve herkes bunu yayımlanan oylardaki zamanlardan yeniden hesaplayabilir."

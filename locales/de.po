@@ -1182,3 +1182,12 @@ msgstr "Sie beweisen nicht eine Person, eine Stimme. Ein Konto ist keine Person,
 
 msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
 msgstr "Zwei der Zahlen, angefragt und berechtigt, werden von uns angegeben und lassen sich aus den veröffentlichten Daten nicht nachrechnen, denn dazu bräuchte man die Kontodaten, die wir bewusst nicht veröffentlichen. Abgegeben ist nachrechenbar: es ist schlicht die Zahl der Stimmzettel dieser Umfrage im Datensatz."
+
+msgid "when votes were cast"
+msgstr "wann abgestimmt wurde"
+
+msgid "When the votes were cast"
+msgstr "Wann abgestimmt wurde"
+
+msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
+msgstr "Jede Umfrage zeigt außerdem ein kleines Diagramm, wann ihre Stimmen abgegeben wurden, von der ersten bis zur letzten, sodass die Form ihrer Teilnahme sichtbar wird. Stimmen, die stetig eintreffen, sehen gleichmäßig aus; ein Schwung auf einmal sieht wie eine Spitze aus. Das Diagramm erscheint, sobald eine Umfrage genug Stimmen hat, um als Form lesbar zu sein, und jede und jeder kann es aus den Zeiten in den veröffentlichten Stimmen nachrechnen."

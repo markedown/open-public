@@ -28,6 +28,13 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
             ))
 
             (section(
+                i18n::t("When the votes were cast"),
+                &[
+                    i18n::t("Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."),
+                ],
+            ))
+
+            (section(
                 i18n::t("The bound anyone can check"),
                 &[
                     i18n::t("Cast can never exceed requested, and requested can never exceed eligible. Written out: cast is at most requested, which is at most eligible. The published data at /data/polls.json carries all three, so anyone can confirm the relationship holds for every poll."),

@@ -268,6 +268,46 @@ pub async fn reconciliation(pool: &Pool, poll_id: i64) -> Result<Reconciliation>
     })
 }
 
+/// Below this many ballots, the fine-grained participation signals (the cast-time
+/// timeline, and later the account-age cohort) are suppressed on the page: too
+/// few points to read as a shape, and a low-resolution aggregate could leak. The
+/// reconciliation counts have no such resolution and are always shown.
+pub const MIN_PARTICIPANTS: i64 = 25;
+
+/// A coarse histogram of when a poll's ballots were cast: `buckets` equal time
+/// slices spanning the first ballot to the last, each carrying its count. Returns
+/// all zeros when the poll has no ballots. This is aggregate timing only: it is
+/// derived from `cast_at` (already public per ballot) and names no voter.
+pub async fn cast_histogram(pool: &Pool, poll_id: i64, buckets: i32) -> Result<Vec<i64>> {
+    let rows = sqlx::query!(
+        r#"
+        with b as (
+            select extract(epoch from cast_at)::float8 as t
+            from vote_ballots where poll_id = $1
+        ),
+        bounds as (select min(t) as lo, max(t) as hi from b)
+        select least($2::int, greatest(1,
+                 case when bounds.hi > bounds.lo
+                      then width_bucket(b.t, bounds.lo, bounds.hi, $2::int)
+                      else 1 end)) as "slot!",
+               count(*) as "n!"
+        from b, bounds
+        group by 1
+        order by 1
+        "#,
+        poll_id,
+        buckets
+    )
+    .fetch_all(pool)
+    .await?;
+    let mut out = vec![0i64; buckets.max(1) as usize];
+    for r in rows {
+        let idx = (r.slot - 1).clamp(0, buckets - 1) as usize;
+        out[idx] = r.n;
+    }
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -346,6 +386,37 @@ mod tests {
                 eligible: 1
             }
         );
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn cast_histogram_buckets_ballots_over_time(pool: Pool) {
+        let poll = a_poll(&pool).await;
+
+        // No ballots: every slice is zero.
+        assert_eq!(
+            cast_histogram(&pool, poll, 4).await.unwrap(),
+            vec![0, 0, 0, 0]
+        );
+
+        // One ballot in the earliest slice, a cluster in the latest.
+        sqlx::query(
+            "insert into vote_ballots (poll_id, token, signature, seq, content_hash, cast_at) \
+             values \
+               ($1, 'a', 's', 1, 'h1', now() - interval '10 hours'), \
+               ($1, 'b', 's', 2, 'h2', now() - interval '20 minutes'), \
+               ($1, 'c', 's', 3, 'h3', now() - interval '10 minutes'), \
+               ($1, 'd', 's', 4, 'h4', now())",
+        )
+        .bind(poll)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+        let h = cast_histogram(&pool, poll, 4).await.unwrap();
+        assert_eq!(h.len(), 4);
+        assert_eq!(h.iter().sum::<i64>(), 4, "every ballot lands in a slice");
+        assert_eq!(h[0], 1, "the earliest ballot is in the first slice");
+        assert!(h[3] >= 2, "the late cluster falls in the last slice");
     }
 
     #[sqlx::test(migrations = "../../migrations")]
