@@ -119,7 +119,7 @@ impl Config {
             .filter(|k| !k.trim().is_empty())
             .map(|api_key| ReviewConfig {
                 api_key,
-                model: get("DEEPSEEK_MODEL").unwrap_or_else(|| "deepseek-chat".to_string()),
+                model: get("DEEPSEEK_MODEL").unwrap_or_else(|| "deepseek-v4-flash".to_string()),
                 base_url: get("DEEPSEEK_BASE_URL")
                     .unwrap_or_else(|| "https://api.deepseek.com".to_string())
                     .trim_end_matches('/')
@@ -236,7 +236,7 @@ mod tests {
         ]))
         .unwrap();
         let review = cfg.review.expect("review configured");
-        assert_eq!(review.model, "deepseek-chat"); // default model
+        assert_eq!(review.model, "deepseek-v4-flash"); // default model
         assert_eq!(review.base_url, "https://api.deepseek.com"); // trailing slash trimmed
     }
 
