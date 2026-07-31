@@ -193,6 +193,14 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/admin/bios", get(pages::admin::bios))
         .route("/admin/bios/{id}/publish", post(pages::admin::bio_publish))
         .route("/admin/bios/{id}/discard", post(pages::admin::bio_discard))
+        .route(
+            "/admin/bios/people/publish-all",
+            post(pages::admin::bio_people_publish_all),
+        )
+        .route(
+            "/admin/bios/people/discard-all",
+            post(pages::admin::bio_people_discard_all),
+        )
         .route("/admin/translations", get(pages::admin::translations))
         .route(
             "/admin/translations/{id}/publish",

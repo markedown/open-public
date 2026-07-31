@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.id, p.full_name as name, p.slug, c.slug as \"country_slug!\",\n               p.summary_draft as \"draft!\", p.summary as \"current\"\n        from people p join countries c on c.id = p.country_id\n        where p.summary_draft is not null\n        order by p.full_name collate \"name_sort\"\n        limit $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "country_slug!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "countries",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "draft!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "summary_draft"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "current",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "summary"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "d2f4773ae0f54c94c2176d145604204d0b47f5c5c7c2f7a6df113bb3ed874044"
+}

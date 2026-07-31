@@ -1077,6 +1077,73 @@ async fn admin_reviews_and_publishes_summaries(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn admin_reviews_person_bios_as_a_batch(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let cookie = admin_cookie(&pool).await;
+
+    // Two people with pending bio drafts.
+    sqlx::query(
+        "update people set summary_draft = 'Taslak biyografi ' || slug \
+         where slug in ('ayse-yilmaz','mehmet-demir')",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    assert_eq!(
+        db::people::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        2
+    );
+
+    // The bios page shows the person batch, its count, the sample, and the
+    // batch actions; it is admin-only.
+    let page = body_string(get_cookie(&app, "/admin/bios", &cookie).await).await;
+    assert!(
+        page.contains("Taslak biyografi ayse-yilmaz"),
+        "the sample shows"
+    );
+    assert!(
+        page.contains("Tümünü yayımla"),
+        "the publish-all action shows"
+    );
+    assert_eq!(
+        get(&app, "/admin/bios").await.status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // Publishing the batch sets each summary and clears every draft.
+    let resp = post_form(&app, "/admin/bios/people/publish-all", "", Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(
+        db::people::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+    let p = db::people::get_by_slug(&pool, "ayse-yilmaz")
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(p.summary.as_deref(), Some("Taslak biyografi ayse-yilmaz"));
+
+    // Discard-all clears drafts without publishing.
+    sqlx::query("update people set summary_draft = 'x' where slug='mehmet-demir'")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let resp = post_form(&app, "/admin/bios/people/discard-all", "", Some(&cookie)).await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(
+        db::people::count_pending_summary_drafts(&pool)
+            .await
+            .unwrap(),
+        0
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn list_pages_are_searchable(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool);

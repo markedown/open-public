@@ -1206,3 +1206,12 @@ msgstr "Cela est calculé sur les comptes ayant participé, non sur les votes, e
 
 msgid "Also reported by"
 msgstr "Également rapporté par"
+
+msgid "Publish all"
+msgstr "Tout publier"
+
+msgid "Discard all"
+msgstr "Tout supprimer"
+
+msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
+msgstr "Ces biographies sont générées de la même manière à partir de données structurées sourcées. Lisez l'échantillon, puis publiez ou supprimez tout le lot."

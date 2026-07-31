@@ -39,7 +39,8 @@ pub async fn index(
     let pending_drafts = db::news::pending_draft_count(&pool).await?;
     let pending_translations = db::translations::pending_count(&pool).await?;
     let pending_submissions = db::submissions::pending_admin_count(&pool).await?;
-    let pending_bios = db::parties::count_pending_summary_drafts(&pool).await?;
+    let pending_bios = db::parties::count_pending_summary_drafts(&pool).await?
+        + db::people::count_pending_summary_drafts(&pool).await?;
 
     let content = html! {
         section class="mx-auto max-w-2xl" {
@@ -246,6 +247,8 @@ pub async fn bios(
 ) -> Result<Markup, PageError> {
     require_admin(&session)?;
     let drafts = db::parties::pending_summary_drafts(&pool).await?;
+    let person_pending = db::people::count_pending_summary_drafts(&pool).await?;
+    let person_sample = db::people::pending_summary_drafts(&pool, 12).await?;
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
@@ -263,12 +266,22 @@ pub async fn bios(
                 (i18n::t("Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."))
             }
 
+            // Person bios arrive in bulk, generated the same way from sourced
+            // structured data, so they are reviewed as a batch (a sample below)
+            // rather than one of thousands at a time.
+            @if person_pending > 0 {
+                (person_bio_panel(person_pending, &person_sample))
+            }
+
+            h2 class="mt-10 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+                (i18n::t("Parties"))
+            }
             @if drafts.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-4 py-6 text-center text-sm text-ink-muted" {
                     (i18n::t("No drafts to review."))
                 }
             } @else {
-                ul class="mt-6 space-y-4" {
+                ul class="mt-4 space-y-4" {
                     @for d in &drafts {
                         (bio_card(d))
                     }
@@ -282,6 +295,65 @@ pub async fn bios(
         true,
         content,
     ))
+}
+
+/// The person-bio batch: how many are pending, a sample to spot-check, and the
+/// two batch actions. They are one machine-generated set from sourced data, so a
+/// reviewer approves the method (having read the sample), not each of thousands.
+fn person_bio_panel(pending: i64, sample: &[db::people::PersonDraft]) -> Markup {
+    html! {
+        section class="mt-8 op-card p-5" {
+            h2 class="flex flex-wrap items-baseline gap-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+                (i18n::t("People"))
+                span class="font-mono text-base font-medium text-ink" { (pending) }
+            }
+            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                (i18n::t("These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."))
+            }
+            ul class="mt-3 space-y-2" {
+                @for d in sample {
+                    li class="text-xs leading-relaxed text-ink-muted" {
+                        span class="font-mono text-[10px] uppercase tracking-wide text-ink-faint" { (d.country_slug) " " }
+                        (d.draft)
+                    }
+                }
+            }
+            div class="mt-4 flex gap-2" {
+                form method="post" action="/admin/bios/people/publish-all" {
+                    button type="submit"
+                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                        (i18n::t("Publish all")) " (" (pending) ")"
+                    }
+                }
+                form method="post" action="/admin/bios/people/discard-all" {
+                    button type="submit"
+                      class="rounded-lg border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                        (i18n::t("Discard all"))
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Publish every pending person bio at once, then back to the queue.
+pub async fn bio_people_publish_all(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+) -> Result<Response, PageError> {
+    require_admin(&session)?;
+    db::people::publish_all_summary_drafts(&pool).await?;
+    Ok(Redirect::to("/admin/bios").into_response())
+}
+
+/// Discard every pending person bio at once, then back to the queue.
+pub async fn bio_people_discard_all(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+) -> Result<Response, PageError> {
+    require_admin(&session)?;
+    db::people::discard_all_summary_drafts(&pool).await?;
+    Ok(Redirect::to("/admin/bios").into_response())
 }
 
 /// One draft awaiting review.

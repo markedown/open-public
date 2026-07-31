@@ -1218,3 +1218,12 @@ msgstr "Bu, oylar üzerinden değil, katılan hesaplar üzerinden hesaplanır; d
 
 msgid "Also reported by"
 msgstr "Ayrıca haberleştirenler"
+
+msgid "Publish all"
+msgstr "Tümünü yayımla"
+
+msgid "Discard all"
+msgstr "Tümünü sil"
+
+msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
+msgstr "Bu biyografiler, kaynaklı yapısal verilerden aynı yöntemle üretilir. Örneği okuyun, ardından toplu olarak yayımlayın ya da silin."
