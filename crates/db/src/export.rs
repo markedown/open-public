@@ -33,6 +33,10 @@ pub struct BallotTally {
     /// How many ballots were spent (cast) for this poll. Recomputable by counting
     /// the published ballots; carried explicitly so the reconciliation is legible.
     pub spent: i64,
+    /// How many participating accounts were new (younger than a week) when issued
+    /// a token. An aggregate over entitlements, never ballots. Attested, not
+    /// recomputable from this dump; its total is `issued`.
+    pub cohort_new: i64,
     /// The ballot-chain head sequence and hash, `None` for a poll with no ballot.
     pub head_seq: Option<i64>,
     pub head_hash: Option<Vec<u8>>,
@@ -67,6 +71,10 @@ pub async fn ballot_tallies(pool: &Pool) -> Result<Vec<BallotTally>> {
                k.public_key as "public_key?",
                (select count(*) from vote_entitlements e where e.poll_id = p.id) as "issued!",
                (select count(*) from vote_ballots b where b.poll_id = p.id) as "spent!",
+               (select count(*) from vote_entitlements e
+                  join users u on u.id = e.user_id
+                  where e.poll_id = p.id
+                    and e.issued_at - u.created_at < make_interval(days => 7)) as "cohort_new!",
                hd.seq as "head_seq?", hd.hash as "head_hash?"
         from polls p
         join poll_options o on o.poll_id = p.id

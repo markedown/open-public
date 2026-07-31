@@ -1191,3 +1191,15 @@ msgstr "Wann abgestimmt wurde"
 
 msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
 msgstr "Jede Umfrage zeigt außerdem ein kleines Diagramm, wann ihre Stimmen abgegeben wurden, von der ersten bis zur letzten, sodass die Form ihrer Teilnahme sichtbar wird. Stimmen, die stetig eintreffen, sehen gleichmäßig aus; ein Schwung auf einmal sieht wie eine Spitze aus. Das Diagramm erscheint, sobald eine Umfrage genug Stimmen hat, um als Form lesbar zu sein, und jede und jeder kann es aus den Zeiten in den veröffentlichten Stimmen nachrechnen."
+
+msgid "Accounts under a week old when they took part:"
+msgstr "Konten, die beim Mitmachen jünger als eine Woche waren:"
+
+msgid "How new the accounts were"
+msgstr "Wie neu die Konten waren"
+
+msgid "A poll can also show what share of the accounts that took part were newly created, less than a week old when they were issued a ballot. Accounts made in bulk just before a poll are the usual way someone tries to manufacture participation, and a high share is where that would show."
+msgstr "Eine Umfrage kann außerdem zeigen, welcher Anteil der teilnehmenden Konten neu angelegt war, jünger als eine Woche, als ihnen ein Stimmzettel ausgestellt wurde. In großer Zahl kurz vor einer Umfrage angelegte Konten sind der übliche Weg, Teilnahme vorzutäuschen, und ein hoher Anteil ist die Stelle, an der sich das zeigen würde."
+
+msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
+msgstr "Das wird über die teilnehmenden Konten berechnet, nicht über die Stimmen, verrät also nichts darüber, wie jemand abgestimmt hat; eine Stimme lässt sich weiterhin keinem Konto zuordnen. Wie die Zeitleiste erscheint es erst, wenn genug Konten teilgenommen haben, und es ist eine Zahl, die wir angeben, nicht eine aus den veröffentlichten Daten nachrechenbare."

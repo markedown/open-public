@@ -49,6 +49,10 @@ struct PollExport {
     issued: i64,
     /// Ballots cast for this poll. Recomputable by counting this poll's ballots.
     spent: i64,
+    /// The share (percent) of participating accounts that were new (younger than a
+    /// week) when issued a token, or null when too few took part to show it. An
+    /// attested aggregate over accounts, not recomputable from this file.
+    new_accounts_pct: Option<i64>,
     chain: Option<ChainHead>,
     options: Vec<OptionExport>,
 }
@@ -98,7 +102,10 @@ that the operator cannot link a ballot to a voter. It does not prove one person 
 one vote. `issued` and `eligible` are counts we attest; they cannot be recomputed \
 from this file, because doing so would need the account data we do not publish. \
 Each ballot carries its `cast_at`, so the timeline of when a poll's ballots were \
-cast is recomputable by bucketing them.";
+cast is recomputable by bucketing them. `new_accounts_pct` is the share of a \
+poll's participating accounts that were new when they took part, an aggregate \
+over accounts that we attest and that names no voter; it is null below the \
+participant threshold.";
 
 /// The anonymous poll-participation dump.
 pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, PageError> {
@@ -137,6 +144,7 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
                         .map(|der| base64::engine::general_purpose::STANDARD.encode(der)),
                     issued: t.issued,
                     spent: t.spent,
+                    new_accounts_pct: db::voting::cohort_pct(t.issued, t.cohort_new),
                     chain,
                     options: vec![opt],
                 });

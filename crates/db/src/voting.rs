@@ -308,6 +308,41 @@ pub async fn cast_histogram(pool: &Pool, poll_id: i64, buckets: i32) -> Result<V
     Ok(out)
 }
 
+/// An account counts as "new" for the cohort signal if it was younger than this
+/// many days when it was issued its token. Just-in-time account farms are the
+/// main Sybil vector, and they show up here.
+pub const NEW_ACCOUNT_DAYS: i32 = 7;
+
+/// How many of a poll's participating accounts were new (younger than
+/// `NEW_ACCOUNT_DAYS`) when issued their token. Computed over `vote_entitlements`
+/// joined to `users`, never over ballots, so it is a property of who took part
+/// and reveals nothing about which ballot anyone cast. The total it is a share of
+/// is the poll's issued count.
+pub async fn cohort_new_count(pool: &Pool, poll_id: i64) -> Result<i64> {
+    let n = sqlx::query_scalar!(
+        r#"
+        select count(*) as "n!"
+        from vote_entitlements e
+        join users u on u.id = e.user_id
+        where e.poll_id = $1
+          and e.issued_at - u.created_at < make_interval(days => $2)
+        "#,
+        poll_id,
+        NEW_ACCOUNT_DAYS
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(n)
+}
+
+/// The new-account share to display, as a rounded percentage, or `None` when
+/// there are too few participants to show it (the same suppression as the
+/// timeline, so a small poll cannot leak through a coarse aggregate). `total` is
+/// the poll's issued count; `new` is `cohort_new_count`.
+pub fn cohort_pct(total: i64, new: i64) -> Option<i64> {
+    (total >= MIN_PARTICIPANTS).then(|| (new * 100 + total / 2) / total)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -417,6 +452,40 @@ mod tests {
         assert_eq!(h.iter().sum::<i64>(), 4, "every ballot lands in a slice");
         assert_eq!(h[0], 1, "the earliest ballot is in the first slice");
         assert!(h[3] >= 2, "the late cluster falls in the last slice");
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn cohort_new_count_and_pct_measure_fresh_accounts(pool: Pool) {
+        let poll = a_poll(&pool).await;
+        // A fresh account and an old one, each issued a token for the poll.
+        let new_uid: i64 = sqlx::query_scalar(
+            "insert into users (email_hash, password_hash, created_at) \
+             values ('n', 'p', now()) returning id",
+        )
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        let old_uid: i64 = sqlx::query_scalar(
+            "insert into users (email_hash, password_hash, created_at) \
+             values ('o', 'p', now() - interval '30 days') returning id",
+        )
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        record_entitlement(&pool, poll, new_uid).await.unwrap();
+        record_entitlement(&pool, poll, old_uid).await.unwrap();
+
+        assert_eq!(
+            cohort_new_count(&pool, poll).await.unwrap(),
+            1,
+            "only the account that was fresh when issued counts"
+        );
+
+        // The share is suppressed below the participant threshold and rounded
+        // above it.
+        assert_eq!(cohort_pct(2, 1), None);
+        assert_eq!(cohort_pct(MIN_PARTICIPANTS, MIN_PARTICIPANTS), Some(100));
+        assert_eq!(cohort_pct(40, 10), Some(25));
     }
 
     #[sqlx::test(migrations = "../../migrations")]
