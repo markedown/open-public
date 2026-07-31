@@ -828,6 +828,69 @@ pub async fn related_ids(pool: &Pool, news_id: i64) -> Result<Vec<i64>> {
     Ok(rows)
 }
 
+/// A related article, for the "also reported by" block on a news item's page.
+pub struct RelatedNews {
+    pub id: i64,
+    pub headline: String,
+    pub outlet: Option<String>,
+    pub published_at: Option<DateTime<Utc>>,
+}
+
+/// The articles linked to this one as the same story, newest first, each with its
+/// outlet so the page can show the spread of coverage.
+pub async fn related_news(pool: &Pool, news_id: i64) -> Result<Vec<RelatedNews>> {
+    let rows = sqlx::query_as!(
+        RelatedNews,
+        r#"
+        select n.id, n.headline, s.outlet, s.published_at
+        from news_related r
+        join news_items n on n.id = case when r.a_id = $1 then r.b_id else r.a_id end
+        join sources s on s.id = n.source_id
+        where r.a_id = $1 or r.b_id = $1
+        order by s.published_at desc nulls last, n.id desc
+        "#,
+        news_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// A news item near another in embedding space, with its cosine similarity.
+pub struct Neighbour {
+    pub id: i64,
+    pub similarity: f32,
+}
+
+/// The `limit` news items closest to `news_id` by cosine similarity, nearest
+/// first, excluding itself and any item without an embedding. This is the finder
+/// the clustering pass uses to propose same-story candidates. A runtime query,
+/// because the vector operator is not compile-checkable without a vector-typed
+/// binding.
+pub async fn nearest_neighbours(pool: &Pool, news_id: i64, limit: i64) -> Result<Vec<Neighbour>> {
+    use sqlx::Row;
+    let rows = sqlx::query(
+        "select n.id, (1.0 - (n.embedding <=> src.embedding))::float4 as similarity \
+         from news_items n, news_items src \
+         where src.id = $1 and src.embedding is not null \
+           and n.id <> $1 and n.embedding is not null \
+         order by n.embedding <=> src.embedding \
+         limit $2",
+    )
+    .bind(news_id)
+    .bind(limit)
+    .fetch_all(pool)
+    .await?;
+    rows.iter()
+        .map(|r| {
+            Ok(Neighbour {
+                id: r.try_get("id")?,
+                similarity: r.try_get("similarity")?,
+            })
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -885,5 +948,35 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(count, 1);
+
+        // The related-coverage read returns the other article, either direction.
+        let related = related_news(&pool, n1).await.unwrap();
+        assert_eq!(related.len(), 1);
+        assert_eq!(related[0].id, n2);
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn nearest_neighbours_orders_by_cosine_similarity(pool: Pool) {
+        let a = a_news(&pool, "https://o.test/a").await;
+        let near = a_news(&pool, "https://o.test/near").await;
+        let far = a_news(&pool, "https://o.test/far").await;
+
+        // `a` points along the first axis; `near` almost the same, `far` orthogonal.
+        let mut va = vec![0.0_f32; 1024];
+        va[0] = 1.0;
+        let mut vnear = vec![0.0_f32; 1024];
+        vnear[0] = 0.95;
+        vnear[1] = 0.05;
+        let mut vfar = vec![0.0_f32; 1024];
+        vfar[500] = 1.0;
+        set_embedding(&pool, a, &va).await.unwrap();
+        set_embedding(&pool, near, &vnear).await.unwrap();
+        set_embedding(&pool, far, &vfar).await.unwrap();
+
+        let ns = nearest_neighbours(&pool, a, 10).await.unwrap();
+        assert_eq!(ns.len(), 2, "itself is excluded");
+        assert_eq!(ns[0].id, near, "the closest comes first");
+        assert_eq!(ns[1].id, far);
+        assert!(ns[0].similarity > ns[1].similarity);
     }
 }

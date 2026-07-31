@@ -1203,3 +1203,6 @@ msgstr "Un sondage peut aussi montrer quelle part des comptes ayant participé �
 
 msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
 msgstr "Cela est calculé sur les comptes ayant participé, non sur les votes, et ne révèle donc rien sur la façon dont quiconque a voté ; un bulletin ne peut toujours pas être relié à un compte. Comme la chronologie, cela n'apparaît qu'une fois qu'assez de comptes ont participé, et c'est un chiffre que nous rapportons, non recalculable à partir des données publiées."
+
+msgid "Also reported by"
+msgstr "Également rapporté par"
