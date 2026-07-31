@@ -438,3 +438,66 @@ pub async fn current_parties(pool: &Pool, person_ids: &[i64]) -> Result<Vec<Pers
     .await?;
     Ok(rows)
 }
+
+/// A pending person-bio draft, for the review sample.
+pub struct PersonDraft {
+    pub id: i64,
+    pub name: String,
+    pub slug: String,
+    pub country_slug: String,
+    pub draft: String,
+    pub current: Option<String>,
+}
+
+/// How many people have a bio draft awaiting review.
+pub async fn count_pending_summary_drafts(pool: &Pool) -> Result<i64> {
+    let n = sqlx::query_scalar!(
+        r#"select count(*) as "count!" from people where summary_draft is not null"#,
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(n)
+}
+
+/// A sample of pending person-bio drafts (there can be thousands), for a
+/// spot-check before a bulk publish.
+pub async fn pending_summary_drafts(pool: &Pool, limit: i64) -> Result<Vec<PersonDraft>> {
+    let rows = sqlx::query_as!(
+        PersonDraft,
+        r#"
+        select p.id, p.full_name as name, p.slug, c.slug as "country_slug!",
+               p.summary_draft as "draft!", p.summary as "current"
+        from people p join countries c on c.id = p.country_id
+        where p.summary_draft is not null
+        order by p.full_name collate "name_sort"
+        limit $1
+        "#,
+        limit,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// Publish every pending person bio draft at once (they are generated the same
+/// way from sourced structured data, so a reviewer approves the method, not each
+/// of thousands). Returns how many were published.
+pub async fn publish_all_summary_drafts(pool: &Pool) -> Result<u64> {
+    let n = sqlx::query!(
+        "update people set summary = summary_draft, summary_draft = null, updated_at = now() \
+         where summary_draft is not null",
+    )
+    .execute(pool)
+    .await?
+    .rows_affected();
+    Ok(n)
+}
+
+/// Discard every pending person bio draft at once. Returns how many were cleared.
+pub async fn discard_all_summary_drafts(pool: &Pool) -> Result<u64> {
+    let n = sqlx::query!("update people set summary_draft = null where summary_draft is not null")
+        .execute(pool)
+        .await?
+        .rows_affected();
+    Ok(n)
+}

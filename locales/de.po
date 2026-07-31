@@ -1206,3 +1206,12 @@ msgstr "Das wird über die teilnehmenden Konten berechnet, nicht über die Stimm
 
 msgid "Also reported by"
 msgstr "Auch berichtet von"
+
+msgid "Publish all"
+msgstr "Alle veröffentlichen"
+
+msgid "Discard all"
+msgstr "Alle verwerfen"
+
+msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
+msgstr "Diese Biografien werden auf die gleiche Weise aus belegten strukturierten Daten erzeugt. Lesen Sie die Stichprobe und veröffentlichen oder verwerfen Sie dann den ganzen Stapel."

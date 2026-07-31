@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update people set summary_draft = null where summary_draft is not null",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "c3161139a072f4250efdd58f12ca554a5d1bdbe2f30798d4667960434d78c886"
+}
