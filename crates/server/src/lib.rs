@@ -129,6 +129,7 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}/outlet/{slug}", get(pages::outlets::detail))
         .route("/search", get(pages::search::page))
         .route("/privacy", get(pages::privacy::page))
+        .route("/participation", get(pages::participation::page))
         .route("/robots.txt", get(pages::discovery::robots))
         .route("/sitemap.xml", get(pages::discovery::sitemap))
         .route("/{country}/polls", get(pages::polls::list))

@@ -1140,3 +1140,57 @@ msgstr "Bu anket için anonim oy pusulanızı kullandınız."
 
 msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
 msgstr "Oyunuz anonimdir: kendi sistemlerimize tam erişimimiz olsa bile nasıl oy verdiğinizi göremeyiz. Bu, bir kişi bir oy olduğunu kanıtlamaz."
+
+msgid "Participation"
+msgstr "Katılım"
+
+msgid "requested"
+msgstr "istenen"
+
+msgid "cast"
+msgstr "kullanılan"
+
+msgid "eligible"
+msgstr "uygun"
+
+msgid "Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."
+msgstr "Oy pusulası isteyen hesaplar, gerçekten kullanılan oylar ve kullanabilecek doğrulanmış hesaplar. Kullanılanın istenenden, istenenin de uygun sayısından fazla olamayacağını herkes doğrulayabilir."
+
+msgid "How these numbers work"
+msgstr "Bu sayılar nasıl çalışır"
+
+msgid "How participation numbers work"
+msgstr "Katılım sayıları nasıl çalışır"
+
+msgid "Each poll shows a few plain counts of how its participation formed. They let anyone judge how a poll's numbers came about, without revealing who took part. This page explains each one and, just as importantly, what it does not show."
+msgstr "Her anket, katılımının nasıl oluştuğunu gösteren birkaç yalın sayı sunar. Bunlar, kimin katıldığını açık etmeden, bir anketin sayılarının nasıl ortaya çıktığını herkesin değerlendirmesine olanak tanır. Bu sayfa her birini ve aynı ölçüde önemli olarak neyi göstermediğini açıklar."
+
+msgid "The three counts"
+msgstr "Üç sayı"
+
+msgid "Requested is how many accounts asked for a ballot for this poll. It is a count of accounts that took part, never a list of which ones."
+msgstr "İstenen, bu anket için kaç hesabın oy pusulası istediğidir. Katılan hesapların bir sayısıdır; hangileri olduğunun bir listesi değildir."
+
+msgid "Cast is how many anonymous ballots were actually cast. A ballot cannot be linked to any account, so this counts votes, not people."
+msgstr "Kullanılan, gerçekten kullanılan anonim oy sayısıdır. Bir oy hiçbir hesaba bağlanamaz; dolayısıyla bu, kişileri değil oyları sayar."
+
+msgid "Eligible is how many verified, unbanned accounts exist on the platform: the most any poll could possibly reach. It is a ceiling, not a figure for this poll."
+msgstr "Uygun, platformda kaç tane doğrulanmış ve yasaklı olmayan hesap bulunduğudur: bir anketin ulaşabileceği en yüksek sayı. Bu ankete özgü bir değer değil, bir tavandır."
+
+msgid "The bound anyone can check"
+msgstr "Herkesin doğrulayabileceği sınır"
+
+msgid "Cast can never exceed requested, and requested can never exceed eligible. Written out: cast is at most requested, which is at most eligible. The published data at /data/polls.json carries all three, so anyone can confirm the relationship holds for every poll."
+msgstr "Kullanılan hiçbir zaman istenenden, istenen de hiçbir zaman uygun sayısından fazla olamaz. Açık yazımıyla: kullanılan en çok istenen kadardır, istenen de en çok uygun kadar. /data/polls.json adresinde yayımlanan veri üçünü de taşır; böylece herkes bu ilişkinin her anket için geçerli olduğunu doğrulayabilir."
+
+msgid "This is what makes manufactured participation visible rather than preventable. A poll whose requested count jumped far beyond the usual, with cast sitting right against it, is the honest tell, without anyone having to assert that it happened."
+msgstr "Uydurma katılımı engellenebilir değil ama görünür kılan şey budur. İstenen sayısı olağanın çok ötesine sıçramış, kullanılan da ona neredeyse yapışmış bir anket, kimsenin böyle olduğunu iddia etmesine gerek kalmadan dürüst işarettir."
+
+msgid "What these numbers do not show"
+msgstr "Bu sayıların göstermediği"
+
+msgid "They do not prove one person, one vote. An account is not a person, and nothing here establishes that one human is behind one account. They raise the cost of manipulating a poll and make it visible; they do not make it impossible."
+msgstr "Bunlar bir kişi, bir oy olduğunu kanıtlamaz. Bir hesap bir kişi değildir ve buradaki hiçbir şey bir hesabın arkasında tek bir insan olduğunu ortaya koymaz. Bir anketi manipüle etmenin maliyetini artırır ve bunu görünür kılarlar; imkânsız kılmazlar."
+
+msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
+msgstr "Sayılardan ikisi, istenen ve uygun, bizim tarafımızdan bildirilir ve yayımlanan veriden yeniden hesaplanamaz; çünkü bunları yeniden hesaplamak, bilerek yayımlamadığımız hesap ayrıntılarını gerektirir. Kullanılan yeniden hesaplanabilir: yalnızca o anketin dökümdeki oy sayısıdır."

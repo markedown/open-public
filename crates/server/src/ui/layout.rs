@@ -150,6 +150,7 @@ pub fn document_described(
                         span { (i18n::t("Open political data.")) }
                         nav class="flex gap-4" {
                             a href="/search" class="transition-colors hover:text-ink" { (i18n::t("Search")) }
+                            a href="/participation" class="transition-colors hover:text-ink" { (i18n::t("Participation")) }
                             a href="/privacy" class="transition-colors hover:text-ink" { (i18n::t("Privacy")) }
                         }
                     }

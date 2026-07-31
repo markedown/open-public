@@ -30,6 +30,9 @@ pub struct BallotTally {
     /// How many tokens were issued for this poll (entitlements). Ballots cast can
     /// never exceed this.
     pub issued: i64,
+    /// How many ballots were spent (cast) for this poll. Recomputable by counting
+    /// the published ballots; carried explicitly so the reconciliation is legible.
+    pub spent: i64,
     /// The ballot-chain head sequence and hash, `None` for a poll with no ballot.
     pub head_seq: Option<i64>,
     pub head_hash: Option<Vec<u8>>,
@@ -63,6 +66,7 @@ pub async fn ballot_tallies(pool: &Pool) -> Result<Vec<BallotTally>> {
                count(bo.ballot_id) as "votes!",
                k.public_key as "public_key?",
                (select count(*) from vote_entitlements e where e.poll_id = p.id) as "issued!",
+               (select count(*) from vote_ballots b where b.poll_id = p.id) as "spent!",
                hd.seq as "head_seq?", hd.hash as "head_hash?"
         from polls p
         join poll_options o on o.poll_id = p.id
@@ -80,6 +84,18 @@ pub async fn ballot_tallies(pool: &Pool) -> Result<Vec<BallotTally>> {
     .fetch_all(pool)
     .await?;
     Ok(rows)
+}
+
+/// The number of accounts eligible to vote (verified and unbanned), the ceiling
+/// for how many tokens any poll can issue. A single count, no identity.
+pub async fn eligible_voters(pool: &Pool) -> Result<i64> {
+    let n = sqlx::query_scalar!(
+        r#"select count(*) as "n!" from users
+           where verified_at is not null and banned_at is null"#
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(n)
 }
 
 /// Every anonymous ballot, in chain order, so a reader can walk it straight from

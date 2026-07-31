@@ -30,6 +30,7 @@ pub async fn detail(
 
     let viewer = viewer_for(session.as_ref());
     let chain = db::voting::ballot_chain_head(&state.pool, poll.id).await?;
+    let recon = db::voting::reconciliation(&state.pool, poll.id).await?;
 
     // Only a viewer who can vote on an open poll needs the issuer public key and
     // the island. Generating the key here (idempotent) means it exists by the
@@ -64,6 +65,12 @@ pub async fn detail(
                 // can happen.
                 @if pubkey.is_some() {
                     script type="module" src="/static/vote.min.js" defer {}
+                }
+
+                // Reconciliation: how the poll's numbers formed, at counts that
+                // carry no per-voter resolution. Shown once anyone has taken part.
+                @if recon.issued > 0 {
+                    (reconciliation_panel(&recon))
                 }
 
                 // The ballot-chain fingerprint: anyone can check it against the
@@ -236,6 +243,39 @@ fn viewer_for(session: Option<&AuthSession>) -> Viewer {
     match session {
         None => Viewer::Anonymous,
         Some(_) => Viewer::CanVote,
+    }
+}
+
+/// The reconciliation panel: three counts (requested, cast, eligible) and the
+/// public bound between them, monochrome because it is data about a poll, not a
+/// verdict on it. See docs/participation-integrity.md.
+fn reconciliation_panel(r: &db::voting::Reconciliation) -> Markup {
+    let stat = |value: i64, label: &str| {
+        html! {
+            div class="flex flex-col" {
+                span class="font-mono text-xl font-semibold text-ink" { (value) }
+                span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" { (label) }
+            }
+        }
+    };
+    html! {
+        div class="mt-8 border-t border-hairline pt-4" {
+            span class="font-mono text-xs font-semibold uppercase tracking-wide text-ink" {
+                (i18n::t("Participation"))
+            }
+            div class="mt-3 flex gap-8" {
+                (stat(r.issued, i18n::t("requested")))
+                (stat(r.spent, i18n::t("cast")))
+                (stat(r.eligible, i18n::t("eligible")))
+            }
+            p class="mt-3 max-w-prose text-xs leading-relaxed text-ink-muted" {
+                (i18n::t("Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."))
+                " "
+                a href="/participation" class="text-accent hover:underline" {
+                    (i18n::t("How these numbers work"))
+                }
+            }
+        }
     }
 }
 

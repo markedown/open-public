@@ -2892,6 +2892,9 @@ async fn data_dump_publishes_anonymized_poll_results(pool: db::Pool) {
     assert!(body.contains("\"slug\":\"party-poll\""));
     assert!(body.contains("\"total_votes\":1"));
     assert!(body.contains("\"issued\":1"));
+    // Reconciliation: the ballot spent, and the eligible-account ceiling.
+    assert!(body.contains("\"spent\":1"));
+    assert!(body.contains("\"eligible\":"));
     assert!(body.contains("\"public_key\":\""));
     assert!(body.contains("\"seq\":")); // the chain head
                                         // One anonymous ballot, carrying its token (a nullifier) and signature.
@@ -6055,6 +6058,34 @@ async fn the_privacy_page_says_what_is_stored_and_what_cannot_be_claimed(pool: d
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn the_participation_page_explains_the_counts_and_stays_honest(pool: db::Pool) {
+    let app = router(pool.clone());
+    let body = body_string(get_cookie(&app, "/participation", "lang=en").await).await;
+
+    // It explains each count and the checkable bound.
+    assert!(body.contains("How participation numbers work"));
+    assert!(body.contains("Requested is how many accounts"));
+    assert!(body.contains("The bound anyone can check"));
+    // And states the limit rather than glossing it.
+    assert!(body.contains("do not prove one person, one vote"));
+
+    // Reachable from the footer of every page.
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    assert!(
+        home.contains("href=\"/participation\""),
+        "footer links to it"
+    );
+
+    // Public: no account needed to read it.
+    assert_eq!(get(&app, "/participation").await.status(), StatusCode::OK);
+
+    // Renders in another language rather than falling back to English.
+    let fr = body_string(get_cookie(&app, "/participation", "lang=fr").await).await;
+    assert!(fr.contains("Comment fonctionnent les chiffres de participation"));
+    assert!(!fr.contains("How participation numbers work"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn the_compass_steps_through_positions_without_needing_javascript(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
@@ -7673,12 +7704,23 @@ async fn a_token_casts_one_anonymous_ballot_and_no_more(pool: db::Pool) {
     assert_eq!(forged.status(), StatusCode::FORBIDDEN);
 
     // The poll page now shows the ballot-chain fingerprint, pointing at the dump.
-    let page = body_string(get(&app, "/tr/poll/party-poll").await).await;
+    let page = body_string(get_cookie(&app, "/tr/poll/party-poll", "lang=en").await).await;
     assert!(page.contains("#1"), "the chain head sequence shows");
     assert!(
         page.contains("/data/polls.json"),
         "the verify link points at the dump"
     );
+    // And the reconciliation panel: how the poll's numbers formed, linking to the
+    // methodology page. Shown because a token was issued (issued > 0).
+    assert!(
+        page.contains("How these numbers work"),
+        "the reconciliation panel renders"
+    );
+    assert!(
+        page.contains("requested") && page.contains("cast") && page.contains("eligible"),
+        "the three counts are labelled"
+    );
+    assert!(page.contains("href=\"/participation\""));
 }
 
 /// The anonymous cast endpoint refuses a request with no token, a request with
