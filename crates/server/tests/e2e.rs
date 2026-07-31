@@ -329,6 +329,7 @@ fn router(pool: db::Pool) -> Router {
         site_notice: None,
         construction: false,
         base_url: "https://open-public.test".into(),
+        admin_api_key: None,
     };
     server::app(state, Path::new("static"))
 }
@@ -350,6 +351,7 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
         site_notice: Some(Arc::from(notice)),
         construction: false,
         base_url: "https://open-public.test".into(),
+        admin_api_key: None,
     };
     server::app(state, Path::new("static"))
 }
@@ -377,6 +379,7 @@ fn router_broken_mail(pool: db::Pool) -> Router {
         site_notice: None,
         construction: false,
         base_url: "https://open-public.test".into(),
+        admin_api_key: None,
     };
     server::app(state, Path::new("static"))
 }
@@ -399,6 +402,31 @@ fn router_no_origin(pool: db::Pool) -> Router {
         site_notice: None,
         construction: false,
         base_url: "".into(),
+        admin_api_key: None,
+    };
+    server::app(state, Path::new("static"))
+}
+
+/// Build the router with the admin ingest API enabled by a known key, optionally
+/// in construction mode, for the API tests.
+const API_KEY: &str = "test-admin-key-xyz";
+fn router_api(pool: db::Pool, construction: bool) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction,
+        base_url: "https://open-public.test".into(),
+        admin_api_key: Some(Arc::from(API_KEY)),
     };
     server::app(state, Path::new("static"))
 }
@@ -420,6 +448,7 @@ fn router_construction(pool: db::Pool) -> Router {
         site_notice: None,
         construction: true,
         base_url: "https://open-public.test".into(),
+        admin_api_key: None,
     };
     server::app(state, Path::new("static"))
 }
@@ -468,6 +497,23 @@ async fn post_form(app: &Router, uri: &str, form: &str, cookie: Option<&str>) ->
     }
     let req = builder.body(Body::from(form.to_string())).expect("request");
     app.clone().oneshot(req).await.expect("response")
+}
+
+async fn post_json(app: &Router, uri: &str, json: &str, bearer: Option<&str>) -> Response {
+    let mut builder = Request::builder()
+        .method("POST")
+        .uri(uri)
+        .header("content-type", "application/json");
+    if let Some(b) = bearer {
+        builder = builder.header("authorization", format!("Bearer {b}"));
+    }
+    let req = builder.body(Body::from(json.to_string())).expect("request");
+    app.clone().oneshot(req).await.expect("response")
+}
+
+async fn json_body(resp: Response) -> serde_json::Value {
+    let bytes = resp.into_body().collect().await.unwrap().to_bytes();
+    serde_json::from_slice(&bytes).expect("json response")
 }
 
 /// Fetch a captcha challenge and solve it the way the widget would, returning
@@ -7824,6 +7870,181 @@ async fn the_new_account_share_shows_once_enough_accounts_take_part(pool: db::Po
     assert!(
         page.contains("67%"),
         "the share is computed over the accounts"
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_api_is_invisible_without_the_right_key(pool: db::Pool) {
+    let payload = r#"{"kind":"manual","url":"https://x.test/a"}"#;
+
+    // No key configured on the instance: the API does not exist, even with a key.
+    let closed = router(pool.clone());
+    let r = post_json(&closed, "/api/v1/sources", payload, Some(API_KEY)).await;
+    assert_eq!(
+        r.status(),
+        StatusCode::NOT_FOUND,
+        "no key configured means 404"
+    );
+
+    // Key configured, but the caller presents the wrong one, or none.
+    let open = router_api(pool.clone(), false);
+    let wrong = post_json(&open, "/api/v1/sources", payload, Some("wrong-key")).await;
+    assert_eq!(
+        wrong.status(),
+        StatusCode::NOT_FOUND,
+        "a wrong key is a 404"
+    );
+    let none = post_json(&open, "/api/v1/sources", payload, None).await;
+    assert_eq!(none.status(), StatusCode::NOT_FOUND, "no header is a 404");
+
+    // None of the refused calls wrote anything.
+    let n: i64 = sqlx::query_scalar("select count(*) from sources where url = 'https://x.test/a'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(n, 0, "a refused call writes nothing");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_api_upserts_a_source_idempotently(pool: db::Pool) {
+    let app = router_api(pool.clone(), false);
+    let body =
+        r#"{"kind":"manual","url":"https://x.test/doc","title":"A doc","content_hash":"abc"}"#;
+
+    let first = post_json(&app, "/api/v1/sources", body, Some(API_KEY)).await;
+    assert_eq!(first.status(), StatusCode::OK);
+    let j = json_body(first).await;
+    assert_eq!(j["created"], true);
+    let id = j["id"].as_i64().unwrap();
+
+    let again = post_json(&app, "/api/v1/sources", body, Some(API_KEY)).await;
+    let j2 = json_body(again).await;
+    assert_eq!(
+        j2["created"], false,
+        "the second write updates, not creates"
+    );
+    assert_eq!(j2["id"].as_i64().unwrap(), id, "the same row");
+
+    let n: i64 =
+        sqlx::query_scalar("select count(*) from sources where url = 'https://x.test/doc'")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(n, 1, "no duplicate source");
+
+    // A payload with no url, or no kind, is a bad request.
+    let no_url = post_json(
+        &app,
+        "/api/v1/sources",
+        r#"{"kind":"manual","url":""}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(no_url.status(), StatusCode::BAD_REQUEST);
+    let no_kind = post_json(
+        &app,
+        "/api/v1/sources",
+        r#"{"kind":"","url":"https://x.test/y"}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(no_kind.status(), StatusCode::BAD_REQUEST);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_api_upserts_news_with_links_and_a_draft(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_api(pool.clone(), false);
+    let body = r#"{
+        "url":"https://outlet.test/story-1",
+        "outlet":"Test Gazette",
+        "headline":"A headline naming a person and a party",
+        "summary":"A neutral short summary.",
+        "people":["ayse-yilmaz"],
+        "parties":["test-partisi"]
+    }"#;
+
+    let first = post_json(&app, "/api/v1/news", body, Some(API_KEY)).await;
+    assert_eq!(first.status(), StatusCode::OK);
+    let j = json_body(first).await;
+    assert_eq!(j["created"], true);
+    assert_eq!(j["linked_people"], 1);
+    assert_eq!(j["linked_parties"], 1);
+    let news_id = j["id"].as_i64().unwrap();
+
+    // The summary is a draft awaiting review, never published directly.
+    let (draft, published): (Option<String>, Option<String>) =
+        sqlx::query_as("select summary_draft, our_summary from news_items where id = $1")
+            .bind(news_id)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(draft.as_deref(), Some("A neutral short summary."));
+    assert_eq!(
+        published, None,
+        "the API never publishes a summary directly"
+    );
+
+    let links: i64 =
+        sqlx::query_scalar("select count(*) from news_item_people where news_item_id = $1")
+            .bind(news_id)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(links, 1);
+
+    // Re-delivering the same URL updates in place, no duplicate.
+    let again = post_json(&app, "/api/v1/news", body, Some(API_KEY)).await;
+    let j2 = json_body(again).await;
+    assert_eq!(j2["created"], false);
+    assert_eq!(j2["id"].as_i64().unwrap(), news_id);
+    let count: i64 = sqlx::query_scalar("select count(*) from news_items")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(count, 1, "no duplicate news item");
+
+    // A missing headline, or a missing url, is refused.
+    let no_headline = post_json(
+        &app,
+        "/api/v1/news",
+        r#"{"url":"https://outlet.test/x","headline":""}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(no_headline.status(), StatusCode::BAD_REQUEST);
+    let no_url = post_json(
+        &app,
+        "/api/v1/news",
+        r#"{"url":"","headline":"H"}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(no_url.status(), StatusCode::BAD_REQUEST);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_api_reaches_a_gated_instance(pool: db::Pool) {
+    seed(&pool).await;
+    let gated = router_api(pool.clone(), true);
+
+    // The public site is dark.
+    let home = body_string(get(&gated, "/").await).await;
+    assert!(home.contains("Still being assembled"), "the site is gated");
+
+    // But the pipeline can still deliver through the API: its bearer key, not the
+    // construction page, is the gate for /api.
+    let r = post_json(
+        &gated,
+        "/api/v1/news",
+        r#"{"url":"https://outlet.test/gated","headline":"H","people":["ayse-yilmaz"]}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(
+        r.status(),
+        StatusCode::OK,
+        "the API reaches a gated instance"
     );
 }
 

@@ -46,6 +46,10 @@ pub struct Config {
     /// Automated poll-review provider. `None` when no key is set, in which case
     /// submissions are deferred to the admin queue instead of auto-screened.
     pub review: Option<ReviewConfig>,
+    /// Bearer key for the admin ingest API (`ADMIN_API_KEY`). `None` disables the
+    /// API entirely: every endpoint answers 404, so an instance with no key
+    /// configured exposes no write surface at all.
+    pub admin_api_key: Option<String>,
 }
 
 /// Settings for the automated poll reviewer (an OpenAI-compatible chat API).
@@ -122,6 +126,10 @@ impl Config {
                     .to_string(),
             });
 
+        let admin_api_key = get("ADMIN_API_KEY")
+            .map(|k| k.trim().to_string())
+            .filter(|k| !k.is_empty());
+
         Ok(Self {
             site_addr,
             static_dir,
@@ -135,6 +143,7 @@ impl Config {
             site_notice,
             construction,
             review,
+            admin_api_key,
         })
     }
 }

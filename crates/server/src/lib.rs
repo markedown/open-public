@@ -3,6 +3,7 @@
 //! configuration and serves [`app`].
 
 pub mod admin_account;
+pub mod api;
 pub mod auth;
 pub mod captcha;
 pub mod config;
@@ -42,7 +43,9 @@ use state::AppState;
 /// Build the application router. `static_dir` is served under `/static`.
 pub fn app(state: AppState, static_dir: &Path) -> Router {
     let construction = state.construction;
-    let router = routes(state.clone(), static_dir);
+    // The admin ingest API is its own router, merged in, so it carries none of
+    // the HTML layers and speaks JSON. Its bearer-key check is its own gate.
+    let router = routes(state.clone(), static_dir).merge(api::routes(state.clone()));
     if construction {
         // Construction mode hides the platform behind a single coming-soon
         // page. An admin still needs to reach it: the content waiting to be
@@ -77,6 +80,10 @@ fn open_while_gated(path: &str) -> bool {
             | "/robots.txt"
             | "/sitemap.xml"
     ) || path.starts_with("/static/")
+        // The ingest API must reach a gated instance: the pipeline delivers to
+        // exactly the production box that is dark before launch. Its own bearer
+        // key is the real gate; the construction page would only get in the way.
+        || path.starts_with("/api/")
 }
 
 /// Serve the coming-soon page for everyone except a signed-in admin.

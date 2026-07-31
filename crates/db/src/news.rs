@@ -21,6 +21,94 @@ pub struct NewNews<'a> {
     pub party_ids: &'a [i64],
 }
 
+/// Fields for the idempotent admin-API news upsert. The summary lands as a
+/// draft, never published directly: the API speeds ingest, it does not bypass
+/// review. Entity links are set separately, by slug.
+pub struct ApiNews<'a> {
+    pub url: &'a str,
+    pub outlet: Option<&'a str>,
+    pub published_at: Option<DateTime<Utc>>,
+    pub content_hash: Option<&'a str>,
+    pub headline: &'a str,
+    pub summary_draft: Option<&'a str>,
+}
+
+/// The result of an idempotent upsert: the row id and whether it was created.
+pub struct Upserted {
+    pub id: i64,
+    pub created: bool,
+}
+
+/// Idempotently upsert a news item by its article URL (which is its source), so
+/// a re-delivered article updates in place rather than duplicating. The summary
+/// is stored as a draft. Returns the news id and whether it was newly created.
+pub async fn upsert(pool: &Pool, n: &ApiNews<'_>) -> Result<Upserted> {
+    let mut tx = pool.begin().await?;
+
+    // Find or create the article's source, keyed on url (a missing hash is the
+    // same document), so the same URL never yields two sources.
+    let existing = sqlx::query_scalar!(
+        "select id from sources where url = $1 and content_hash is not distinct from $2",
+        n.url,
+        n.content_hash,
+    )
+    .fetch_optional(&mut *tx)
+    .await?;
+    let source_id = match existing {
+        Some(id) => {
+            sqlx::query!(
+                "update sources set outlet = $2, published_at = $3, fetched_at = now() where id = $1",
+                id,
+                n.outlet,
+                n.published_at,
+            )
+            .execute(&mut *tx)
+            .await?;
+            id
+        }
+        None => {
+            sqlx::query_scalar!(
+                "insert into sources (kind, url, outlet, published_at, content_hash, fetched_at) \
+                 values ('news_rss', $1, $2, $3, $4, now()) returning id",
+                n.url,
+                n.outlet,
+                n.published_at,
+                n.content_hash,
+            )
+            .fetch_one(&mut *tx)
+            .await?
+        }
+    };
+
+    let existed = sqlx::query_scalar!(
+        r#"select exists(select 1 from news_items where source_id = $1) as "e!""#,
+        source_id,
+    )
+    .fetch_one(&mut *tx)
+    .await?;
+
+    // `source_id` is unique on news_items, so this upserts the article in place.
+    // A new draft overwrites an old draft, but never clears a published summary.
+    let id = sqlx::query_scalar!(
+        "insert into news_items (source_id, headline, summary_draft) values ($1, $2, $3) \
+         on conflict (source_id) do update set \
+             headline = excluded.headline, \
+             summary_draft = coalesce(excluded.summary_draft, news_items.summary_draft) \
+         returning id",
+        source_id,
+        n.headline,
+        n.summary_draft,
+    )
+    .fetch_one(&mut *tx)
+    .await?;
+
+    tx.commit().await?;
+    Ok(Upserted {
+        id,
+        created: !existed,
+    })
+}
+
 /// Insert a news item with its source and entity links. Returns the news id.
 pub async fn create(pool: &Pool, n: &NewNews<'_>) -> Result<i64> {
     let mut tx = pool.begin().await?;

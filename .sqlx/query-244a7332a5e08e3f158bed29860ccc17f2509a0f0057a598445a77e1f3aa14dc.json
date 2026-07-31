@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update sources set outlet = $2, published_at = $3, fetched_at = now() where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "244a7332a5e08e3f158bed29860ccc17f2509a0f0057a598445a77e1f3aa14dc"
+}
