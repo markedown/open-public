@@ -39,6 +39,14 @@ pub async fn detail(
     } else {
         None
     };
+    // The new-account share, over the accounts that took part (entitlements), and
+    // only once enough took part. Suppressed below the same threshold.
+    let cohort_pct = if recon.issued >= db::voting::MIN_PARTICIPANTS {
+        let new = db::voting::cohort_new_count(&state.pool, poll.id).await?;
+        db::voting::cohort_pct(recon.issued, new)
+    } else {
+        None
+    };
 
     // Only a viewer who can vote on an open poll needs the issuer public key and
     // the island. Generating the key here (idempotent) means it exists by the
@@ -78,7 +86,7 @@ pub async fn detail(
                 // Reconciliation: how the poll's numbers formed, at counts that
                 // carry no per-voter resolution. Shown once anyone has taken part.
                 @if recon.issued > 0 {
-                    (reconciliation_panel(&recon, timeline.as_deref()))
+                    (reconciliation_panel(&recon, timeline.as_deref(), cohort_pct))
                 }
 
                 // The ballot-chain fingerprint: anyone can check it against the
@@ -258,10 +266,14 @@ fn viewer_for(session: Option<&AuthSession>) -> Viewer {
 const TIMELINE_BUCKETS: i32 = 24;
 
 /// The reconciliation panel: three counts (requested, cast, eligible), an
-/// optional cast-time timeline, and the public bound between the counts.
-/// Monochrome because it is data about a poll, not a verdict on it. See
-/// docs/participation-integrity.md.
-fn reconciliation_panel(r: &db::voting::Reconciliation, timeline: Option<&[i64]>) -> Markup {
+/// optional cast-time timeline, an optional new-account share, and the public
+/// bound between the counts. Monochrome because it is data about a poll, not a
+/// verdict on it. See docs/participation-integrity.md.
+fn reconciliation_panel(
+    r: &db::voting::Reconciliation,
+    timeline: Option<&[i64]>,
+    cohort_pct: Option<i64>,
+) -> Markup {
     let stat = |value: i64, label: &str| {
         html! {
             div class="flex flex-col" {
@@ -282,6 +294,13 @@ fn reconciliation_panel(r: &db::voting::Reconciliation, timeline: Option<&[i64]>
             }
             @if let Some(counts) = timeline {
                 (sparkline(counts))
+            }
+            @if let Some(pct) = cohort_pct {
+                p class="mt-3 text-xs leading-relaxed text-ink-muted" {
+                    (i18n::t("Accounts under a week old when they took part:"))
+                    " "
+                    span class="font-mono font-semibold text-ink" { (pct) "%" }
+                }
             }
             p class="mt-3 max-w-prose text-xs leading-relaxed text-ink-muted" {
                 (i18n::t("Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."))

@@ -2895,6 +2895,9 @@ async fn data_dump_publishes_anonymized_poll_results(pool: db::Pool) {
     // Reconciliation: the ballot spent, and the eligible-account ceiling.
     assert!(body.contains("\"spent\":1"));
     assert!(body.contains("\"eligible\":"));
+    // The new-account share is present but null: one participant is below the
+    // suppression threshold.
+    assert!(body.contains("\"new_accounts_pct\":null"));
     assert!(body.contains("\"public_key\":\""));
     assert!(body.contains("\"seq\":")); // the chain head
                                         // One anonymous ballot, carrying its token (a nullifier) and signature.
@@ -7773,6 +7776,54 @@ async fn the_participation_timeline_shows_once_enough_ballots_exist(pool: db::Po
     assert!(
         page.contains("when votes were cast"),
         "the timeline shows once enough ballots exist"
+    );
+}
+
+/// The new-account share appears once enough accounts have taken part, computed
+/// over the accounts (entitlements), and reflects how fresh they were.
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_new_account_share_shows_once_enough_accounts_take_part(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug = 'party-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    // Twenty brand-new accounts and ten created a month ago, each issued a token.
+    // The new-account share is 20 of 30, which rounds to 67%.
+    sqlx::query(
+        "insert into users (email_hash, password_hash, verified_at, created_at) \
+         select 'new' || g, 'p', now(), now() from generate_series(1, 20) g",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    sqlx::query(
+        "insert into users (email_hash, password_hash, verified_at, created_at) \
+         select 'old' || g, 'p', now(), now() - interval '30 days' from generate_series(1, 10) g",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    sqlx::query(
+        "insert into vote_entitlements (poll_id, user_id) \
+         select $1, u.id from users u \
+         where u.email_hash like 'new%' or u.email_hash like 'old%'",
+    )
+    .bind(poll_id)
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    let page = body_string(get_cookie(&app, "/tr/poll/party-poll", "lang=en").await).await;
+    assert!(
+        page.contains("Accounts under a week old when they took part:"),
+        "the new-account line shows"
+    );
+    assert!(
+        page.contains("67%"),
+        "the share is computed over the accounts"
     );
 }
 

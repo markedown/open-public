@@ -1203,3 +1203,15 @@ msgstr "Oylar ne zaman kullanıldı"
 
 msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
 msgstr "Her anket ayrıca, oylarının ilkinden sonuncusuna kadar ne zaman kullanıldığını gösteren küçük bir grafik sunar; böylece katılımının şekli görünür olur. Düzenli aralıklarla gelen oylar dengeli görünür; hepsi bir anda gelen bir yığılma ise sivri bir çıkıntı gibi görünür. Grafik, bir anket bir şekil olarak okunacak kadar oy topladığında belirir ve herkes bunu yayımlanan oylardaki zamanlardan yeniden hesaplayabilir."
+
+msgid "Accounts under a week old when they took part:"
+msgstr "Katıldıklarında bir haftadan daha yeni olan hesaplar:"
+
+msgid "How new the accounts were"
+msgstr "Hesapların ne kadar yeni olduğu"
+
+msgid "A poll can also show what share of the accounts that took part were newly created, less than a week old when they were issued a ballot. Accounts made in bulk just before a poll are the usual way someone tries to manufacture participation, and a high share is where that would show."
+msgstr "Bir anket ayrıca, katılan hesaplardan ne kadarının yeni oluşturulduğunu, oy pusulası verildiğinde bir haftadan daha yeni olduğunu gösterebilir. Bir anketten hemen önce toplu olarak açılan hesaplar, birinin katılımı uydurmaya çalışmasının olağan yoludur ve yüksek bir oran, bunun görüneceği yerdir."
+
+msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
+msgstr "Bu, oylar üzerinden değil, katılan hesaplar üzerinden hesaplanır; dolayısıyla kimsenin nasıl oy verdiğine dair bir şey açık etmez; bir oy yine de bir hesaba bağlanamaz. Zaman çizelgesi gibi, yalnızca yeterince hesap katıldığında görünür ve yayımlanan veriden yeniden hesaplanabilen değil, bizim bildirdiğimiz bir değerdir."

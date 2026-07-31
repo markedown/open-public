@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.slug as \"slug!\", p.question as \"question!\", p.kind as \"kind!\",\n               p.id as \"poll_id!\", o.position as \"position!\", o.id as \"option_id!\", o.label as \"label!\",\n               count(bo.ballot_id) as \"votes!\",\n               k.public_key as \"public_key?\",\n               (select count(*) from vote_entitlements e where e.poll_id = p.id) as \"issued!\",\n               (select count(*) from vote_ballots b where b.poll_id = p.id) as \"spent!\",\n               hd.seq as \"head_seq?\", hd.hash as \"head_hash?\"\n        from polls p\n        join poll_options o on o.poll_id = p.id\n        left join ballot_options bo on bo.option_id = o.id\n        left join poll_issuer_keys k on k.poll_id = p.id\n        left join lateral (\n            select b.seq, b.content_hash as hash\n            from vote_ballots b where b.poll_id = p.id order by b.seq desc limit 1\n        ) hd on true\n        where p.kind <> 'approval'\n        group by p.id, o.id, k.public_key, hd.seq, hd.hash\n        order by p.slug, o.position\n        ",
+  "query": "\n        select p.slug as \"slug!\", p.question as \"question!\", p.kind as \"kind!\",\n               p.id as \"poll_id!\", o.position as \"position!\", o.id as \"option_id!\", o.label as \"label!\",\n               count(bo.ballot_id) as \"votes!\",\n               k.public_key as \"public_key?\",\n               (select count(*) from vote_entitlements e where e.poll_id = p.id) as \"issued!\",\n               (select count(*) from vote_ballots b where b.poll_id = p.id) as \"spent!\",\n               (select count(*) from vote_entitlements e\n                  join users u on u.id = e.user_id\n                  where e.poll_id = p.id\n                    and e.issued_at - u.created_at < make_interval(days => 7)) as \"cohort_new!\",\n               hd.seq as \"head_seq?\", hd.hash as \"head_hash?\"\n        from polls p\n        join poll_options o on o.poll_id = p.id\n        left join ballot_options bo on bo.option_id = o.id\n        left join poll_issuer_keys k on k.poll_id = p.id\n        left join lateral (\n            select b.seq, b.content_hash as hash\n            from vote_ballots b where b.poll_id = p.id order by b.seq desc limit 1\n        ) hd on true\n        where p.kind <> 'approval'\n        group by p.id, o.id, k.public_key, hd.seq, hd.hash\n        order by p.slug, o.position\n        ",
   "describe": {
     "columns": [
       {
@@ -111,6 +111,12 @@
       },
       {
         "ordinal": 11,
+        "name": "cohort_new!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 12,
         "name": "head_seq?",
         "type_info": "Int8",
         "origin": {
@@ -121,7 +127,7 @@
         }
       },
       {
-        "ordinal": 12,
+        "ordinal": 13,
         "name": "head_hash?",
         "type_info": "Bytea",
         "origin": {
@@ -147,9 +153,10 @@
       false,
       null,
       null,
+      null,
       false,
       false
     ]
   },
-  "hash": "fa21270de15fbb800a2065867b3b2521ecd3c7e22c38080e85111ba7fc6bbde7"
+  "hash": "043e9861a972a1cd933a6c66257650aca4f63e8fd75ec9f0e179e5b8e6e3f39d"
 }

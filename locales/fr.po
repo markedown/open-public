@@ -1191,3 +1191,15 @@ msgstr "Quand les votes ont été exprimés"
 
 msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
 msgstr "Chaque sondage affiche aussi un petit graphique du moment où ses bulletins ont été exprimés, du premier au dernier, de sorte que la forme de sa participation soit visible. Des voix qui arrivent régulièrement paraissent régulières ; un afflux d'un coup ressemble à un pic. Le graphique apparaît dès qu'un sondage compte assez de bulletins pour se lire comme une forme, et quiconque peut le recalculer à partir des heures figurant dans les bulletins publiés."
+
+msgid "Accounts under a week old when they took part:"
+msgstr "Comptes de moins d'une semaine au moment de leur participation :"
+
+msgid "How new the accounts were"
+msgstr "À quel point les comptes étaient récents"
+
+msgid "A poll can also show what share of the accounts that took part were newly created, less than a week old when they were issued a ballot. Accounts made in bulk just before a poll are the usual way someone tries to manufacture participation, and a high share is where that would show."
+msgstr "Un sondage peut aussi montrer quelle part des comptes ayant participé étaient nouvellement créés, de moins d'une semaine lorsqu'un bulletin leur a été délivré. Des comptes créés en masse juste avant un sondage sont la façon habituelle dont on tente de fabriquer une participation, et une part élevée est là où cela se verrait."
+
+msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
+msgstr "Cela est calculé sur les comptes ayant participé, non sur les votes, et ne révèle donc rien sur la façon dont quiconque a voté ; un bulletin ne peut toujours pas être relié à un compte. Comme la chronologie, cela n'apparaît qu'une fois qu'assez de comptes ont participé, et c'est un chiffre que nous rapportons, non recalculable à partir des données publiées."

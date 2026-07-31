@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"n!\"\n        from vote_entitlements e\n        join users u on u.id = e.user_id\n        where e.poll_id = $1\n          and e.issued_at - u.created_at < make_interval(days => $2)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "n!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "368f9756dc39442293574eeab2dc1cfde851e93c815ed6179c3472356526e9fb"
+}

@@ -35,6 +35,14 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
             ))
 
             (section(
+                i18n::t("How new the accounts were"),
+                &[
+                    i18n::t("A poll can also show what share of the accounts that took part were newly created, less than a week old when they were issued a ballot. Accounts made in bulk just before a poll are the usual way someone tries to manufacture participation, and a high share is where that would show."),
+                    i18n::t("This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."),
+                ],
+            ))
+
+            (section(
                 i18n::t("The bound anyone can check"),
                 &[
                     i18n::t("Cast can never exceed requested, and requested can never exceed eligible. Written out: cast is at most requested, which is at most eligible. The published data at /data/polls.json carries all three, so anyone can confirm the relationship holds for every poll."),
