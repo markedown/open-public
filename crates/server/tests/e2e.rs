@@ -8096,6 +8096,59 @@ async fn a_news_page_shows_related_coverage(pool: db::Pool) {
     );
 }
 
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_api_upserts_outlets_and_links_their_articles(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router_api(pool.clone(), false);
+
+    // An article is delivered under an outlet name before the outlet exists.
+    let news = post_json(
+        &app,
+        "/api/v1/news",
+        r#"{"url":"https://gazette.test/1","outlet":"The Test Gazette","headline":"H"}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(news.status(), StatusCode::OK);
+
+    // Creating the outlet links that already-delivered article to it.
+    let body = r#"{"slug":"test-gazette","name":"The Test Gazette","country":"tr","homepage_url":"https://gazette.test","leaning":"center"}"#;
+    let r = post_json(&app, "/api/v1/outlets", body, Some(API_KEY)).await;
+    assert_eq!(r.status(), StatusCode::OK);
+    let j = json_body(r).await;
+    assert_eq!(j["created"], true);
+    assert_eq!(j["linked_articles"], 1, "the earlier article is linked");
+    let id = j["id"].as_i64().unwrap();
+
+    // Idempotent: re-upsert updates in place, no duplicate.
+    let again = json_body(post_json(&app, "/api/v1/outlets", body, Some(API_KEY)).await).await;
+    assert_eq!(again["created"], false);
+    assert_eq!(again["id"].as_i64().unwrap(), id);
+    let count: i64 = sqlx::query_scalar("select count(*) from outlets where slug = 'test-gazette'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(count, 1, "no duplicate outlet");
+
+    // An invalid leaning, and an unknown country, are refused.
+    let bad_lean = post_json(
+        &app,
+        "/api/v1/outlets",
+        r#"{"slug":"x","name":"X","country":"tr","leaning":"far_left"}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(bad_lean.status(), StatusCode::BAD_REQUEST);
+    let bad_country = post_json(
+        &app,
+        "/api/v1/outlets",
+        r#"{"slug":"y","name":"Y","country":"atlantis"}"#,
+        Some(API_KEY),
+    )
+    .await;
+    assert_eq!(bad_country.status(), StatusCode::BAD_REQUEST);
+}
+
 /// The anonymous cast endpoint refuses a request with no token, a request with
 /// no valid option, and a well-formed request for a poll that has no issuer key.
 #[sqlx::test(migrations = "../../migrations")]
