@@ -1,0 +1,47 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select id, headline, coalesce(our_summary, summary_draft) as summary\n           from news_items where embedding is null order by id limit $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "headline",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "news_items",
+            "name": "headline"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "summary",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "9751c11893c5488dd82f29ba276e408ef57be6a331a51e2e3e78738133c71248"
+}

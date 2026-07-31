@@ -744,3 +744,146 @@ pub async fn for_party(pool: &Pool, party_id: i64) -> Result<Vec<NewsItem>> {
     .await?;
     Ok(rows)
 }
+
+/// Set (or replace) a news item's similarity embedding. The vector is bound as a
+/// pgvector text literal and cast in SQL, so no vector-typed Rust binding, and no
+/// extra dependency, is needed. `embedding` must have the column's dimension.
+pub async fn set_embedding(pool: &Pool, news_id: i64, embedding: &[f32]) -> Result<()> {
+    use std::fmt::Write;
+    let mut lit = String::with_capacity(embedding.len() * 8 + 2);
+    lit.push('[');
+    for (i, x) in embedding.iter().enumerate() {
+        if i > 0 {
+            lit.push(',');
+        }
+        let _ = write!(lit, "{x}");
+    }
+    lit.push(']');
+    sqlx::query("update news_items set embedding = $1::vector where id = $2")
+        .bind(lit)
+        .bind(news_id)
+        .execute(pool)
+        .await?;
+    Ok(())
+}
+
+/// A news item still needing an embedding: its id and the text to embed (the
+/// headline plus whatever summary exists). For the pipeline's embedding pass.
+pub struct ToEmbed {
+    pub id: i64,
+    pub headline: String,
+    pub summary: Option<String>,
+}
+
+/// News items with no embedding yet, oldest first, capped at `limit`.
+pub async fn needs_embedding(pool: &Pool, limit: i64) -> Result<Vec<ToEmbed>> {
+    let rows = sqlx::query_as!(
+        ToEmbed,
+        r#"select id, headline, coalesce(our_summary, summary_draft) as summary
+           from news_items where embedding is null order by id limit $1"#,
+        limit,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// Link two news items as related (the same story), stored once in canonical
+/// order so a pair never appears twice. `method` is how they were matched, and
+/// `similarity` the cosine score when the match came from embeddings.
+pub async fn link_related(
+    pool: &Pool,
+    x: i64,
+    y: i64,
+    method: &str,
+    similarity: Option<f32>,
+) -> Result<()> {
+    if x == y {
+        return Ok(());
+    }
+    let (a, b) = if x < y { (x, y) } else { (y, x) };
+    sqlx::query!(
+        "insert into news_related (a_id, b_id, method, similarity) values ($1, $2, $3, $4) \
+         on conflict (a_id, b_id) \
+         do update set method = excluded.method, similarity = excluded.similarity",
+        a,
+        b,
+        method,
+        similarity,
+    )
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
+/// The ids of news items related to this one, from either direction of a pair.
+pub async fn related_ids(pool: &Pool, news_id: i64) -> Result<Vec<i64>> {
+    let rows = sqlx::query_scalar!(
+        r#"select case when a_id = $1 then b_id else a_id end as "other!"
+           from news_related where a_id = $1 or b_id = $1 order by 1"#,
+        news_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    async fn a_news(pool: &Pool, url: &str) -> i64 {
+        upsert(
+            pool,
+            &ApiNews {
+                url,
+                outlet: None,
+                published_at: None,
+                content_hash: None,
+                headline: "H",
+                summary_draft: Some("s"),
+            },
+        )
+        .await
+        .unwrap()
+        .id
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn embeddings_and_related_links(pool: Pool) {
+        let n1 = a_news(&pool, "https://o.test/1").await;
+        let n2 = a_news(&pool, "https://o.test/2").await;
+
+        // Both need an embedding at first.
+        assert_eq!(needs_embedding(&pool, 10).await.unwrap().len(), 2);
+        set_embedding(&pool, n1, &vec![0.1_f32; 1024])
+            .await
+            .unwrap();
+        let pending = needs_embedding(&pool, 10).await.unwrap();
+        assert_eq!(pending.len(), 1, "the embedded item drops out");
+        assert_eq!(pending[0].id, n2);
+
+        // Linking is symmetric and stored once, in canonical order.
+        link_related(&pool, n2, n1, "embedding", Some(0.9))
+            .await
+            .unwrap();
+        link_related(&pool, n1, n2, "verified", None).await.unwrap(); // same pair, upsert
+        assert_eq!(related_ids(&pool, n1).await.unwrap(), vec![n2]);
+        assert_eq!(related_ids(&pool, n2).await.unwrap(), vec![n1]);
+        let count: i64 = sqlx::query_scalar("select count(*) from news_related")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        assert_eq!(count, 1, "one row per pair");
+
+        // A self-link is a no-op.
+        link_related(&pool, n1, n1, "embedding", None)
+            .await
+            .unwrap();
+        let count: i64 = sqlx::query_scalar("select count(*) from news_related")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        assert_eq!(count, 1);
+    }
+}
