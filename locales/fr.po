@@ -1182,3 +1182,12 @@ msgstr "Ils ne prouvent pas une personne, une voix. Un compte n'est pas une pers
 
 msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
 msgstr "Deux des chiffres, demandés et éligibles, sont rapportés par nous et ne peuvent être recalculés à partir des données publiées, car les recalculer exigerait les détails de compte que nous ne publions volontairement pas. Exprimés est recalculable : c'est simplement le nombre de bulletins de ce sondage dans le jeu de données."
+
+msgid "when votes were cast"
+msgstr "quand les votes ont été exprimés"
+
+msgid "When the votes were cast"
+msgstr "Quand les votes ont été exprimés"
+
+msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
+msgstr "Chaque sondage affiche aussi un petit graphique du moment où ses bulletins ont été exprimés, du premier au dernier, de sorte que la forme de sa participation soit visible. Des voix qui arrivent régulièrement paraissent régulières ; un afflux d'un coup ressemble à un pic. Le graphique apparaît dès qu'un sondage compte assez de bulletins pour se lire comme une forme, et quiconque peut le recalculer à partir des heures figurant dans les bulletins publiés."

@@ -31,6 +31,14 @@ pub async fn detail(
     let viewer = viewer_for(session.as_ref());
     let chain = db::voting::ballot_chain_head(&state.pool, poll.id).await?;
     let recon = db::voting::reconciliation(&state.pool, poll.id).await?;
+    // The cast-time timeline is shown only once enough ballots exist to read as a
+    // shape (below that it is suppressed, see MIN_PARTICIPANTS). Fetch it only
+    // when it will be shown.
+    let timeline = if recon.spent >= db::voting::MIN_PARTICIPANTS {
+        Some(db::voting::cast_histogram(&state.pool, poll.id, TIMELINE_BUCKETS).await?)
+    } else {
+        None
+    };
 
     // Only a viewer who can vote on an open poll needs the issuer public key and
     // the island. Generating the key here (idempotent) means it exists by the
@@ -70,7 +78,7 @@ pub async fn detail(
                 // Reconciliation: how the poll's numbers formed, at counts that
                 // carry no per-voter resolution. Shown once anyone has taken part.
                 @if recon.issued > 0 {
-                    (reconciliation_panel(&recon))
+                    (reconciliation_panel(&recon, timeline.as_deref()))
                 }
 
                 // The ballot-chain fingerprint: anyone can check it against the
@@ -246,10 +254,14 @@ fn viewer_for(session: Option<&AuthSession>) -> Viewer {
     }
 }
 
-/// The reconciliation panel: three counts (requested, cast, eligible) and the
-/// public bound between them, monochrome because it is data about a poll, not a
-/// verdict on it. See docs/participation-integrity.md.
-fn reconciliation_panel(r: &db::voting::Reconciliation) -> Markup {
+/// How many time slices the cast-time timeline is drawn with.
+const TIMELINE_BUCKETS: i32 = 24;
+
+/// The reconciliation panel: three counts (requested, cast, eligible), an
+/// optional cast-time timeline, and the public bound between the counts.
+/// Monochrome because it is data about a poll, not a verdict on it. See
+/// docs/participation-integrity.md.
+fn reconciliation_panel(r: &db::voting::Reconciliation, timeline: Option<&[i64]>) -> Markup {
     let stat = |value: i64, label: &str| {
         html! {
             div class="flex flex-col" {
@@ -268,12 +280,36 @@ fn reconciliation_panel(r: &db::voting::Reconciliation) -> Markup {
                 (stat(r.spent, i18n::t("cast")))
                 (stat(r.eligible, i18n::t("eligible")))
             }
+            @if let Some(counts) = timeline {
+                (sparkline(counts))
+            }
             p class="mt-3 max-w-prose text-xs leading-relaxed text-ink-muted" {
                 (i18n::t("Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."))
                 " "
                 a href="/participation" class="text-accent hover:underline" {
                     (i18n::t("How these numbers work"))
                 }
+            }
+        }
+    }
+}
+
+/// A no-JS monochrome sparkline of the cast-time counts: one bar per time slice,
+/// height proportional to that slice's share of the busiest one. The bars are
+/// decorative (a screen reader gets the caption, not the shape), so they are
+/// hidden from assistive tech.
+fn sparkline(counts: &[i64]) -> Markup {
+    let max = counts.iter().copied().max().unwrap_or(0).max(1);
+    html! {
+        div class="mt-4" {
+            div class="flex h-10 items-end gap-px" aria-hidden="true" {
+                @for &c in counts {
+                    @let pct = if c > 0 { (c * 100 / max).max(4) } else { 0 };
+                    div class="flex-1 bg-ink-muted" style={"height:" (pct) "%"} {}
+                }
+            }
+            span class="mt-1 block font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+                (i18n::t("when votes were cast"))
             }
         }
     }
