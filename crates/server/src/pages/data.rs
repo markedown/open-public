@@ -26,6 +26,10 @@ pub struct PollsDump {
     commit: &'static str,
     /// How to recompute and verify, and what this does and does not prove.
     note: &'static str,
+    /// Accounts eligible to vote (verified, unbanned): the ceiling for how many
+    /// tokens any poll can issue. The reconciliation bound is
+    /// `spent <= issued <= eligible`.
+    eligible: i64,
     polls: Vec<PollExport>,
     ballots: Vec<BallotExport>,
 }
@@ -43,6 +47,8 @@ struct PollExport {
     public_key: Option<String>,
     /// Tokens issued for this poll. Ballots cast can never exceed this.
     issued: i64,
+    /// Ballots cast for this poll. Recomputable by counting this poll's ballots.
+    spent: i64,
     chain: Option<ChainHead>,
     options: Vec<OptionExport>,
 }
@@ -85,14 +91,18 @@ tally by counting the ballots that selected it; the counts here must match. A \
 polls. Verify each ballot with scripts/verify_chain.py, which checks: the blind \
 signature over the token under the poll's public_key (the ballot was issued for \
 this poll), that no token repeats (no double vote), the append-only hash chain, \
-and that ballots never exceed issued tokens. This proves ballots were issued, \
-unaltered, and un-double-voted, and that the operator cannot link a ballot to a \
-voter. It does not prove one person one vote.";
+and the reconciliation `spent <= issued <= eligible` (each poll's ballots do not \
+exceed its issued tokens, and issuance does not exceed the eligible-account \
+count). This proves ballots were issued, unaltered, and un-double-voted, and \
+that the operator cannot link a ballot to a voter. It does not prove one person \
+one vote. `issued` and `eligible` are counts we attest; they cannot be recomputed \
+from this file, because doing so would need the account data we do not publish.";
 
 /// The anonymous poll-participation dump.
 pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, PageError> {
     let tallies = db::export::ballot_tallies(&pool).await?;
     let raw = db::export::anon_ballots(&pool).await?;
+    let eligible = db::export::eligible_voters(&pool).await?;
 
     // Tallies arrive ordered by (poll slug, option position), so consecutive
     // rows of one poll collect together.
@@ -124,6 +134,7 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
                         .public_key
                         .map(|der| base64::engine::general_purpose::STANDARD.encode(der)),
                     issued: t.issued,
+                    spent: t.spent,
                     chain,
                     options: vec![opt],
                 });
@@ -151,6 +162,7 @@ pub async fn polls(State(pool): State<db::Pool>) -> Result<Json<PollsDump>, Page
         license: "CC0-1.0",
         commit: option_env!("GIT_SHA").unwrap_or("unknown"),
         note: NOTE,
+        eligible,
         polls,
         ballots,
     }))

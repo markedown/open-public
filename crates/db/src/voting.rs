@@ -232,6 +232,42 @@ pub async fn ballot_chain_head(pool: &Pool, poll_id: i64) -> Result<Option<(i64,
     Ok(row.map(|r| (r.seq, r.content_hash)))
 }
 
+/// The reconciliation counts for a poll: how many tokens it issued, how many
+/// ballots were spent, and how many accounts are eligible to vote at all. The
+/// public bound is `spent <= issued <= eligible`, checkable by anyone. None of
+/// these carries per-voter resolution: `issued` and `eligible` are counts, and
+/// `spent` is the number of anonymous ballots, linkable to no account.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Reconciliation {
+    /// Accounts issued a token for this poll (entitlements).
+    pub issued: i64,
+    /// Anonymous ballots cast for this poll (distinct ballots, not option picks).
+    pub spent: i64,
+    /// Verified, unbanned accounts: the ceiling for how many any poll can issue.
+    pub eligible: i64,
+}
+
+/// Compute a poll's reconciliation counts in one round trip.
+pub async fn reconciliation(pool: &Pool, poll_id: i64) -> Result<Reconciliation> {
+    let row = sqlx::query!(
+        r#"
+        select
+          (select count(*) from vote_entitlements where poll_id = $1) as "issued!",
+          (select count(*) from vote_ballots where poll_id = $1) as "spent!",
+          (select count(*) from users
+             where verified_at is not null and banned_at is null) as "eligible!"
+        "#,
+        poll_id
+    )
+    .fetch_one(pool)
+    .await?;
+    Ok(Reconciliation {
+        issued: row.issued,
+        spent: row.spent,
+        eligible: row.eligible,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -250,6 +286,66 @@ mod tests {
         .fetch_one(pool)
         .await
         .unwrap()
+    }
+
+    #[sqlx::test(migrations = "../../migrations")]
+    async fn reconciliation_counts_issued_spent_and_eligible(pool: Pool) {
+        let poll = a_poll(&pool).await;
+        let opt: i64 = sqlx::query_scalar(
+            "insert into poll_options (poll_id, label, position) values ($1, 'A', 0) returning id",
+        )
+        .bind(poll)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+        // Three accounts: verified and unbanned (eligible), unverified, and
+        // verified but banned. Only the first counts toward `eligible`.
+        let eligible_uid: i64 = sqlx::query_scalar(
+            "insert into users (email_hash, password_hash, verified_at) \
+             values ('a', 'p', now()) returning id",
+        )
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        sqlx::query("insert into users (email_hash, password_hash) values ('b', 'p')")
+            .execute(&pool)
+            .await
+            .unwrap();
+        sqlx::query(
+            "insert into users (email_hash, password_hash, verified_at, banned_at) \
+             values ('c', 'p', now(), now())",
+        )
+        .execute(&pool)
+        .await
+        .unwrap();
+
+        // Before anyone takes part: no issue, no spend, one eligible account.
+        assert_eq!(
+            reconciliation(&pool, poll).await.unwrap(),
+            Reconciliation {
+                issued: 0,
+                spent: 0,
+                eligible: 1
+            }
+        );
+
+        // Two accounts request a token; one casts a ballot.
+        record_entitlement(&pool, poll, eligible_uid).await.unwrap();
+        let other = a_user(&pool).await;
+        record_entitlement(&pool, poll, other).await.unwrap();
+        cast_ballot(&pool, poll, b"tok", b"sig", None, &[opt])
+            .await
+            .unwrap();
+
+        assert_eq!(
+            reconciliation(&pool, poll).await.unwrap(),
+            Reconciliation {
+                issued: 2,
+                spent: 1,
+                eligible: 1
+            }
+        );
     }
 
     #[sqlx::test(migrations = "../../migrations")]

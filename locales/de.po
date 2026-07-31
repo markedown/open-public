@@ -1128,3 +1128,57 @@ msgstr "Sie haben Ihren anonymen Stimmzettel für diese Umfrage abgegeben."
 
 msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
 msgstr "Ihre Stimme ist anonym: Wir können auch mit vollem Zugriff auf unsere eigenen Systeme nicht sehen, wie Sie abgestimmt haben. Das beweist nicht eine Person, eine Stimme."
+
+msgid "Participation"
+msgstr "Teilnahme"
+
+msgid "requested"
+msgstr "angefragt"
+
+msgid "cast"
+msgstr "abgegeben"
+
+msgid "eligible"
+msgstr "berechtigt"
+
+msgid "Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."
+msgstr "Konten, die einen Stimmzettel angefragt haben, tatsächlich abgegebene Stimmen und die verifizierten Konten, die es gekonnt hätten. Jede und jeder kann prüfen, dass abgegeben nie angefragt übersteigt und angefragt nie berechtigt."
+
+msgid "How these numbers work"
+msgstr "Wie diese Zahlen funktionieren"
+
+msgid "How participation numbers work"
+msgstr "Wie die Teilnahmezahlen funktionieren"
+
+msgid "Each poll shows a few plain counts of how its participation formed. They let anyone judge how a poll's numbers came about, without revealing who took part. This page explains each one and, just as importantly, what it does not show."
+msgstr "Jede Umfrage zeigt einige schlichte Zahlen dazu, wie ihre Teilnahme zustande kam. Sie erlauben es, zu beurteilen, wie die Zahlen einer Umfrage entstanden sind, ohne zu verraten, wer teilgenommen hat. Diese Seite erklärt jede davon und, ebenso wichtig, was sie nicht zeigt."
+
+msgid "The three counts"
+msgstr "Die drei Zahlen"
+
+msgid "Requested is how many accounts asked for a ballot for this poll. It is a count of accounts that took part, never a list of which ones."
+msgstr "Angefragt ist, wie viele Konten für diese Umfrage einen Stimmzettel angefragt haben. Es ist eine Zahl der teilnehmenden Konten, nie eine Liste, welche es waren."
+
+msgid "Cast is how many anonymous ballots were actually cast. A ballot cannot be linked to any account, so this counts votes, not people."
+msgstr "Abgegeben ist, wie viele anonyme Stimmen tatsächlich abgegeben wurden. Eine Stimme lässt sich keinem Konto zuordnen, also zählt dies Stimmen, nicht Personen."
+
+msgid "Eligible is how many verified, unbanned accounts exist on the platform: the most any poll could possibly reach. It is a ceiling, not a figure for this poll."
+msgstr "Berechtigt ist, wie viele verifizierte, nicht gesperrte Konten es auf der Plattform gibt: das Höchste, was eine Umfrage überhaupt erreichen könnte. Es ist eine Obergrenze, kein Wert für diese Umfrage."
+
+msgid "The bound anyone can check"
+msgstr "Die Grenze, die jede und jeder prüfen kann"
+
+msgid "Cast can never exceed requested, and requested can never exceed eligible. Written out: cast is at most requested, which is at most eligible. The published data at /data/polls.json carries all three, so anyone can confirm the relationship holds for every poll."
+msgstr "Abgegeben kann angefragt nie übersteigen, und angefragt kann berechtigt nie übersteigen. Ausgeschrieben: abgegeben ist höchstens angefragt, und das ist höchstens berechtigt. Die veröffentlichten Daten unter /data/polls.json enthalten alle drei, sodass jede und jeder bestätigen kann, dass die Beziehung für jede Umfrage gilt."
+
+msgid "This is what makes manufactured participation visible rather than preventable. A poll whose requested count jumped far beyond the usual, with cast sitting right against it, is the honest tell, without anyone having to assert that it happened."
+msgstr "Das macht erfundene Teilnahme sichtbar statt verhinderbar. Eine Umfrage, deren Anfragezahl weit über das Übliche gesprungen ist, mit abgegeben dicht dahinter, ist das ehrliche Anzeichen, ohne dass jemand behaupten müsste, dass es geschehen ist."
+
+msgid "What these numbers do not show"
+msgstr "Was diese Zahlen nicht zeigen"
+
+msgid "They do not prove one person, one vote. An account is not a person, and nothing here establishes that one human is behind one account. They raise the cost of manipulating a poll and make it visible; they do not make it impossible."
+msgstr "Sie beweisen nicht eine Person, eine Stimme. Ein Konto ist keine Person, und nichts hier belegt, dass hinter einem Konto ein Mensch steht. Sie erhöhen die Kosten, eine Umfrage zu manipulieren, und machen es sichtbar; unmöglich machen sie es nicht."
+
+msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
+msgstr "Zwei der Zahlen, angefragt und berechtigt, werden von uns angegeben und lassen sich aus den veröffentlichten Daten nicht nachrechnen, denn dazu bräuchte man die Kontodaten, die wir bewusst nicht veröffentlichen. Abgegeben ist nachrechenbar: es ist schlicht die Zahl der Stimmzettel dieser Umfrage im Datensatz."

@@ -14,6 +14,7 @@ pub mod history;
 pub mod home;
 pub mod news;
 pub mod outlets;
+pub mod participation;
 pub mod parties;
 pub mod party;
 pub mod people;
