@@ -24,6 +24,9 @@ pub struct AppState {
     /// canonical URL of a page and the absolute URLs in the sitemap. Empty when
     /// unknown, in which case neither is emitted rather than guessed at.
     pub base_url: Arc<str>,
+    /// Bearer key for the admin ingest API. `None` disables the API: every
+    /// endpoint answers 404, so no key means no write surface.
+    pub admin_api_key: Option<Arc<str>>,
 }
 
 impl FromRef<AppState> for Pool {

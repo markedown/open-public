@@ -78,6 +78,7 @@ async fn main() -> anyhow::Result<()> {
         site_notice: config.site_notice.map(Arc::from),
         construction: config.construction,
         base_url: config.base_url.clone().into(),
+        admin_api_key: config.admin_api_key.map(Arc::from),
     };
 
     let router = server::app(state, &config.static_dir);
