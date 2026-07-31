@@ -70,6 +70,7 @@ pub async fn detail(
         .await?
         .ok_or(PageError::NotFound)?;
     let is_admin = session.as_ref().is_some_and(|s| s.is_admin);
+    let related = db::news::related_news(&pool, item.id).await?;
     let loc = crate::content::Localized::load(&pool, "news_item", item.id).await?;
     // The headline shows in the reader's language; the original headline stays
     // reachable through the "read at the source" link, so it needs no separate
@@ -140,6 +141,8 @@ pub async fn detail(
               class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
                 (i18n::t("Read at the source")) " ↗"
             }
+
+            (ui::news::related_coverage(&related, &country.slug))
         }
     };
 

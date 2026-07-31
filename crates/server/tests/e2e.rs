@@ -8048,6 +8048,54 @@ async fn the_admin_api_reaches_a_gated_instance(pool: db::Pool) {
     );
 }
 
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_news_page_shows_related_coverage(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    let mk = |url: &'static str, outlet: &'static str, headline: &'static str| {
+        let pool = pool.clone();
+        async move {
+            db::news::upsert(
+                &pool,
+                &db::news::ApiNews {
+                    url,
+                    outlet: Some(outlet),
+                    published_at: None,
+                    content_hash: None,
+                    headline,
+                    summary_draft: None,
+                },
+            )
+            .await
+            .unwrap()
+            .id
+        }
+    };
+    let n1 = mk("https://a.test/1", "Outlet A", "First telling").await;
+    let n2 = mk("https://b.test/2", "Outlet B", "Second telling").await;
+    db::news::link_related(&pool, n1, n2, "embedding", Some(0.88))
+        .await
+        .unwrap();
+
+    // The article's page shows the other outlet that covered the same story.
+    let page = body_string(get_cookie(&app, &format!("/tr/news/{n1}"), "lang=en").await).await;
+    assert!(page.contains("Also reported by"), "the related block shows");
+    assert!(
+        page.contains("Second telling"),
+        "the other article is listed"
+    );
+    assert!(page.contains("Outlet B"));
+
+    // An article with no related coverage does not show the block.
+    let n3 = mk("https://c.test/3", "Outlet C", "Lonely").await;
+    let page3 = body_string(get_cookie(&app, &format!("/tr/news/{n3}"), "lang=en").await).await;
+    assert!(
+        !page3.contains("Also reported by"),
+        "no block without related coverage"
+    );
+}
+
 /// The anonymous cast endpoint refuses a request with no token, a request with
 /// no valid option, and a well-formed request for a poll that has no issuer key.
 #[sqlx::test(migrations = "../../migrations")]

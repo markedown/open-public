@@ -1215,3 +1215,6 @@ msgstr "Bir anket ayrıca, katılan hesaplardan ne kadarının yeni oluşturuldu
 
 msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
 msgstr "Bu, oylar üzerinden değil, katılan hesaplar üzerinden hesaplanır; dolayısıyla kimsenin nasıl oy verdiğine dair bir şey açık etmez; bir oy yine de bir hesaba bağlanamaz. Zaman çizelgesi gibi, yalnızca yeterince hesap katıldığında görünür ve yayımlanan veriden yeniden hesaplanabilen değil, bizim bildirdiğimiz bir değerdir."
+
+msgid "Also reported by"
+msgstr "Ayrıca haberleştirenler"

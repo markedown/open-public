@@ -1,6 +1,7 @@
 use domain::models::NewsItem;
 use maud::{html, Markup};
 
+use crate::fmt;
 use crate::i18n;
 use crate::ui;
 
@@ -90,6 +91,42 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
                         li {
                             a href={"/" (country) "/news/" (it.id)}
                               class="block text-sm font-medium text-ink transition-colors hover:text-accent" {
+                                (it.headline)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// The "also reported by" block on a news item's page: the other outlets that
+/// covered the same story, each linking to its own page. It shows the spread of
+/// coverage rather than judging any of it; renders nothing when there is none.
+pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Markup {
+    if items.is_empty() {
+        return html! {};
+    }
+    html! {
+        section class="mt-8 border-t border-hairline pt-6" {
+            h2 class="mb-3 text-[10px] font-bold uppercase tracking-widest text-ink-muted" {
+                (i18n::t("Also reported by"))
+            }
+            ul class="space-y-2.5" {
+                @for it in items {
+                    li {
+                        a href={"/" (country) "/news/" (it.id)}
+                          class="group block" {
+                            @if let Some(ref o) = it.outlet {
+                                span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+                                    (o)
+                                    @if let Some(d) = it.published_at {
+                                        " · " (fmt::date(Some(d.date_naive())))
+                                    }
+                                }
+                            }
+                            span class="block text-sm font-medium text-ink transition-colors group-hover:text-accent" {
                                 (it.headline)
                             }
                         }
