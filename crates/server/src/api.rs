@@ -30,6 +30,7 @@ pub fn routes(state: AppState) -> Router {
     Router::new()
         .route("/api/v1/sources", post(upsert_source))
         .route("/api/v1/news", post(upsert_news))
+        .route("/api/v1/outlets", post(upsert_outlet))
         .route_layer(middleware::from_fn_with_state(state.clone(), require_key))
         .with_state(state)
 }
@@ -207,6 +208,86 @@ async fn upsert_news(
         created: up.created,
         linked_people,
         linked_parties,
+    }))
+}
+
+#[derive(Deserialize)]
+struct OutletIn {
+    slug: String,
+    name: String,
+    /// The country slug this outlet belongs to.
+    country: String,
+    homepage_url: Option<String>,
+    /// One of the five-point spectrum values, or omitted.
+    leaning: Option<String>,
+    summary: Option<String>,
+}
+
+#[derive(Serialize)]
+struct OutletUpserted {
+    id: i64,
+    created: bool,
+    /// How many already-delivered articles from this outlet were linked to it.
+    linked_articles: u64,
+}
+
+/// Upsert a news outlet by slug, and link any articles already delivered under
+/// its name to it (so its page and leaning show them). Idempotent.
+async fn upsert_outlet(
+    State(state): State<AppState>,
+    Json(body): Json<OutletIn>,
+) -> Result<Json<OutletUpserted>, ApiError> {
+    let slug = body.slug.trim();
+    let name = body.name.trim();
+    if slug.is_empty() {
+        return Err(ApiError::BadRequest("slug is required"));
+    }
+    if name.is_empty() {
+        return Err(ApiError::BadRequest("name is required"));
+    }
+    let leaning = body
+        .leaning
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty());
+    if let Some(l) = leaning {
+        if !db::outlets::LEANINGS.contains(&l) {
+            return Err(ApiError::BadRequest(
+                "leaning must be one of: left, lean_left, center, lean_right, right",
+            ));
+        }
+    }
+    let country = db::country::get_by_slug(&state.pool, body.country.trim())
+        .await?
+        .ok_or(ApiError::BadRequest("unknown country"))?;
+
+    let created = db::outlets::get_by_slug(&state.pool, slug).await?.is_none();
+    let id = db::outlets::upsert(
+        &state.pool,
+        &db::outlets::NewOutlet {
+            name,
+            slug,
+            homepage_url: body.homepage_url.as_deref(),
+            logo_url: None,
+            logo_license: None,
+            leaning,
+            summary: body
+                .summary
+                .as_deref()
+                .map(str::trim)
+                .filter(|s| !s.is_empty()),
+            country_id: Some(country.id),
+        },
+    )
+    .await?;
+    // Connect articles already delivered under this outlet's name (news stores the
+    // outlet as text) to the entity, so re-running after a backfill links them.
+    let linked = db::outlets::link_sources_by_label(&state.pool, id, name).await?;
+
+    Ok(Json(OutletUpserted {
+        id,
+        created,
+        linked_articles: linked,
     }))
 }
 
