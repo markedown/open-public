@@ -157,7 +157,7 @@ impl AuthSession {
     /// Resolve the session from the request cookie. `Ok(None)` means no valid
     /// session (missing cookie or unknown/expired token); `Err` is a server
     /// error looking it up.
-    async fn load<S>(parts: &mut Parts, state: &S) -> Result<Option<Self>, Response>
+    async fn load<S>(parts: &mut Parts, state: &S) -> Result<Option<Self>, StatusCode>
     where
         Pool: FromRef<S>,
         S: Send + Sync,
@@ -171,7 +171,7 @@ impl AuthSession {
         let token_hash = hash_token(cookie.value());
         let session = db::sessions::get_by_token_hash(&pool, &token_hash)
             .await
-            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR.into_response())?;
+            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
         Ok(session.map(|s| AuthSession {
             user_id: s.user_id,
@@ -191,9 +191,10 @@ where
     type Rejection = Response;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        match Self::load(parts, state).await? {
-            Some(session) => Ok(session),
-            None => Err(Redirect::to("/login").into_response()),
+        match Self::load(parts, state).await {
+            Ok(Some(session)) => Ok(session),
+            Ok(None) => Err(Redirect::to("/login").into_response()),
+            Err(status) => Err(status.into_response()),
         }
     }
 }
