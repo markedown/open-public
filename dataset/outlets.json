@@ -1,5 +1,233 @@
 [
   {
+    "country": "france",
+    "homepage_url": "https://www.francetvinfo.fr",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "France Info",
+    "slug": "france-info",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.humanite.fr",
+    "leaning": "left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "L'Humanité",
+    "slug": "humanite",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.lefigaro.fr",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Le Figaro",
+    "slug": "le-figaro",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.lemonde.fr",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Le Monde",
+    "slug": "le-monde",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.lexpress.fr",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "L'Express",
+    "slug": "lexpress",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.liberation.fr",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Libération",
+    "slug": "liberation",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.mediapart.fr",
+    "leaning": "left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Mediapart",
+    "slug": "mediapart",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.ouest-france.fr",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Ouest-France",
+    "slug": "ouest-france",
+    "summary": null
+  },
+  {
+    "country": "france",
+    "homepage_url": "https://www.valeursactuelles.com",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Valeurs Actuelles",
+    "slug": "valeurs-actuelles",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.faz.net",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "FAZ",
+    "slug": "faz",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.focus.de",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Focus",
+    "slug": "focus",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://jungefreiheit.de",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Junge Freiheit",
+    "slug": "junge-freiheit",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.jungewelt.de",
+    "leaning": "left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "junge Welt",
+    "slug": "junge-welt",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.spiegel.de",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Der Spiegel",
+    "slug": "spiegel",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.sueddeutsche.de",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Süddeutsche Zeitung",
+    "slug": "sueddeutsche",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.tagesschau.de",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "tagesschau",
+    "slug": "tagesschau",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://taz.de",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "taz",
+    "slug": "taz",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.welt.de",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Die Welt",
+    "slug": "welt",
+    "summary": null
+  },
+  {
+    "country": "germany",
+    "homepage_url": "https://www.zdf.de",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "ZDF heute",
+    "slug": "zdf-heute",
+    "summary": null
+  },
+  {
     "country": "turkiye",
     "homepage_url": "https://www.bbc.com/turkce",
     "leaning": "center",
@@ -9,7 +237,7 @@
     "logo_url": null,
     "name": "BBC Türkçe",
     "slug": "bbc-turkce",
-    "summary": "Türkçe yayın yapan uluslararası kamu yayıncısının haber servisi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -21,7 +249,7 @@
     "logo_url": null,
     "name": "CNN Türk",
     "slug": "cnn-turk",
-    "summary": "Haber televizyonu ve internet haber sitesi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -33,7 +261,7 @@
     "logo_url": null,
     "name": "Cumhuriyet",
     "slug": "cumhuriyet",
-    "summary": "1924'te kurulan günlük gazete."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -45,7 +273,7 @@
     "logo_url": null,
     "name": "Habertürk",
     "slug": "haberturk",
-    "summary": "Haber sitesi ve televizyon kanalı olan medya kuruluşu."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -57,7 +285,7 @@
     "logo_url": null,
     "name": "Hürriyet",
     "slug": "hurriyet",
-    "summary": "Yüksek tirajlı, uzun geçmişe sahip günlük gazete."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -69,7 +297,7 @@
     "logo_url": null,
     "name": "Milliyet",
     "slug": "milliyet",
-    "summary": "Ulusal ölçekte yayın yapan köklü günlük gazete."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -81,7 +309,7 @@
     "logo_url": null,
     "name": "NTV",
     "slug": "ntv",
-    "summary": "Haber televizyonu ve internet haber sitesi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -93,7 +321,7 @@
     "logo_url": null,
     "name": "Sabah",
     "slug": "sabah",
-    "summary": "Yüksek tirajlı günlük gazete."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -105,7 +333,7 @@
     "logo_url": null,
     "name": "Sözcü",
     "slug": "sozcu",
-    "summary": "Yüksek tirajlı günlük gazete ve internet haber sitesi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -117,7 +345,7 @@
     "logo_url": null,
     "name": "T24",
     "slug": "t24",
-    "summary": "Bağımsız internet haber sitesi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -129,7 +357,7 @@
     "logo_url": null,
     "name": "TRT Haber",
     "slug": "trt-haber",
-    "summary": "Kamu yayıncısı TRT'nin haber kanalı ve sitesi."
+    "summary": null
   },
   {
     "country": "turkiye",
@@ -141,6 +369,234 @@
     "logo_url": null,
     "name": "Yeni Şafak",
     "slug": "yeni-safak",
-    "summary": "Günlük gazete ve internet haber sitesi."
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.bbc.co.uk/news",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "BBC News",
+    "slug": "bbc-news",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.channel4.com/news",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Channel 4 News",
+    "slug": "channel-4-news",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.express.co.uk",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Daily Express",
+    "slug": "daily-express",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.dailymail.co.uk",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Daily Mail",
+    "slug": "daily-mail",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.ft.com",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Financial Times",
+    "slug": "financial-times",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.gbnews.com",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "GB News",
+    "slug": "gb-news",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.independent.co.uk",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "The Independent",
+    "slug": "independent",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.mirror.co.uk",
+    "leaning": "left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Daily Mirror",
+    "slug": "mirror",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://news.sky.com",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Sky News",
+    "slug": "sky-news",
+    "summary": null
+  },
+  {
+    "country": "united-kingdom",
+    "homepage_url": "https://www.theguardian.com",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "The Guardian",
+    "slug": "the-guardian",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.csmonitor.com",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Christian Science Monitor",
+    "slug": "csmonitor",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.foxnews.com",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Fox News",
+    "slug": "fox-news",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.huffpost.com",
+    "leaning": "left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "HuffPost",
+    "slug": "huffpost",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.nationalreview.com",
+    "leaning": "right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "National Review",
+    "slug": "national-review",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.npr.org",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "NPR",
+    "slug": "npr",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://nypost.com",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "New York Post",
+    "slug": "ny-post",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.nytimes.com",
+    "leaning": "lean_left",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "The New York Times",
+    "slug": "nyt",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://thehill.com",
+    "leaning": "center",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "The Hill",
+    "slug": "the-hill",
+    "summary": null
+  },
+  {
+    "country": "usa",
+    "homepage_url": "https://www.washingtonexaminer.com",
+    "leaning": "lean_right",
+    "leaning_source_hash": null,
+    "leaning_source_url": null,
+    "logo_license": null,
+    "logo_url": null,
+    "name": "Washington Examiner",
+    "slug": "washington-examiner",
+    "summary": null
   }
 ]

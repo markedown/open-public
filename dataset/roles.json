@@ -26455,6 +26455,17 @@
     "title": "Milletvekili"
   },
   {
+    "district": null,
+    "end_date": null,
+    "org": "Yeni Parti",
+    "person": "ozgur-ozel",
+    "role_type": "party_leader",
+    "source_hash": "yeni-parti-wikidata",
+    "source_url": "https://www.wikidata.org/wiki/Q140644267",
+    "start_date": "2026-07-24",
+    "title": "Genel Başkan"
+  },
+  {
     "district": "İstanbul",
     "end_date": null,
     "org": "Türkiye Büyük Millet Meclisi",

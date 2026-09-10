@@ -26081,6 +26081,17 @@
     "url": "https://tip.org.tr/raporlar-belgeler/tip-2023-secim-bildirgesi-halkin-kirmizi-cizgileri"
   },
   {
+    "content_hash": "yeni-parti-gecis-2026",
+    "content_sha256": null,
+    "fetched_at": "2026-07-28T12:46:18.246456+00:00",
+    "kind": "manual",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "CHP'den Yeni Parti'ye geçişler, 24 Temmuz 2026",
+    "url": "https://tr.wikipedia.org/wiki/Yeni_Parti_(2026)"
+  },
+  {
     "content_hash": "uk-division-1878",
     "content_sha256": "e4328c2f152231e5b227744811adcd2b05c04b1f986108cae8bc4d08fb5cda43",
     "fetched_at": "2026-07-23T23:53:03.049217+00:00",
@@ -48145,6 +48156,17 @@
     "snapshot_url": null,
     "title": "Wikidata",
     "url": "https://www.wikidata.org/wiki/Q140537772"
+  },
+  {
+    "content_hash": "yeni-parti-wikidata",
+    "content_sha256": null,
+    "fetched_at": "2026-07-28T12:46:18.238760+00:00",
+    "kind": "wikidata",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Yeni Parti, Wikidata",
+    "url": "https://www.wikidata.org/wiki/Q140644267"
   },
   {
     "content_hash": "wd-enrich-Q1407342",

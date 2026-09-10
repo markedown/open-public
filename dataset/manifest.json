@@ -5,22 +5,22 @@
     "election_results": 197,
     "elections": 22,
     "events": 11,
-    "outlets": 12,
-    "parties": 69,
+    "outlets": 50,
+    "parties": 70,
     "party_alliances": 12,
-    "party_memberships": 3848,
+    "party_memberships": 3939,
     "people": 4150,
     "person_attributes": 3279,
     "person_education": 2617,
     "poll_options": 17,
     "polls": 5,
     "position_evidence": 324,
-    "roles": 4152,
-    "sources": 5619,
+    "roles": 4153,
+    "sources": 5621,
     "statements": 1,
     "theses": 103,
     "topics": 0,
-    "translations": 1
+    "translations": 195
   },
   "note": "Row counts of this export. Generated file; see README for what is included and what is deliberately left out."
 }
