@@ -27,6 +27,8 @@ pub struct AppState {
     /// Bearer key for the admin ingest API. `None` disables the API: every
     /// endpoint answers 404, so no key means no write surface.
     pub admin_api_key: Option<Arc<str>>,
+    /// Validates domain MX/deliverability during registration.
+    pub email_deliverability: crate::email_mx::EmailDeliverability,
 }
 
 impl FromRef<AppState> for Pool {

@@ -33,6 +33,7 @@ cookie.workspace = true
 lettre.workspace = true
 reqwest.workspace = true
 image.workspace = true
+hickory-resolver.workspace = true
 
 [dev-dependencies]
 sqlx.workspace = true

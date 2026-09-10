@@ -9,6 +9,7 @@ pub mod captcha;
 pub mod config;
 pub mod content;
 pub mod email_blocklist;
+pub mod email_mx;
 pub mod error;
 pub mod fmt;
 pub mod i18n;

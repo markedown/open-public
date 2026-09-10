@@ -79,6 +79,7 @@ async fn main() -> anyhow::Result<()> {
         construction: config.construction,
         base_url: config.base_url.clone().into(),
         admin_api_key: config.admin_api_key.map(Arc::from),
+        email_deliverability: server::email_mx::default_deliverability(),
     };
 
     let router = server::app(state, &config.static_dir);
