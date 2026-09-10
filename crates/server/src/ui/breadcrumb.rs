@@ -26,3 +26,13 @@ pub fn breadcrumbs(items: &[Crumb]) -> Markup {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_crumbs_render_nothing() {
+        assert_eq!(breadcrumbs(&[]).into_string(), "");
+    }
+}

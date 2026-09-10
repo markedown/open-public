@@ -2386,8 +2386,20 @@ async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
     assert!(button.contains("Following")); // the toggled-on button came back
     assert!(button.contains("/follow/person/")); // and it is the toggle form
 
+    // Unfollow over HTMX: toggles back to Follow
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/follow/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie)
+        .header("hx-request", "true")
+        .body(Body::from("next=/tr/people/ayse-yilmaz"))
+        .unwrap();
+    let button = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(button.contains("Follow"));
+
     let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
-    assert!(feed.contains("Followed person makes news"));
+    assert!(!feed.contains("Followed person makes news"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

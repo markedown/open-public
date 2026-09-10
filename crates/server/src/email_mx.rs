@@ -124,32 +124,25 @@ async fn check_domain(resolver: &TokioResolver, domain: &str) -> bool {
                 check_ip_fallback(resolver, &fqdn).await
             }
         }
-        Err(err) => {
-            if is_definitive_nxdomain(&err) || is_definitive_invalid(&err) {
+        Err(err) => match classify_error(&err) {
+            DnsOutcome::NxDomainOrInvalid => {
                 tracing::info!(
                     domain,
                     ?err,
                     "email domain rejected: non-existent or invalid domain"
                 );
                 false
-            } else if is_no_records(&err) {
-                check_ip_fallback(resolver, &fqdn).await
-            } else if is_transient(&err) {
+            }
+            DnsOutcome::NoRecords => check_ip_fallback(resolver, &fqdn).await,
+            DnsOutcome::Transient => {
                 tracing::warn!(
                     domain,
                     ?err,
                     "transient DNS error during MX lookup; failing open"
                 );
                 true
-            } else {
-                tracing::warn!(
-                    domain,
-                    ?err,
-                    "unrecognized DNS error during MX lookup; failing open"
-                );
-                true
             }
-        }
+        },
     }
 }
 
@@ -163,59 +156,46 @@ async fn check_ip_fallback(resolver: &TokioResolver, fqdn: &str) -> bool {
                 false
             }
         }
-        Err(err) => {
-            if is_definitive_nxdomain(&err) || is_no_records(&err) || is_definitive_invalid(&err) {
+        Err(err) => match classify_error(&err) {
+            DnsOutcome::NxDomainOrInvalid | DnsOutcome::NoRecords => {
                 tracing::info!(fqdn, ?err, "email domain rejected: no MX or A/AAAA records");
                 false
-            } else if is_transient(&err) {
+            }
+            DnsOutcome::Transient => {
                 tracing::warn!(
                     fqdn,
                     ?err,
                     "transient DNS error during A/AAAA fallback; failing open"
                 );
                 true
+            }
+        },
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum DnsOutcome {
+    NxDomainOrInvalid,
+    NoRecords,
+    Transient,
+}
+
+fn classify_error(err: &NetError) -> DnsOutcome {
+    match err {
+        NetError::Proto(_) => DnsOutcome::NxDomainOrInvalid,
+        NetError::Dns(DnsError::ResponseCode(ResponseCode::NXDomain)) => {
+            DnsOutcome::NxDomainOrInvalid
+        }
+        NetError::Dns(DnsError::NoRecordsFound(no_records)) => {
+            if no_records.response_code == ResponseCode::NXDomain {
+                DnsOutcome::NxDomainOrInvalid
+            } else if no_records.response_code == ResponseCode::NoError {
+                DnsOutcome::NoRecords
             } else {
-                tracing::warn!(
-                    fqdn,
-                    ?err,
-                    "unrecognized DNS error during A/AAAA fallback; failing open"
-                );
-                true
+                DnsOutcome::Transient
             }
         }
-    }
-}
-
-fn is_definitive_invalid(err: &NetError) -> bool {
-    matches!(err, NetError::Proto(_))
-}
-
-fn is_definitive_nxdomain(err: &NetError) -> bool {
-    match err {
-        NetError::Dns(DnsError::NoRecordsFound(no_records)) => {
-            no_records.response_code == ResponseCode::NXDomain
-        }
-        NetError::Dns(DnsError::ResponseCode(code)) => *code == ResponseCode::NXDomain,
-        _ => false,
-    }
-}
-
-fn is_no_records(err: &NetError) -> bool {
-    match err {
-        NetError::Dns(DnsError::NoRecordsFound(no_records)) => {
-            no_records.response_code == ResponseCode::NoError
-        }
-        _ => false,
-    }
-}
-
-fn is_transient(err: &NetError) -> bool {
-    match err {
-        NetError::Timeout | NetError::Busy | NetError::NoConnections | NetError::Io(_) => true,
-        NetError::Dns(DnsError::ResponseCode(code)) => {
-            matches!(code, ResponseCode::ServFail | ResponseCode::Refused)
-        }
-        _ => false,
+        _ => DnsOutcome::Transient,
     }
 }
 
@@ -290,32 +270,38 @@ mod tests {
     }
 
     #[test]
+    fn default_deliverability_constructs() {
+        let deliverability = default_deliverability();
+        assert!(matches!(
+            deliverability,
+            EmailDeliverability::Live(_) | EmailDeliverability::AllowAll
+        ));
+    }
+
+    #[test]
     fn error_classification() {
         use hickory_resolver::net::DnsError;
         use hickory_resolver::proto::op::ResponseCode;
 
         let nxdomain = NetError::Dns(DnsError::ResponseCode(ResponseCode::NXDomain));
-        assert!(is_definitive_nxdomain(&nxdomain));
-        assert!(!is_transient(&nxdomain));
+        assert_eq!(classify_error(&nxdomain), DnsOutcome::NxDomainOrInvalid);
+
+        let proto = NetError::Proto(hickory_resolver::proto::ProtoError::from("bad"));
+        assert_eq!(classify_error(&proto), DnsOutcome::NxDomainOrInvalid);
 
         let servfail = NetError::Dns(DnsError::ResponseCode(ResponseCode::ServFail));
-        assert!(!is_definitive_nxdomain(&servfail));
-        assert!(is_transient(&servfail));
+        assert_eq!(classify_error(&servfail), DnsOutcome::Transient);
 
         let timeout = NetError::Timeout;
-        assert!(is_transient(&timeout));
+        assert_eq!(classify_error(&timeout), DnsOutcome::Transient);
 
         let busy = NetError::Busy;
-        assert!(is_transient(&busy));
+        assert_eq!(classify_error(&busy), DnsOutcome::Transient);
 
         let io_err = NetError::Io(Arc::new(std::io::Error::new(
             std::io::ErrorKind::ConnectionReset,
             "reset",
         )));
-        assert!(is_transient(&io_err));
-
-        let proto = NetError::Proto(hickory_resolver::proto::ProtoError::from("bad"));
-        assert!(is_definitive_invalid(&proto));
-        assert!(!is_transient(&proto));
+        assert_eq!(classify_error(&io_err), DnsOutcome::Transient);
     }
 }

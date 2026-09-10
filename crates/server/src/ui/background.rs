@@ -69,3 +69,13 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_background_renders_nothing() {
+        assert_eq!(section(&[], &[]).into_string(), "");
+    }
+}
