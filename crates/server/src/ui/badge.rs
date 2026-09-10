@@ -42,3 +42,19 @@ fn text_on(hex: &str) -> &'static str {
     }
     "text-white"
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn badge_text_colors() {
+        assert_eq!(text_on("#ffffff"), "text-ink");
+        assert_eq!(text_on("#000000"), "text-white");
+        assert_eq!(text_on("invalid"), "text-white");
+        let html_none = party_chip("TP", None).into_string();
+        assert!(html_none.contains("border-hairline"));
+        let badge = party_badge("TP", "test", Some("#fff"), "tr").into_string();
+        assert!(badge.contains("parties/test"));
+    }
+}

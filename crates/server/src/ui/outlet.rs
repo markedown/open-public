@@ -71,3 +71,13 @@ pub fn card(o: &db::outlets::OutletCard, country: &str) -> Markup {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn unrated_leaning_label() {
+        assert_eq!(leaning_label("unknown"), i18n::t("Unrated"));
+    }
+}

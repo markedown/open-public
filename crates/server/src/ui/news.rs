@@ -136,3 +136,14 @@ pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Marku
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_news_and_coverage_renders_nothing() {
+        assert_eq!(news_section(&[], "tr", None).into_string(), "");
+        assert_eq!(related_coverage(&[], "tr").into_string(), "");
+    }
+}

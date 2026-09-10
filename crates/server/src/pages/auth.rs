@@ -63,6 +63,9 @@ pub async fn register_submit(
             "Please use a non-disposable email address.",
         ))));
     }
+    if !state.email_deliverability.is_deliverable(email).await {
+        return Err(register_page(Some(i18n::t("Enter a valid email address."))));
+    }
     if form.password.chars().count() < 8 {
         return Err(register_page(Some(i18n::t(
             "Password must be at least 8 characters.",

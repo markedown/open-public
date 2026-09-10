@@ -46,3 +46,24 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn statement_section_renders_paraphrase_and_add() {
+        let stmt = Statement {
+            id: 1,
+            text_original: "Test quote".to_string(),
+            is_paraphrase: true,
+            stated_at: None,
+            url: "https://example.com".to_string(),
+            outlet: Some("News".to_string()),
+        };
+        let html = statement_section(&[stmt], Some("/add")).into_string();
+        assert!(html.contains(i18n::t("paraphrase")));
+        assert!(html.contains("+ "));
+        assert_eq!(statement_section(&[], None).into_string(), "");
+    }
+}

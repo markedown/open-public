@@ -330,6 +330,7 @@ fn router(pool: db::Pool) -> Router {
         construction: false,
         base_url: "https://open-public.test".into(),
         admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -352,6 +353,7 @@ fn router_with_notice(pool: db::Pool, notice: &str) -> Router {
         construction: false,
         base_url: "https://open-public.test".into(),
         admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -380,6 +382,7 @@ fn router_broken_mail(pool: db::Pool) -> Router {
         construction: false,
         base_url: "https://open-public.test".into(),
         admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -403,6 +406,7 @@ fn router_no_origin(pool: db::Pool) -> Router {
         construction: false,
         base_url: "".into(),
         admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -427,6 +431,7 @@ fn router_api(pool: db::Pool, construction: bool) -> Router {
         construction,
         base_url: "https://open-public.test".into(),
         admin_api_key: Some(Arc::from(API_KEY)),
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -449,6 +454,7 @@ fn router_construction(pool: db::Pool) -> Router {
         construction: true,
         base_url: "https://open-public.test".into(),
         admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
     };
     server::app(state, Path::new("static"))
 }
@@ -2380,8 +2386,20 @@ async fn feed_shows_news_and_an_empty_state_over_htmx(pool: db::Pool) {
     assert!(button.contains("Following")); // the toggled-on button came back
     assert!(button.contains("/follow/person/")); // and it is the toggle form
 
+    // Unfollow over HTMX: toggles back to Follow
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/follow/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie)
+        .header("hx-request", "true")
+        .body(Body::from("next=/tr/people/ayse-yilmaz"))
+        .unwrap();
+    let button = body_string(app.clone().oneshot(req).await.unwrap()).await;
+    assert!(button.contains("Follow"));
+
     let feed = body_string(get_cookie(&app, "/feed", &cookie).await).await;
-    assert!(feed.contains("Followed person makes news"));
+    assert!(!feed.contains("Followed person makes news"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]
@@ -7467,6 +7485,69 @@ async fn register_rejects_a_disposable_email_domain(pool: db::Pool) {
         .await
         .unwrap();
     assert_eq!(users, 0, "no account is created for a disposable domain");
+}
+
+/// Registration with an undeliverable email domain is refused and stores nothing.
+#[sqlx::test(migrations = "../../migrations")]
+async fn register_rejects_a_non_deliverable_email_domain(pool: db::Pool) {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool: pool.clone(),
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: false,
+        base_url: "https://open-public.test".into(),
+        admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::Mock(Arc::new(|email| {
+            !email.ends_with("@nonexistent-mail-host.org")
+        })),
+    };
+    let app = server::app(state, Path::new("static"));
+
+    let resp = post_form_captcha(
+        &app,
+        "/register",
+        "email=voter@nonexistent-mail-host.org&password=longenough",
+        None,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    let body = body_string(resp).await;
+    assert!(body.contains("e-posta adresi gir"));
+
+    let users: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        users, 0,
+        "no account is created for an undeliverable domain"
+    );
+
+    // Deliverable domain proceeds to check-email page
+    let resp = post_form_captcha(
+        &app,
+        "/register",
+        "email=voter@deliverable-domain.org&password=longenough",
+        None,
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    let body = body_string(resp).await;
+    assert!(!body.contains("e-posta adresi gir"));
+    let users: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(users, 1, "account is created for a deliverable domain");
 }
 
 /// A poll gets an issuer keypair on demand, and asking again keeps the same key.
