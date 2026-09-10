@@ -2340,3 +2340,32 @@ async fn monthly_entity_approval(pool: sqlx::PgPool) {
         "approval polls must be hidden from the poll index"
     );
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn db_connect_and_follows_count(pool: db::Pool) {
+    let url = std::env::var("DATABASE_URL").unwrap();
+    let p = db::connect(&url).await.unwrap();
+    assert!(db::ping(&p).await.is_ok());
+
+    let user_id = db::users::insert(&pool, "user_hash_1", "pass_hash")
+        .await
+        .unwrap();
+    assert_eq!(
+        db::follows::count_for_user(&pool, user_id).await.unwrap(),
+        0
+    );
+    db::follows::follow(&pool, user_id, "party", 1)
+        .await
+        .unwrap();
+    assert_eq!(
+        db::follows::count_for_user(&pool, user_id).await.unwrap(),
+        1
+    );
+    db::follows::unfollow(&pool, user_id, "party", 1)
+        .await
+        .unwrap();
+    assert_eq!(
+        db::follows::count_for_user(&pool, user_id).await.unwrap(),
+        0
+    );
+}

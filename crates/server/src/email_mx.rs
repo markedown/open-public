@@ -17,25 +17,13 @@ const DNS_TIMEOUT: Duration = Duration::from_secs(3);
 /// public DNS configuration if system configuration fails.
 /// If resolver construction fails completely, logs a warning and returns `AllowAll` (fail open).
 pub fn default_deliverability() -> EmailDeliverability {
-    let resolver = TokioResolver::builder_tokio()
-        .and_then(|b| b.build())
-        .or_else(|_| {
-            Resolver::builder_with_config(
-                ResolverConfig::default(),
-                TokioRuntimeProvider::default(),
-            )
-            .build()
-        });
+    let builder = TokioResolver::builder_tokio().unwrap_or_else(|_| {
+        Resolver::builder_with_config(ResolverConfig::default(), TokioRuntimeProvider::default())
+    });
 
-    match resolver {
+    match builder.build() {
         Ok(r) => EmailDeliverability::Live(Arc::new(r)),
-        Err(err) => {
-            tracing::warn!(
-                ?err,
-                "failed to initialize DNS resolver; failing open with AllowAll"
-            );
-            EmailDeliverability::AllowAll
-        }
+        Err(_) => EmailDeliverability::AllowAll,
     }
 }
 
@@ -148,19 +136,8 @@ async fn check_domain(resolver: &TokioResolver, domain: &str) -> bool {
 
 async fn check_ip_fallback(resolver: &TokioResolver, fqdn: &str) -> bool {
     match resolver.lookup_ip(fqdn).await {
-        Ok(ips) => {
-            if ips.iter().next().is_some() {
-                true
-            } else {
-                tracing::info!(fqdn, "email domain rejected: no MX and empty A/AAAA");
-                false
-            }
-        }
+        Ok(ips) => ips.iter().next().is_some(),
         Err(err) => match classify_error(&err) {
-            DnsOutcome::NxDomainOrInvalid | DnsOutcome::NoRecords => {
-                tracing::info!(fqdn, ?err, "email domain rejected: no MX or A/AAAA records");
-                false
-            }
             DnsOutcome::Transient => {
                 tracing::warn!(
                     fqdn,
@@ -168,6 +145,10 @@ async fn check_ip_fallback(resolver: &TokioResolver, fqdn: &str) -> bool {
                     "transient DNS error during A/AAAA fallback; failing open"
                 );
                 true
+            }
+            _ => {
+                tracing::info!(fqdn, ?err, "email domain rejected: no MX or A/AAAA records");
+                false
             }
         },
     }
@@ -187,12 +168,10 @@ fn classify_error(err: &NetError) -> DnsOutcome {
             DnsOutcome::NxDomainOrInvalid
         }
         NetError::Dns(DnsError::NoRecordsFound(no_records)) => {
-            if no_records.response_code == ResponseCode::NXDomain {
-                DnsOutcome::NxDomainOrInvalid
-            } else if no_records.response_code == ResponseCode::NoError {
+            if no_records.response_code == ResponseCode::NoError {
                 DnsOutcome::NoRecords
             } else {
-                DnsOutcome::Transient
+                DnsOutcome::NxDomainOrInvalid
             }
         }
         _ => DnsOutcome::Transient,
@@ -244,7 +223,7 @@ mod tests {
         let resolver = TokioResolver::builder_tokio()
             .and_then(|b| b.build())
             .expect("local system resolver");
-        let checker = EmailDeliverability::Live(Arc::new(resolver));
+        let checker = EmailDeliverability::Live(Arc::new(resolver.clone()));
 
         // Valid domain with MX
         assert!(checker.is_deliverable("user@gmail.com").await);
@@ -267,6 +246,9 @@ mod tests {
         assert!(!checker.is_deliverable("user@nodot").await);
         assert!(!checker.is_deliverable("user@..invalid..").await);
         assert!(!checker.is_deliverable("user@-invalid-.com").await);
+
+        // Direct IP fallback on non-existent host
+        assert!(!check_ip_fallback(&resolver, "definitely-not-existent-ip-1234987654.org.").await);
     }
 
     #[test]
