@@ -1126,7 +1126,7 @@ msgstr "Für diese Umfrage wurde Ihrem Konto bereits ein Stimmzettel ausgestellt
 msgid "You have cast your anonymous ballot for this poll."
 msgstr "Sie haben Ihren anonymen Stimmzettel für diese Umfrage abgegeben."
 
-msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."
 msgstr "Ihre Stimme ist anonym: Wir können auch mit vollem Zugriff auf unsere eigenen Systeme nicht sehen, wie Sie abgestimmt haben. Das beweist nicht eine Person, eine Stimme."
 
 msgid "Participation"
@@ -1215,3 +1215,21 @@ msgstr "Alle verwerfen"
 
 msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
 msgstr "Diese Biografien werden auf die gleiche Weise aus belegten strukturierten Daten erzeugt. Lesen Sie die Stichprobe und veröffentlichen oder verwerfen Sie dann den ganzen Stapel."
+
+msgid "Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."
+msgstr "Umfragen auf open-public zählen die Teilnahme unter verifizierten Konten, keine repräsentative Umfrage oder statistische Stichprobe einer Bevölkerung. Die Ergebnisse zeigen, wie Teilnehmende hier abgestimmt haben, wobei jeder Stimmzettel anonym und manipulationssicher ist."
+
+msgid "What the layers prove, and what they cannot"
+msgstr "Was die Schichten beweisen, und was nicht"
+
+msgid "Unaltered (the hash chain): each cast ballot is hashed into an append-only chain. Anyone can verify that no ballot has been altered, reordered, inserted, or removed after casting."
+msgstr "Unverändert (die Hash-Kette): Jeder abgegebene Stimmzettel wird in eine rein anfügende Kette gehasht. Jede und jeder kann überprüfen, dass nach der Abgabe kein Stimmzettel verändert, umgeordnet, eingefügt oder entfernt wurde."
+
+msgid "Cost-raised (proof-of-work and validation): proof-of-work challenges on write actions, disposable-domain blocking, email deliverability verification, and email canonicalization raise the computational and operational cost of automated account creation."
+msgstr "Kosten erhöht (Proof-of-Work und Validierung): Proof-of-Work-Prüfungen bei Schreibaktionen, das Sperren von Wegwerf-Domains, die Prüfung der E-Mail-Zustellbarkeit und E-Mail-Kanonisierung erhöhen den rechnerischen und operativen Aufwand für automatisierte Kontoerstellung."
+
+msgid "One per account (blind-signed tokens): cryptographic blind signatures ensure that each verified account can obtain at most one token per poll and cast at most one ballot, while preventing the platform from linking any ballot to the account that cast it."
+msgstr "Eins pro Konto (blind signierte Token): Kryptografische Blindsignaturen stellen sicher, dass jedes verifizierte Konto höchstens ein Token pro Umfrage erhalten und höchstens einen Stimmzettel abgeben kann, während verhindert wird, dass die Plattform einen Stimmzettel mit dem Konto verknüpft, das ihn abgegeben hat."
+
+msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
+msgstr "Was keine davon beweist: Keine dieser Schichten beweist, dass ein Konto einer eindeutigen lebenden Person entspricht, noch dass die Teilnehmenden eine repräsentative Stichprobe oder einen statistischen Querschnitt einer Bevölkerung bilden. Die Teilnahme hier spiegelt ausschließlich die verifizierten Konten wider, die sich für die Teilnahme entschieden haben."

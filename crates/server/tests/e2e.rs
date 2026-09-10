@@ -6202,6 +6202,11 @@ async fn the_participation_page_explains_the_counts_and_stays_honest(pool: db::P
     assert!(body.contains("The bound anyone can check"));
     // And states the limit rather than glossing it.
     assert!(body.contains("do not prove one person, one vote"));
+    assert!(body.contains("What the layers prove, and what they cannot"));
+    assert!(body.contains("Unaltered (the hash chain)"));
+    assert!(body.contains("Cost-raised"));
+    assert!(body.contains("One per account"));
+    assert!(body.contains("What none of them prove"));
 
     // Reachable from the footer of every page.
     let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
@@ -6216,7 +6221,30 @@ async fn the_participation_page_explains_the_counts_and_stays_honest(pool: db::P
     // Renders in another language rather than falling back to English.
     let fr = body_string(get_cookie(&app, "/participation", "lang=fr").await).await;
     assert!(fr.contains("Comment fonctionnent les chiffres de participation"));
+    assert!(fr.contains("Ce que prouvent les différentes couches"));
     assert!(!fr.contains("How participation numbers work"));
+
+    let de = body_string(get_cookie(&app, "/participation", "lang=de").await).await;
+    assert!(de.contains("Was die Schichten beweisen"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn polls_index_and_previews_carry_humble_participation_framing(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // Index page has the humble framing note.
+    let index = body_string(get_cookie(&app, "/tr/polls", "lang=en").await).await;
+    assert!(index.contains("Polls on open-public count participation among verified accounts, not a representative survey"));
+    let index_de = body_string(get_cookie(&app, "/tr/polls", "lang=de").await).await;
+    assert!(index_de
+        .contains("Umfragen auf open-public zählen die Teilnahme unter verifizierten Konten"));
+
+    // Country page previews carry the honest frame note when polls exist.
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(
+        country.contains("Counts among verified participants here, not a representative sample.")
+    );
 }
 
 #[sqlx::test(migrations = "../../migrations")]

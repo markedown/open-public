@@ -56,6 +56,9 @@ pub async fn list(
                 Some(html! { span class="font-mono" { (polls.len()) } " " (i18n::t("Polls")) }),
                 Some(propose),
             ))
+            p class="mb-6 max-w-prose text-xs leading-relaxed text-ink-muted" {
+                (i18n::t("Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."))
+            }
             (ui::search::bar(&list_url, "#polls-results", &query))
 
             // The search box swaps this container in place as the query changes.

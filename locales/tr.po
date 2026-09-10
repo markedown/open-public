@@ -1138,7 +1138,7 @@ msgstr "Bu anket için hesabınıza zaten bir oy pusulası verildi."
 msgid "You have cast your anonymous ballot for this poll."
 msgstr "Bu anket için anonim oy pusulanızı kullandınız."
 
-msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."
 msgstr "Oyunuz anonimdir: kendi sistemlerimize tam erişimimiz olsa bile nasıl oy verdiğinizi göremeyiz. Bu, bir kişi bir oy olduğunu kanıtlamaz."
 
 msgid "Participation"
@@ -1227,3 +1227,21 @@ msgstr "Tümünü sil"
 
 msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
 msgstr "Bu biyografiler, kaynaklı yapısal verilerden aynı yöntemle üretilir. Örneği okuyun, ardından toplu olarak yayımlayın ya da silin."
+
+msgid "Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."
+msgstr "open-public üzerindeki anketler, herhangi bir nüfusun temsili bir anketi veya istatistiksel örneklemi değil, doğrulanmış hesaplar arasındaki katılımı sayar. Sonuçlar, buradaki katılımcıların nasıl oy verdiğini gösterir; her oy pusulası anonimdir ve tahrifata karşı korumalıdır."
+
+msgid "What the layers prove, and what they cannot"
+msgstr "Katmanların kanıtladıkları ve kanıtlayamadıkları"
+
+msgid "Unaltered (the hash chain): each cast ballot is hashed into an append-only chain. Anyone can verify that no ballot has been altered, reordered, inserted, or removed after casting."
+msgstr "Değiştirilmemiş (özet zinciri): Kullanılan her oy pusulası yalnızca ekleme yapılabilen bir zincire özetlenir. Herkes, oylamadan sonra hiçbir pusulanın değiştirilmediğini, yeniden sıralanmadığını, eklenmediğini veya çıkarılmadığını doğrulayabilir."
+
+msgid "Cost-raised (proof-of-work and validation): proof-of-work challenges on write actions, disposable-domain blocking, email deliverability verification, and email canonicalization raise the computational and operational cost of automated account creation."
+msgstr "Maliyeti artırılmış (iş kanıtı ve doğrulama): Yazma işlemlerindeki iş kanıtı sınamaları, tek kullanımlık alan adı engelleme, e-posta teslim edilebilirlik doğrulaması ve e-posta kurallılaştırması, otomatik hesap açmanın hesaplama ve operasyonel maliyetini yükseltir."
+
+msgid "One per account (blind-signed tokens): cryptographic blind signatures ensure that each verified account can obtain at most one token per poll and cast at most one ballot, while preventing the platform from linking any ballot to the account that cast it."
+msgstr "Hesap başına bir (kör imzalı jetonlar): Kriptografik kör imzalar, her doğrulanmış hesabın anket başına en fazla bir jeton alabilmesini ve en fazla bir oy pusulası kullanabilmesini sağlarken platformun herhangi bir pusulayı onu kullanan hesapla ilişkilendirmesini engeller."
+
+msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
+msgstr "Hiçbirinin kanıtlamadığı: Bu katmanların hiçbiri, bir hesabın benzersiz yaşayan bir kişiye karşılık geldiğini veya katılımcıların herhangi bir nüfusun temsili bir örneklemini ya da istatistiksel bir kesitini oluşturduğunu kanıtlamaz. Buradaki katılım yalnızca katılmayı seçen doğrulanmış hesapları yansıtır."

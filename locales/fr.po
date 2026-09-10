@@ -1126,7 +1126,7 @@ msgstr "Un bulletin pour ce sondage a déjà été délivré à votre compte."
 msgid "You have cast your anonymous ballot for this poll."
 msgstr "Vous avez déposé votre bulletin anonyme pour ce sondage."
 
-msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."
 msgstr "Votre vote est anonyme : nous ne pouvons pas savoir comment vous avez voté, même avec un accès complet à nos propres systèmes. Cela ne prouve pas une personne, une voix."
 
 msgid "Participation"
@@ -1215,3 +1215,21 @@ msgstr "Tout supprimer"
 
 msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
 msgstr "Ces biographies sont générées de la même manière à partir de données structurées sourcées. Lisez l'échantillon, puis publiez ou supprimez tout le lot."
+
+msgid "Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."
+msgstr "Les sondages sur open-public décomptent la participation parmi les comptes vérifiés, et non un sondage représentatif ou un échantillon statistique d'une population. Les résultats montrent comment les participants ici ont voté, chaque bulletin étant anonyme et infalsifiable."
+
+msgid "What the layers prove, and what they cannot"
+msgstr "Ce que prouvent les différentes couches, et ce qu'elles ne peuvent pas prouver"
+
+msgid "Unaltered (the hash chain): each cast ballot is hashed into an append-only chain. Anyone can verify that no ballot has been altered, reordered, inserted, or removed after casting."
+msgstr "Inaltéré (la chaîne de hachage) : chaque bulletin déposé est haché dans une chaîne en ajout seul. Quiconque peut vérifier qu'aucun bulletin n'a été modifié, réordonné, inséré ou supprimé après le vote."
+
+msgid "Cost-raised (proof-of-work and validation): proof-of-work challenges on write actions, disposable-domain blocking, email deliverability verification, and email canonicalization raise the computational and operational cost of automated account creation."
+msgstr "Coût accru (preuve de travail et validation) : les défis de preuve de travail sur les actions d'écriture, le blocage des domaines jetables, la vérification de la délivrabilité des courriels et la canonisation des adresses augmentent le coût computationnel et opérationnel de la création automatisée de comptes."
+
+msgid "One per account (blind-signed tokens): cryptographic blind signatures ensure that each verified account can obtain at most one token per poll and cast at most one ballot, while preventing the platform from linking any ballot to the account that cast it."
+msgstr "Un par compte (jetons signés en aveugle) : les signatures aveugles cryptographiques garantissent que chaque compte vérifié ne peut obtenir qu'au plus un jeton par sondage et ne déposer qu'au plus un bulletin, tout en empêchant la plateforme de relier un bulletin au compte qui l'a déposé."
+
+msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
+msgstr "Ce qu'aucune ne prouve : aucune de ces couches ne prouve qu'un compte correspond à une personne vivante unique, ni que les participants forment un échantillon représentatif ou une coupe statistique d'une quelconque population. La participation ici reflète uniquement les comptes vérifiés qui ont choisi de prendre part."

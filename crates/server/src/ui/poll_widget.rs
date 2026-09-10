@@ -87,7 +87,7 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
                     }
                     // The honest claim, always shown where a vote can happen.
                     p class="mt-2 text-[11px] leading-snug text-ink-muted" {
-                        (i18n::t("Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person one vote."))
+                        (i18n::t("Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."))
                     }
                 },
                 Viewer::Anonymous => p class="mt-1 text-sm text-ink-muted" {
@@ -137,6 +137,9 @@ pub fn poll_previews(
                     @for poll in shown {
                         (poll_preview_card(poll, country))
                     }
+                }
+                p class="mt-3 text-[11px] leading-snug text-ink-muted" {
+                    (i18n::t("Counts among verified participants here, not a representative sample."))
                 }
             }
         }

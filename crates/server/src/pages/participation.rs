@@ -57,6 +57,16 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
                     i18n::t("Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."),
                 ],
             ))
+
+            (section(
+                i18n::t("What the layers prove, and what they cannot"),
+                &[
+                    i18n::t("Unaltered (the hash chain): each cast ballot is hashed into an append-only chain. Anyone can verify that no ballot has been altered, reordered, inserted, or removed after casting."),
+                    i18n::t("Cost-raised (proof-of-work and validation): proof-of-work challenges on write actions, disposable-domain blocking, email deliverability verification, and email canonicalization raise the computational and operational cost of automated account creation."),
+                    i18n::t("One per account (blind-signed tokens): cryptographic blind signatures ensure that each verified account can obtain at most one token per poll and cast at most one ballot, while preventing the platform from linking any ballot to the account that cast it."),
+                    i18n::t("What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."),
+                ],
+            ))
         }
     };
 

@@ -16,6 +16,13 @@ Any alteration, reordering, insertion or removal after casting produces a
 mismatch. Checks 1-4 use the standard library only; check 5 is skipped with a
 note when `cryptography` is absent.
 
+What this proves and does not prove:
+This proves ballots were issued for the poll, are unaltered, and are not
+double-voted, and that the published tallies match the ballots.
+It does not prove that an account is a unique living person, nor that
+participants form a representative sample or cross-section of any
+population.
+
 The chain hashing must match crates/db/src/voting.rs exactly:
 
   content_hash = sha256(prev || poll_id_be8 || token || option_id_be8... || seq_be8)
