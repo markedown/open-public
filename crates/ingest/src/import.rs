@@ -683,20 +683,22 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         n.other += 1;
     }
 
+    let mut outlets: HashMap<String, i64> = HashMap::new();
     for o in read::<Outlet>(dir, "outlets")? {
         let leaning_source_id = o
             .leaning_source_url
             .as_deref()
             .and_then(|u| sources.get(&source_key(u, o.leaning_source_hash.as_deref())))
             .copied();
-        sqlx::query!(
+        let id = sqlx::query_scalar!(
             "insert into outlets
                (slug, name, country_id, homepage_url, logo_url, logo_license,
                 leaning, summary, leaning_source_id)
              values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
              on conflict (slug) do update set name = excluded.name,
                leaning = excluded.leaning, summary = excluded.summary,
-               leaning_source_id = excluded.leaning_source_id",
+               leaning_source_id = excluded.leaning_source_id
+             returning id",
             o.slug,
             o.name,
             o.country.as_ref().and_then(|c| countries.get(c)).copied(),
@@ -707,8 +709,9 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
             o.summary,
             leaning_source_id,
         )
-        .execute(pool)
+        .fetch_one(pool)
         .await?;
+        outlets.insert(o.slug, id);
         n.other += 1;
     }
 
@@ -885,6 +888,7 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
             "alliance" => alliances.get(&t.entity).copied(),
             "poll" => polls.get(&t.entity).copied(),
             "topic" => topics.get(&t.entity).copied(),
+            "outlet" => outlets.get(&t.entity).copied(),
             _ => None,
         };
         let Some(entity_id) = entity_id else {

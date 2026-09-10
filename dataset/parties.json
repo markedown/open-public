@@ -10,7 +10,7 @@
     "slug": "fr-dem",
     "source_hash": "fr-org-PO845454",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845454",
-    "summary": null,
+    "summary": "Les Démocrates est un groupe parlementaire. Il réunit actuellement 37 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -24,7 +24,7 @@
     "slug": "fr-dr",
     "source_hash": "fr-org-PO845425",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845425",
-    "summary": null,
+    "summary": "Droite Républicaine est un groupe parlementaire. Il réunit actuellement 48 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -38,7 +38,7 @@
     "slug": "fr-ecos",
     "source_hash": "fr-org-PO845439",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845439",
-    "summary": null,
+    "summary": "Écologiste et Social est un groupe parlementaire. Il réunit actuellement 38 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -52,7 +52,7 @@
     "slug": "fr-epr",
     "source_hash": "fr-org-PO845407",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845407",
-    "summary": null,
+    "summary": "Ensemble pour la République est un groupe parlementaire. Il réunit actuellement 91 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -66,7 +66,7 @@
     "slug": "fr-gdr",
     "source_hash": "fr-org-PO845514",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845514",
-    "summary": null,
+    "summary": "Gauche Démocrate et Républicaine est un groupe parlementaire. Il réunit actuellement 17 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -80,7 +80,7 @@
     "slug": "fr-hor",
     "source_hash": "fr-org-PO845470",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845470",
-    "summary": null,
+    "summary": "Horizons & Indépendants est un groupe parlementaire. Il réunit actuellement 35 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -94,7 +94,7 @@
     "slug": "fr-lfi-nfp",
     "source_hash": "fr-org-PO845413",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845413",
-    "summary": null,
+    "summary": "La France insoumise - Nouveau Front Populaire est un groupe parlementaire. Il réunit actuellement 71 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -108,7 +108,7 @@
     "slug": "fr-liot",
     "source_hash": "fr-org-PO845485",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845485",
-    "summary": null,
+    "summary": "Libertés, Indépendants, Outre-mer et Territoires est un groupe parlementaire. Il réunit actuellement 23 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -122,7 +122,7 @@
     "slug": "fr-rn",
     "source_hash": "fr-org-PO845401",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845401",
-    "summary": null,
+    "summary": "Rassemblement National est un groupe parlementaire. Il réunit actuellement 122 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -136,7 +136,7 @@
     "slug": "fr-senat-crce-k",
     "source_hash": "sen-grp-CRCE-K",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Communiste Républicain Citoyen et Écologiste - Kanaky est un groupe parlementaire. Il réunit actuellement 18 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -150,7 +150,7 @@
     "slug": "fr-senat-gest",
     "source_hash": "sen-grp-GEST",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Écologiste - Solidarité et Territoires est un groupe parlementaire. Il réunit actuellement 16 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -164,7 +164,7 @@
     "slug": "fr-senat-lirt",
     "source_hash": "sen-grp-LIRT",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Les Indépendants - République et Territoires est un groupe parlementaire. Il réunit actuellement 20 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -178,7 +178,7 @@
     "slug": "fr-senat-lr",
     "source_hash": "sen-grp-LR",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Les Républicains est un groupe parlementaire. Il réunit actuellement 131 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -192,7 +192,7 @@
     "slug": "fr-senat-rdpi",
     "source_hash": "sen-grp-RDPI",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Rassemblement des démocrates, progressistes et indépendants est un groupe parlementaire. Il réunit actuellement 19 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -206,7 +206,7 @@
     "slug": "fr-senat-rdse",
     "source_hash": "sen-grp-RDSE",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Rassemblement Démocratique et Social Européen est un groupe parlementaire. Il réunit actuellement 16 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -220,7 +220,7 @@
     "slug": "fr-senat-ser",
     "source_hash": "sen-grp-SER",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Socialiste, Écologiste et Républicain est un groupe parlementaire. Il réunit actuellement 65 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -234,7 +234,7 @@
     "slug": "fr-senat-uc",
     "source_hash": "sen-grp-UC",
     "source_url": "https://data.senat.fr/data/senateurs/ODSEN_GENERAL.csv",
-    "summary": null,
+    "summary": "Union Centriste est un groupe parlementaire. Il réunit actuellement 59 membres au Sénat.",
     "wikidata_id": null
   },
   {
@@ -248,7 +248,7 @@
     "slug": "fr-soc",
     "source_hash": "fr-org-PO845419",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO845419",
-    "summary": null,
+    "summary": "Socialistes et apparentés est un groupe parlementaire. Il réunit actuellement 68 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -262,7 +262,7 @@
     "slug": "fr-uddplr",
     "source_hash": "fr-org-PO872880",
     "source_url": "https://www.assemblee-nationale.fr/dyn/organe/PO872880",
-    "summary": null,
+    "summary": "Union des droites pour la République est un groupe parlementaire. Il réunit actuellement 17 membres à l'Assemblée nationale.",
     "wikidata_id": null
   },
   {
@@ -276,7 +276,7 @@
     "slug": "de-afd",
     "source_hash": "de-party-afd",
     "source_url": "https://www.abgeordnetenwatch.de/parties/afd",
-    "summary": null,
+    "summary": "Alternative für Deutschland ist eine politische Partei. Bei der Bundestagswahl 2025 erhielt sie 10.328.780 Stimmen und 152 Sitze. Derzeit gehören ihr 150 Mitglieder im Bundestag an.",
     "wikidata_id": null
   },
   {
@@ -290,7 +290,7 @@
     "slug": "de-buendnis-90",
     "source_hash": "de-party-buendnis-90-die-gruenen",
     "source_url": "https://www.abgeordnetenwatch.de/parties/buendnis-90-die-gruenen",
-    "summary": null,
+    "summary": "Bündnis 90/Die Grünen ist eine politische Partei. Bei der Bundestagswahl 2025 erhielt sie 5.762.380 Stimmen und 85 Sitze. Derzeit gehören ihr 85 Mitglieder im Bundestag an.",
     "wikidata_id": null
   },
   {
@@ -304,7 +304,7 @@
     "slug": "de-cdu-csu",
     "source_hash": "de-party-cdu-csu",
     "source_url": "https://www.abgeordnetenwatch.de/parties/cdu-csu",
-    "summary": null,
+    "summary": "CDU/CSU ist eine politische Partei. Bei der Bundestagswahl 2025 erhielt sie 14.160.402 Stimmen und 208 Sitze. Derzeit gehören ihr 208 Mitglieder im Bundestag an.",
     "wikidata_id": null
   },
   {
@@ -318,7 +318,7 @@
     "slug": "de-linke",
     "source_hash": "de-party-die-linke",
     "source_url": "https://www.abgeordnetenwatch.de/parties/die-linke",
-    "summary": null,
+    "summary": "Die Linke ist eine politische Partei. Bei der Bundestagswahl 2025 erhielt sie 4.356.532 Stimmen und 64 Sitze. Derzeit gehören ihr 64 Mitglieder im Bundestag an.",
     "wikidata_id": null
   },
   {
@@ -332,7 +332,7 @@
     "slug": "de-spd",
     "source_hash": "de-party-spd",
     "source_url": "https://www.abgeordnetenwatch.de/parties/spd",
-    "summary": null,
+    "summary": "Sozialdemokratische Partei Deutschlands ist eine politische Partei. Bei der Bundestagswahl 2025 erhielt sie 8.149.124 Stimmen und 120 Sitze. Derzeit gehören ihr 121 Mitglieder im Bundestag an.",
     "wikidata_id": null
   },
   {
@@ -351,7 +351,7 @@
     "slug": "adalet-ve-kalkinma-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Adalet ve Kalkınma Partisi, 14 Ağustos 2001 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye muhafazakârlık, ekonomik liberalizm, sağ popülizm ve millî muhafazakârlık eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 19.187.214 oy ve 268 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 278 üyesi bulunmaktadır.",
     "wikidata_id": "Q19077"
   },
   {
@@ -365,7 +365,7 @@
     "slug": "anap",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Anavatan Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 66.102 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -379,7 +379,7 @@
     "slug": "ap",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Adalet Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 108.713 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -393,7 +393,7 @@
     "slug": "bbp",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Büyük Birlik Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 524.833 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -407,7 +407,7 @@
     "slug": "btp",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Bağımsız Türkiye Partisi bir siyasi partidir. Kasım 2015 Genel Seçimi'nde 49.297 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -425,7 +425,7 @@
     "slug": "cumhuriyet-halk-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Cumhuriyet Halk Partisi, 9 Eylül 1923 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye sosyal demokrasi, sekülarizm ve Kemalizm eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 13.675.902 oy ve 169 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 135 üyesi bulunmaktadır.",
     "wikidata_id": "Q19079"
   },
   {
@@ -442,7 +442,7 @@
     "slug": "demokratik-bolgeler-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Demokratik Bölgeler Partisi, 11 Temmuz 2014 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye demokratik sosyalizm ve kurt milliyetciligi eğilimleri atfedilmektedir. Türkiye Büyük Millet Meclisi çatısı altında halen 2 üyesi bulunmaktadır.",
     "wikidata_id": "Q18615419"
   },
   {
@@ -459,7 +459,7 @@
     "slug": "demokratik-sol-parti",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Demokratik Sol Parti, 14 Kasım 1985 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye sosyal demokrasi ve Kemalizm eğilimleri atfedilmektedir. Kasım 2015 Genel Seçimi'nde 31.805 oy aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 1 üyesi bulunmaktadır.",
     "wikidata_id": "Q942515"
   },
   {
@@ -475,7 +475,7 @@
     "slug": "demokrat-parti",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Demokrat Parti, 27 Mayıs 2007 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye liberal muhafazakarlik eğilimleri atfedilmektedir. Kasım 2015 Genel Seçimi'nde 69.319 oy aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 1 üyesi bulunmaktadır.",
     "wikidata_id": "Q2067217"
   },
   {
@@ -491,7 +491,7 @@
     "slug": "emek-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Emek Partisi, 1 Ocak 1996 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye marksizm leninizm eğilimleri atfedilmektedir. Türkiye Büyük Millet Meclisi çatısı altında halen 2 üyesi bulunmaktadır.",
     "wikidata_id": "Q1335307"
   },
   {
@@ -505,7 +505,7 @@
     "slug": "gencparti",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Genç Parti bir siyasi partidir. 2023 Genel Seçimi'nde 112.972 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -519,7 +519,7 @@
     "slug": "hak-par",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Hak ve Özgürlükler Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 42.509 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -536,7 +536,7 @@
     "slug": "halklarin-esitlik-ve-demokrasi-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Halkların Eşitlik ve Demokrasi Partisi, 30 Kasım 2012 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye demokratik sosyalizm ve azınlık hakları eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 4.800.592 oy ve 61 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 56 üyesi bulunmaktadır.",
     "wikidata_id": "Q725173"
   },
   {
@@ -550,7 +550,7 @@
     "slug": "hkp",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Halkın Kurtuluş Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 31.831 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -567,7 +567,7 @@
     "slug": "hur-dava-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Hür Dava Partisi, 17 Aralık 2012 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye islamcilik ve islami koktendincilik eğilimleri atfedilmektedir. 2018 Genel Seçimi'nde 155.538 oy aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 4 üyesi bulunmaktadır.",
     "wikidata_id": "Q13583751"
   },
   {
@@ -585,7 +585,7 @@
     "slug": "iyi-parti",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "İYİ Parti, 25 Ekim 2017 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye Kemalizm, liberal muhafazakârlık ve Türk milliyetçiliği eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 5.225.196 oy ve 43 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 29 üyesi bulunmaktadır.",
     "wikidata_id": "Q42313794"
   },
   {
@@ -599,7 +599,7 @@
     "slug": "kp",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Komünist Parti bir siyasi partidir. Kasım 2015 Genel Seçimi'nde 52.527 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -613,7 +613,7 @@
     "slug": "memleket",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Memleket Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 502.669 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -632,7 +632,7 @@
     "slug": "milliyetci-hareket-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Milliyetçi Hareket Partisi, 9 Şubat 1969 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye milliyetçilik, Türk milliyetçiliği, Ülkücülük ve antikomünizm eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 5.421.802 oy ve 50 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 46 üyesi bulunmaktadır.",
     "wikidata_id": "Q251077"
   },
   {
@@ -649,7 +649,7 @@
     "slug": "saadet-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Saadet Partisi, 20 Temmuz 2001 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye İslamcılık ve Millî Görüş eğilimleri atfedilmektedir. 2018 Genel Seçimi'nde 667.030 oy aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 1 üyesi bulunmaktadır.",
     "wikidata_id": "Q1637009"
   },
   {
@@ -663,7 +663,7 @@
     "slug": "sol-parti",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Sol Parti bir siyasi partidir. 2023 Genel Seçimi'nde 76.801 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -677,7 +677,7 @@
     "slug": "tkp",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Türkiye Komünist Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 62.832 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -694,7 +694,7 @@
     "slug": "turkiye-isci-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Türkiye İşçi Partisi, 7 Kasım 2017 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye komunizm ve marksizm leninizm eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 954.583 oy ve 4 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 3 üyesi bulunmaktadır.",
     "wikidata_id": "Q59519227"
   },
   {
@@ -708,7 +708,7 @@
     "slug": "turk-parti",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Türkparti bir siyasi partidir. Haziran 2015 Genel Seçimi'nde 72.701 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -722,7 +722,7 @@
     "slug": "vatan-partisi",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Vatan Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 52.720 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -740,8 +740,29 @@
     "slug": "yeniden-refah-partisi",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Yeniden Refah Partisi, 23 Kasım 2018 tarihinde kurulmuş bir siyasi partidir. Kayıtlarımızda partiye islamcilik, milli gorus ve sosyal muhafazakarlik eğilimleri atfedilmektedir. 2023 Genel Seçimi'nde 1.510.740 oy ve 5 sandalye aldı. Türkiye Büyük Millet Meclisi çatısı altında halen 4 üyesi bulunmaktadır.",
     "wikidata_id": "Q61076978"
+  },
+  {
+    "color": "#ED1C24",
+    "country": "turkiye",
+    "dissolved_date": null,
+    "founded_date": "2026-07-24",
+    "ideology_tags": [
+      "sosyal demokrasi",
+      "Kemalizm",
+      "sosyal liberalizm",
+      "ilerlemecilik",
+      "büyük çadır",
+      "pro-Avrupacılık"
+    ],
+    "name": "Yeni Parti",
+    "short_name": "Yeni Parti",
+    "slug": "yeni-parti",
+    "source_hash": "yeni-parti-wikidata",
+    "source_url": "https://www.wikidata.org/wiki/Q140644267",
+    "summary": "Yeni Parti, 24 Temmuz 2026'da Özgür Özel öncülüğünde, Cumhuriyet Halk Partisi'nden ayrılan milletvekilleriyle kurulan merkez sol bir siyasi partidir. Kuruluşunda Türkiye Büyük Millet Meclisi'nde 91 sandalyeye sahiptir.",
+    "wikidata_id": "Q140644267"
   },
   {
     "color": "#0F766E",
@@ -754,7 +775,7 @@
     "slug": "yeni-yol-grubu",
     "source_hash": "28",
     "source_url": "https://www.tbmm.gov.tr/milletvekili/eposta-liste",
-    "summary": null,
+    "summary": "Yeni Yol Grubu bir siyasi partidir. Türkiye Büyük Millet Meclisi çatısı altında halen 20 üyesi bulunmaktadır.",
     "wikidata_id": null
   },
   {
@@ -768,7 +789,7 @@
     "slug": "zafer-partisi",
     "source_hash": "ysk-historical-parties",
     "source_url": "https://sonuc.ysk.gov.tr/sorgu",
-    "summary": null,
+    "summary": "Zafer Partisi bir siyasi partidir. 2023 Genel Seçimi'nde 1.211.917 oy aldı.",
     "wikidata_id": null
   },
   {
@@ -992,7 +1013,7 @@
     "slug": "democratic-party",
     "source_hash": "wd-Q29552",
     "source_url": "https://www.wikidata.org/wiki/Q29552",
-    "summary": null,
+    "summary": "Democratic Party bir siyasi partidir. 2024 ABD Temsilciler Meclisi Seçimleri'nde 70.571.330 oy ve 215 sandalye aldı. ABD Kongresi çatısı altında halen 260 üyesi bulunmaktadır.",
     "wikidata_id": "Q29552"
   },
   {
@@ -1006,7 +1027,7 @@
     "slug": "republican-party",
     "source_hash": "wd-Q29468",
     "source_url": "https://www.wikidata.org/wiki/Q29468",
-    "summary": null,
+    "summary": "Republican Party bir siyasi partidir. 2024 ABD Temsilciler Meclisi Seçimleri'nde 74.390.864 oy ve 220 sandalye aldı. ABD Kongresi çatısı altında halen 276 üyesi bulunmaktadır.",
     "wikidata_id": "Q29468"
   }
 ]

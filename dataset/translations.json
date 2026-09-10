@@ -1,11 +1,1757 @@
 [
   {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Volksbündnis"
+  },
+  {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "People's Alliance"
+  },
+  {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Alliance populaire"
+  },
+  {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein 2018 in der Türkei gebildetes Wahlbündnis unter Führung der AKP und der MHP; später schlossen sich weitere Parteien an."
+  },
+  {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "An electoral alliance formed in Türkiye in 2018, led by the AK Party and the MHP; other parties joined later."
+  },
+  {
+    "entity": "cumhur-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Une alliance électorale formée en Türkiye en 2018, menée par l'AKP et le MHP ; d'autres partis l'ont rejointe par la suite."
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Bündnis für Arbeit und Freiheit"
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Labour and Freedom Alliance"
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Alliance du travail et de la liberté"
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein 2022 gebildetes linkes Wahlbündnis. Ihm gehörten Parteien wie die Grüne Linkspartei (später DEM-Partei) und die TİP an."
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A left-wing electoral alliance formed in 2022. It included parties such as the Green Left Party (later the DEM Party) and the TİP."
+  },
+  {
+    "entity": "emek-ve-ozgurluk-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Une alliance électorale de gauche formée en 2022. Elle réunissait des partis comme le Parti de la gauche verte (devenu le parti DEM) et le TİP."
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Nationsbündnis"
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Nation Alliance"
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Alliance de la nation"
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein 2018 gebildetes oppositionelles Wahlbündnis. Es vereinte mehrere Parteien, allen voran die CHP und die İYİ-Partei."
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "An opposition electoral alliance formed in 2018. It brought together several parties, chief among them the CHP and the İYİ Party."
+  },
+  {
+    "entity": "millet-ittifaki",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Une alliance électorale d'opposition formée en 2018. Elle rassemblait plusieurs partis, au premier rang desquels le CHP et le parti İYİ."
+  },
+  {
+    "entity": "france",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Frankreich ist eine semipräsidentielle Republik. Der Präsident der Republik ist das Staatsoberhaupt, der Premierminister führt die Regierung. Die Nationalversammlung ist das Unterhaus des Parlaments und wird in allgemeiner, unmittelbarer Wahl gewählt."
+  },
+  {
+    "entity": "france",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "France is a semi-presidential republic. The President of the Republic is head of state and the Prime Minister leads the government. The National Assembly is the lower house of Parliament, elected by direct universal suffrage."
+  },
+  {
+    "entity": "france",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Fransa, yarı başkanlık sistemiyle yönetilen bir cumhuriyettir. Cumhurbaşkanı devletin başı, başbakan ise hükümetin başıdır. Ulusal Meclis, doğrudan genel oyla seçilen parlamentonun alt kanadıdır."
+  },
+  {
+    "entity": "germany",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Germany is a federal parliamentary republic made up of sixteen states. Its parliament is the Bundestag; the Federal Chancellor leads the government and the Federal President is head of state."
+  },
+  {
+    "entity": "germany",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "L'Allemagne est une république parlementaire fédérale composée de seize Länder. Son parlement est le Bundestag ; le chancelier fédéral dirige le gouvernement et le président fédéral est le chef de l'État."
+  },
+  {
+    "entity": "germany",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Almanya, on altı eyaletten oluşan federal bir parlamenter cumhuriyettir. Parlamentosu Federal Meclis'tir (Bundestag); federal şansölye hükümeti yönetir, federal cumhurbaşkanı ise devletin başıdır."
+  },
+  {
+    "entity": "turkiye",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Die Türkei ist eine 1923 gegründete Republik, die seit 2018 nach einem präsidialen Regierungssystem regiert wird. Die gesetzgebende Gewalt liegt bei der Großen Nationalversammlung der Türkei mit 600 Sitzen, die vollziehende Gewalt beim Präsidenten und seinem Kabinett."
+  },
+  {
+    "entity": "turkiye",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Türkiye is a republic founded in 1923 and, since 2018, governed under a presidential system of government. Legislative power rests with the 600-seat Grand National Assembly of Türkiye; executive power lies with the President and the cabinet."
+  },
+  {
+    "entity": "turkiye",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "La Turquie est une république fondée en 1923 et dirigée, depuis 2018, selon un régime présidentiel. Le pouvoir législatif appartient à la Grande Assemblée nationale de Turquie, qui compte 600 sièges ; le pouvoir exécutif revient au président et à son cabinet."
+  },
+  {
+    "entity": "united-kingdom",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Das Vereinigte Königreich ist eine konstitutionelle Monarchie mit einem parlamentarischen Regierungssystem. Das Parlament besteht aus zwei Kammern: dem Unterhaus (House of Commons), dessen Mitglieder in Einpersonenwahlkreisen gewählt werden, und dem Oberhaus (House of Lords), dessen Mitglieder ernannt werden oder kraft Amtes angehören. Staatsoberhaupt ist der Monarch, Regierungschef der Premierminister."
+  },
+  {
+    "entity": "united-kingdom",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Le Royaume-Uni est une monarchie constitutionnelle dotée d'un régime parlementaire. Le Parlement compte deux chambres : la Chambre des communes, dont les membres sont élus dans des circonscriptions uninominales, et la Chambre des lords, dont les membres sont nommés ou y siègent en raison de leur fonction. Le monarque est le chef de l'État et le Premier ministre le chef du gouvernement."
+  },
+  {
+    "entity": "united-kingdom",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Birleşik Krallık, parlamenter hükümet sistemine sahip bir anayasal monarşidir. Parlamento iki kanattan oluşur: üyeleri tek üyeli seçim bölgelerinden seçilen Avam Kamarası ve üyeleri atanan ya da görevleri gereği bu görevde bulunan Lordlar Kamarası. Devletin başı hükümdar, hükümetin başı ise başbakandır."
+  },
+  {
+    "entity": "usa",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Die Vereinigten Staaten sind eine föderale Republik, die 1776 ihre Unabhängigkeit erklärte. Ihre Legislative ist der aus zwei Kammern bestehende Kongress mit dem Repräsentantenhaus und dem Senat. Das Staatsoberhaupt ist zugleich Regierungschef und wird alle vier Jahre gewählt."
+  },
+  {
     "entity": "usa",
     "entity_type": "country",
     "field": "summary",
     "lang": "en",
-    "origin": "machine",
+    "origin": "human",
     "source_lang": "tr",
-    "text": "The United States of America is a federal republic that declared its independence in 1776. Its legislative body is the bicameral Congress, consisting of the House of Representatives and the Senate. The head of state is also the head of government and is elected every four years."
+    "text": "The United States is a federal republic that declared its independence in 1776. Its legislature is the two-chamber Congress, made up of the House of Representatives and the Senate. The head of state is also the head of government and is elected every four years."
+  },
+  {
+    "entity": "usa",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Les États-Unis sont une république fédérale qui a proclamé son indépendance en 1776. Leur pouvoir législatif est le Congrès, composé de deux chambres : la Chambre des représentants et le Sénat. Le chef de l'État est aussi le chef du gouvernement et est élu tous les quatre ans."
+  },
+  {
+    "entity": "2015-haziran-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl Juni 2015"
+  },
+  {
+    "entity": "2015-haziran-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "June 2015 General Election"
+  },
+  {
+    "entity": "2015-haziran-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections législatives de juin 2015"
+  },
+  {
+    "entity": "2015-kasim-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl November 2015"
+  },
+  {
+    "entity": "2015-kasim-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "November 2015 General Election"
+  },
+  {
+    "entity": "2015-kasim-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections législatives de novembre 2015"
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein Referendum über Verfassungsänderungen im Jahr 2017. Es sah den Übergang vom parlamentarischen zum präsidialen Regierungssystem vor."
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A referendum on constitutional amendments held in 2017. It provided for the transition from a parliamentary system to a presidential system of government."
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un référendum sur des modifications constitutionnelles tenu en 2017. Il prévoyait le passage d'un régime parlementaire à un régime présidentiel."
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Referendum 2017"
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2017 Referendum"
+  },
+  {
+    "entity": "2017-halkoylamasi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Référendum de 2017"
+  },
+  {
+    "entity": "2018-cumhurbaskani",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Präsidentschaftswahl 2018"
+  },
+  {
+    "entity": "2018-cumhurbaskani",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2018 Presidential Election"
+  },
+  {
+    "entity": "2018-cumhurbaskani",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle de 2018"
+  },
+  {
+    "entity": "2018-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl 2018"
+  },
+  {
+    "entity": "2018-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2018 General Election"
+  },
+  {
+    "entity": "2018-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections législatives de 2018"
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "The federal election of 26 September 2021 was won by the SPD, narrowly ahead of the CDU/CSU. Turnout was 76.4 percent."
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Les élections fédérales du 26 septembre 2021 ont été remportées par le SPD, de justesse devant la CDU/CSU. La participation s'est élevée à 76,4 pour cent."
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "26 Eylül 2021'de yapılan federal seçimi SPD, CDU/CSU'nun az farkla önünde kazandı. Katılım yüzde 76,4 oldu."
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2021 Federal Election"
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élections fédérales de 2021"
+  },
+  {
+    "entity": "2021-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2021 Federal Meclis Seçimi"
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Bei den Zwischenwahlen zum Repräsentantenhaus am 8. November 2022 gewannen die Republikaner 222 und die Demokraten 213 Sitze."
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "In the midterm House of Representatives elections held on 8 November 2022, the Republicans won 222 seats and the Democrats 213."
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Lors des élections de mi-mandat à la Chambre des représentants du 8 novembre 2022, les républicains ont remporté 222 sièges et les démocrates 213."
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Wahl zum US-Repräsentantenhaus 2022"
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2022 United States House of Representatives Elections"
+  },
+  {
+    "entity": "2022-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections à la Chambre des représentants des États-Unis de 2022"
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Bei der Parlamentswahl am 12. und 19. Juni 2022 blieb das Präsidentenbündnis Ensemble stärkster Block, verfehlte aber die absolute Mehrheit. Die Zahlen sind die Stimmen des ersten Wahlgangs und die gewonnenen Sitze."
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "In the legislative elections of 12 and 19 June 2022, the presidential coalition Ensemble remained the largest bloc but fell short of an absolute majority. The figures are the first-round votes and the seats won."
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "12 ve 19 Haziran 2022'de yapılan yasama seçimlerinde cumhurbaşkanlığı ittifakı Ensemble en büyük blok olmayı sürdürdü, ancak salt çoğunluğu elde edemedi. Rakamlar birinci turdaki oyları ve kazanılan sandalyeleri gösterir."
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Parlamentswahl 2022"
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2022 Legislative Elections"
+  },
+  {
+    "entity": "2022-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2022 Yasama Seçimleri"
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Bei der Präsidentschaftswahl am 10. und 24. April 2022 wurde Emmanuel Macron gegen Marine Le Pen im Amt bestätigt. Die Zahlen beziehen sich auf den zweiten Wahlgang."
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "The presidential election of 10 and 24 April 2022 returned Emmanuel Macron to office against Marine Le Pen. The figures are those of the second round."
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "10 ve 24 Nisan 2022'de yapılan cumhurbaşkanlığı seçiminde Emmanuel Macron, Marine Le Pen karşısında yeniden seçildi. Rakamlar ikinci tura aittir."
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Präsidentschaftswahl 2022"
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2022 Presidential Election"
+  },
+  {
+    "entity": "2022-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2022 Cumhurbaşkanlığı Seçimi"
+  },
+  {
+    "entity": "2023-cumhurbaskani-1",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Präsidentschaftswahl 2023 (1. Runde)"
+  },
+  {
+    "entity": "2023-cumhurbaskani-1",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2023 Presidential Election (1st round)"
+  },
+  {
+    "entity": "2023-cumhurbaskani-1",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle de 2023 (1er tour)"
+  },
+  {
+    "entity": "2023-cumhurbaskani-2",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Präsidentschaftswahl 2023 (2. Runde)"
+  },
+  {
+    "entity": "2023-cumhurbaskani-2",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2023 Presidential Election (2nd round)"
+  },
+  {
+    "entity": "2023-cumhurbaskani-2",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle de 2023 (2e tour)"
+  },
+  {
+    "entity": "2023-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl 2023"
+  },
+  {
+    "entity": "2023-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2023 General Election"
+  },
+  {
+    "entity": "2023-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections législatives de 2023"
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Die Präsidentschaftswahl am 5. November 2024 gewann der republikanische Kandidat Donald Trump mit 312 Wahlleutestimmen; die demokratische Kandidatin Kamala Harris erhielt 226 Wahlleutestimmen."
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "The presidential election of 5 November 2024 was won by the Republican candidate Donald Trump with 312 electoral votes; the Democratic candidate Kamala Harris received 226 electoral votes."
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "L'élection présidentielle du 5 novembre 2024 a été remportée par le candidat républicain Donald Trump avec 312 grands électeurs ; la candidate démocrate Kamala Harris en a obtenu 226."
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "US-Präsidentschaftswahl 2024"
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2024 United States Presidential Election"
+  },
+  {
+    "entity": "2024-abd-baskanlik-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle américaine de 2024"
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Bei den Wahlen zum Repräsentantenhaus am 5. November 2024 gewannen die Republikaner 220 und die Demokraten 215 Sitze."
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "In the House of Representatives elections held on 5 November 2024, the Republicans won 220 seats and the Democrats 215."
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Lors des élections à la Chambre des représentants du 5 novembre 2024, les républicains ont remporté 220 sièges et les démocrates 215."
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Wahl zum US-Repräsentantenhaus 2024"
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2024 United States House of Representatives Elections"
+  },
+  {
+    "entity": "2024-abd-temsilciler-meclisi-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections à la Chambre des représentants des États-Unis de 2024"
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Die Parlamentswahl am 30. Juni und 7. Juli 2024, die nach der Auflösung der Nationalversammlung ausgerufen wurde, führte zu einer Versammlung ohne absolute Mehrheit. Die Zahlen sind die Stimmen des ersten Wahlgangs und die gewonnenen Sitze."
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "The legislative elections of 30 June and 7 July 2024, called after the dissolution of the National Assembly, produced an assembly with no absolute majority. The figures are the first-round votes and the seats won."
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Ulusal Meclis'in feshedilmesinin ardından 30 Haziran ve 7 Temmuz 2024'te yapılan yasama seçimleri, salt çoğunluğun bulunmadığı bir meclisle sonuçlandı. Rakamlar birinci turdaki oyları ve kazanılan sandalyeleri gösterir."
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Parlamentswahl 2024"
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2024 Legislative Elections"
+  },
+  {
+    "entity": "2024-legislatives",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2024 Yasama Seçimleri"
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "The federal election of 23 February 2025 was won by the CDU/CSU; the AfD became the second-largest force. Turnout was 82.5 percent."
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Les élections fédérales du 23 février 2025 ont été remportées par la CDU/CSU ; l'AfD est devenue la deuxième force. La participation s'est élevée à 82,5 pour cent."
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "23 Şubat 2025'te yapılan federal seçimi CDU/CSU kazandı; AfD ikinci en güçlü parti oldu. Katılım yüzde 82,5 oldu."
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2025 Federal Election"
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élections fédérales de 2025"
+  },
+  {
+    "entity": "2025-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2025 Federal Meclis Seçimi"
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Zwischenwahlen für alle Mitglieder des Repräsentantenhauses und einen Teil des Senats."
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Midterm elections for all members of the House of Representatives and part of the Senate."
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections de mi-mandat pour l'ensemble des membres de la Chambre des représentants et une partie du Sénat."
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "US-Kongresswahl 2026"
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2026 United States Congressional Elections"
+  },
+  {
+    "entity": "2026-abd-kongre-secimleri",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections au Congrès des États-Unis de 2026"
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Wahl des Präsidenten der Republik in einer Mehrheitswahl mit zwei Wahlgängen; der zweite findet am vierzehnten Tag nach dem ersten statt."
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Election of the President of the Republic by a two-round majority vote, the second round taking place on the fourteenth day after the first."
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Cumhurbaşkanının iki turlu çoğunluk sistemiyle seçilmesi; ikinci tur, birinci turdan sonraki on dördüncü gün yapılır."
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "Präsidentschaftswahl 2027"
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2027 Presidential Election"
+  },
+  {
+    "entity": "2027-presidentielle",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "fr",
+    "text": "2027 Cumhurbaşkanlığı Seçimi"
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Präsidentschaftswahl. Wird im ersten Wahlgang die erforderliche Mehrheit nicht erreicht, findet ein zweiter Wahlgang statt."
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Presidential election. If the required majority is not reached in the first round, a second round is held."
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle. Si la majorité requise n'est pas atteinte au premier tour, un second tour est organisé."
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Präsidentschaftswahl 2028"
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2028 Presidential Election"
+  },
+  {
+    "entity": "2028-cumhurbaskani-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection présidentielle de 2028"
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl der Abgeordneten. Sie findet nach der Verfassung am selben Tag wie die Präsidentschaftswahl statt."
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "General election for members of parliament. Under the constitution it is held on the same day as the presidential election."
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élection générale des députés. En vertu de la Constitution, elle a lieu le même jour que l'élection présidentielle."
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Parlamentswahl 2028"
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "2028 General Election"
+  },
+  {
+    "entity": "2028-genel-secimi",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Élections législatives de 2028"
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Election of the 22nd German Bundestag."
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élection du 22e Bundestag allemand."
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "22. Alman Federal Meclisi'nin (Bundestag) seçimi."
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2029 Federal Election"
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élections fédérales de 2029"
+  },
+  {
+    "entity": "2029-bundestagswahl",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2029 Federal Meclis Seçimi"
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Wahl aller 650 Mitglieder des Unterhauses, eines je Wahlkreis, wobei jedes Mandat an denjenigen geht, der dort die meisten Stimmen erhält. Die Zahlen sind die Summe aller verkündeten Wahlkreisergebnisse."
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Élection de l'ensemble des 650 membres de la Chambre des communes, un par circonscription, chaque siège revenant à celui qui y recueille le plus de voix. Les chiffres sont la somme de tous les résultats de circonscription proclamés."
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Avam Kamarası'nın 650 üyesinin tamamının, her seçim bölgesi için bir üye olacak şekilde seçilmesi; her koltuk, o bölgede en çok oyu alan adaya gider. Rakamlar, açıklanan her seçim bölgesi sonucunun toplamıdır."
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Unterhauswahl 2024"
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "Élections générales de 2024"
+  },
+  {
+    "entity": "uk-general-election-2024",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "en",
+    "text": "2024 Genel Seçimi"
+  },
+  {
+    "entity": "bbc-turkce",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Der Nachrichtendienst eines internationalen öffentlich-rechtlichen Senders, der auf Türkisch publiziert."
+  },
+  {
+    "entity": "bbc-turkce",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "The news service of an international public broadcaster, publishing in Turkish."
+  },
+  {
+    "entity": "bbc-turkce",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Le service d'information d'un radiodiffuseur public international, publiant en turc."
+  },
+  {
+    "entity": "cnn-turk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein Nachrichtenfernsehsender und eine Online-Nachrichtenseite."
+  },
+  {
+    "entity": "cnn-turk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A news television channel and online news site."
+  },
+  {
+    "entity": "cnn-turk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Une chaîne de télévision d'information et un site d'actualité en ligne."
+  },
+  {
+    "entity": "cumhuriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine 1924 gegründete Tageszeitung."
+  },
+  {
+    "entity": "cumhuriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A daily newspaper founded in 1924."
+  },
+  {
+    "entity": "cumhuriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien fondé en 1924."
+  },
+  {
+    "entity": "haberturk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein Medienunternehmen mit einer Nachrichtenseite und einem Fernsehsender."
+  },
+  {
+    "entity": "haberturk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A media organisation comprising a news site and a television channel."
+  },
+  {
+    "entity": "haberturk",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un groupe de médias regroupant un site d'actualité et une chaîne de télévision."
+  },
+  {
+    "entity": "hurriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine auflagenstarke Tageszeitung mit langer Geschichte."
+  },
+  {
+    "entity": "hurriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A high-circulation daily newspaper with a long history."
+  },
+  {
+    "entity": "hurriyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien à fort tirage et de longue tradition."
+  },
+  {
+    "entity": "milliyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine traditionsreiche Tageszeitung mit landesweiter Verbreitung."
+  },
+  {
+    "entity": "milliyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A long-established daily newspaper with national distribution."
+  },
+  {
+    "entity": "milliyet",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien de longue date à diffusion nationale."
+  },
+  {
+    "entity": "ntv",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ein Nachrichtenfernsehsender und eine Online-Nachrichtenseite."
+  },
+  {
+    "entity": "ntv",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A news television channel and online news site."
+  },
+  {
+    "entity": "ntv",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Une chaîne de télévision d'information et un site d'actualité en ligne."
+  },
+  {
+    "entity": "sabah",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine auflagenstarke Tageszeitung."
+  },
+  {
+    "entity": "sabah",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A high-circulation daily newspaper."
+  },
+  {
+    "entity": "sabah",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien à fort tirage."
+  },
+  {
+    "entity": "sozcu",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine auflagenstarke Tageszeitung und Online-Nachrichtenseite."
+  },
+  {
+    "entity": "sozcu",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A high-circulation daily newspaper and online news site."
+  },
+  {
+    "entity": "sozcu",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien à fort tirage et un site d'actualité en ligne."
+  },
+  {
+    "entity": "t24",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine unabhängige Online-Nachrichtenseite."
+  },
+  {
+    "entity": "t24",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "An independent online news site."
+  },
+  {
+    "entity": "t24",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un site d'actualité en ligne indépendant."
+  },
+  {
+    "entity": "trt-haber",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Der Nachrichtensender und die Website des öffentlich-rechtlichen Senders TRT."
+  },
+  {
+    "entity": "trt-haber",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "The news channel and website of the public broadcaster TRT."
+  },
+  {
+    "entity": "trt-haber",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "La chaîne d'information et le site du radiodiffuseur public TRT."
+  },
+  {
+    "entity": "yeni-safak",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Eine Tageszeitung und Online-Nachrichtenseite."
+  },
+  {
+    "entity": "yeni-safak",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "A daily newspaper and online news site."
+  },
+  {
+    "entity": "yeni-safak",
+    "entity_type": "outlet",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Un quotidien et un site d'actualité en ligne."
+  },
+  {
+    "entity": "akp-performans-2026",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Wie bewerten Sie die Leistung dieser Partei im vergangenen Jahr?"
+  },
+  {
+    "entity": "akp-performans-2026",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "How would you rate this party's performance over the past year?"
+  },
+  {
+    "entity": "akp-performans-2026",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Comment évaluez-vous la performance de ce parti au cours de l'année écoulée ?"
+  },
+  {
+    "entity": "amblem",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Welches Emblem bevorzugen Sie?"
+  },
+  {
+    "entity": "amblem",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Which emblem do you prefer?"
+  },
+  {
+    "entity": "amblem",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Quel emblème préférez-vous ?"
+  },
+  {
+    "entity": "muhalefet-yeterince-etkili-mi",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Ist die Opposition wirkungsvoll genug?"
+  },
+  {
+    "entity": "muhalefet-yeterince-etkili-mi",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Is the opposition effective enough?"
+  },
+  {
+    "entity": "muhalefet-yeterince-etkili-mi",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "L'opposition est-elle suffisamment efficace ?"
+  },
+  {
+    "entity": "ulke-gidisat",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Wie bewerten Sie die allgemeine Entwicklung des Landes?"
+  },
+  {
+    "entity": "ulke-gidisat",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "How would you rate the general direction of the country?"
+  },
+  {
+    "entity": "ulke-gidisat",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Comment évaluez-vous l'orientation générale du pays ?"
+  },
+  {
+    "entity": "yerel-memnuniyet",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Sind Sie mit der Kommunalverwaltung zufrieden?"
+  },
+  {
+    "entity": "yerel-memnuniyet",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Are you satisfied with local government?"
+  },
+  {
+    "entity": "yerel-memnuniyet",
+    "entity_type": "poll",
+    "field": "question",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "tr",
+    "text": "Êtes-vous satisfait des collectivités locales ?"
   }
 ]
