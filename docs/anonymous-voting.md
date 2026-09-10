@@ -240,9 +240,10 @@ Wherever this surfaces, we say only:
   our own systems."
 - "Each account can vote once per poll, and anyone can verify from the public data
   that none voted twice."
-- "This does not prove one person, one vote (an account is not a person), and a
-  party watching both your token request and your vote, close in time, could
-  correlate them. The cryptography does not link them."
+- "This does not prove one person, one vote (an account is not a person), nor that
+  participants form a representative sample of any population. A party watching both
+  your token request and your vote, close in time, could correlate them; the cryptography
+  does not link them."
 
 No stronger than the mechanism proves. Same discipline as the hash chain and the
 recomputable dump.

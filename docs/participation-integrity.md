@@ -184,7 +184,8 @@ Wherever this surfaces:
 - "These signals show how a poll's numbers formed: how many tokens it issued and
   spent, when the votes were cast, and how new the accounts were. They make
   large-scale manipulation costly and visible."
-- "They do not prove one person, one vote. An account is not a person."
+- "They do not prove one person, one vote (an account is not a person), nor that
+  participants form a representative sample of any population."
 - "Two of these figures (the issued count and the new-account share) are reported
   by us and cannot be recomputed from the anonymous data, because doing so would
   need the account details we do not publish."

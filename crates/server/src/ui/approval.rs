@@ -150,6 +150,9 @@ pub fn history_chart(entries: &[db::approvals::MonthTally]) -> Markup {
                     span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-ink-muted" {} (i18n::t("Disapprove")) }
                     span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-hairline" {} (i18n::t("No opinion")) }
                 }
+                p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                    (i18n::t("Counts among verified participants here, not a representative sample."))
+                }
             }
         }
     }

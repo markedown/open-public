@@ -162,7 +162,8 @@ holds each poll's signing key, so it could issue extra tokens; that is ballot-st
 deanonymization, and it is bounded and public. Issuance is tied to verified accounts, and the dump
 publishes how many tokens each poll issued, so anyone can check that no poll cast more ballots than it
 issued and that the count is in the range the account base allows. None of this proves that one person
-voted once, an account is not a person, and nothing here claims otherwise.
+voted once (an account is not a person), nor that participants form a representative sample of any
+population, and nothing here claims otherwise.
 
 ## Versioning
 

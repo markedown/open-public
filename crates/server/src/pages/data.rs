@@ -98,8 +98,9 @@ this poll), that no token repeats (no double vote), the append-only hash chain, 
 and the reconciliation `spent <= issued <= eligible` (each poll's ballots do not \
 exceed its issued tokens, and issuance does not exceed the eligible-account \
 count). This proves ballots were issued, unaltered, and un-double-voted, and \
-that the operator cannot link a ballot to a voter. It does not prove one person \
-one vote. `issued` and `eligible` are counts we attest; they cannot be recomputed \
+that the operator cannot link a ballot to a voter. It does not prove one person, \
+one vote, nor that participants form a representative sample of any population. \
+`issued` and `eligible` are counts we attest; they cannot be recomputed \
 from this file, because doing so would need the account data we do not publish. \
 Each ballot carries its `cast_at`, so the timeline of when a poll's ballots were \
 cast is recomputable by bucketing them. `new_accounts_pct` is the share of a \
