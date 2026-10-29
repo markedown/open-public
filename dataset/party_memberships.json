@@ -19938,7 +19938,7 @@
   {
     "end_date": null,
     "party": "rs-party-svm-vmsz",
-    "person": "rs-akos-ujhelji",
+    "person": "rs-akos-mgr-ujhelyi",
     "source_hash": "rs-member-1144",
     "source_url": "https://www.parlament.gov.rs/AKO%C5%A0_UJHELjI.1144.891.html",
     "start_date": "2024-02-06"
@@ -20049,14 +20049,6 @@
   },
   {
     "end_date": null,
-    "party": "rs-party-gdp",
-    "person": "rs-ana-oreg",
-    "source_hash": "rs-member-1221",
-    "source_url": "https://www.parlament.gov.rs/ANA_OREG.1221.891.html",
-    "start_date": "2024-02-06"
-  },
-  {
-    "end_date": null,
     "party": "rs-party-zlf",
     "person": "rs-andjela-ruvidic",
     "source_hash": "rs-member-1436",
@@ -20089,8 +20081,16 @@
   },
   {
     "end_date": null,
+    "party": "rs-party-gdp",
+    "person": "rs-anna-oreg",
+    "source_hash": "rs-member-1221",
+    "source_url": "https://www.parlament.gov.rs/ANA_OREG.1221.891.html",
+    "start_date": "2024-02-06"
+  },
+  {
+    "end_date": null,
     "party": "rs-party-svm-vmsz",
-    "person": "rs-balint-pastor",
+    "person": "rs-balint-pasztor",
     "source_hash": "rs-member-324",
     "source_url": "https://www.parlament.gov.rs/BALINT_PASTOR.324.891.html",
     "start_date": "2024-02-06"
@@ -20145,18 +20145,18 @@
   },
   {
     "end_date": null,
-    "party": "rs-party-svm-vmsz",
-    "person": "rs-boris-bajic",
-    "source_hash": "rs-member-1415",
-    "source_url": "https://www.parlament.gov.rs/BORIS_BAJI%C4%86.1415.891.html",
-    "start_date": "2024-02-06"
-  },
-  {
-    "end_date": null,
     "party": "rs-party-narodni-pokret-srbije",
     "person": "rs-borislav-novakovic",
     "source_hash": "rs-member-1234",
     "source_url": "https://www.parlament.gov.rs/BORISLAV_NOVAKOVI%C4%86.1234.891.html",
+    "start_date": "2024-02-06"
+  },
+  {
+    "end_date": null,
+    "party": "rs-party-svm-vmsz",
+    "person": "rs-borisz-bajity",
+    "source_hash": "rs-member-1415",
+    "source_url": "https://www.parlament.gov.rs/BORIS_BAJI%C4%86.1415.891.html",
     "start_date": "2024-02-06"
   },
   {
@@ -20329,14 +20329,6 @@
   },
   {
     "end_date": null,
-    "party": "rs-party-pups",
-    "person": "rs-dragan",
-    "source_hash": "rs-member-1055",
-    "source_url": "https://www.parlament.gov.rs/DRAGAN+%D0%9C._MARKOVI%C4%86.1055.891.html",
-    "start_date": "2024-02-06"
-  },
-  {
-    "end_date": null,
     "party": "rs-party-sns",
     "person": "rs-dragana-arsic",
     "source_hash": "rs-member-1350",
@@ -20397,6 +20389,14 @@
     "person": "rs-dragan-jovanovic",
     "source_hash": "rs-member-438",
     "source_url": "https://www.parlament.gov.rs/DRAGAN+_JOVANOVI%C4%86.438.891.html",
+    "start_date": "2024-02-06"
+  },
+  {
+    "end_date": null,
+    "party": "rs-party-pups",
+    "person": "rs-dragan-m-markovic",
+    "source_hash": "rs-member-1055",
+    "source_url": "https://www.parlament.gov.rs/DRAGAN+%D0%9C._MARKOVI%C4%86.1055.891.html",
     "start_date": "2024-02-06"
   },
   {
@@ -20506,7 +20506,7 @@
   {
     "end_date": null,
     "party": "rs-party-svm-vmsz",
-    "person": "rs-elvira-kovac",
+    "person": "rs-elvira-kovacs",
     "source_hash": "rs-member-409",
     "source_url": "https://www.parlament.gov.rs/ELVIRA_KOVA%C4%8C.409.891.html",
     "start_date": "2024-02-06"
@@ -20602,7 +20602,7 @@
   {
     "end_date": null,
     "party": "rs-party-sns",
-    "person": "rs-igor-d",
+    "person": "rs-igor-d-jaksic",
     "source_hash": "rs-member-1420",
     "source_url": "https://www.parlament.gov.rs/IGOR+D._JAK%C5%A0I%C4%86.1420.891.html",
     "start_date": "2024-05-01"
@@ -20730,7 +20730,7 @@
   {
     "end_date": null,
     "party": "rs-party-svm-vmsz",
-    "person": "rs-jozef-tobias",
+    "person": "rs-jozsef-tobias",
     "source_hash": "rs-member-1416",
     "source_url": "https://www.parlament.gov.rs/JO%C5%BDEF_TOBIA%C5%A0.1416.891.html",
     "start_date": "2024-02-06"
@@ -21321,14 +21321,6 @@
   },
   {
     "end_date": null,
-    "party": "rs-party-pdd",
-    "person": "rs-saip-kamberi",
-    "source_hash": "rs-member-863",
-    "source_url": "https://www.parlament.gov.rs/%C5%A0AIP_KAMBERI.863.891.html",
-    "start_date": "2024-02-06"
-  },
-  {
-    "end_date": null,
     "party": "rs-party-sns",
     "person": "rs-sanela-strainovic",
     "source_hash": "rs-member-1351",
@@ -21365,6 +21357,14 @@
     "person": "rs-sanja-milosevic",
     "source_hash": "rs-member-1341",
     "source_url": "https://www.parlament.gov.rs/SANjA_MILO%C5%A0EVI%C4%86.1341.891.html",
+    "start_date": "2024-02-06"
+  },
+  {
+    "end_date": null,
+    "party": "rs-party-pdd",
+    "person": "rs-shaip-kamberi",
+    "source_hash": "rs-member-863",
+    "source_url": "https://www.parlament.gov.rs/%C5%A0AIP_KAMBERI.863.891.html",
     "start_date": "2024-02-06"
   },
   {
