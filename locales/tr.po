@@ -1281,3 +1281,13 @@ msgstr "Her nokta bir sandalyedir. Gri: belgelenmiş rengi olmayan bir parti. İ
 
 msgid "Sections"
 msgstr "Bölümler"
+
+msgid "Most seats"
+msgstr "En çok sandalye"
+
+msgid "Most votes"
+msgstr "En çok oy"
+
+
+msgid "Where this comes from"
+msgstr "Bu bilgi nereden geliyor"

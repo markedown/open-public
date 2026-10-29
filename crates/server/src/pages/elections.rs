@@ -164,23 +164,22 @@ pub async fn detail(
     };
 
     let content = html! {
-        article class="mx-auto max-w-2xl" {
-            (ui::breadcrumb::breadcrumbs(&[
+        article {
+            (ui::election::election_detail(&election, &rows, prev.as_ref(), &country.slug, &[
                 Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: Some(format!("/{}/elections", country.slug)) },
                 Crumb { label: election.name.clone(), href: None },
             ]))
-            (ui::election::election_detail(&election, &rows, prev.as_ref(), &country.slug))
 
             @if compass_href.is_some() {
-                div class="mt-6" { (ui::election::compass_cta(compass_href.as_deref())) }
+                div class="mb-12" { (ui::election::compass_cta(compass_href.as_deref())) }
             }
 
             @if let Some(url) = source {
-                p class="mt-4" {
-                    a href=(url) rel="noopener" target="_blank"
-                      class="text-xs font-medium text-link hover:underline" {
-                        (i18n::t("source")) " ↗"
+                section class="border-t border-hairline pt-6" {
+                    h2 class="text-[20px] font-bold text-ink" { (i18n::t("Where this comes from")) }
+                    p class="mt-2 break-words text-[16px]" {
+                        a href=(url) rel="noopener" target="_blank" class="op-link" { (url) }
                     }
                 }
             }

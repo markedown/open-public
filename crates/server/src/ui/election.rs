@@ -190,47 +190,36 @@ pub fn election_box(
 ) -> Markup {
     let prev_map = prev_shares(prev);
     html! {
-        div class="op-card p-5" {
-            div class="flex flex-wrap items-baseline justify-between gap-2" {
+        div class="op-card p-5 sm:p-6" {
+            div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1" {
                 @if linked {
-                    a href={"/" (country) "/election/" (election.slug)}
-                      class="text-sm font-semibold text-ink transition-colors hover:text-link" {
+                    a href={"/" (country) "/election/" (election.slug)} class="op-link text-[19px] font-bold" {
                         (election.name)
                     }
                 } @else {
-                    h3 class="text-sm font-semibold text-ink" { (election.name) }
+                    h3 class="text-[19px] font-bold text-ink" { (election.name) }
                 }
                 @if let Some(d) = election.held_on {
-                    span class="font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+                    span class="text-[15px] text-ink-muted" { (fmt::date(Some(d))) }
                 }
             }
 
             @if let Some(ref desc) = election.description {
-                p class="mt-1 max-w-prose text-xs leading-relaxed text-ink-muted" { (desc) }
+                p class="mt-2 max-w-prose text-[15px] leading-relaxed text-ink-muted" { (desc) }
             }
 
-            (seat_chips(rows, country))
-
             @if let Some(valid) = election.valid_votes.filter(|v| *v > 0) {
-                div class="mt-4" {
-                    // A compact "last time" legend, naming the compared election
-                    // by year so the ghost bars and swing figures read clearly.
-                    @if !prev_map.is_empty() {
-                        div class="mb-2 flex items-center gap-1.5 text-[10px] text-ink-muted" {
-                            span class="inline-block h-2 w-3 shrink-0 rounded-sm bg-ink-muted/25" {}
-                            (i18n::t("Previous"))
-                            @if let Some((e, _)) = prev {
-                                @if let Some(d) = e.held_on { " · " (d.format("%Y")) }
-                            }
-                        }
-                    }
+                div class="mt-5" {
+                    (previous_legend(prev.map(|(e, _)| e), &prev_map))
                     (vote_share_list(rows, valid, country, limit, &prev_map))
                 }
+            } @else {
+                (seat_chips(rows, country))
             }
 
             @if let (Some(cast), Some(elect)) = (election.votes_cast, election.electorate.filter(|e| *e > 0)) {
-                p class="mt-3 font-mono text-[11px] text-ink-muted" {
-                    (i18n::t("Turnout")) " " (fmt_pct(cast * 1000 / elect))
+                p class="mt-4 text-[15px] text-ink-muted" {
+                    (i18n::t("Turnout")) " " span class="font-semibold text-ink" { (fmt_pct(cast * 1000 / elect)) }
                     " · " (thousands(cast)) " / " (thousands(elect))
                 }
             }
@@ -265,61 +254,130 @@ pub fn election_detail(
     rows: &[db::elections::ResultRow],
     prev: Option<&(db::elections::Election, Vec<db::elections::ResultRow>)>,
     country: &str,
+    crumbs: &[ui::breadcrumb::Crumb],
 ) -> Markup {
     let total_seats: i32 = rows.iter().filter_map(|r| r.seats).sum();
     let prev_map = prev_shares(prev);
-    let prev_name = prev.map(|(e, _)| e.name.as_str());
+    let leader_by_seats = rows
+        .iter()
+        .filter(|r| r.seats.is_some_and(|s| s > 0))
+        .max_by_key(|r| r.seats);
+    let leader_by_votes = rows
+        .iter()
+        .filter(|r| r.votes.is_some())
+        .max_by_key(|r| r.votes);
+    let valid = election.valid_votes.filter(|v| *v > 0);
     html! {
-        header class="op-card mb-8 p-6 sm:p-8" {
-            h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" { (election.name) }
+        (ui::hero_band(html! {
+            (ui::breadcrumb::trail(crumbs))
+            h1 class="mt-4 text-[42px] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-[50px]" {
+                (election.name)
+            }
             @if let Some(d) = election.held_on {
-                p class="mt-1 font-mono text-sm text-ink-muted" { (fmt::date(Some(d))) }
+                p class="mt-2 text-[18px] text-ink-muted" { (fmt::date(Some(d))) }
             }
             @if let Some(ref desc) = election.description {
-                p class="mt-4 max-w-prose text-[15px] leading-relaxed text-ink" { (desc) }
+                p class="mt-4 max-w-[42em] text-[20px] leading-relaxed text-ink" { (desc) }
             }
             // An election dated ahead of today has not been held, so the page
             // says so rather than presenting an empty result set as a result.
             @if is_upcoming(election) {
-                p class="mt-4 text-[13px] font-medium text-ink" {
-                    (i18n::t("Not held yet"))
-                    @if let Some(days) = days_ahead(election) {
-                        " · " span class="font-mono" { (days) } " " (i18n::t("days"))
+                div class="mt-5 max-w-[46em] rounded-[12px] bg-accent-tint px-5 py-4" {
+                    p class="font-bold text-ink" {
+                        (i18n::t("Not held yet"))
+                        @if let Some(days) = days_ahead(election) {
+                            " · " (days) " " (i18n::t("days"))
+                        }
+                    }
+                    @if let Some(note) = &election.expected_note {
+                        p class="mt-1 text-[16px] text-ink-muted" { (note) }
                     }
                 }
             }
-            @if let Some(note) = &election.expected_note {
-                p class="mt-2 max-w-prose text-xs text-ink-muted" { (note) }
+            @if leader_by_votes.is_some() || election.electorate.is_some() {
+                div class="mt-7 grid gap-4 sm:grid-cols-3" {
+                    @if let Some(r) = leader_by_seats.filter(|_| total_seats > 0) {
+                        (ui::fact_card(
+                            html! {
+                                (r.seats.unwrap_or(0))
+                                span class="text-[20px] font-bold text-ink-muted" { " / " (total_seats) }
+                            },
+                            i18n::t("Most seats"),
+                            Some(html! { (row_name(r)) }),
+                        ))
+                    } @else if let (Some(r), Some(v)) = (leader_by_votes, valid) {
+                        (ui::fact_card(
+                            html! { (fmt_pct(r.votes.unwrap_or(0) * 1000 / v)) },
+                            i18n::t("Most votes"),
+                            Some(html! { (row_name(r)) }),
+                        ))
+                    }
+                    @if let (Some(cast), Some(elect)) = (election.votes_cast, election.electorate.filter(|e| *e > 0)) {
+                        @let tenths = cast * 1000 / elect;
+                        div class="rounded-[12px] border border-hairline bg-paper px-5 py-4" {
+                            div class="text-[38px] font-extrabold leading-none tracking-tight text-ink" { (fmt_pct(tenths)) }
+                            div class="mt-2 font-semibold text-ink" { (i18n::t("Turnout")) }
+                            div aria-hidden="true" class="mt-2 h-2 rounded-full bg-hairline-light" {
+                                div class="h-2 rounded-full bg-ink" style={"width:" (tenths as f64 / 10.0) "%"} {}
+                            }
+                            div class="mt-1.5 text-[15px] text-ink-muted" {
+                                (thousands(cast)) " / " (thousands(elect)) " " (i18n::t("Registered"))
+                            }
+                        }
+                    } @else if let Some(e) = election.electorate {
+                        (ui::fact_card(html! { (thousands(e)) }, i18n::t("Registered"), None))
+                    }
+                    @if let Some(v) = valid {
+                        (ui::fact_card(
+                            html! { (thousands(v)) },
+                            i18n::t("Valid votes"),
+                            None,
+                        ))
+                    }
+                }
             }
-        }
+        }))
 
         @if total_seats > 0 {
-            section class="mb-8" {
-                h2 class="mb-3 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
-                    (i18n::t("Seats")) " " span class="font-mono" { (total_seats) }
-                }
+            section class="mb-12" {
+                (ui::section_header(i18n::t("Seats"), Some(html! {
+                    span class="text-[16px] text-ink-muted" { (total_seats) " " (i18n::t("seats")) }
+                })))
                 (seat_bar(rows))
-                div class="mt-3" { (seat_chips(rows, country)) }
+                (seat_chips(rows, country))
             }
         }
 
-        (turnout_stats(election))
-
-        @if let Some(valid) = election.valid_votes.filter(|v| *v > 0) {
-            section class="mb-8" {
-                h2 class="mb-3 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
-                    (i18n::t("Vote share"))
-                }
-                @if !prev_map.is_empty() {
-                    // A faint bar behind each result marks the previous election's
-                    // share, so the swing is visible at a glance.
-                    div class="mb-3 flex items-center gap-2 text-[11px] text-ink-muted" {
-                        span class="inline-block h-2.5 w-4 shrink-0 rounded-sm bg-ink-muted/25" {}
-                        (i18n::t("Previous"))
-                        @if let Some(n) = prev_name { " · " (n) }
-                    }
-                }
+        @if let Some(valid) = valid {
+            section class="mb-12" {
+                (ui::section_header(i18n::t("Vote share"), None))
+                (previous_legend(prev.map(|(e, _)| e), &prev_map))
                 (vote_share_list(rows, valid, country, None, &prev_map))
+            }
+        }
+    }
+}
+
+/// A result row's display name: the party's name, or the label of a list,
+/// coalition or candidate that is not one of our parties.
+fn row_name(r: &db::elections::ResultRow) -> &str {
+    r.party_name
+        .as_deref()
+        .or(r.label.as_deref())
+        .unwrap_or_default()
+}
+
+/// The key to the faint "previous election" bars, naming the compared
+/// election, shown only when there is one.
+fn previous_legend(prev: Option<&db::elections::Election>, map: &PrevShares) -> Markup {
+    html! {
+        @if !map.is_empty() {
+            div class="mb-3 flex items-center gap-2 text-[15px] text-ink-muted" {
+                span aria-hidden="true" class="inline-block h-2.5 w-5 shrink-0 rounded-full bg-ink-muted/25" {}
+                (i18n::t("Previous"))
+                @if let Some(e) = prev {
+                    " · " (e.name)
+                }
             }
         }
     }
@@ -331,22 +389,21 @@ pub fn election_detail(
 /// in the bar with no name beside them.
 fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
     html! {
-        div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" {
+        ul class="mt-4 flex flex-wrap gap-x-5 gap-y-2" {
             @for r in rows {
-                @if let (Some(sn), Some(slug)) = (r.party_short_name.as_deref(), r.party_slug.as_deref()) {
-                    a href={"/" (country) "/parties/" (slug)}
-                      class="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80" {
-                        (ui::badge::party_chip(sn, r.party_color.as_deref()))
-                        @if let Some(s) = r.seats {
-                            span class="font-mono text-xs font-semibold text-ink" { (s) }
-                        }
+                @if let (Some(name), Some(slug), Some(s)) = (r.party_name.as_deref(), r.party_slug.as_deref(), r.seats.filter(|s| *s > 0)) {
+                    li class="inline-flex items-center gap-2 text-[16px]" {
+                        span aria-hidden="true" class="size-3 shrink-0 rounded-full"
+                            style={"background-color:" (ui::css_color(r.party_color.as_deref(), UNCOLOURED_SEAT))} {}
+                        a href={"/" (country) "/parties/" (slug)} class="text-ink hover:underline" { (name) }
+                        span class="font-bold text-ink" { (s) }
                     }
                 } @else if let (Some(label), Some(s)) = (r.label.as_deref(), r.seats.filter(|s| *s > 0)) {
-                    span class="inline-flex items-center gap-1.5" {
-                        span class="inline-block h-3 w-3 rounded-sm" aria-hidden="true"
+                    li class="inline-flex items-center gap-2 text-[16px]" {
+                        span aria-hidden="true" class="size-3 shrink-0 rounded-full"
                             style={"background-color:" (UNCOLOURED_SEAT)} {}
-                        span class="text-xs text-ink" { (label) }
-                        span class="font-mono text-xs font-semibold text-ink" { (s) }
+                        span class="text-ink" { (label) }
+                        span class="font-bold text-ink" { (s) }
                     }
                 }
             }
@@ -355,7 +412,7 @@ fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
 }
 
 /// The bar colour of a seat held by a row with no party colour.
-const UNCOLOURED_SEAT: &str = "#171717";
+const UNCOLOURED_SEAT: &str = "#545b64";
 
 /// A proportional seat-composition bar from the per-party seat counts.
 fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
@@ -363,46 +420,14 @@ fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
         // Decorative: the composition list beside the bar names each party and
         // its seats as text, so the bar is hidden from assistive tech rather than
         // repeating that as a native tooltip.
-        div class="flex h-6 w-full overflow-hidden rounded-md border border-hairline"
+        div class="flex h-5 w-full overflow-hidden rounded-full bg-hairline-light"
             aria-hidden="true" {
             @for r in rows {
                 @if let Some(s) = r.seats.filter(|s| *s > 0) {
-                    div class="h-full border-r border-r-paper-raised last:border-r-0"
-                        style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or(UNCOLOURED_SEAT))} {}
+                    div class="h-full border-r-2 border-r-paper last:border-r-0"
+                        style={"flex:" (s) " 0 0;background-color:" (ui::css_color(r.party_color.as_deref(), UNCOLOURED_SEAT))} {}
                 }
             }
-        }
-    }
-}
-
-/// Turnout statistic cards: registered voters, valid votes, and turnout share.
-fn turnout_stats(election: &db::elections::Election) -> Markup {
-    html! {
-        @if election.electorate.is_some() || election.valid_votes.is_some() {
-            div class="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4" {
-                @if let (Some(cast), Some(elect)) = (election.votes_cast, election.electorate.filter(|e| *e > 0)) {
-                    (stat_card(i18n::t("Turnout"), fmt_pct(cast * 1000 / elect)))
-                }
-                @if let Some(e) = election.electorate {
-                    (stat_card(i18n::t("Registered"), thousands(e)))
-                }
-                @if let Some(c) = election.votes_cast {
-                    (stat_card(i18n::t("Votes cast"), thousands(c)))
-                }
-                @if let Some(v) = election.valid_votes {
-                    (stat_card(i18n::t("Valid votes"), thousands(v)))
-                }
-            }
-        }
-    }
-}
-
-/// One labelled statistic card (a mono figure over an uppercase caption).
-fn stat_card(label: &str, value: String) -> Markup {
-    html! {
-        div class="op-card p-3" {
-            div class="font-mono text-lg font-semibold text-ink" { (value) }
-            div class="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-ink-muted" { (label) }
         }
     }
 }
@@ -438,63 +463,96 @@ fn vote_share_list(
             .or(r.label.as_deref())
             .is_some_and(|k| prev.contains_key(k))
     });
+    let has_seats = rows.iter().any(|r| r.seats.is_some_and(|s| s > 0));
+    let cols = if has_seats {
+        "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 border-b border-hairline-light py-2.5 sm:grid-cols-[minmax(10rem,2fr)_minmax(0,3fr)_4.5rem]"
+    } else {
+        "grid grid-cols-1 items-center gap-x-4 gap-y-1.5 border-b border-hairline-light py-2.5 sm:grid-cols-[minmax(10rem,2fr)_minmax(0,3fr)]"
+    };
     html! {
-        div class="space-y-1.5" {
+        div {
+            @if has_seats {
+                div class="hidden text-[14px] text-ink-muted sm:grid sm:grid-cols-[minmax(10rem,2fr)_minmax(0,3fr)_4.5rem] sm:gap-x-4" {
+                    span {}
+                    span { (i18n::t("Vote share")) }
+                    span class="text-right" { (i18n::t("Seats")) }
+                }
+            }
             @for r in shown {
                 @let votes = r.votes.unwrap_or(0);
                 @let tenths = votes * 1000 / valid;
-                @let color = r.party_color.as_deref().unwrap_or("#33527a");
+                @let seated = r.seats.is_some_and(|s| s > 0);
+                // A party's own colour where it has one; otherwise slate for a
+                // contestant that won seats and grey for one that did not.
+                @let color = match r.party_color.as_deref() {
+                    Some(_) => ui::css_color(r.party_color.as_deref(), "#1b1f24"),
+                    None if seated || !has_seats => "#1b1f24".to_string(),
+                    None => "#a7afb8".to_string(),
+                };
                 @let prev_tenths = r.party_slug.as_deref().or(r.label.as_deref())
                     .and_then(|k| prev.get(k).copied());
-                div class="flex items-center gap-2" {
-                    @if let (Some(sn), Some(slug)) = (r.party_short_name.as_deref(), r.party_slug.as_deref()) {
-                        a href={"/" (country) "/parties/" (slug)}
-                          class="w-14 shrink-0 transition-opacity hover:opacity-80" {
-                            (ui::badge::party_chip(sn, r.party_color.as_deref()))
-                        }
-                    } @else if let Some(lbl) = r.label.as_deref() {
-                        // A label row (a coalition, or a presidential candidate)
-                        // has no page to link to, so its name must stay readable
-                        // here: it wraps rather than being cut off at a fixed
-                        // width, which mattered most for long candidate names on
-                        // a phone.
-                        span class="w-28 shrink-0 text-xs font-medium leading-tight text-ink" { (lbl) }
-                    }
-                    span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
-                        // The previous share sits behind the current one, so when
-                        // the party lost ground its faint ghost tail shows past the
-                        // current bar.
-                        @if let Some(pt) = prev_tenths {
-                            span class="absolute inset-y-0 left-0 rounded opacity-25"
-                                 style={"width:" (pt as f64 / 10.0) "%;background-color:" (color)} {}
-                        }
-                        span class="absolute inset-y-0 left-0 rounded"
-                             style={"width:" (tenths as f64 / 10.0) "%;background-color:" (color)} {}
-                        // A tick at the previous share marks "last time" even when
-                        // the party gained and the current bar covers the ghost.
-                        @if let Some(pt) = prev_tenths {
-                            span class="absolute inset-y-0 w-px bg-ink/45"
-                                 style={"left:" (pt as f64 / 10.0) "%"} {}
+                div class=(cols) {
+                    div class="order-1 min-w-0 text-[16px] font-semibold leading-snug text-ink" {
+                        @if let (Some(name), Some(slug)) = (r.party_name.as_deref(), r.party_slug.as_deref()) {
+                            a href={"/" (country) "/parties/" (slug)} class="hover:underline" { (name) }
+                            @if let Some(sn) = r.party_short_name.as_deref().filter(|sn| *sn != name) {
+                                " " span class="font-normal text-ink-muted" { (sn) }
+                            }
+                        } @else if let Some(lbl) = r.label.as_deref() {
+                            (lbl)
                         }
                     }
-                    span class="w-12 shrink-0 text-right font-mono text-xs text-ink" { (fmt_pct(tenths)) }
-                    @if has_swing {
-                        span class="w-12 shrink-0 text-right font-mono text-[11px]" {
-                            @if let Some(pt) = prev_tenths { (swing(tenths - pt)) }
+                    div class="order-3 col-span-full flex items-center gap-3 sm:order-2 sm:col-span-1" {
+                        span class="relative h-3 grow rounded-full bg-hairline-light" {
+                            // The previous share sits behind the current one, so
+                            // when the contestant lost ground its faint ghost
+                            // shows past the current bar.
+                            @if let Some(pt) = prev_tenths {
+                                span class="absolute inset-y-0 left-0 rounded-full opacity-25"
+                                     style={"width:" (pt as f64 / 10.0) "%;background-color:" (color)} {}
+                            }
+                            span class="absolute inset-y-0 left-0 min-w-1.5 rounded-full"
+                                 style={"width:" (tenths as f64 / 10.0) "%;background-color:" (color)} {}
+                            // A tick at the previous share marks "last time" even
+                            // when the bar has grown past it.
+                            @if let Some(pt) = prev_tenths {
+                                span class="absolute -inset-y-1 w-0.5 bg-ink/50"
+                                     style={"left:" (pt as f64 / 10.0) "%"} {}
+                            }
+                        }
+                        span class="w-14 shrink-0 text-right text-[16px] text-ink" { (fmt_pct(tenths)) }
+                        @if has_swing {
+                            span class="w-12 shrink-0 text-right text-[14px]" {
+                                @if let Some(pt) = prev_tenths { (swing(tenths - pt)) }
+                            }
+                        }
+                    }
+                    @if has_seats {
+                        div class="order-2 text-right text-[16px] sm:order-3" {
+                            @if seated {
+                                span class="inline-block min-w-9 rounded-full bg-ink px-2.5 py-0.5 text-center font-bold text-paper" {
+                                    (r.seats.unwrap_or(0))
+                                }
+                            } @else {
+                                span class="text-ink-faint" { "0" }
+                            }
                         }
                     }
                 }
             }
             @if others > 0 {
                 @let tenths = others * 1000 / valid;
-                div class="flex items-center gap-2" {
-                    span class="w-14 shrink-0 truncate text-xs text-ink-muted sm:w-28" { (i18n::t("Others")) }
-                    span class="relative h-4 grow overflow-hidden rounded bg-paper-sunken" {
-                        span class="absolute inset-y-0 left-0 rounded bg-hairline"
-                             style={"width:" (tenths as f64 / 10.0) "%"} {}
+                div class=(cols) {
+                    div class="order-1 text-[16px] text-ink-muted" { (i18n::t("Others")) }
+                    div class="order-3 col-span-full flex items-center gap-3 sm:order-2 sm:col-span-1" {
+                        span class="relative h-3 grow rounded-full bg-hairline-light" {
+                            span class="absolute inset-y-0 left-0 rounded-full bg-hairline-strong"
+                                 style={"width:" (tenths as f64 / 10.0) "%"} {}
+                        }
+                        span class="w-14 shrink-0 text-right text-[16px] text-ink-muted" { (fmt_pct(tenths)) }
+                        @if has_swing { span class="w-12 shrink-0" {} }
                     }
-                    span class="w-12 shrink-0 text-right font-mono text-xs text-ink-muted" { (fmt_pct(tenths)) }
-                    @if has_swing { span class="w-12 shrink-0" {} }
+                    @if has_seats { div class="order-2 sm:order-3" {} }
                 }
             }
         }
@@ -555,7 +613,7 @@ pub fn compass_cta(href: Option<&str>) -> Markup {
     html! {
         @if let Some(href) = href {
             a href=(href)
-              class="inline-block rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+              class="inline-flex min-h-11 items-center rounded-[10px] bg-ink px-5 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                 (i18n::t("Compare your positions"))
             }
         }
