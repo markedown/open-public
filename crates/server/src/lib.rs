@@ -424,35 +424,33 @@ const COMING_SOON_HTML: &str = r#"<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>open-public</title>
 <style>
-:root{--paper:#f0f1f3;--ink:#22242a;--muted:#6a6c72;--rule:#d5d7db;--block:#22242a}
+:root{--paper:#ffffff;--band:#f2f5f9;--ink:#1b1f24;--muted:#545b64;--rule:#dfe3e8;--ring:#b9c0c8}
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{background:var(--paper);color:var(--ink);font:400 15px/1.55 ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;display:flex;align-items:center;justify-content:center;padding:6vw;-webkit-font-smoothing:antialiased}
-main{width:100%;max-width:640px}
-.rule{height:1px;background:var(--rule)}
-.top{display:flex;align-items:center;gap:.7rem;padding-bottom:1.1rem}
-.block{width:20px;height:20px;background:var(--block);flex:none}
-.word{font-weight:600;font-size:clamp(19px,5vw,24px);letter-spacing:-.02em}
-.body{padding:2.6rem 0}
-.status{font-size:clamp(30px,9vw,56px);font-weight:600;letter-spacing:-.03em;line-height:1.02}
-.cursor{display:inline-block;width:.5em;height:.92em;background:var(--ink);vertical-align:-.06em;margin-left:.14em;animation:blink 1.1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.cursor{animation:none}}
-.desc{margin-top:1.5rem;max-width:48ch;color:var(--muted);font-size:14px}
-.foot{display:flex;justify-content:space-between;gap:1rem;padding-top:1.1rem;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+html,body{min-height:100%}
+body{background:var(--paper);color:var(--ink);font:400 18px/1.55 "Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+.band{background:var(--band);border-bottom:1px solid var(--rule);padding:clamp(28px,7vw,72px) 24px}
+.wrap{max-width:720px;margin:0 auto}
+.top{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;letter-spacing:-.01em}
+.mark{display:inline-grid;grid-template-columns:repeat(3,7px);gap:2px}
+.mark i{width:7px;height:7px;border-radius:50%;background:var(--ring)}
+.mark i.on{background:var(--ink)}
+h1{margin-top:clamp(32px,7vw,64px);font-size:clamp(38px,8vw,60px);line-height:1.05;font-weight:800;letter-spacing:-.02em}
+.lead{margin-top:18px;max-width:34em;font-size:clamp(18px,2.6vw,21px)}
+.note{margin-top:28px;display:flex;gap:12px;align-items:flex-start;background:#e9f0f8;border-radius:12px;padding:16px 18px;max-width:34em;font-size:16px;color:var(--muted)}
+.note svg{flex:none;margin-top:2px}
+footer{margin-top:auto;padding:22px 24px;color:var(--muted);font-size:15px}
 </style>
 </head>
 <body>
-<main>
-  <div class="top"><span class="block"></span><span class="word">open-public</span></div>
-  <div class="rule"></div>
-  <div class="body">
-    <div class="status">Under<br>construction<span class="cursor"></span></div>
-    <p class="desc">An open, source-backed record of political data and public participation. Still being assembled. Back soon.</p>
-  </div>
-  <div class="rule"></div>
-  <div class="foot"><span>Open political data</span><span>Coming soon</span></div>
-</main>
+<div class="band">
+  <main class="wrap">
+    <div class="top"><span class="mark" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i></span>open-public</div>
+    <h1>Under construction</h1>
+    <p class="lead">An open, source-backed record of public political life: who holds office, the parties they belong to, and how people voted. Every fact will link to the source it came from.</p>
+    <p class="note"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l3 2"/></svg><span>We are still putting it together and checking the data. Back soon.</span></p>
+  </main>
+</div>
+<footer><div class="wrap">Open political data</div></footer>
 </body>
 </html>
 "#;

@@ -1,4 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="open-public">
-  <rect width="32" height="32" fill="#22242a"/>
-  <text x="16" y="22" font-family="'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16" font-weight="700" letter-spacing="-0.6" fill="#f2f2ef" text-anchor="middle">op</text>
+  <rect width="32" height="32" rx="6" fill="#ffffff"/>
+  <circle cx="7.70" cy="11.85" r="3.20" fill="#1b1f24"/>
+  <circle cx="16.00" cy="11.85" r="3.20" fill="#1b1f24"/>
+  <circle cx="24.30" cy="11.85" r="3.20" fill="#b9c0c8"/>
+  <circle cx="7.70" cy="20.15" r="3.20" fill="#1b1f24"/>
+  <circle cx="16.00" cy="20.15" r="3.20" fill="#b9c0c8"/>
+  <circle cx="24.30" cy="20.15" r="3.20" fill="#b9c0c8"/>
 </svg>
