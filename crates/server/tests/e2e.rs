@@ -6710,6 +6710,16 @@ async fn a_people_search_with_no_matches_asks_for_nothing(pool: db::Pool) {
     assert_eq!(some.len(), 1);
     assert_eq!(some[0].person_id, ayse);
     assert_eq!(some[0].party_slug, "test-partisi");
+    assert_eq!(some[0].short_name.as_deref(), Some("TP"));
+
+    // A party with no abbreviation is labelled by its name, so the membership
+    // still shows in the list.
+    sqlx::query("update parties set short_name = null where slug = 'test-partisi'")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let some = db::people::current_parties(&pool, &[ayse]).await.unwrap();
+    assert_eq!(some[0].short_name.as_deref(), Some("Test Partisi"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

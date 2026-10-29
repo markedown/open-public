@@ -26,7 +26,7 @@ pub async fn detail(
             ]))
             (ui::page_header(i18n::t("Timeline"), None, None))
             @if events.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No events yet.")) }
+                p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No events yet.")) }
             } @else {
                 (ui::event::entries(&events))
             }

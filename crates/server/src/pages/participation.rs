@@ -81,7 +81,7 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
 fn section(title: &str, paragraphs: &[&str]) -> Markup {
     html! {
         section class="mt-10" {
-            h2 class="text-[13px] font-bold uppercase tracking-wider text-ink-muted" { (title) }
+            h2 class="text-[15px] font-bold text-ink-muted" { (title) }
             @for p in paragraphs {
                 p class="mt-3 max-w-prose text-[15px] leading-relaxed text-ink" { (p) }
             }

@@ -41,11 +41,11 @@ pub async fn list(
             (ui::search::bar(&list_url, "#alliances-results", &query))
 
             div id="alliances-results" {
-                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (alliances.len()) } " " (i18n::t("Alliances"))
+                p class="mb-4 text-[14px] font-bold text-ink-muted" {
+                    span class="" { (alliances.len()) } " " (i18n::t("Alliances"))
                 }
                 @if alliances.is_empty() {
-                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No alliances yet.")) }
+                    p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No alliances yet.")) }
                 } @else {
                     ul class="grid gap-3 sm:grid-cols-2" {
                         @for a in &alliances {
@@ -53,19 +53,19 @@ pub async fn list(
                             a href={"/" (country.slug) "/alliance/" (a.slug)}
                               class="op-card op-card-link block px-4 py-3.5" {
                                 div class="flex items-baseline justify-between gap-3" {
-                                    span class="text-sm font-medium text-ink" { (a.name) }
+                                    span class="text-[16px] font-medium text-ink" { (a.name) }
                                     // Active while not dissolved.
                                     @if a.dissolved_date.is_none() {
-                                        span class="shrink-0 rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-link" {
+                                        span class="shrink-0 rounded-full border border-accent px-2 py-0.5 text-[15px] font-bold text-link" {
                                             (i18n::t("Active"))
                                         }
                                     } @else {
-                                        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                                        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 text-[15px] font-bold text-ink-muted" {
                                             (i18n::t("Inactive"))
                                         }
                                     }
                                 }
-                                div class="mt-1 flex flex-wrap gap-x-4 font-mono text-[11px] text-ink-muted" {
+                                div class="mt-1 flex flex-wrap gap-x-4 text-[14px] text-ink-muted" {
                                     span { (a.member_count) " " (i18n::t("parties")) }
                                     @if let Some(f) = a.founded_date {
                                         span { (fmt::date(Some(f))) }

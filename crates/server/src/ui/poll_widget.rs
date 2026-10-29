@@ -31,9 +31,9 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
             @if let Some(ref url) = poll.media_url {
                 figure class="mt-4" {
                     img src=(url) alt="" loading="lazy"
-                        class="max-h-56 w-full rounded-lg border border-hairline object-contain";
+                        class="max-h-56 w-full rounded-[10px] border border-hairline object-contain";
                     @if let Some(ref lic) = poll.media_license {
-                        figcaption class="mt-1 font-mono text-[10px] text-ink-muted" { (lic) }
+                        figcaption class="mt-1 text-[15px] text-ink-muted" { (lic) }
                     }
                 }
             }
@@ -55,10 +55,10 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
                         "scale" => { form data-vote { (grid_options(poll, total, true, "mt-6 flex flex-wrap gap-2")) } }
                         _ => { form data-vote { (stacked_options(poll, total, true)) } }
                     }
-                    p data-vote-status hidden class="mt-3 text-sm text-red-600" {}
+                    p data-vote-status hidden class="mt-3 text-[16px] text-red-600" {}
                 }
                 noscript {
-                    p class="mt-6 text-sm text-ink-muted" { (i18n::t("Voting needs JavaScript enabled.")) }
+                    p class="mt-6 text-[16px] text-ink-muted" { (i18n::t("Voting needs JavaScript enabled.")) }
                 }
             } @else {
                 @match poll.kind.as_str() {
@@ -69,28 +69,28 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
             }
 
 
-            p class="mt-4 font-mono text-xs text-ink-muted" {
+            p class="mt-4 text-[14px] text-ink-muted" {
                 (format!("{} {}", total, i18n::t("votes")))
             }
             // The honest base tier: results are the people who answered here,
             // never a sample of a population. Same frame as the approval panel.
             @if total > 0 {
-                p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                p class="mt-2 text-[14px] leading-snug text-ink-muted" {
                     (i18n::t("Counts among verified participants here, not a representative sample."))
                 }
             }
             @match viewer {
                 Viewer::CanVote => {
-                    p class="mt-1 text-xs text-ink-muted" {
+                    p class="mt-1 text-[14px] text-ink-muted" {
                         @if poll.kind == "multi" { (i18n::t("Select one or more options, then vote.")) }
                         @else { (i18n::t("Tap an option to vote.")) }
                     }
                     // The honest claim, always shown where a vote can happen.
-                    p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                    p class="mt-2 text-[14px] leading-snug text-ink-muted" {
                         (i18n::t("Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."))
                     }
                 },
-                Viewer::Anonymous => p class="mt-1 text-sm text-ink-muted" {
+                Viewer::Anonymous => p class="mt-1 text-[16px] text-ink-muted" {
                     a href="/login" class="font-medium text-link hover:underline" { (i18n::t("Log in to vote.")) }
                 },
             }
@@ -120,7 +120,7 @@ pub fn poll_previews(
     let action = html! {
         div class="flex items-center gap-4" {
             @if let Some(href) = add_href {
-                a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
+                a href=(href) class="text-[15px] font-semibold text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add poll"))
                 }
             }
@@ -131,14 +131,14 @@ pub fn poll_previews(
         section class="mb-8" {
             (crate::ui::section_header(i18n::t("Polls"), Some(action)))
             @if polls.is_empty() {
-                p class="text-sm text-ink-muted" { (i18n::t("No polls yet.")) }
+                p class="text-[16px] text-ink-muted" { (i18n::t("No polls yet.")) }
             } @else {
                 div class="grid gap-4 sm:grid-cols-2" {
                     @for poll in shown {
                         (poll_preview_card(poll, country))
                     }
                 }
-                p class="mt-3 text-[11px] leading-snug text-ink-muted" {
+                p class="mt-3 text-[14px] leading-snug text-ink-muted" {
                     (i18n::t("Counts among verified participants here, not a representative sample."))
                 }
             }
@@ -162,7 +162,7 @@ fn poll_preview_card(poll: &Poll, country: &str) -> Markup {
                     }
                 }
             }
-            p class="mt-3 font-mono text-[11px] text-ink-muted" {
+            p class="mt-3 text-[14px] text-ink-muted" {
                 (format!("{} {}", total, i18n::t("votes")))
             }
         }
@@ -174,7 +174,7 @@ fn poll_preview_card(poll: &Poll, country: &str) -> Markup {
 fn result_row(label: &str, pct: i64, votes: i64, media: Option<&str>) -> Markup {
     html! {
         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
-        div class="relative flex items-center justify-between gap-3 px-3 py-2.5 text-sm" {
+        div class="relative flex items-center justify-between gap-3 px-3 py-2.5 text-[16px]" {
             div class="flex min-w-0 items-center gap-3" {
                 @if let Some(url) = media {
                     img src=(url) alt="" loading="lazy"
@@ -182,7 +182,7 @@ fn result_row(label: &str, pct: i64, votes: i64, media: Option<&str>) -> Markup 
                 }
                 span class="truncate text-ink" { (label) }
             }
-            span class="shrink-0 font-mono text-xs font-semibold text-ink" { (pct) "% · " (votes) }
+            span class="shrink-0 text-[14px] font-semibold text-ink" { (pct) "% · " (votes) }
         }
     }
 }
@@ -211,7 +211,7 @@ fn stacked_options(poll: &Poll, total: i64, can_vote: bool) -> Markup {
                 @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
                 (option_control(
                     can_vote, opt.id,
-                    "relative block w-full overflow-hidden rounded-lg border border-hairline text-left transition-colors hover:border-accent",
+                    "relative block w-full overflow-hidden rounded-[10px] border border-hairline text-left transition-colors hover:border-accent",
                     result_row(&opt.label, pct, opt.votes, opt.media_url.as_deref()),
                 ))
             }
@@ -229,7 +229,7 @@ fn grid_options(poll: &Poll, total: i64, can_vote: bool, container: &str) -> Mar
                 @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
                 (option_control(
                     can_vote, opt.id,
-                    "relative grow basis-24 overflow-hidden rounded-lg border border-hairline px-3 py-4 text-center transition-colors hover:border-accent",
+                    "relative grow basis-24 overflow-hidden rounded-[10px] border border-hairline px-3 py-4 text-center transition-colors hover:border-accent",
                     html! {
                         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
                         div class="relative" {
@@ -237,8 +237,8 @@ fn grid_options(poll: &Poll, total: i64, can_vote: bool, container: &str) -> Mar
                                 img src=(url) alt="" loading="lazy"
                                     class="mx-auto mb-2 h-20 w-20 rounded border border-hairline object-cover";
                             }
-                            div class="text-sm font-semibold text-ink" { (opt.label) }
-                            div class="mt-1 font-mono text-xs text-ink-muted" { (pct) "% · " (opt.votes) }
+                            div class="text-[16px] font-semibold text-ink" { (opt.label) }
+                            div class="mt-1 text-[14px] text-ink-muted" { (pct) "% · " (opt.votes) }
                         }
                     },
                 ))
@@ -256,7 +256,7 @@ fn multi_options(poll: &Poll, total: i64) -> Markup {
             div class="space-y-2.5" {
                 @for opt in &poll.options {
                     @let pct = if total > 0 { opt.votes * 100 / total } else { 0 };
-                    label class="relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-lg border border-hairline px-4 py-3 transition-colors hover:border-accent" {
+                    label class="relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-[10px] border border-hairline px-4 py-3 transition-colors hover:border-accent" {
                         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
                         input type="checkbox" name="option" value=(opt.id)
                             class="relative z-10 h-4 w-4 shrink-0 rounded border border-hairline accent-accent";
@@ -264,15 +264,15 @@ fn multi_options(poll: &Poll, total: i64) -> Markup {
                             img src=(url) alt="" loading="lazy"
                                 class="relative z-10 h-9 w-9 shrink-0 rounded border border-hairline object-cover";
                         }
-                        span class="relative z-10 grow text-sm text-ink" { (opt.label) }
-                        span class="relative z-10 shrink-0 font-mono text-sm font-semibold text-ink" {
+                        span class="relative z-10 grow text-[16px] text-ink" { (opt.label) }
+                        span class="relative z-10 shrink-0 text-[16px] font-semibold text-ink" {
                             (pct) "% · " (opt.votes)
                         }
                     }
                 }
             }
             button type="submit"
-                class="mt-3 rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                class="mt-3 rounded-[10px] bg-accent px-4 py-2 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                 (i18n::t("Vote"))
             }
         }

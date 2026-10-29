@@ -55,14 +55,14 @@ pub async fn list(
             (ui::search::bar(&list_url, "#elections-results", &query))
 
             div id="elections-results" {
-                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (elections.len()) } " " (i18n::t("Elections"))
+                p class="mb-4 text-[14px] font-bold text-ink-muted" {
+                    span class="" { (elections.len()) } " " (i18n::t("Elections"))
                 }
                 @if elections.is_empty() {
-                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No elections yet.")) }
+                    p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No elections yet.")) }
                 }
                 @if !upcoming.is_empty() {
-                    h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                    h2 class="mb-3 text-[14px] font-bold text-ink-muted" {
                         (i18n::t("Upcoming"))
                     }
                     ul class="mb-8 grid gap-3 sm:grid-cols-2" {
@@ -71,16 +71,16 @@ pub async fn list(
                                 a href={"/" (country.slug) "/election/" (e.slug)}
                                   class="op-card op-card-link block px-4 py-3.5" {
                                     div class="flex items-baseline justify-between gap-3" {
-                                        span class="text-sm font-medium text-ink" { (e.name) }
+                                        span class="text-[16px] font-medium text-ink" { (e.name) }
                                         @if let Some(d) = e.held_on {
-                                            span class="shrink-0 font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+                                            span class="shrink-0 text-[14px] text-ink-muted" { (fmt::date(Some(d))) }
                                         }
                                     }
-                                    span class="mt-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
+                                    span class="mt-1 block text-[14px] font-bold text-ink-muted" {
                                         (kind_label(e.kind.as_deref()))
                                     }
                                     @if let Some(note) = &e.expected_note {
-                                        p class="mt-1 text-xs text-ink-muted" { (note) }
+                                        p class="mt-1 text-[14px] text-ink-muted" { (note) }
                                     }
                                 }
                             }
@@ -94,12 +94,12 @@ pub async fn list(
                                 a href={"/" (country.slug) "/election/" (e.slug)}
                                   class="op-card op-card-link block px-4 py-3.5" {
                                     div class="flex items-baseline justify-between gap-3" {
-                                        span class="text-sm font-medium text-ink" { (e.name) }
+                                        span class="text-[16px] font-medium text-ink" { (e.name) }
                                         @if let Some(d) = e.held_on {
-                                            span class="shrink-0 font-mono text-xs text-ink-muted" { (fmt::date(Some(d))) }
+                                            span class="shrink-0 text-[14px] text-ink-muted" { (fmt::date(Some(d))) }
                                         }
                                     }
-                                    span class="mt-1 block text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
+                                    span class="mt-1 block text-[14px] font-bold text-ink-muted" {
                                         (kind_label(e.kind.as_deref()))
                                     }
                                 }

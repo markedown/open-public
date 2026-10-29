@@ -27,12 +27,12 @@ pub async fn page(
             @if let Some(ref notice) = state.site_notice {
                 div class="mb-8 flex items-start gap-3 border border-ink bg-paper-raised px-4 py-3" {
                     span class="op-block mt-0.5 h-3.5 w-3.5 shrink-0" {}
-                    p class="font-mono text-[13px] leading-relaxed text-ink" { (notice.as_ref()) }
+                    p class="text-[15px] leading-relaxed text-ink" { (notice.as_ref()) }
                 }
             }
 
             header class="max-w-3xl" {
-                p class="font-mono text-[12px] font-semibold uppercase tracking-widest text-ink-faint" {
+                p class="text-[15px] font-semibold text-ink-faint" {
                     (i18n::t("Open political data."))
                 }
                 h1 class="mt-3 font-display text-[2.6rem] font-extrabold leading-[0.98] tracking-tight text-ink sm:text-6xl" {
@@ -45,7 +45,7 @@ pub async fn page(
 
             @if !chambers.is_empty() {
                 div class="mb-4 mt-12 flex items-baseline justify-between border-b border-hairline-strong pb-2" {
-                    h2 class="font-mono text-[12px] font-semibold uppercase tracking-widest text-ink-muted" {
+                    h2 class="text-[15px] font-semibold text-ink-muted" {
                         (i18n::t("Countries"))
                     }
                 }
@@ -62,13 +62,13 @@ pub async fn page(
                                         (c.name)
                                     }
                                     div class="mt-2 flex items-baseline justify-between gap-2" {
-                                        span class="min-w-0 truncate font-mono text-[11px] text-ink-faint" {
+                                        span class="min-w-0 truncate text-[14px] text-ink-faint" {
                                             @if let Some(ref g) = c.government_type {
                                                 (i18n::t_dyn(g))
                                             }
                                         }
                                         @if *total > 0 {
-                                            span class="shrink-0 font-mono text-[13px] font-semibold text-ink" {
+                                            span class="shrink-0 text-[15px] font-semibold text-ink" {
                                                 (total) " " span class="text-ink-faint" { (i18n::t("seats")) }
                                             }
                                         }
@@ -82,16 +82,16 @@ pub async fn page(
 
             a href="/search"
               class="group mt-8 flex items-center gap-4 border border-hairline bg-paper-raised px-4 py-4 transition-colors hover:border-ink" {
-                span class="grid h-8 w-8 shrink-0 place-items-center border border-hairline font-mono text-[14px] text-ink-muted" { "⌕" }
+                span class="grid h-8 w-8 shrink-0 place-items-center border border-hairline text-[14px] text-ink-muted" { "⌕" }
                 div class="min-w-0 flex-1" {
                     div class="font-display text-lg font-bold tracking-tight text-ink underline-offset-4 group-hover:underline" {
                         (i18n::t("Search"))
                     }
-                    div class="mt-0.5 font-mono text-[11px] text-ink-faint" {
+                    div class="mt-0.5 text-[14px] text-ink-faint" {
                         (i18n::t("Full-text search across people and parties."))
                     }
                 }
-                span class="shrink-0 font-mono text-ink-faint transition-colors group-hover:text-ink" { "→" }
+                span class="shrink-0 text-ink-faint transition-colors group-hover:text-ink" { "→" }
             }
         }
     };

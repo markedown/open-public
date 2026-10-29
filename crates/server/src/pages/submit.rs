@@ -47,9 +47,9 @@ fn option_row_markup() -> Markup {
     html! {
         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
             input type="text" name="option" placeholder=(i18n::t("Option"))
-                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
             input type="file" name="option_image" accept="image/png,image/jpeg,image/webp"
-                class="block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
+                class="block w-full text-[16px] text-ink-muted file:mr-3 file:rounded-[8px] file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[15px] file:font-semibold file:text-ink";
         }
     }
 }
@@ -78,28 +78,28 @@ fn submit_page(
             h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Propose a poll"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Your poll is checked automatically and then by an editor before it appears. Keep it neutral and on topic."))
             }
 
             @if let Some(err) = error {
-                p class="mt-4 rounded-lg border-l-2 border-accent bg-accent-tint px-3 py-2 text-sm text-ink" { (err) }
+                p class="mt-4 rounded-[10px] border-l-2 border-accent bg-accent-tint px-3 py-2 text-[16px] text-ink" { (err) }
             }
 
             form class="mt-6 space-y-4" method="post"
                  action={"/" (country_slug) "/polls/submit"} enctype="multipart/form-data" {
-                p class="text-xs font-bold uppercase tracking-widest text-ink-muted" { (country_name) }
+                p class="text-[14px] font-bold text-ink-muted" { (country_name) }
 
                 div {
-                    label class="block text-sm font-medium text-ink" for="question" { (i18n::t("Question")) }
+                    label class="block text-[16px] font-medium text-ink" for="question" { (i18n::t("Question")) }
                     input type="text" name="question" id="question" required value=(question)
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                 }
 
                 div {
-                    label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
+                    label class="block text-[16px] font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         @for (value, label) in KINDS {
                             option value=(value) selected[value == kind] { (i18n::t(label)) }
                         }
@@ -107,18 +107,18 @@ fn submit_page(
                 }
 
                 div {
-                    label class="block text-sm font-medium text-ink" for="question_image" {
+                    label class="block text-[16px] font-medium text-ink" for="question_image" {
                         (i18n::t("Question image (optional)"))
                     }
                     input type="file" name="question_image" id="question_image"
                         accept="image/png,image/jpeg,image/webp"
-                        class="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
-                    p class="mt-1 text-xs text-ink-muted" {
+                        class="mt-1 block w-full text-[16px] text-ink-muted file:mr-3 file:rounded-[8px] file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[15px] file:font-semibold file:text-ink";
+                    p class="mt-1 text-[14px] text-ink-muted" {
                         (i18n::t("PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."))
                     }
                 }
 
-                p class="pt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                p class="pt-2 text-[14px] font-bold text-ink-muted" {
                     (i18n::t("Options"))
                 }
                 div id="poll-options" class="space-y-2" {
@@ -126,15 +126,15 @@ fn submit_page(
                         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
                             input type="text" name="option" placeholder=(i18n::t("Option"))
                                 value=(option_labels.get(i).map(String::as_str).unwrap_or(""))
-                                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                             input type="file" name="option_image" accept="image/png,image/jpeg,image/webp"
-                                class="block w-full text-sm text-ink-muted file:mr-3 file:rounded-md file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:uppercase file:tracking-wide file:text-ink";
+                                class="block w-full text-[16px] text-ink-muted file:mr-3 file:rounded-[8px] file:border file:border-hairline file:bg-paper-sunken file:px-3 file:py-1.5 file:text-[15px] file:font-semibold file:text-ink";
                         }
                     }
                 }
                 button type="button"
                     hx-get={"/" (country_slug) "/polls/submit/row"} hx-target="#poll-options" hx-swap="beforeend"
-                    class="text-[11px] font-bold uppercase tracking-wide text-link transition-colors hover:underline" {
+                    class="text-[14px] font-bold text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add option"))
                 }
                 (ui::captcha::widget())
@@ -345,11 +345,11 @@ pub async fn mine(
             h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("My submissions"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Every poll you propose is listed here with its current state."))
             }
             @if subs.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("You have not proposed any polls yet."))
                 }
             } @else {
@@ -357,19 +357,19 @@ pub async fn mine(
                     @for s in &subs {
                         li class="op-card p-4" {
                             div class="flex items-baseline justify-between gap-3" {
-                                span class="text-sm font-medium text-ink" { (s.question) }
+                                span class="text-[16px] font-medium text-ink" { (s.question) }
                                 (status_badge(&s.status))
                             }
-                            div class="mt-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted" {
+                            div class="mt-1 text-[14px] text-ink-muted" {
                                 (s.country_name)
                             }
                             @if let Some(ref sha) = s.question_sha {
                                 img src={"/media/" (sha)} alt="" loading="lazy"
-                                    class="mt-2 max-h-32 rounded-lg border border-hairline object-contain";
+                                    class="mt-2 max-h-32 rounded-[10px] border border-hairline object-contain";
                             }
                             @if matches!(s.status.as_str(), "approved") {
                                 @if let Some(pid) = s.published_poll_id {
-                                    a href={"/" (s.country_slug) "/polls"} class="mt-2 inline-block text-xs text-link hover:underline" {
+                                    a href={"/" (s.country_slug) "/polls"} class="mt-2 inline-block text-[14px] text-link hover:underline" {
                                         (i18n::t("View published poll"))
                                     }
                                     span class="hidden" { (pid) }
@@ -377,11 +377,11 @@ pub async fn mine(
                             }
                             @if let Some(ref reason) = s.ai_reason {
                                 @if matches!(s.status.as_str(), "ai_rejected") {
-                                    p class="mt-2 text-xs text-ink-muted" { (i18n::t("Reason")) ": " (reason) }
+                                    p class="mt-2 text-[14px] text-ink-muted" { (i18n::t("Reason")) ": " (reason) }
                                 }
                             }
                             @if let Some(ref note) = s.admin_note {
-                                p class="mt-2 text-xs text-ink-muted" { (i18n::t("Reason")) ": " (note) }
+                                p class="mt-2 text-[14px] text-ink-muted" { (i18n::t("Reason")) ": " (note) }
                             }
                         }
                     }
@@ -405,7 +405,7 @@ fn status_badge(status: &str) -> Markup {
         _ => i18n::t("Not accepted"),
     };
     html! {
-        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+        span class="shrink-0 rounded-full border border-hairline px-2 py-0.5 text-[15px] font-bold text-ink-muted" {
             (label)
         }
     }

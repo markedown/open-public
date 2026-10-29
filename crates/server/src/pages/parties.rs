@@ -45,12 +45,12 @@ pub async fn list(
             (ui::search::bar(&list_url, "#parties-results", &query))
 
             div id="parties-results" {
-                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (total) }
+                p class="mb-4 text-[14px] font-bold text-ink-muted" {
+                    span class="" { (total) }
                     " " (i18n::t("parties listed"))
                 }
             @if parties.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No parties found.")) }
+                p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No parties found.")) }
             } @else {
                 ul class="op-card divide-y divide-hairline-light px-4" {
                     @for p in &parties {
@@ -62,12 +62,12 @@ pub async fn list(
                                         (ui::badge::party_chip(sn, p.color.as_deref()))
                                     }
                                 }
-                                span class="min-w-0 truncate text-sm font-medium text-ink transition-colors group-hover:text-link" {
+                                span class="min-w-0 truncate text-[16px] font-medium text-ink transition-colors group-hover:text-link" {
                                     (p.name)
                                 }
                                 @let n = members.get(&p.id).copied().unwrap_or(0);
                                 @if n > 0 {
-                                    span class="ml-auto shrink-0 font-mono text-xs text-ink-muted" {
+                                    span class="ml-auto shrink-0 text-[14px] text-ink-muted" {
                                         (n) " " (i18n::t("members"))
                                     }
                                 }

@@ -59,22 +59,22 @@ pub async fn list(
 
             // The search box swaps this container in place as the query changes.
             div id="people-results" {
-                p class="mb-4 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                    span class="font-mono" { (total) }
+                p class="mb-4 text-[14px] font-bold text-ink-muted" {
+                    span class="" { (total) }
                     " " (i18n::t("people listed"))
                 }
                 @if people.is_empty() {
-                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No people found.")) }
+                    p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No people found.")) }
                 } @else {
                     ul class="op-card divide-y divide-hairline-light px-4" {
                         @for p in &people {
                             li {
                                 a href={"/" (country.slug) "/people/" (p.slug)}
                                   class="group flex items-center gap-3 py-3" {
-                                    span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline bg-paper-sunken font-mono text-[10px] font-semibold text-ink-muted" {
+                                    span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline bg-paper-sunken text-[15px] font-semibold text-ink-muted" {
                                         (ui::initials(&p.full_name))
                                     }
-                                    span class="grow truncate text-sm font-medium text-ink transition-colors group-hover:text-link" {
+                                    span class="grow truncate text-[16px] font-medium text-ink transition-colors group-hover:text-link" {
                                         (p.full_name)
                                     }
                                     @if let Some(pp) = party_of.get(&p.id) {
@@ -83,7 +83,7 @@ pub async fn list(
                                         }
                                     }
                                     @if let Some(ref place) = p.birth_place {
-                                        span class="hidden shrink-0 text-xs text-ink-muted sm:inline" { (place) }
+                                        span class="hidden shrink-0 text-[14px] text-ink-muted sm:inline" { (place) }
                                     }
                                 }
                             }
@@ -131,13 +131,13 @@ fn pagination(page: i64, total: i64, country_slug: &str, query: &str) -> Markup 
     let box_active = "rounded-lg border border-hairline px-4 py-2 text-ink-muted transition-colors hover:border-accent hover:text-link";
     let box_disabled = "rounded-lg border border-hairline px-4 py-2 text-ink-faint cursor-default";
     html! {
-        nav class="mt-8 flex items-center justify-center gap-4 text-sm" {
+        nav class="mt-8 flex items-center justify-center gap-4 text-[16px]" {
             @if page > 1 {
                 a href={"/" (country_slug) "/people?page=" (page - 1) (q)} class=(box_active) { (i18n::t("Previous")) }
             } @else {
                 span class=(box_disabled) { (i18n::t("Previous")) }
             }
-            span class="font-mono text-ink-muted" {
+            span class="text-ink-muted" {
                 (page) " / " (total_pages)
             }
             @if page < total_pages {

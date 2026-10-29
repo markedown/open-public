@@ -47,7 +47,7 @@ pub async fn index(
             h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Admin panel"))
             }
-            p class="mt-4 max-w-prose text-sm text-ink-muted" {
+            p class="mt-4 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Curated content is editable and always sourced. Cast votes are immutable and are never editable here."))
             }
 
@@ -61,9 +61,9 @@ pub async fn index(
                     (i18n::t("Review data conflicts"), "/admin/conflicts", open_conflicts),
                 ] {
                     a href=(href)
-                      class="flex items-center justify-between gap-3 rounded-lg border border-hairline px-5 py-3 transition-colors hover:border-accent" {
-                        span class="text-sm font-medium text-ink" { (label) }
-                        span class={"font-mono text-xs font-bold "
+                      class="flex items-center justify-between gap-3 rounded-[10px] border border-hairline px-5 py-3 transition-colors hover:border-accent" {
+                        span class="text-[16px] font-medium text-ink" { (label) }
+                        span class={"text-[14px] font-bold "
                             (if count > 0 { "text-link" } else { "text-ink-muted" })} {
                             (count)
                         }
@@ -79,37 +79,37 @@ pub async fn index(
                     }
                     div class="mt-4 flex flex-wrap gap-2" {
                         a href={"/" (c.slug) "/people"}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
+                          class="rounded-[10px] border border-hairline px-3 py-1.5 text-[14px] font-bold text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("People"))
                         }
                         a href={"/" (c.slug) "/parties"}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
+                          class="rounded-[10px] border border-hairline px-3 py-1.5 text-[14px] font-bold text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("Parties"))
                         }
                         a href={"/admin/poll/new?country=" (c.slug)}
-                          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                          class="rounded-[10px] bg-accent px-3 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                             (i18n::t("Add poll"))
                         }
                         a href={"/admin/outlet/new?country=" (c.slug)}
-                          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                          class="rounded-[10px] bg-accent px-3 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                             (i18n::t("Add outlet"))
                         }
                         a href={"/admin/compass?country=" (c.slug)}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
+                          class="rounded-[10px] border border-hairline px-3 py-1.5 text-[14px] font-bold text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("Compass positions"))
                         }
                     }
                     @if !outlets.is_empty() {
                         div class="mt-4" {
-                            h3 class="mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-muted" {
+                            h3 class="mb-2 text-[14px] font-bold text-ink-muted" {
                                 (i18n::t("Outlets"))
                             }
                             ul class="divide-y divide-hairline-light" {
                                 @for o in outlets {
                                     li class="flex items-center justify-between gap-3 py-2" {
-                                        span class="text-sm text-ink" { (o.name) }
+                                        span class="text-[16px] text-ink" { (o.name) }
                                         a href={"/admin/outlet/" (o.slug) "/edit?country=" (c.slug)}
-                                          class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
+                                          class="text-[14px] font-bold text-link hover:underline" {
                                             (i18n::t("Edit"))
                                         }
                                     }
@@ -120,7 +120,7 @@ pub async fn index(
                 }
             }
 
-            p class="mt-8 text-xs text-ink-muted" {
+            p class="mt-8 text-[14px] text-ink-muted" {
                 (i18n::t("News and statements are added from a person or party page."))
             }
         }
@@ -146,18 +146,18 @@ pub async fn summaries(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review summaries"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Each draft summary stays unpublished until you review it. Edit the text if needed, then publish it, or discard the draft."))
             }
 
             @if drafts.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No drafts to review."))
                 }
             } @else {
@@ -165,26 +165,26 @@ pub async fn summaries(
                     @for d in &drafts {
                         li class="border border-hairline p-4" {
                             a href=(d.url) rel="noopener" target="_blank"
-                              class="block text-sm font-medium text-ink transition-colors hover:text-link" {
+                              class="block text-[16px] font-medium text-ink transition-colors hover:text-link" {
                                 (d.headline)
                             }
                             @if let Some(ref o) = d.outlet {
-                                span class="font-mono text-xs text-ink-muted" { (o) }
+                                span class="text-[14px] text-ink-muted" { (o) }
                             }
                             form method="post" action={"/admin/summaries/" (d.id) "/publish"}
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="summary" rows="3"
-                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
+                                  class="w-full rounded-[10px] border border-hairline bg-paper p-2 text-[16px] text-ink" {
                                     (d.summary_draft)
                                 }
                                 div class="flex gap-2" {
                                     button type="submit"
-                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                                      class="rounded-[10px] bg-accent px-4 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Publish"))
                                     }
                                     button type="submit" formaction={"/admin/summaries/" (d.id) "/discard"}
                                       formnovalidate
-                                      class="border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                      class="border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                                         (i18n::t("Discard"))
                                     }
                                 }
@@ -252,17 +252,17 @@ pub async fn bios(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 flex flex-wrap items-baseline gap-3 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review biographies"))
                 // How many are waiting, so a long queue shows its own size.
                 @if !drafts.is_empty() {
-                    span class="font-mono text-base font-medium text-ink-muted" { (drafts.len()) }
+                    span class="text-base font-medium text-ink-muted" { (drafts.len()) }
                 }
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."))
             }
 
@@ -273,11 +273,11 @@ pub async fn bios(
                 (person_bio_panel(person_pending, &person_sample))
             }
 
-            h2 class="mt-10 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+            h2 class="mt-10 text-[15px] font-bold text-ink-muted" {
                 (i18n::t("Parties"))
             }
             @if drafts.is_empty() {
-                p class="mt-4 py-6 text-center text-sm text-ink-muted" {
+                p class="mt-4 py-6 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No drafts to review."))
                 }
             } @else {
@@ -303,17 +303,17 @@ pub async fn bios(
 fn person_bio_panel(pending: i64, sample: &[db::people::PersonDraft]) -> Markup {
     html! {
         section class="mt-8 op-card p-5" {
-            h2 class="flex flex-wrap items-baseline gap-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+            h2 class="flex flex-wrap items-baseline gap-2 text-[15px] font-bold text-ink-muted" {
                 (i18n::t("People"))
-                span class="font-mono text-base font-medium text-ink" { (pending) }
+                span class="text-base font-medium text-ink" { (pending) }
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."))
             }
             ul class="mt-3 space-y-2" {
                 @for d in sample {
-                    li class="text-xs leading-relaxed text-ink-muted" {
-                        span class="font-mono text-[10px] uppercase tracking-wide text-ink-faint" { (d.country_slug) " " }
+                    li class="text-[14px] leading-relaxed text-ink-muted" {
+                        span class="text-[15px] text-ink-faint" { (d.country_slug) " " }
                         (d.draft)
                     }
                 }
@@ -321,13 +321,13 @@ fn person_bio_panel(pending: i64, sample: &[db::people::PersonDraft]) -> Markup 
             div class="mt-4 flex gap-2" {
                 form method="post" action="/admin/bios/people/publish-all" {
                     button type="submit"
-                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                      class="rounded-[10px] bg-accent px-4 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                         (i18n::t("Publish all")) " (" (pending) ")"
                     }
                 }
                 form method="post" action="/admin/bios/people/discard-all" {
                     button type="submit"
-                      class="rounded-lg border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                      class="rounded-[10px] border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                         (i18n::t("Discard all"))
                     }
                 }
@@ -369,24 +369,24 @@ fn bio_card(d: &db::parties::SummaryDraft) -> Markup {
                             div class="flex items-baseline justify-between gap-3" {
                                 span class="flex flex-wrap items-baseline gap-2" {
                                     a href={"/" (d.country_slug) "/parties/" (d.slug)}
-                                      class="text-sm font-semibold text-ink transition-colors hover:text-link" {
+                                      class="text-[16px] font-semibold text-ink transition-colors hover:text-link" {
                                         (d.name)
                                     }
                                     // Which country, since a queue spans several
                                     // and a party name does not always say.
-                                    span class="font-mono text-[10px] uppercase tracking-wide text-ink-faint" {
+                                    span class="text-[15px] text-ink-faint" {
                                         (d.country_slug)
                                     }
                                 }
                                 @if let Some(ref qid) = d.wikidata_id {
                                     a href={"https://www.wikidata.org/wiki/" (qid)} target="_blank" rel="noopener noreferrer"
-                                      class="shrink-0 font-mono text-[10px] uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
+                                      class="shrink-0 text-[15px] text-ink-muted transition-colors hover:text-link" {
                                         "Wikidata ↗"
                                     }
                                 }
                             }
                             @if let Some(ref cur) = d.current {
-                                p class="mt-1 text-xs text-ink-muted" {
+                                p class="mt-1 text-[14px] text-ink-muted" {
                                     (i18n::t("Replaces")) ": " (cur)
                                 }
                             }
@@ -395,19 +395,19 @@ fn bio_card(d: &db::parties::SummaryDraft) -> Markup {
                                  hx-target=(target) hx-swap="outerHTML"
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="summary" rows="4"
-                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
+                                  class="w-full rounded-[10px] border border-hairline bg-paper p-2 text-[16px] text-ink" {
                                     (d.draft)
                                 }
                                 div class="flex gap-2" {
                                     button type="submit"
-                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                                      class="rounded-[10px] bg-accent px-4 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Approve"))
                                     }
                                     button type="submit" formaction={"/admin/bios/" (d.id) "/discard"}
                                       formnovalidate
                                       hx-post={"/admin/bios/" (d.id) "/discard"}
                                       hx-target=(target) hx-swap="outerHTML"
-                                      class="rounded-lg border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                      class="rounded-[10px] border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                                         (i18n::t("Discard"))
                                     }
                                 }
@@ -452,7 +452,7 @@ fn decided(headers: &HeaderMap, published: bool) -> Response {
         i18n::t("Discarded")
     };
     html! {
-        li class="op-card px-4 py-3 text-xs text-ink-muted" { (label) }
+        li class="op-card px-4 py-3 text-[14px] text-ink-muted" { (label) }
     }
     .into_response()
 }
@@ -487,47 +487,47 @@ pub async fn translations(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review translations"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Each draft translation stays hidden until you review it. Compare it with the original, edit the text if needed, then publish it, or discard the draft."))
             }
 
             @if rows.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No drafts to review."))
                 }
             } @else {
                 ul class="mt-6 space-y-4" {
                     @for (d, original) in &rows {
                         li class="border border-hairline p-4" {
-                            div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted" {
+                            div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-ink-muted" {
                                 span class="font-bold text-ink" { (d.entity_type) " · " (d.field) }
                                 span { (d.lang) }
                                 @if let Some(ref src) = d.source_lang { span { "← " (src) } }
                                 span { (d.origin) }
                             }
                             @if let Some(orig) = original {
-                                p class="mt-2 border-l-2 border-hairline pl-3 text-sm text-ink-muted" { (orig) }
+                                p class="mt-2 border-l-2 border-hairline pl-3 text-[16px] text-ink-muted" { (orig) }
                             }
                             form method="post" action={"/admin/translations/" (d.id) "/publish"}
                                  class="mt-3 flex flex-col gap-2" {
                                 textarea name="text" rows="3"
-                                  class="w-full rounded-lg border border-hairline bg-paper p-2 text-sm text-ink" {
+                                  class="w-full rounded-[10px] border border-hairline bg-paper p-2 text-[16px] text-ink" {
                                     (d.text)
                                 }
                                 div class="flex gap-2" {
                                     button type="submit"
-                                      class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                                      class="rounded-[10px] bg-accent px-4 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Publish"))
                                     }
                                     button type="submit" formaction={"/admin/translations/" (d.id) "/discard"}
                                       formnovalidate
-                                      class="border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                      class="border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                                         (i18n::t("Discard"))
                                     }
                                 }
@@ -594,18 +594,18 @@ pub async fn conflicts(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Data conflicts"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("A source disagreed with a value we already hold. Nothing was overwritten. Correct the record through the normal editing flow, then mark the conflict resolved."))
             }
 
             @if items.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No open conflicts."))
                 }
             } @else {
@@ -613,14 +613,14 @@ pub async fn conflicts(
                     @for c in &items {
                         li class="border border-hairline p-4" {
                             div class="flex flex-wrap items-baseline justify-between gap-2" {
-                                span class="text-sm font-medium text-ink" {
+                                span class="text-[16px] font-medium text-ink" {
                                     (c.entity_label.as_deref().unwrap_or(&c.entity_type))
                                     " · "
-                                    span class="font-mono text-xs text-ink-muted" { (c.field) }
+                                    span class="text-[14px] text-ink-muted" { (c.field) }
                                 }
                                 form method="post" action={"/admin/conflicts/" (c.id) "/resolve"} {
                                     button type="submit"
-                                      class="rounded-lg border border-hairline px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
+                                      class="rounded-[10px] border border-hairline px-3 py-1 text-[14px] font-bold text-ink transition-colors hover:border-accent hover:text-link" {
                                         (i18n::t("Mark resolved"))
                                     }
                                 }
@@ -655,11 +655,11 @@ pub async fn conflicts(
 fn conflict_side(label: &str, value: Option<&str>, source: Option<&str>) -> Markup {
     html! {
         div class="border border-hairline-light p-3" {
-            div class="text-[10px] font-bold uppercase tracking-widest text-ink-muted" { (label) }
-            div class="mt-1 text-sm text-ink" { (value.unwrap_or("-")) }
+            div class="text-[15px] font-bold text-ink-muted" { (label) }
+            div class="mt-1 text-[16px] text-ink" { (value.unwrap_or("-")) }
             @if let Some(url) = source {
                 a href=(url) rel="noopener" target="_blank"
-                  class="mt-1 block truncate font-mono text-[11px] text-link hover:underline" { (url) }
+                  class="mt-1 block truncate text-[14px] text-link hover:underline" { (url) }
             }
         }
     }
@@ -697,13 +697,13 @@ fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) ->
     let add = |what: &str| format!("/admin/{what}/new?country={country}&{kind}={slug}");
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href=(back) class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (name)
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Manage")) " · " (name)
             }
-            p class="mt-2 text-sm text-ink-muted" {
+            p class="mt-2 text-[16px] text-ink-muted" {
                 (i18n::t("Add sourced content for this entity."))
             }
             div class="mt-6 flex flex-wrap gap-2" {
@@ -713,7 +713,7 @@ fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) ->
                     (i18n::t("Add poll"), "poll"),
                 ] {
                     a href=(add(what))
-                      class="rounded-lg bg-accent px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                      class="rounded-[10px] bg-accent px-4 py-2 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                         (label)
                     }
                 }
@@ -774,13 +774,13 @@ fn person_manage_page(
     let base = format!("/admin/person/{slug}");
     let del_btn = html! {
         button type="submit"
-          class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
+          class="text-[15px] font-bold text-ink-muted transition-colors hover:text-link" {
             (i18n::t("Delete"))
         }
     };
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href=(back) class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (name)
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -793,21 +793,21 @@ fn person_manage_page(
                     (i18n::t("Add poll"), "poll"),
                 ] {
                     a href={"/admin/" (what) "/new?country=" (country) "&person=" (slug)}
-                      class="rounded-lg bg-accent px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                      class="rounded-[10px] bg-accent px-4 py-2 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                         (label)
                     }
                 }
             }
 
             // Education.
-            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[15px] font-bold text-ink-muted" {
                 (i18n::t("Education"))
             }
             @if !education.is_empty() {
                 ul class="mb-4 divide-y divide-hairline-light" {
                     @for e in education {
                         li class="flex items-center justify-between gap-3 py-2" {
-                            span class="text-sm text-ink" {
+                            span class="text-[16px] text-ink" {
                                 (e.institution)
                                 @if let Some(ref d) = e.degree { span class="text-ink-muted" { " · " (d) } }
                             }
@@ -829,15 +829,15 @@ fn person_manage_page(
             }
 
             // Attributes.
-            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+            h2 class="mt-10 mb-3 border-b border-hairline pb-2 text-[15px] font-bold text-ink-muted" {
                 (i18n::t("Attributes"))
             }
             @if !attributes.is_empty() {
                 ul class="mb-4 divide-y divide-hairline-light" {
                     @for a in attributes {
                         li class="flex items-center justify-between gap-3 py-2" {
-                            span class="text-sm text-ink" {
-                                span class="font-mono text-xs uppercase text-ink-muted" { (a.kind) } " · " (a.value)
+                            span class="text-[16px] text-ink" {
+                                span class="text-[14px] text-ink-muted" { (a.kind) } " · " (a.value)
                             }
                             form method="post" action={(base) "/attribute/" (a.id) "/delete?country=" (country)} {
                                 (del_btn)
@@ -848,9 +848,9 @@ fn person_manage_page(
             }
             form class="space-y-3" method="post" action={(base) "/attribute?country=" (country)} {
                 div {
-                    label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Kind")) }
+                    label class="block text-[16px] font-medium text-ink" for="kind" { (i18n::t("Kind")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         @for k in db::people::ATTRIBUTE_KINDS {
                             option value=(k) { (k) }
                         }
@@ -1008,7 +1008,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
     };
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" { (heading) }
@@ -1020,9 +1020,9 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
                 (prefilled("logo_url", i18n::t("Logo URL"), "url", false, o.map(|x| text(x.logo_url.as_deref())).as_deref()))
                 (prefilled("logo_license", i18n::t("Logo license"), "text", false, o.map(|x| text(x.logo_license.as_deref())).as_deref()))
                 div {
-                    label class="block text-sm font-medium text-ink" for="leaning" { (i18n::t("Political leaning")) }
+                    label class="block text-[16px] font-medium text-ink" for="leaning" { (i18n::t("Political leaning")) }
                     select name="leaning" id="leaning"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         option value="" { (i18n::t("Unrated")) }
                         @for l in db::outlets::LEANINGS {
                             option value=(l) selected[o.and_then(|x| x.leaning.as_deref()) == Some(l)] {
@@ -1032,9 +1032,9 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
                     }
                 }
                 div {
-                    label class="block text-sm font-medium text-ink" for="summary" { (i18n::t("Summary")) }
+                    label class="block text-[16px] font-medium text-ink" for="summary" { (i18n::t("Summary")) }
                     textarea name="summary" id="summary" rows="3"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         (o.map(|x| text(x.summary.as_deref())).unwrap_or_default())
                     }
                 }
@@ -1049,9 +1049,9 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
 fn prefilled(name: &str, label: &str, ty: &str, req: bool, value: Option<&str>) -> Markup {
     html! {
         div {
-            label class="block text-sm font-medium text-ink" for=(name) { (label) }
+            label class="block text-[16px] font-medium text-ink" for=(name) { (label) }
             input type=(ty) name=(name) id=(name) required[req] value=(value.unwrap_or(""))
-                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -1152,13 +1152,13 @@ pub async fn news_edit(
     let linked = |title: &str, kind: &str, entities: &[db::news::LinkedEntity]| -> Markup {
         html! {
             div {
-                div class="text-[10px] font-bold uppercase tracking-widest text-ink-muted" { (title) }
+                div class="text-[15px] font-bold text-ink-muted" { (title) }
                 @if entities.is_empty() {
-                    p class="mt-1 text-sm text-ink-muted" { "-" }
+                    p class="mt-1 text-[16px] text-ink-muted" { "-" }
                 } @else {
                     ul class="mt-1 flex flex-wrap gap-2" {
                         @for e in entities {
-                            li class="inline-flex items-center gap-1.5 border border-hairline px-2 py-1 text-xs text-ink" {
+                            li class="inline-flex items-center gap-1.5 border border-hairline px-2 py-1 text-[14px] text-ink" {
                                 (e.name)
                                 form method="post" action={"/admin/news/" (id) "/unlink"} {
                                     input type="hidden" name="kind" value=(kind);
@@ -1175,22 +1175,22 @@ pub async fn news_edit(
 
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Edit news"))
             }
             a href=(item.url) rel="noopener" target="_blank"
-              class="mt-1 block truncate font-mono text-[11px] text-link hover:underline" { (item.url) }
+              class="mt-1 block truncate text-[14px] text-link hover:underline" { (item.url) }
 
             form class="mt-6 space-y-4" method="post" action={"/admin/news/" (id)} {
                 (prefilled("headline", i18n::t("Headline"), "text", true, Some(item.headline.as_str())))
                 (prefilled("author", i18n::t("Author"), "text", false, item.author.as_deref()))
                 div {
-                    label class="block text-sm font-medium text-ink" for="our_summary" { (i18n::t("Summary")) }
+                    label class="block text-[16px] font-medium text-ink" for="our_summary" { (i18n::t("Summary")) }
                     textarea name="our_summary" id="our_summary" rows="3"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         (item.our_summary.clone().unwrap_or_default())
                     }
                 }
@@ -1198,7 +1198,7 @@ pub async fn news_edit(
             }
 
             section class="mt-8 space-y-4" {
-                h2 class="border-b border-hairline pb-2 text-[13px] font-bold uppercase tracking-wider text-ink-muted" {
+                h2 class="border-b border-hairline pb-2 text-[15px] font-bold text-ink-muted" {
                     (i18n::t("Relations"))
                 }
                 (linked(i18n::t("People"), "person", &item.people))
@@ -1207,12 +1207,12 @@ pub async fn news_edit(
                 // Search-as-you-type (HTMX) with a plain-GET fallback: without
                 // JavaScript the same form submits to the search page.
                 form method="get" action={"/admin/news/" (id) "/search"} class="mt-4" {
-                    label class="block text-sm font-medium text-ink" for="q" { (i18n::t("Attach a person or party")) }
+                    label class="block text-[16px] font-medium text-ink" for="q" { (i18n::t("Attach a person or party")) }
                     input type="search" name="q" id="q" autocomplete="off"
                         hx-get={"/admin/news/" (id) "/search"} hx-target="#search-results"
                         hx-trigger="keyup changed delay:300ms, search"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
-                    noscript { button type="submit" class="mt-2 text-xs font-bold uppercase tracking-wide text-link" { (i18n::t("Search")) } }
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                    noscript { button type="submit" class="mt-2 text-[14px] font-bold text-link" { (i18n::t("Search")) } }
                 }
                 div id="search-results" {}
             }
@@ -1259,9 +1259,9 @@ pub async fn news_relation_search(
                         input type="hidden" name="kind" value=(kind);
                         input type="hidden" name="slug" value=(h.slug);
                         button type="submit"
-                          class="flex w-full items-center justify-between gap-2 border border-hairline px-3 py-1.5 text-left text-sm text-ink transition-colors hover:border-accent" {
+                          class="flex w-full items-center justify-between gap-2 border border-hairline px-3 py-1.5 text-left text-[16px] text-ink transition-colors hover:border-accent" {
                             span { "+ " (h.name) }
-                            span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" { (kind_label) }
+                            span class="text-[15px] text-ink-muted" { (kind_label) }
                         }
                     }
                 }
@@ -1274,7 +1274,7 @@ pub async fn news_relation_search(
     } else {
         Ok(ui::layout::document(Some(i18n::t("Search")), true, true, html! {
             section class="mx-auto max-w-xl" {
-                a href={"/admin/news/" (id) "/edit"} class="text-xs text-ink-muted hover:text-link" {
+                a href={"/admin/news/" (id) "/edit"} class="text-[14px] text-ink-muted hover:text-link" {
                     "← " (i18n::t("Edit news"))
                 }
                 h1 class="mt-2 text-2xl font-bold text-ink" { (i18n::t("Attach a person or party")) }
@@ -1380,11 +1380,11 @@ pub async fn news_form(
                 (field("outlet", i18n::t("Outlet"), "text", false))
                 (field("published_at", i18n::t("Date"), "date", false))
                 div {
-                    label class="block text-sm font-medium text-ink" for="our_summary" {
+                    label class="block text-[16px] font-medium text-ink" for="our_summary" {
                         (i18n::t("Summary"))
                     }
                     textarea name="our_summary" id="our_summary" rows="3"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
                 }
                 (ui::button::primary(i18n::t("Save")))
             }
@@ -1401,9 +1401,9 @@ pub async fn news_form(
 fn field(name: &str, label: &str, ty: &str, req: bool) -> Markup {
     html! {
         div {
-            label class="block text-sm font-medium text-ink" for=(name) { (label) }
+            label class="block text-[16px] font-medium text-ink" for=(name) { (label) }
             input type=(ty) name=(name) id=(name) required[req]
-                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -1483,16 +1483,16 @@ pub async fn statement_form(
                 @if let Some(ref p) = q.party { input type="hidden" name="party" value=(p); }
 
                 div {
-                    label class="block text-sm font-medium text-ink" for="text" {
+                    label class="block text-[16px] font-medium text-ink" for="text" {
                         (i18n::t("Statement"))
                     }
                     textarea name="text" id="text" rows="3" required
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {}
                 }
                 (field("url", i18n::t("Source URL"), "url", true))
                 (field("outlet", i18n::t("Outlet"), "text", false))
                 (field("stated_at", i18n::t("Date"), "date", false))
-                label class="flex items-center gap-2 pt-1 text-sm text-ink" {
+                label class="flex items-center gap-2 pt-1 text-[16px] text-ink" {
                     input type="checkbox" name="is_paraphrase"
                         class="h-4 w-4 rounded border border-hairline accent-accent";
                     (i18n::t("Paraphrase in our own words"))
@@ -1583,9 +1583,9 @@ pub async fn poll_form(
                 (field("question", i18n::t("Question"), "text", true))
 
                 div {
-                    label class="block text-sm font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
+                    label class="block text-[16px] font-medium text-ink" for="kind" { (i18n::t("Poll type")) }
                     select name="kind" id="kind"
-                        class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
+                        class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" {
                         option value="single" { (i18n::t("Single choice")) }
                         option value="multi" { (i18n::t("Multiple choice")) }
                         option value="yesno" { (i18n::t("Yes / No")) }
@@ -1596,7 +1596,7 @@ pub async fn poll_form(
                 (field("media_url", i18n::t("Question image URL"), "url", false))
                 (field("media_license", i18n::t("Image license"), "text", false))
 
-                p class="pt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                p class="pt-2 text-[14px] font-bold text-ink-muted" {
                     (i18n::t("Options"))
                 }
                 // Repeated option rows, so a poll can have any number of options.
@@ -1607,7 +1607,7 @@ pub async fn poll_form(
                 }
                 button type="button"
                     hx-get="/admin/poll/option-row" hx-target="#poll-options" hx-swap="beforeend"
-                    class="text-[11px] font-bold uppercase tracking-wide text-link transition-colors hover:underline" {
+                    class="text-[14px] font-bold text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add option"))
                 }
                 (ui::button::primary(i18n::t("Save")))
@@ -1628,9 +1628,9 @@ fn option_row() -> Markup {
     html! {
         div class="grid grid-cols-1 gap-2 sm:grid-cols-2" {
             input type="text" name="option" placeholder=(i18n::t("Option"))
-                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
             input type="url" name="option_media" placeholder=(i18n::t("image URL"))
-                class="block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
         }
     }
 }
@@ -1755,44 +1755,44 @@ pub async fn submissions(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Review poll submissions"))
             }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."))
             }
 
             @if rows.is_empty() {
-                p class="mt-8 py-10 text-center text-sm text-ink-muted" {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No submissions to review."))
                 }
             } @else {
                 ul class="mt-6 space-y-4" {
                     @for (s, opts) in &rows {
                         li class="border border-hairline p-4" {
-                            div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase tracking-wide text-ink-muted" {
+                            div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-ink-muted" {
                                 span class="font-bold text-ink" { (s.country_name) }
                                 span { (s.kind) }
                             }
-                            h2 class="mt-1 text-sm font-medium text-ink" { (s.question) }
+                            h2 class="mt-1 text-[16px] font-medium text-ink" { (s.question) }
                             @if let Some(ref sha) = s.question_sha {
                                 img src={"/media/" (sha)} alt="" loading="lazy"
                                     class="mt-2 max-h-40 border border-hairline object-contain";
                             }
                             @if let Some(ref reason) = s.ai_reason {
-                                p class="mt-2 text-xs text-ink-muted" {
-                                    span class="font-bold uppercase tracking-wide" { (i18n::t("Automated note")) } ": " (reason)
+                                p class="mt-2 text-[14px] text-ink-muted" {
+                                    span class="font-bold" { (i18n::t("Automated note")) }":" (reason)
                                 }
                             }
                             @if let Some(cats) = s.ai_categories.as_ref().filter(|c| !c.is_empty()) {
-                                p class="mt-1 font-mono text-[11px] text-ink-muted" { (cats.join(", ")) }
+                                p class="mt-1 text-[14px] text-ink-muted" { (cats.join(", ")) }
                             }
                             ul class="mt-3 space-y-1.5" {
                                 @for o in opts {
-                                    li class="flex items-center gap-2 text-sm text-ink" {
+                                    li class="flex items-center gap-2 text-[16px] text-ink" {
                                         @if let Some(ref sha) = o.asset_sha {
                                             img src={"/media/" (sha)} alt="" loading="lazy"
                                                 class="h-9 w-9 border border-hairline object-cover";
@@ -1805,20 +1805,20 @@ pub async fn submissions(
                             div class="mt-4 flex flex-wrap items-start gap-3 border-t border-hairline-light pt-3" {
                                 form method="post" action={"/admin/submissions/" (s.id) "/approve"} {
                                     button type="submit"
-                                        class="rounded-lg bg-accent px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-white transition-colors hover:bg-accent-strong" {
+                                        class="rounded-[10px] bg-accent px-4 py-1.5 text-[14px] font-bold text-white transition-colors hover:bg-accent-strong" {
                                         (i18n::t("Approve"))
                                     }
                                 }
                                 form method="post" action={"/admin/submissions/" (s.id) "/reject"}
                                      class="flex flex-1 flex-col gap-2" {
                                     input type="text" name="note" placeholder=(i18n::t("Reason (optional)"))
-                                        class="w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-sm text-ink";
-                                    label class="flex items-center gap-2 text-xs text-ink-muted" {
+                                        class="w-full rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[16px] text-ink";
+                                    label class="flex items-center gap-2 text-[14px] text-ink-muted" {
                                         input type="checkbox" name="violation" value="on";
                                         (i18n::t("Policy violation (counts toward a ban)"))
                                     }
                                     button type="submit"
-                                        class="self-start border border-hairline px-4 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                                        class="self-start border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                                         (i18n::t("Reject"))
                                     }
                                 }
@@ -1936,53 +1936,53 @@ pub async fn compass(
             h1 class="text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Compass positions")) " " span class="text-ink-muted" { (country.name) }
             }
-            p class="mt-3 max-w-prose text-sm text-ink-muted" {
+            p class="mt-3 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."))
             }
 
             form method="post" action="/admin/compass/thesis" class="mt-6 op-card space-y-3 p-5" {
                 input type="hidden" name="country" value=(country.slug);
                 label class="block" {
-                    span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Position")) }
+                    span class="text-[14px] font-bold text-ink-muted" { (i18n::t("Position")) }
                     textarea name="text" rows="2" required
-                      class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink" {}
+                      class="mt-1 w-full rounded-[10px] border border-hairline bg-paper px-3 py-2 text-[16px] text-ink" {}
                 }
                 div class="flex flex-wrap gap-3" {
                     label class="block" {
-                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Order")) }
+                        span class="text-[14px] font-bold text-ink-muted" { (i18n::t("Order")) }
                         input type="number" name="position" value="0"
-                          class="mt-1 w-24 rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
+                          class="mt-1 w-24 rounded-[10px] border border-hairline bg-paper px-3 py-2 text-[16px] text-ink";
                     }
                     label class="block" {
-                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Answered about")) }
+                        span class="text-[14px] font-bold text-ink-muted" { (i18n::t("Answered about")) }
                         select name="scope"
-                          class="mt-1 block rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink" {
+                          class="mt-1 block rounded-[10px] border border-hairline bg-paper px-3 py-2 text-[16px] text-ink" {
                             option value=(db::compass::SCOPE_PARTY) { (i18n::t("Parties")) }
                             option value=(db::compass::SCOPE_PERSON) { (i18n::t("Candidates")) }
                         }
                     }
                     label class="block grow" {
-                        span class="text-[11px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                        span class="text-[14px] font-bold text-ink-muted" { (i18n::t("Source URL")) }
                         input type="url" name="source_url" required
-                          class="mt-1 w-full rounded-lg border border-hairline bg-paper px-3 py-2 text-sm text-ink";
+                          class="mt-1 w-full rounded-[10px] border border-hairline bg-paper px-3 py-2 text-[16px] text-ink";
                     }
                 }
                 button type="submit"
-                  class="rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                  class="rounded-[10px] bg-accent px-4 py-2 text-[15px] font-semibold text-white transition-colors hover:bg-accent-strong" {
                     (i18n::t("Add position"))
                 }
             }
 
             @if theses.is_empty() {
-                p class="py-10 text-center text-sm text-ink-muted" {
+                p class="py-10 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No positions have been recorded for this country yet."))
                 }
             } @else {
                 ul class="mt-6 space-y-2" {
                     @for t in &theses {
                         li class="op-card flex items-start justify-between gap-3 px-4 py-3" {
-                            span class="text-sm text-ink" {
-                                span class="mr-2 font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                            span class="text-[16px] text-ink" {
+                                span class="mr-2 text-[15px] font-bold text-ink-muted" {
                                     @if t.scope == db::compass::SCOPE_PERSON {
                                         (i18n::t("Candidates"))
                                     } @else {
@@ -1993,12 +1993,12 @@ pub async fn compass(
                             }
                             span class="flex shrink-0 items-center gap-3" {
                                 a href={"/admin/compass/thesis/" (t.id)}
-                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
+                                  class="text-[14px] font-bold text-link hover:underline" {
                                     (i18n::t("Stances"))
                                 }
                                 form method="post" action={"/admin/compass/thesis/" (t.id) "/delete"} {
                                     button type="submit"
-                                      class="font-mono text-[11px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                      class="text-[14px] font-bold text-ink-muted hover:text-ink" {
                                         (i18n::t("Delete"))
                                     }
                                 }
@@ -2092,45 +2092,45 @@ pub async fn compass_thesis_delete(
 fn evidence_fields() -> Markup {
     html! {
                         label class="block" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Evidence")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Evidence")) }
                             select name="kind"
-                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                              class="mt-1 block rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink" {
                                 @for k in EVIDENCE_KINDS {
                                     option value=(k) { (k) }
                                 }
                             }
                         }
                         label class="block" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Stance")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Stance")) }
                             select name="stance"
-                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink" {
+                              class="mt-1 block rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink" {
                                 @for (value, label) in stance_choices() {
                                     option value=(value) { (label) }
                                 }
                             }
                         }
                         label class="block" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Date")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Date")) }
                             input type="date" name="occurred_on"
-                              class="mt-1 block rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                              class="mt-1 block rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink";
                         }
                         label class="block grow" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Reference")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Reference")) }
                             input type="text" name="quote"
-                              class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                              class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink";
                         }
                         label class="block" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Page or article")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Page or article")) }
                             input type="text" name="locator"
-                              class="mt-1 block w-28 rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                              class="mt-1 block w-28 rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink";
                         }
                         label class="block grow" {
-                            span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Source URL")) }
+                            span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Source URL")) }
                             input type="url" name="source_url" required
-                              class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                              class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink";
                         }
         button type="submit"
-          class="rounded-lg bg-accent px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+          class="rounded-[10px] bg-accent px-3 py-1.5 text-[14px] font-semibold text-white transition-colors hover:bg-accent-strong" {
             (i18n::t("Add"))
         }
     }
@@ -2181,11 +2181,11 @@ pub async fn compass_thesis(
     let content = html! {
         section class="mx-auto max-w-3xl" {
             a href={"/admin/compass?country=" (thesis.country_slug)}
-              class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
+              class="text-[14px] font-bold text-link hover:underline" {
                 "← " (i18n::t("Compass positions"))
             }
             h1 class="mt-3 text-2xl font-bold tracking-tight text-ink" { (thesis.text) }
-            p class="mt-2 max-w-prose text-sm text-ink-muted" {
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                 (i18n::t("Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."))
             }
 
@@ -2195,23 +2195,23 @@ pub async fn compass_thesis(
                         @if let Some(first) = people.iter().find(|r| r.person_id == *pid) {
                             li class="op-card px-4 py-3" {
                                 a href={"/" (thesis.country_slug) "/people/" (first.person_slug)}
-                                  class="text-sm font-medium text-ink hover:text-link" {
+                                  class="text-[16px] font-medium text-ink hover:text-link" {
                                     (first.person_name)
                                 }
                                 ul class="mt-2 space-y-1" {
                                     @for r in people.iter().filter(|r| r.person_id == *pid) {
-                                        li class="flex flex-wrap items-baseline gap-2 text-xs text-ink-muted" {
-                                            span class="font-mono text-[10px] uppercase tracking-wide text-ink" { (r.kind) }
-                                            span class="font-mono" { (r.stance) }
-                                            @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                        li class="flex flex-wrap items-baseline gap-2 text-[14px] text-ink-muted" {
+                                            span class="text-[15px] text-ink" { (r.kind) }
+                                            span class="" { (r.stance) }
+                                            @if let Some(d) = r.occurred_on { span class="text-[15px]" { (crate::fmt::date(Some(d))) } }
                                             @if let Some(l) = &r.locator {
-                                                span class="font-mono text-[10px] text-ink" { (l) }
+                                                span class="text-[15px] text-ink" { (l) }
                                             }
                                             @if let Some(q) = &r.quote { span { (q) } }
                                             form method="post"
                                                  action={"/admin/compass/thesis/" (thesis.id) "/evidence/" (r.id) "/delete"} {
                                                 button type="submit"
-                                                  class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                                  class="text-[15px] font-bold text-ink-muted hover:text-ink" {
                                                     (i18n::t("Delete"))
                                                 }
                                             }
@@ -2232,9 +2232,9 @@ pub async fn compass_thesis(
                 form method="post" action={"/admin/compass/thesis/" (thesis.id) "/evidence"}
                      class="mt-4 op-card flex flex-wrap items-end gap-2 p-4" {
                     label class="block grow" {
-                        span class="text-[10px] font-bold uppercase tracking-wide text-ink-muted" { (i18n::t("Candidate")) }
+                        span class="text-[15px] font-bold text-ink-muted" { (i18n::t("Candidate")) }
                         input type="text" name="person_slug" required
-                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper px-2 py-1.5 text-xs text-ink";
+                          class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[14px] text-ink";
                     }
                     (evidence_fields())
                 }
@@ -2248,26 +2248,26 @@ pub async fn compass_thesis(
                                     first.short_name.as_deref().unwrap_or(&first.party_name),
                                     first.color.as_deref(),
                                 ))
-                                span class="text-sm font-medium text-ink" { (first.party_name) }
+                                span class="text-[16px] font-medium text-ink" { (first.party_name) }
                             }
 
                             ul class="mt-2 space-y-1" {
                                 @for r in rows.iter().filter(|r| r.party_id == *party_id && r.id.is_some()) {
-                                    li class="flex flex-wrap items-baseline gap-2 text-xs text-ink-muted" {
-                                        span class="font-mono text-[10px] uppercase tracking-wide text-ink" {
+                                    li class="flex flex-wrap items-baseline gap-2 text-[14px] text-ink-muted" {
+                                        span class="text-[15px] text-ink" {
                                             (r.kind.as_deref().unwrap_or(""))
                                         }
-                                        span class="font-mono" { (r.stance.unwrap_or(0)) }
-                                        @if let Some(d) = r.occurred_on { span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) } }
+                                        span class="" { (r.stance.unwrap_or(0)) }
+                                        @if let Some(d) = r.occurred_on { span class="text-[15px]" { (crate::fmt::date(Some(d))) } }
                                         @if let Some(l) = &r.locator {
-                                            span class="font-mono text-[10px] text-ink" { (l) }
+                                            span class="text-[15px] text-ink" { (l) }
                                         }
                                         @if let Some(q) = &r.quote { span { (q) } }
                                         @if let Some(eid) = r.id {
                                             form method="post"
                                                  action={"/admin/compass/thesis/" (thesis.id) "/evidence/" (eid) "/delete"} {
                                                 button type="submit"
-                                                  class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted hover:text-ink" {
+                                                  class="text-[15px] font-bold text-ink-muted hover:text-ink" {
                                                     (i18n::t("Delete"))
                                                 }
                                             }

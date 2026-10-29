@@ -27,7 +27,7 @@ pub fn bar(action: &str, target: &str, value: &str) -> Markup {
                 placeholder=(i18n::t("Search"))
                 hx-get=(action) hx-trigger="keyup changed delay:250ms, search"
                 hx-target=(target) hx-select=(target) hx-swap="outerHTML" hx-push-url="true"
-                class="w-full border border-hairline bg-paper-raised px-3 py-2.5 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                class="h-12 w-full rounded-[10px] border border-hairline-strong bg-paper px-4 text-[17px] text-ink placeholder:text-ink-faint";
         }
     }
 }

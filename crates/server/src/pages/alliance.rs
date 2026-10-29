@@ -53,15 +53,15 @@ pub async fn detail(
 
             header class="op-card mb-8 p-6 sm:p-8" {
                 div class="flex flex-wrap items-center gap-3" {
-                    span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
+                    span class="text-[14px] font-bold text-ink-muted" {
                         (i18n::t("Alliance"))
                     }
                     @if alliance.dissolved_date.is_none() {
-                        span class="rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-link" {
+                        span class="rounded-full border border-accent px-2 py-0.5 text-[15px] font-bold text-link" {
                             (i18n::t("Active"))
                         }
                     } @else {
-                        span class="rounded-full border border-hairline px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-muted" {
+                        span class="rounded-full border border-hairline px-2 py-0.5 text-[15px] font-bold text-ink-muted" {
                             (i18n::t("Inactive"))
                         }
                     }
@@ -70,14 +70,14 @@ pub async fn detail(
                     (name)
                 }
                 @if alliance.founded_date.is_some() || alliance.dissolved_date.is_some() {
-                    p class="mt-2 font-mono text-xs text-ink-muted" {
+                    p class="mt-2 text-[14px] text-ink-muted" {
                         (fmt::date_range(alliance.founded_date, alliance.dissolved_date))
                     }
                 }
                 @if combined_seats > 0 {
                     div class="mt-5" {
-                        div class="font-mono text-3xl font-semibold text-ink" { (combined_seats) }
-                        div class="mt-0.5 text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
+                        div class="text-3xl font-semibold text-ink" { (combined_seats) }
+                        div class="mt-0.5 text-[14px] font-bold text-ink-muted" {
                             (i18n::t("combined members"))
                         }
                     }
@@ -114,7 +114,7 @@ pub async fn detail(
                 section class="mb-8" {
                     (ui::section_header(
                         i18n::t("Parties"),
-                        Some(html! { span class="font-mono text-xs text-ink-muted" { (members.len()) } }),
+                        Some(html! { span class="text-[14px] text-ink-muted" { (members.len()) } }),
                     ))
                     ul class="op-card grid gap-x-10 px-5 sm:grid-cols-2" {
                         @for m in &members {
@@ -123,11 +123,11 @@ pub async fn detail(
                                     span class="shrink-0" { (ui::badge::party_chip(sn, m.party_color.as_deref())) }
                                 }
                                 a href={"/" (country_model.slug) "/parties/" (m.party_slug)}
-                                  class="grow text-sm font-medium text-ink transition-colors hover:text-link" {
+                                  class="grow text-[16px] font-medium text-ink transition-colors hover:text-link" {
                                     (m.party_name)
                                 }
                                 @if m.seats > 0 {
-                                    span class="shrink-0 font-mono text-xs text-ink-muted" {
+                                    span class="shrink-0 text-[14px] text-ink-muted" {
                                         (m.seats) " " (i18n::t("members"))
                                     }
                                 }

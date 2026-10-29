@@ -9,8 +9,8 @@ pub fn controls(base: &str, page: i64, total_pages: i64) -> Markup {
     if total_pages <= 1 {
         return html! {};
     }
-    let link = "border border-ink px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link";
-    let disabled = "border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-faint";
+    let link = "inline-flex min-h-11 items-center rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink";
+    let disabled = "inline-flex min-h-11 items-center rounded-[10px] border border-hairline px-4 text-[16px] font-semibold text-ink-faint";
     html! {
         nav class="mt-8 flex items-center justify-between gap-3" aria-label=(i18n::t("Pagination")) {
             @if page > 1 {
@@ -18,7 +18,7 @@ pub fn controls(base: &str, page: i64, total_pages: i64) -> Markup {
             } @else {
                 span class=(disabled) { "‹ " (i18n::t("Previous")) }
             }
-            span class="font-mono text-xs text-ink-muted" { (page) " / " (total_pages) }
+            span class="text-[14px] text-ink-muted" { (page) " / " (total_pages) }
             @if page < total_pages {
                 a href={(base) "?p=" (page + 1)} class=(link) { (i18n::t("Next")) " ›" }
             } @else {
