@@ -46,12 +46,12 @@ pub fn panel(
     let action = format!("/approve/{entity_type}/{entity_id}");
 
     html! {
-        section id=(dom_id) class="op-card p-5" {
+        section id=(dom_id) class="op-card p-6" {
             div class="flex items-baseline justify-between gap-3" {
-                h2 class="text-sm font-bold uppercase tracking-widest text-ink-muted" {
+                h2 class="text-[24px] font-extrabold tracking-tight text-ink" {
                     (i18n::t("Approval"))
                 }
-                span class="font-mono text-xs text-ink-muted" { (month) }
+                span class="text-[15px] text-ink-muted" { (month) }
             }
 
             // The counts, visible to everyone.
@@ -59,18 +59,18 @@ pub fn panel(
                 @for (_pos, label, count) in &rows {
                     @let pct = if total > 0 { (*count * 100 / total).max(0) } else { 0 };
                     div {
-                        div class="flex items-baseline justify-between gap-3 text-sm" {
+                        div class="flex items-baseline justify-between gap-3 text-[16px]" {
                             span class="text-ink" { (label) }
-                            span class="font-mono text-ink-muted" { (count) }
+                            span class="font-semibold text-ink" { (count) }
                         }
-                        div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-paper-sunken" {
-                            div class="h-full rounded-full bg-ink-muted" style={"width:" (pct) "%"} {}
+                        div class="mt-1 h-2.5 w-full overflow-hidden rounded-full bg-hairline-light" {
+                            div class="h-full rounded-full bg-ink" style={"width:" (pct) "%"} {}
                         }
                     }
                 }
             }
 
-            p class="mt-3 font-mono text-[11px] text-ink-muted" {
+            p class="mt-3 text-[15px] text-ink-muted" {
                 (total) " " (i18n::t("took part"))
             }
 
@@ -80,7 +80,7 @@ pub fn panel(
             }
 
             // The honest limit, always.
-            p class="mt-3 text-[11px] leading-snug text-ink-muted" {
+            p class="mt-3 text-[15px] leading-snug text-ink-muted" {
                 (i18n::t("Counts among verified participants here, not a representative sample."))
             }
         }
@@ -145,12 +145,12 @@ pub fn history_chart(entries: &[db::approvals::MonthTally]) -> Markup {
                     }
                 }
                 // Which shade is which, since the bars are monochrome.
-                p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-ink-muted" {
+                p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[15px] text-ink-muted" {
                     span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-ink" {} (i18n::t("Approve")) }
                     span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-ink-muted" {} (i18n::t("Disapprove")) }
                     span { span class="mr-1 inline-block h-2 w-2 rounded-sm bg-hairline" {} (i18n::t("No opinion")) }
                 }
-                p class="mt-2 text-[11px] leading-snug text-ink-muted" {
+                p class="mt-2 text-[15px] leading-snug text-ink-muted" {
                     (i18n::t("Counts among verified participants here, not a representative sample."))
                 }
             }
@@ -162,7 +162,7 @@ fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
     match viewer {
         Viewer::Anonymous => html! {
             a href="/login"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-link" {
+              class="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
                 (i18n::t("Log in to take part"))
             }
         },
@@ -173,7 +173,7 @@ fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
                 _ => i18n::t("No opinion"),
             };
             html! {
-                p class="text-[12px] text-ink-muted" {
+                p class="text-[16px] text-ink-muted" {
                     (i18n::t("You said")) ": "
                     span class="font-semibold text-ink" { (label) }
                 }
@@ -187,7 +187,7 @@ fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
                 input type="hidden" name="next" value=(next);
                 @for (choice, label) in [("approve", i18n::t("Approve")), ("disapprove", i18n::t("Disapprove")), ("no_opinion", i18n::t("No opinion"))] {
                     button type="submit" name="choice" value=(choice)
-                        class="inline-flex items-center rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink transition-colors hover:border-accent hover:bg-accent-tint hover:text-link" {
+                        class="inline-flex min-h-11 items-center rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
                         (label)
                     }
                 }

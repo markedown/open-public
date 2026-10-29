@@ -2042,12 +2042,14 @@ async fn people_pages_render_seeded_data(pool: db::Pool) {
     assert!(body.contains("example.test/s"));
     // The hero party chip uses the short name (TP), not the full party name.
     assert!(body.contains(">TP<"));
+    assert!(body.contains("Bir bakışta")); // the at-a-glance panel
 
     // Minimal profile exercises the no-photo, no-detail branches. With no photo
-    // the hero shows a two-letter initials monogram instead of an empty frame.
+    // the hero shows a neutral silhouette, hidden from assistive technology,
+    // instead of an empty frame.
     let body = body_string(get(&app, "/tr/people/mehmet-demir").await).await;
     assert!(body.contains("Mehmet Demir"));
-    assert!(body.contains(">MD<")); // initials monogram
+    assert!(body.contains(r#"<span aria-hidden="true" class="size-28 sm:size-32 flex"#));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

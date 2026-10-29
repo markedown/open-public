@@ -79,137 +79,151 @@ pub async fn detail(
 
     let content = html! {
         article {
-            (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
-                Crumb { label: i18n::t("People").to_string(), href: Some(format!("/{}/people", country.slug)) },
-                Crumb { label: person.full_name.clone(), href: None },
-            ]))
-            // Identity block: a hero record card.
-            header class="op-card mb-8 flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:p-8" {
-                @if let Some(ref photo) = person.photo_url {
-                    img src=(photo) alt=(&person.full_name)
-                        class="h-24 w-24 shrink-0 rounded-xl border border-hairline object-cover"
-                        loading="lazy";
-                } @else {
-                    div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-hairline bg-paper-sunken" {
-                        span class="font-mono text-2xl font-semibold tracking-tight text-ink-muted" {
-                            (ui::initials(&person.full_name))
+            (ui::hero_band(html! {
+                (ui::breadcrumb::trail(&[
+                    Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                    Crumb { label: i18n::t("People").to_string(), href: Some(format!("/{}/people", country.slug)) },
+                    Crumb { label: person.full_name.clone(), href: None },
+                ]))
+                div class="mt-5 flex flex-wrap items-center gap-x-7 gap-y-5" {
+                    (ui::portrait(person.photo_url.as_deref(), &person.full_name, "size-28 sm:size-32"))
+                    div class="min-w-0 flex-[1_1_20rem]" {
+                        h1 class="text-[40px] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-[48px]" {
+                            (person.full_name)
                         }
-                    }
-                }
-                div class="min-w-0" {
-                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
-                        (person.full_name)
-                    }
-                    div class="mt-3 flex flex-wrap items-center gap-2" {
-                        @if let Some(m) = current_party {
-                            (ui::badge::party_badge(
-                                m.party_short_name.as_deref().unwrap_or(&m.party_name),
-                                &m.party_slug, m.party_color.as_deref(), &country.slug))
-                        }
-                        @if let Some(r) = current_role {
-                            span class="text-sm font-medium text-ink-muted" {
-                                @if let Some(ref title) = r.title { (title) } @else { (r.role_type) }
-                                @if let Some(ref d) = r.district { " · " (d) }
-                            }
-                        }
-                    }
-                    div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted" {
-                        @if let Some(bd) = person.birth_date {
-                            span class="inline-flex items-center gap-1.5" {
-                                svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
-                                    rect x="3" y="4" width="18" height="18" rx="2" ry="2" {}
-                                    line x1="16" y1="2" x2="16" y2="6" {}
-                                    line x1="8" y1="2" x2="8" y2="6" {}
-                                    line x1="3" y1="10" x2="21" y2="10" {}
+                        div class="mt-3 flex flex-wrap items-center gap-2" {
+                            @if let Some(r) = current_role {
+                                span class="inline-flex items-center rounded-full border border-hairline bg-paper px-3 py-0.5 text-[15px] font-semibold leading-6 text-ink" {
+                                    @if let Some(ref title) = r.title { (title) } @else { (r.role_type) }
+                                    @if let Some(ref d) = r.district { " · " (d) }
                                 }
-                                span class="font-mono" { (fmt::date(Some(bd))) }
                             }
-                        }
-                        @if let Some(ref place) = person.birth_place {
-                            span class="inline-flex items-center gap-1.5" {
-                                svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
-                                    path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" {}
-                                    circle cx="12" cy="10" r="3" {}
-                                }
-                                (place)
+                            @if let Some(m) = current_party {
+                                (ui::badge::party_badge(
+                                    m.party_short_name.as_deref().unwrap_or(&m.party_name),
+                                    &m.party_slug, m.party_color.as_deref(), &country.slug))
                             }
                         }
                     }
-                    div class="mt-5 flex flex-wrap items-center gap-2" {
+                    div class="flex flex-wrap items-center gap-2" {
                         (ui::follow::button("person", person.id, follow_state, &follow_next))
                         (ui::election::compass_cta(compass_href.as_deref()))
                         @if let Some(ref href) = manage_href {
                             a href=(href)
-                              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-link" {
+                              class="inline-flex min-h-11 items-center rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
                                 (i18n::t("Manage"))
                             }
                         }
                     }
                 }
-            }
-
-            @if let Some(text) = summary {
-                section class="mb-8" {
-                    (ui::translated::prose(
-                        text,
-                        loc.is_translated("summary").then_some(person.summary.as_deref()).flatten(),
-                    ))
+                @if let Some(text) = summary {
+                    div class="mt-6 max-w-[42em] text-[20px] leading-relaxed text-ink" {
+                        (ui::translated::prose(
+                            text,
+                            loc.is_translated("summary").then_some(person.summary.as_deref()).flatten(),
+                        ))
+                    }
+                } @else if let Some(r) = current_role {
+                    // No summary written yet: the current role, in a sentence's
+                    // place, is what a visitor came to learn.
+                    p class="mt-6 max-w-[42em] text-[20px] leading-relaxed text-ink" {
+                        @if let Some(ref title) = r.title { (title) } @else { (r.role_type) }
+                        @if let Some(ref org) = r.org { ", " (org) }
+                        @if let Some(d) = r.start_date {
+                            span class="text-ink-muted" { " · " (i18n::t("In office since")) " " (fmt::date(Some(d))) }
+                        }
+                    }
                 }
-            }
+            }))
 
-            section class="mb-8" { (approval) }
+            div class="flex flex-wrap items-start gap-x-12 gap-y-8" {
+                div class="min-w-0 flex-[999_1_36rem]" {
+                    @if !roles.is_empty() {
+                        section class="mb-12" {
+                            (ui::section_header(i18n::t("Roles"), None))
+                            (ui::timeline_entry::timeline_list(
+                                roles.iter().map(|r| ui::timeline_entry::Entry {
+                                    // The role's own name is the title; a category
+                                    // label would only repeat the section heading.
+                                    kind: String::new(),
+                                    title: r.title.clone().unwrap_or_else(|| r.role_type.clone()),
+                                    subtitle: role_subtitle(r),
+                                    date_range: fmt::date_range(r.start_date, r.end_date),
+                                    link_href: None,
+                                    source_url: Some(r.source_url.clone()),
+                                })
+                            ))
+                        }
+                    }
 
-            (approval_history)
+                    @if !memberships.is_empty() {
+                        section class="mb-12" {
+                            (ui::section_header(i18n::t("Party memberships"), None))
+                            (ui::timeline_entry::timeline_list(
+                                memberships.iter().map(|m| ui::timeline_entry::Entry {
+                                    kind: String::new(),
+                                    title: m.party_name.clone(),
+                                    subtitle: String::new(),
+                                    date_range: fmt::date_range(m.start_date, m.end_date),
+                                    link_href: Some(format!("/{}/parties/{}", country.slug, m.party_slug)),
+                                    source_url: Some(m.source_url.clone()),
+                                })
+                            ))
+                        }
+                    }
 
-            (ui::background::section(&education, &attributes))
+                    section class="mb-12" { (approval) }
 
-            @if !roles.is_empty() {
-                section class="mb-8" {
-                    (ui::section_header(i18n::t("Roles"), None))
-                    (ui::timeline_entry::timeline_list(
-                        roles.iter().map(|r| ui::timeline_entry::Entry {
-                            // The category, the way a membership row says
-                            // "Party". The role's own name is the title below
-                            // it, so putting `role_type` here showed a visitor
-                            // the identifier the database happens to use, in
-                            // English whatever they were reading, and called a
-                            // member of an upper house a "senator" wherever
-                            // that country does not use the word.
-                            kind: i18n::t("Role").to_string(),
-                            title: r.title.clone().unwrap_or_else(|| r.role_type.clone()),
-                            subtitle: role_subtitle(r),
-                            date_range: fmt::date_range(r.start_date, r.end_date),
-                            link_href: None,
-                            source_url: Some(r.source_url.clone()),
-                        })
-                    ))
-                }
-            }
+                    (approval_history)
 
-            @if !memberships.is_empty() {
-                section class="mb-8" {
-                    (ui::section_header(i18n::t("Party memberships"), None))
-                    (ui::timeline_entry::timeline_list(
-                        memberships.iter().map(|m| ui::timeline_entry::Entry {
-                            kind: i18n::t("Party").to_string(),
-                            title: m.party_name.clone(),
-                            subtitle: String::new(),
-                            date_range: fmt::date_range(m.start_date, m.end_date),
-                            link_href: Some(format!("/{}/parties/{}", country.slug, m.party_slug)),
-                            source_url: Some(m.source_url.clone()),
-                        })
-                    ))
-                }
-            }
-
+                    (ui::background::section(&education, &attributes))
             (ui::statement::statement_section(&statements, None))
 
             (ui::news::news_section(&news, &country.slug, None))
 
             (ui::poll_widget::poll_previews(&polls, &country.slug, None, None, None))
 
-            (ui::references::references(person.wikidata_id.as_deref(), person.photo_license.as_deref()))
+                    (ui::references::references(person.wikidata_id.as_deref(), person.photo_license.as_deref()))
+                }
+
+                aside aria-label=(i18n::t("At a glance"))
+                    class="min-w-0 flex-[1_1_18rem] rounded-[12px] bg-paper-sunken px-5 py-5 lg:max-w-sm" {
+                    h2 class="mb-2 text-[18px] font-extrabold text-ink" { (i18n::t("At a glance")) }
+                    dl class="text-[16px]" {
+                        @if let Some(bd) = person.birth_date {
+                            div class="border-b border-hairline py-2.5" {
+                                dt class="text-ink-muted" { (i18n::t("Born")) }
+                                dd class="mt-0.5 font-semibold text-ink" {
+                                    (fmt::date(Some(bd)))
+                                    @if let Some(ref place) = person.birth_place { ", " (place) }
+                                }
+                            }
+                        }
+                        @if let Some(m) = current_party {
+                            div class="border-b border-hairline py-2.5" {
+                                dt class="text-ink-muted" { (i18n::t("Party")) }
+                                dd class="mt-0.5 font-semibold" {
+                                    a href={"/" (country.slug) "/parties/" (m.party_slug)} class="op-link" { (m.party_name) }
+                                }
+                            }
+                        }
+                        div class="border-b border-hairline py-2.5 last:border-0" {
+                            dt class="text-ink-muted" { (i18n::t("Country")) }
+                            dd class="mt-0.5 font-semibold" {
+                                a href={"/" (country.slug)} class="op-link" { (country.name) }
+                            }
+                        }
+                        @if let Some(ref q) = person.wikidata_id {
+                            div class="py-2.5" {
+                                dt class="text-ink-muted" { "Wikidata" }
+                                dd class="mt-0.5 font-semibold" {
+                                    a href={"https://www.wikidata.org/wiki/" (q)} rel="noopener" class="op-link" { (q) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
 

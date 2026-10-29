@@ -1279,3 +1279,12 @@ msgstr "Die meisten Stimmen"
 
 msgid "Where this comes from"
 msgstr "Woher wir das wissen"
+
+msgid "At a glance"
+msgstr "Auf einen Blick"
+
+msgid "Born"
+msgstr "Geboren"
+
+msgid "Country"
+msgstr "Land"

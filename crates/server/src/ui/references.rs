@@ -10,13 +10,13 @@ pub fn references(wikidata_id: Option<&str>, photo_license: Option<&str>) -> Mar
         return html! {};
     }
     html! {
-        section class="mb-8" {
-            (crate::ui::section_header(i18n::t("References"), None))
-            ul class="space-y-1.5 text-sm text-ink-muted" {
+        section class="mb-12 border-t border-hairline pt-6" {
+            h2 class="mb-2 text-[20px] font-bold text-ink" { (i18n::t("Where this comes from")) }
+            ul class="space-y-1.5 text-[16px] text-ink-muted" {
                 @if let Some(qid) = wikidata_id {
                     li {
                         a href={"https://www.wikidata.org/wiki/" (qid)}
-                          class="text-link hover:underline" target="_blank" rel="noopener noreferrer" {
+                          class="op-link" target="_blank" rel="noopener noreferrer" {
                             "Wikidata · " (qid)
                         }
                     }
