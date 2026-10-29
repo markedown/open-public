@@ -119,6 +119,11 @@ pub async fn count(pool: &Pool, country_id: i64) -> Result<i64> {
 /// One page of a country's people whose name contains the query, matched
 /// diacritic- and case-insensitively (so "ayse" finds "Ayşe"), or all of the
 /// country's people when the query is blank. Used by the searchable list page.
+///
+/// The query is also matched against the slug after the same transliteration
+/// (`domain::slug`), which catches what `unaccent` cannot: a letter with no
+/// decomposition written as a digraph ("djilas" finds "Đilas"), and a name
+/// typed in another script ("Ђилас").
 pub async fn list_filtered(
     pool: &Pool,
     country_id: i64,
@@ -131,13 +136,15 @@ pub async fn list_filtered(
         return list(pool, country_id, limit, offset).await;
     }
     let pattern = format!("%{q}%");
+    let slug_part = slug_fragment(q);
     let people = sqlx::query_as!(
         Person,
         r#"
         select id, wikidata_id, full_name, slug, birth_date, birth_place,
                photo_url, photo_license, summary
         from people
-        where country_id = $1 and unaccent(full_name) ilike unaccent($2)
+        where country_id = $1
+          and (unaccent(full_name) ilike unaccent($2) or slug like $5)
         order by full_name collate "name_sort"
         limit $3 offset $4
         "#,
@@ -145,6 +152,7 @@ pub async fn list_filtered(
         pattern,
         limit,
         offset,
+        slug_part,
     )
     .fetch_all(pool)
     .await?;
@@ -161,14 +169,24 @@ pub async fn count_filtered(pool: &Pool, country_id: i64, query: &str) -> Result
     let n = sqlx::query_scalar!(
         r#"
         select count(*) as "count!" from people
-        where country_id = $1 and unaccent(full_name) ilike unaccent($2)
+        where country_id = $1
+          and (unaccent(full_name) ilike unaccent($2) or slug like $3)
         "#,
         country_id,
         pattern,
+        slug_fragment(q),
     )
     .fetch_one(pool)
     .await?;
     Ok(n)
+}
+
+/// A `like` pattern matching slugs that contain the transliterated query, or
+/// `None` (which matches nothing) when the query has no letter or digit a slug
+/// can carry. Slugs are `[a-z0-9-]` only, so the fragment needs no escaping.
+pub(crate) fn slug_fragment(query: &str) -> Option<String> {
+    let s = domain::slug::slugify(query);
+    (!s.is_empty()).then(|| format!("%{s}%"))
 }
 
 /// A person's party memberships, newest first, each with its source.

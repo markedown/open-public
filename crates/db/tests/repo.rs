@@ -354,6 +354,48 @@ async fn people_and_parties_list_filter(pool: sqlx::PgPool) {
         .await
         .unwrap()
         .is_empty());
+
+    // A letter with no decomposition, and another script, match through the
+    // transliterated slug: "djordje" and Cyrillic both find "Đorđe".
+    db::people::upsert_person(
+        &pool,
+        &person("Q4", "Đorđe Testić", "djordje-testic", country_id),
+    )
+    .await
+    .unwrap();
+    for q in ["djordje", "Đorđe", "Ђорђе", "djordje test"] {
+        assert_eq!(
+            db::people::count_filtered(&pool, country_id, q)
+                .await
+                .unwrap(),
+            1,
+            "query {q}"
+        );
+        let hits = db::people::list_filtered(&pool, country_id, q, 50, 0)
+            .await
+            .unwrap();
+        assert_eq!(hits[0].full_name, "Đorđe Testić", "query {q}");
+    }
+    // A query with nothing a slug can carry matches through the name only.
+    assert_eq!(
+        db::people::count_filtered(&pool, country_id, "東京")
+            .await
+            .unwrap(),
+        0
+    );
+    sqlx::query("insert into parties (name, short_name, slug, source_id, country_id) values ('Stranka Đaković', null, 'stranka-djakovic', $1, $2)")
+        .bind(source_id)
+        .bind(country_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    assert_eq!(
+        db::parties::list_filtered(&pool, country_id, "djakovic")
+            .await
+            .unwrap()
+            .len(),
+        1
+    );
 }
 
 #[sqlx::test(migrations = "../../migrations")]
