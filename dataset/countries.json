@@ -26,6 +26,19 @@
     "summary": "Deutschland ist eine föderale parlamentarische Republik mit sechzehn Ländern. Das Parlament ist der Bundestag; der Bundeskanzler führt die Regierung, der Bundespräsident ist das Staatsoberhaupt."
   },
   {
+    "capital": "Belgrade",
+    "flag_url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Flag_of_Serbia.svg",
+    "founded_date": null,
+    "government_type": "Parliamentary republic",
+    "legislature_name": "National Assembly",
+    "name": "Serbia",
+    "population": null,
+    "slug": "serbia",
+    "source_hash": "rs-country",
+    "source_url": "https://www.wikidata.org/wiki/Q403",
+    "summary": "Srbija je parlamentarna republika. Narodna skupština ima 250 narodnih poslanika, koji se biraju proporcionalno sa izbornih lista, pri čemu je cela zemlja jedna izborna jedinica. Predsednik Republike je šef države, a Vladu vodi predsednik Vlade."
+  },
+  {
     "capital": "Ankara",
     "flag_url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg",
     "founded_date": "1923-10-29",

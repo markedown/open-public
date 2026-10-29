@@ -873,7 +873,7 @@
           },
           {
             "name": "end_date",
-            "type": "string"
+            "type": "date"
           },
           {
             "name": "org",

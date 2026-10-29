@@ -216,6 +216,42 @@
     "text": "Almanya, on altı eyaletten oluşan federal bir parlamenter cumhuriyettir. Parlamentosu Federal Meclis'tir (Bundestag); federal şansölye hükümeti yönetir, federal cumhurbaşkanı ise devletin başıdır."
   },
   {
+    "entity": "serbia",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Serbien ist eine parlamentarische Republik. Die Nationalversammlung hat 250 Abgeordnete, die nach Verhältniswahl über Wahllisten gewählt werden; das ganze Land bildet einen einzigen Wahlkreis. Der Präsident der Republik ist Staatsoberhaupt, die Regierung wird vom Ministerpräsidenten geführt."
+  },
+  {
+    "entity": "serbia",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Serbia is a parliamentary republic. The National Assembly has 250 members, elected by proportional representation from electoral lists, with the whole country forming a single constituency. The President of the Republic is head of state, and the government is led by the Prime Minister."
+  },
+  {
+    "entity": "serbia",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "La Serbie est une république parlementaire. L'Assemblée nationale compte 250 députés, élus à la proportionnelle sur des listes électorales, le pays tout entier formant une seule circonscription. Le président de la République est le chef de l'État et le gouvernement est dirigé par le président du gouvernement."
+  },
+  {
+    "entity": "serbia",
+    "entity_type": "country",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Sırbistan parlamenter bir cumhuriyettir. Ulusal Meclis'in 250 milletvekili, tüm ülkenin tek seçim bölgesi olduğu bir sistemde seçim listelerinden nispi temsille seçilir. Cumhurbaşkanı devletin başıdır; hükümeti başbakan yönetir."
+  },
+  {
     "entity": "turkiye",
     "entity_type": "country",
     "field": "summary",
@@ -1240,6 +1276,150 @@
     "origin": "human",
     "source_lang": "de",
     "text": "2029 Federal Meclis Seçimi"
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Wahl aller 250 Abgeordneten der Nationalversammlung. Ganz Serbien ist ein einziger Wahlkreis; die Sitze werden im Verhältnis der Stimmen (D'Hondt-Verfahren) auf die Listen verteilt, die mindestens 3 Prozent der Stimmen der Wählenden erreichen. Für Listen nationaler Minderheiten gilt diese Hürde nicht."
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Election of all 250 members of the National Assembly. All of Serbia is a single constituency, and seats are shared in proportion to votes (the D'Hondt method) among the lists that win at least 3 percent of the votes of those who voted; the threshold does not apply to national minority lists."
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Élection des 250 députés de l'Assemblée nationale. La Serbie entière forme une seule circonscription, et les sièges sont répartis à la proportionnelle des voix (méthode d'Hondt) entre les listes qui obtiennent au moins 3 % des voix des votants ; ce seuil ne s'applique pas aux listes des minorités nationales."
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Ulusal Meclis'in 250 milletvekilinin tamamının seçimi. Sırbistan'ın tamamı tek seçim bölgesidir; sandalyeler, oy kullananların oylarının en az yüzde 3'ünü alan listeler arasında oy oranına göre (D'Hondt yöntemi) dağıtılır. Bu baraj ulusal azınlık listeleri için uygulanmaz."
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Parlamentswahl 2023"
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "2023 Parliamentary Election"
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Élections législatives 2023"
+  },
+  {
+    "entity": "srbija-parlamentarni-izbori-2023",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "2023 Parlamento Seçimi"
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Wahl des Präsidenten der Republik, nachdem das Mandat des bisherigen Präsidenten vor Ablauf der Amtszeit, für die er gewählt worden war, geendet hat."
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Election of the President of the Republic, after the previous President's term ended before the period for which he was elected."
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Élection du président de la République, après que le mandat du précédent président a pris fin avant le terme pour lequel il avait été élu."
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Önceki cumhurbaşkanının görev süresi, seçildiği dönem dolmadan sona erdikten sonra yapılacak cumhurbaşkanı seçimi."
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "de",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Präsidentschaftswahl 2026"
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "2026 Presidential Election"
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "Élection présidentielle 2026"
+  },
+  {
+    "entity": "srbija-predsednicki-izbori-2026",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "sr",
+    "text": "2026 Cumhurbaşkanlığı Seçimi"
   },
   {
     "entity": "uk-general-election-2024",

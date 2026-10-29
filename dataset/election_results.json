@@ -891,6 +891,168 @@
     "votes": 76138
   },
   {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": null,
+    "party": "rs-party-sda-sandzaka",
+    "seats": 2,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 21827
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": null,
+    "party": "rs-party-svm-vmsz",
+    "seats": 6,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 64747
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Albanska demokratska alternativa – Ujedinjena dolina",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 3235
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Aleksandar Vučić – Srbija ne sme da stane",
+    "party": null,
+    "seats": 129,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 1783701
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Čedomir Jovanović – Mora drugačije",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 9243
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Dr Vojislav Šešelj – Srpska radikalna stranka",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 55782
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Ivica Dačić – Premijer Srbije",
+    "party": null,
+    "seats": 18,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 249916
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Mi – Glas iz naroda, prof. dr Branimir Nestorović",
+    "party": null,
+    "seats": 13,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 178830
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Nacionalno okupljanje – Zavetnici – Dveri",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 105165
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Nada za Srbiju – Srpska koalicija NADA",
+    "party": null,
+    "seats": 13,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 191431
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Narodna stranka – Siguran izbor",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 33388
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Politička borba Albanaca se nastavlja – Šaip Kamberi",
+    "party": null,
+    "seats": 1,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 13501
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Ruska stranka – Slobodan Nikolić",
+    "party": null,
+    "seats": 1,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 11369
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Saša Radulović – Boris Tadić – Ana Pejić",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 45079
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Srbija na zapadu",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 5462
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Srbija protiv nasilja",
+    "party": null,
+    "seats": 65,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 902450
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Usame Zukorlić – Ujedinjeni za pravdu",
+    "party": null,
+    "seats": 2,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 29066
+  },
+  {
+    "election": "srbija-parlamentarni-izbori-2023",
+    "label": "Zajedno za budućnost i razvoj",
+    "party": null,
+    "seats": 0,
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "votes": 6786
+  },
+  {
     "election": "uk-general-election-2024",
     "label": null,
     "party": "uk-party-alliance",
