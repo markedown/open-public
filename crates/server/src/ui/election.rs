@@ -254,7 +254,7 @@ pub fn is_upcoming(election: &db::elections::Election) -> bool {
 }
 
 /// How many days until an election with a date that has not arrived.
-fn days_ahead(election: &db::elections::Election) -> Option<i64> {
+pub fn days_ahead(election: &db::elections::Election) -> Option<i64> {
     let day = election.held_on?;
     let today = chrono::Utc::now().date_naive();
     (day > today).then(|| (day - today).num_days())
@@ -576,9 +576,15 @@ pub fn next_elections(
         return html! {};
     };
     html! {
-        section class="op-card mb-6 px-5 py-4" {
-            div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1" {
-                span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
+        section class="mb-12 flex gap-4 rounded-[12px] bg-accent-tint px-5 py-5" {
+            svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                class="mt-0.5 shrink-0 text-ink" {
+                circle cx="12" cy="12" r="9" {}
+                path d="M12 7v6l3 2" {}
+            }
+            div class="min-w-0" {
+                p class="font-bold text-ink" {
                     // One round, so one date and one countdown, however many
                     // contests are decided on it.
                     @if elections.len() > 1 {
@@ -586,23 +592,20 @@ pub fn next_elections(
                     } @else {
                         (i18n::t("Next election"))
                     }
-                }
-                @if let Some(days) = days_ahead(first) {
-                    span class="font-mono text-[11px] text-ink-muted" {
-                        (days) " " (i18n::t("days"))
+                    ": "
+                    @if let Some(d) = first.held_on {
+                        (crate::fmt::date(Some(d)))
+                        @if let Some(days) = days_ahead(first) {
+                            " · " (days) " " (i18n::t("days"))
+                        }
+                    } @else {
+                        // No date fixed yet: the note below says what decides it.
+                        (i18n::t("Date not fixed"))
                     }
                 }
-            }
-            div class="mt-1 flex flex-wrap items-baseline gap-x-3 text-[13px] text-ink-muted" {
-                @if let Some(d) = first.held_on {
-                    span class="font-mono text-ink" { (crate::fmt::date(Some(d))) }
-                } @else {
-                    // No date fixed yet: the note below says what decides it.
-                    span class="font-mono text-ink" { (i18n::t("Date not fixed")) }
+                @for (election, compass_href) in elections {
+                    (next_election_entry(election, country, compass_href.as_deref()))
                 }
-            }
-            @for (election, compass_href) in elections {
-                (next_election_entry(election, country, compass_href.as_deref()))
             }
         }
     }
@@ -616,23 +619,20 @@ fn next_election_entry(
     compass_href: Option<&str>,
 ) -> Markup {
     html! {
-        div class="mt-3 border-t border-hairline-light pt-3 first:border-0 first:pt-1" {
-            a href={"/" (country) "/election/" (election.slug)}
-              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-link hover:underline" {
+        div class="mt-3" {
+            a href={"/" (country) "/election/" (election.slug)} class="op-link text-[19px] font-bold" {
                 (election.name)
             }
-            div class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px] text-ink-muted" {
-                span class="text-[11px] font-bold uppercase tracking-wide" {
-                    (crate::pages::elections::kind_label(election.kind.as_deref()))
-                }
+            span class="ml-2 text-[15px] text-ink-muted" {
+                (crate::pages::elections::kind_label(election.kind.as_deref()))
             }
             // Whether the date is fixed or merely a legal deadline.
             @if let Some(note) = &election.expected_note {
-                p class="mt-2 max-w-prose text-xs text-ink-muted" { (note) }
+                p class="mt-1 max-w-prose text-[16px] text-ink-muted" { (note) }
             }
             @if let Some(href) = compass_href {
                 a href=(href)
-                  class="mt-3 inline-block rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                  class="mt-3 inline-flex min-h-11 items-center rounded-[10px] bg-ink px-5 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                     (i18n::t("Compare your positions"))
                 }
             }

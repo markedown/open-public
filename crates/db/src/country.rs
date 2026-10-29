@@ -7,8 +7,10 @@ use crate::{Pool, Result};
 pub struct GovMember {
     pub person_name: String,
     pub person_slug: String,
+    pub photo_url: Option<String>,
     pub title: Option<String>,
     pub role_type: String,
+    pub start_date: Option<chrono::NaiveDate>,
 }
 
 /// One party's current seat count in parliament.
@@ -129,7 +131,8 @@ pub async fn government(pool: &Pool, country_id: i64) -> Result<Vec<GovMember>> 
     let rows = sqlx::query_as!(
         GovMember,
         r#"
-        select p.full_name as person_name, p.slug as person_slug, r.title, r.role_type
+        select p.full_name as person_name, p.slug as person_slug, p.photo_url,
+               r.title, r.role_type, r.start_date
         from roles r
         join people p on p.id = r.person_id
         where r.role_type in

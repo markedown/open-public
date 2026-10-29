@@ -13,7 +13,7 @@ use crate::i18n;
 /// is shown.
 pub fn prose(text: &str, original: Option<&str>) -> Markup {
     html! {
-        p class="max-w-prose text-[17px] leading-relaxed text-ink" { (text) }
+        p class="max-w-prose leading-relaxed text-ink" { (text) }
         (original_disclosure(original))
     }
 }
@@ -24,7 +24,7 @@ pub fn original_disclosure(original: Option<&str>) -> Markup {
     html! {
         @if let Some(orig) = original {
             details class="mt-1 max-w-prose" {
-                summary class="cursor-pointer list-none text-[11px] font-medium uppercase tracking-wide text-ink-muted transition-colors hover:text-link [&::-webkit-details-marker]:hidden" {
+                summary class="cursor-pointer list-none text-[14px] text-ink-muted underline underline-offset-2 transition-colors hover:text-ink [&::-webkit-details-marker]:hidden" {
                     (i18n::t("Show original"))
                 }
                 p class="mt-2 text-[15px] leading-relaxed text-ink-muted" { (orig) }

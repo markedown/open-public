@@ -88,7 +88,7 @@ pub fn document_described(
                 link rel="apple-touch-icon" href="/static/brand/apple-touch-icon.png";
                 script src="/static/htmx.min.js" defer {}
             }
-            body class="flex min-h-screen flex-col bg-paper font-sans text-[17px] leading-relaxed text-ink antialiased" {
+            body class="flex min-h-screen flex-col overflow-x-clip bg-paper font-sans text-[17px] leading-relaxed text-ink antialiased" {
                 // The first thing a keyboard user reaches: a way past the nav
                 // straight to the page content. Off-screen until focused.
                 a href="#main"

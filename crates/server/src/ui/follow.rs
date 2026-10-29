@@ -18,7 +18,7 @@ pub fn button(entity_type: &str, entity_id: i64, state: FollowState, next: &str)
     if let FollowState::Anonymous = state {
         return html! {
             a href="/login"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-link" {
+              class="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
                 (i18n::t("Log in to follow"))
             }
         };
@@ -30,12 +30,12 @@ pub fn button(entity_type: &str, entity_id: i64, state: FollowState, next: &str)
             input type="hidden" name="next" value=(next);
             @if following {
                 button type="submit"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-accent bg-accent-tint px-3 py-1.5 text-[12px] font-semibold text-link transition-colors hover:border-accent-strong hover:bg-accent hover:text-white" {
+                    class="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
                     "✓ " (i18n::t("Following"))
                 }
             } @else {
                 button type="submit"
-                    class="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                    class="inline-flex min-h-11 items-center gap-1.5 rounded-[10px] bg-ink px-5 text-[16px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                     "+ " (i18n::t("Follow"))
                 }
             }

@@ -1,75 +1,124 @@
-//! A seat-composition bar and its legend, for a legislature or one of its
-//! chambers. Party colours appear only here, inside the data element, never in
-//! the interface chrome (see DESIGN.md).
+//! A chamber's composition: one dot per seat, grouped by party, next to a list
+//! of the parties with their seat counts. Party colours appear only here, inside
+//! the data element, never in the interface chrome (see DESIGN.md).
 
 use maud::{html, Markup};
 
 use crate::i18n;
 
-/// Neutral grey for independents, deliberately not any party colour.
-const INDEPENDENT_COLOR: &str = "oklch(62% 0.01 70)";
-/// A diagonal hairline hatch reads as "empty" rather than any party's colour,
-/// and stays visible in both light and dark themes.
-const VACANT_FILL: &str =
-    "background-image:repeating-linear-gradient(45deg,transparent 0 3px,rgba(115,115,115,0.5) 3px 4px)";
+/// Two neutral greys, alternated between consecutive parties that publish no
+/// colour, so neighbouring blocks stay countable without inventing a colour for
+/// either.
+const UNCOLOURED: [&str; 2] = ["#b7bec6", "#d5dae0"];
+/// The ring drawn for a seat whose member belongs to no party.
+const RING: &str = "#9aa3ad";
+/// How many parties the list names before folding the rest into one line.
+const LISTED: usize = 9;
 
-/// A proportional seat bar followed by a legend. `seats` are the parties (each a
-/// coloured segment), `independents` a neutral segment, and `vacant` an optional
-/// hatched segment for seats sitting empty between elections. Party chips link
-/// to the party page.
+/// The dots and the party list. `seats` are the parties, `independents` the
+/// members with no party (hollow dots), and `vacant` the seats sitting empty
+/// between elections (dotted rings). Each listed party links to its page.
 pub fn composition(
     seats: &[db::country::SeatCount],
     independents: i64,
     vacant: Option<i64>,
     country_slug: &str,
 ) -> Markup {
+    let total: i64 =
+        seats.iter().map(|s| s.seats).sum::<i64>() + independents + vacant.unwrap_or(0);
+    // Large chambers (several hundred seats) get smaller dots so the block stays
+    // a readable size.
+    let dot = if total > 400 { "size-2.5" } else { "size-3.5" };
+    let mut grey = 0;
+    let fills: Vec<String> = seats
+        .iter()
+        .map(|s| match s.color.as_deref() {
+            Some(_) => super::css_color(s.color.as_deref(), UNCOLOURED[0]),
+            None => {
+                grey += 1;
+                UNCOLOURED[(grey - 1) % 2].to_string()
+            }
+        })
+        .collect();
+    let label = summary(seats, independents, vacant);
+    let rest: i64 = seats.iter().skip(LISTED).map(|s| s.seats).sum();
+    let rest_count = seats.len().saturating_sub(LISTED);
     html! {
-        // Proportional flex segments fill the bar exactly; integer width
-        // percentages truncated small parties to 0 and left a gap. The bar is a
-        // visual encoding of the legend below, which carries every party name and
-        // seat count as text, so the bar itself is hidden from assistive tech
-        // rather than repeating that as a native tooltip on each segment.
-        div class="mb-4 flex h-7 w-full overflow-hidden rounded-md border border-hairline"
-            aria-hidden="true" {
-            @for s in seats {
-                div class="h-full border-r border-r-paper-raised last:border-r-0"
-                    style={"flex:" (s.seats) " 0 0; background-color:" (s.color.as_deref().unwrap_or("#171717"))} {}
+        div class="flex flex-wrap items-start gap-x-12 gap-y-6" {
+            div role="img" aria-label=(label)
+                class="flex max-w-full flex-[0_1_34rem] flex-wrap gap-[5px]" {
+                @for (s, fill) in seats.iter().zip(&fills) {
+                    @for _ in 0..s.seats {
+                        span class={(dot) " rounded-full"} style={"background-color:" (fill)} {}
+                    }
+                }
+                @for _ in 0..independents {
+                    span class={(dot) " box-border rounded-full border-2 bg-paper"}
+                        style={"border-color:" (RING)} {}
+                }
+                @for _ in 0..vacant.unwrap_or(0) {
+                    span class={(dot) " box-border rounded-full border-2 border-dotted bg-paper"}
+                        style={"border-color:" (RING)} {}
+                }
             }
-            @if independents > 0 {
-                div class="h-full"
-                    style={"flex:" (independents) " 0 0; background-color:" (INDEPENDENT_COLOR)} {}
-            }
-            @if let Some(v) = vacant {
-                div class="h-full"
-                    style={"flex:" (v) " 0 0; " (VACANT_FILL)} {}
+            ul class="grid min-w-0 flex-[1_1_20rem] grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-x-6" {
+                @for (s, fill) in seats.iter().zip(&fills).take(LISTED) {
+                    li class="flex items-baseline gap-2.5 border-b border-hairline-light py-2" {
+                        span aria-hidden="true" class="size-3 shrink-0 rounded-full"
+                            style={"background-color:" (fill)} {}
+                        a href={"/" (country_slug) "/parties/" (s.slug)}
+                          class="min-w-0 flex-1 text-[16px] text-ink hover:underline" {
+                            (s.name)
+                        }
+                        span class="text-[16px] font-bold text-ink" { (s.seats) }
+                    }
+                }
+                @if rest_count > 0 {
+                    li class="flex items-baseline gap-2.5 border-b border-hairline-light py-2" {
+                        span aria-hidden="true" class="size-3 shrink-0 rounded-full bg-hairline-strong" {}
+                        a href={"/" (country_slug) "/parties"}
+                          class="min-w-0 flex-1 text-[16px] text-ink hover:underline" {
+                            (i18n::t("Other parties")) " (" (rest_count) ")"
+                        }
+                        span class="text-[16px] font-bold text-ink" { (rest) }
+                    }
+                }
+                @if independents > 0 {
+                    li class="flex items-baseline gap-2.5 border-b border-hairline-light py-2" {
+                        span aria-hidden="true" class="box-border size-3 shrink-0 rounded-full border-2 bg-paper"
+                            style={"border-color:" (RING)} {}
+                        span class="min-w-0 flex-1 text-[16px] text-ink" { (i18n::t("Independent")) }
+                        span class="text-[16px] font-bold text-ink" { (independents) }
+                    }
+                }
+                @if let Some(v) = vacant {
+                    li class="flex items-baseline gap-2.5 border-b border-hairline-light py-2" {
+                        span aria-hidden="true" class="box-border size-3 shrink-0 rounded-full border-2 border-dotted bg-paper"
+                            style={"border-color:" (RING)} {}
+                        span class="min-w-0 flex-1 text-[16px] text-ink" { (i18n::t("Vacant")) }
+                        span class="text-[16px] font-bold text-ink" { (v) }
+                    }
+                }
             }
         }
-        div class="flex flex-wrap gap-x-5 gap-y-2" {
-            @for s in seats {
-                a href={"/" (country_slug) "/parties/" (s.slug)} class="flex items-center gap-2 text-sm transition-opacity hover:opacity-80" {
-                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline"
-                        style={"background-color:" (s.color.as_deref().unwrap_or("#171717"))} {}
-                    span class="font-mono text-xs font-semibold text-ink" {
-                        (s.short_name.as_deref().unwrap_or(&s.name))
-                    }
-                    span class="font-mono text-xs text-ink-muted" { (s.seats) }
-                }
-            }
-            @if independents > 0 {
-                span class="flex items-center gap-2 text-sm" {
-                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline"
-                        style={"background-color:" (INDEPENDENT_COLOR)} {}
-                    span class="font-mono text-xs font-semibold text-ink" { (i18n::t("Independent")) }
-                    span class="font-mono text-xs text-ink-muted" { (independents) }
-                }
-            }
-            @if let Some(v) = vacant {
-                span class="flex items-center gap-2 text-sm" {
-                    span class="h-3 w-3 shrink-0 rounded-sm border border-hairline" style=(VACANT_FILL) {}
-                    span class="font-mono text-xs font-semibold text-ink" { (i18n::t("Vacant")) }
-                    span class="font-mono text-xs text-ink-muted" { (v) }
-                }
-            }
+        p class="mt-3 text-[15px] text-ink-muted" {
+            (i18n::t("Each dot is one seat. Grey: a party with no documented colour. Hollow: a member of no party."))
         }
     }
+}
+
+/// The composition as one sentence, for assistive technology: the dots are a
+/// picture of the list beside them.
+fn summary(seats: &[db::country::SeatCount], independents: i64, vacant: Option<i64>) -> String {
+    let mut parts: Vec<String> = seats
+        .iter()
+        .map(|s| format!("{} {}", s.name, s.seats))
+        .collect();
+    if independents > 0 {
+        parts.push(format!("{} {independents}", i18n::t("Independent")));
+    }
+    if let Some(v) = vacant {
+        parts.push(format!("{} {v}", i18n::t("Vacant")));
+    }
+    parts.join(", ")
 }

@@ -5,22 +5,32 @@ pub struct Crumb {
     pub href: Option<String>,
 }
 
+/// The trail with its own bottom margin, for pages that open without a hero
+/// band.
 pub fn breadcrumbs(items: &[Crumb]) -> Markup {
     if items.is_empty() {
         return html! {};
     }
     html! {
-        nav class="mb-8 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-ink-muted" aria-label="Breadcrumb" {
+        div class="mb-6" { (trail(items)) }
+    }
+}
+
+/// The trail alone, for placing inside a hero band.
+pub fn trail(items: &[Crumb]) -> Markup {
+    if items.is_empty() {
+        return html! {};
+    }
+    html! {
+        nav class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[15px] text-ink-muted" aria-label="Breadcrumb" {
             @for (i, item) in items.iter().enumerate() {
                 @if i > 0 {
-                    span { "/" }
+                    span aria-hidden="true" { "›" }
                 }
                 @if let Some(ref href) = item.href {
-                    a href=(href) class="transition-colors hover:text-link" {
-                        (item.label)
-                    }
+                    a href=(href) class="op-link" { (item.label) }
                 } @else {
-                    span class="min-w-0 break-words text-ink" { (item.label) }
+                    span class="min-w-0 break-words" { (item.label) }
                 }
             }
         }
@@ -34,5 +44,6 @@ mod tests {
     #[test]
     fn empty_crumbs_render_nothing() {
         assert_eq!(breadcrumbs(&[]).into_string(), "");
+        assert_eq!(trail(&[]).into_string(), "");
     }
 }

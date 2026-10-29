@@ -1248,3 +1248,24 @@ msgstr "Izvorni kod"
 
 msgid "Data free to reuse (CC0)"
 msgstr "Podaci su slobodni za upotrebu (CC0)"
+
+msgid "Who governs?"
+msgstr "Ko vlada?"
+
+msgid "Who sits in parliament?"
+msgstr "Ko sedi u parlamentu?"
+
+msgid "members of no party"
+msgstr "poslanika bez stranke"
+
+msgid "In office since"
+msgstr "na funkciji od"
+
+msgid "Other parties"
+msgstr "Ostale stranke"
+
+msgid "Each dot is one seat. Grey: a party with no documented colour. Hollow: a member of no party."
+msgstr "Svaka tačka je jedno mesto. Sivo: stranka bez dokumentovane boje. Prazno: član bez stranke."
+
+msgid "Sections"
+msgstr "Odeljci"
