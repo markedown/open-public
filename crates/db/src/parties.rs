@@ -108,8 +108,9 @@ pub async fn count(pool: &Pool, country_id: i64) -> Result<i64> {
 }
 
 /// A country's parties whose name or abbreviation contains the query, matched
-/// diacritic- and case-insensitively, or all of the country's parties when the
-/// query is blank. Used by the searchable list page.
+/// diacritic- and case-insensitively (and against the transliterated slug, as
+/// for people), or all of the country's parties when the query is blank. Used
+/// by the searchable list page.
 pub async fn list_filtered(pool: &Pool, country_id: i64, query: &str) -> Result<Vec<Party>> {
     let q = query.trim();
     if q.is_empty() {
@@ -124,11 +125,13 @@ pub async fn list_filtered(pool: &Pool, country_id: i64, query: &str) -> Result<
         from parties
         where country_id = $1
           and (unaccent(name) ilike unaccent($2)
-               or unaccent(coalesce(short_name, '')) ilike unaccent($2))
+               or unaccent(coalesce(short_name, '')) ilike unaccent($2)
+               or slug like $3)
         order by name collate "name_sort"
         "#,
         country_id,
         pattern,
+        crate::people::slug_fragment(q),
     )
     .fetch_all(pool)
     .await?;
