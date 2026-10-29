@@ -1528,6 +1528,11 @@ async fn elections_index_and_detail_render(pool: db::Pool) {
     assert!(detail.contains("Test Secimi 2024"));
     assert!(detail.contains("TP")); // the party chip
     assert!(detail.contains("example.test/s")); // the source link
+                                                // The page opens with the leader and the turnout at a glance, and closes
+                                                // with where the figures come from.
+    assert!(detail.contains("En çok sandalye")); // most seats
+    assert!(detail.contains("Katılım")); // turnout card
+    assert!(detail.contains("Bu bilgi nereden geliyor")); // source section
 
     assert_eq!(
         get(&app, "/tr/election/does-not-exist").await.status(),

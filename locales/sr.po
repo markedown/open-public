@@ -1269,3 +1269,13 @@ msgstr "Svaka tačka je jedno mesto. Sivo: stranka bez dokumentovane boje. Prazn
 
 msgid "Sections"
 msgstr "Odeljci"
+
+msgid "Most seats"
+msgstr "Najviše mesta"
+
+msgid "Most votes"
+msgstr "Najviše glasova"
+
+
+msgid "Where this comes from"
+msgstr "Odakle ovi podaci"

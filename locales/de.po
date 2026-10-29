@@ -1269,3 +1269,13 @@ msgstr "Jeder Punkt ist ein Sitz. Grau: Partei ohne dokumentierte Farbe. Hohl: M
 
 msgid "Sections"
 msgstr "Abschnitte"
+
+msgid "Most seats"
+msgstr "Die meisten Sitze"
+
+msgid "Most votes"
+msgstr "Die meisten Stimmen"
+
+
+msgid "Where this comes from"
+msgstr "Woher wir das wissen"

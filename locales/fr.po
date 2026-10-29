@@ -1269,3 +1269,13 @@ msgstr "Chaque point est un siège. Gris : parti sans couleur documentée. Creux
 
 msgid "Sections"
 msgstr "Sections"
+
+msgid "Most seats"
+msgstr "Le plus de sièges"
+
+msgid "Most votes"
+msgstr "Le plus de voix"
+
+
+msgid "Where this comes from"
+msgstr "D'où viennent ces données"
