@@ -18,7 +18,7 @@ pub fn button(entity_type: &str, entity_id: i64, state: FollowState, next: &str)
     if let FollowState::Anonymous = state {
         return html! {
             a href="/login"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-link" {
                 (i18n::t("Log in to follow"))
             }
         };
@@ -30,7 +30,7 @@ pub fn button(entity_type: &str, entity_id: i64, state: FollowState, next: &str)
             input type="hidden" name="next" value=(next);
             @if following {
                 button type="submit"
-                    class="inline-flex items-center gap-1.5 rounded-lg border border-accent bg-accent-tint px-3 py-1.5 text-[12px] font-semibold text-accent transition-colors hover:border-accent-strong hover:bg-accent hover:text-white" {
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-accent bg-accent-tint px-3 py-1.5 text-[12px] font-semibold text-link transition-colors hover:border-accent-strong hover:bg-accent hover:text-white" {
                     "✓ " (i18n::t("Following"))
                 }
             } @else {

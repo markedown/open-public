@@ -1236,3 +1236,15 @@ msgstr "Šta nijedan od njih ne dokazuje: nijedan od ovih slojeva ne dokazuje da
 
 msgid "Parliamentary republic"
 msgstr "Parlamentarna republika"
+
+msgid "Account"
+msgstr "Nalog"
+
+msgid "Site"
+msgstr "Sajt"
+
+msgid "Source code"
+msgstr "Izvorni kod"
+
+msgid "Data free to reuse (CC0)"
+msgstr "Podaci su slobodni za upotrebu (CC0)"

@@ -134,7 +134,7 @@ fn submit_page(
                 }
                 button type="button"
                     hx-get={"/" (country_slug) "/polls/submit/row"} hx-target="#poll-options" hx-swap="beforeend"
-                    class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
+                    class="text-[11px] font-bold uppercase tracking-wide text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add option"))
                 }
                 (ui::captcha::widget())
@@ -369,7 +369,7 @@ pub async fn mine(
                             }
                             @if matches!(s.status.as_str(), "approved") {
                                 @if let Some(pid) = s.published_poll_id {
-                                    a href={"/" (s.country_slug) "/polls"} class="mt-2 inline-block text-xs text-accent hover:underline" {
+                                    a href={"/" (s.country_slug) "/polls"} class="mt-2 inline-block text-xs text-link hover:underline" {
                                         (i18n::t("View published poll"))
                                     }
                                     span class="hidden" { (pid) }

@@ -269,14 +269,14 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                 }
                 @if login {
                     p class="mt-4 text-sm text-ink-muted" {
-                        a href="/forgot" class="text-accent hover:underline" {
+                        a href="/forgot" class="text-link hover:underline" {
                             (i18n::t("Forgotten your password?"))
                         }
                     }
                     p class="mt-2 text-sm text-ink-muted" {
                         (i18n::t("No account?"))
                         " "
-                        a href="/register" class="text-accent hover:underline" {
+                        a href="/register" class="text-link hover:underline" {
                             (i18n::t("Register"))
                         }
                     }
@@ -284,7 +284,7 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                     p class="mt-4 text-sm text-ink-muted" {
                         (i18n::t("Already have an account?"))
                         " "
-                        a href="/login" class="text-accent hover:underline" {
+                        a href="/login" class="text-link hover:underline" {
                             (i18n::t("Log in"))
                         }
                     }
@@ -492,7 +492,7 @@ fn forgot_page(message: Option<&str>) -> Markup {
                     (ui::button::primary(i18n::t("Send the link")))
                 }
                 p class="mt-4 text-sm text-ink-muted" {
-                    a href="/login" class="text-accent hover:underline" { (i18n::t("Back to log in")) }
+                    a href="/login" class="text-link hover:underline" { (i18n::t("Back to log in")) }
                 }
             }
         },

@@ -35,7 +35,7 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
                                     }
                                     @if let Some(ref f) = e.field { span { (f) } }
                                     a href=(e.source_url) target="_blank" rel="noopener noreferrer"
-                                      class="uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
+                                      class="uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
                                         (i18n::t("source")) " ↗"
                                     }
                                 }
@@ -58,7 +58,7 @@ pub fn section(education: &[Education], attributes: &[PersonAttribute]) -> Marku
                         div class="flex flex-wrap gap-2" {
                             @for a in &vals {
                                 a href=(a.source_url) target="_blank" rel="noopener noreferrer"
-                                  class="inline-flex items-center rounded-md border border-hairline bg-paper-raised px-2.5 py-1 text-xs text-ink transition-colors hover:border-accent hover:text-accent" {
+                                  class="inline-flex items-center rounded-md border border-hairline bg-paper-raised px-2.5 py-1 text-xs text-ink transition-colors hover:border-accent hover:text-link" {
                                     (a.value)
                                 }
                             }

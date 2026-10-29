@@ -1236,3 +1236,15 @@ msgstr "Was keine davon beweist: Keine dieser Schichten beweist, dass ein Konto 
 
 msgid "Parliamentary republic"
 msgstr "Parlamentarische Republik"
+
+msgid "Account"
+msgstr "Konto"
+
+msgid "Site"
+msgstr "Website"
+
+msgid "Source code"
+msgstr "Quellcode"
+
+msgid "Data free to reuse (CC0)"
+msgstr "Daten frei nutzbar (CC0)"

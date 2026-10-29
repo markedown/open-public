@@ -16,7 +16,7 @@ pub fn breadcrumbs(items: &[Crumb]) -> Markup {
                     span { "/" }
                 }
                 @if let Some(ref href) = item.href {
-                    a href=(href) class="transition-colors hover:text-accent" {
+                    a href=(href) class="transition-colors hover:text-link" {
                         (item.label)
                     }
                 } @else {

@@ -173,7 +173,7 @@ pub async fn detail(
                     @for (label, path, n) in chips {
                         @if n > 0 {
                             a href={"/" (country.slug) "/" (path)}
-                              class="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-paper px-3.5 py-1.5 text-[13px] font-medium text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                              class="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-paper px-3.5 py-1.5 text-[13px] font-medium text-ink-muted transition-colors hover:border-accent hover:text-link" {
                                 (label)
                                 span class="font-mono text-[11px] opacity-70" { (n) }
                             }
@@ -213,7 +213,7 @@ pub async fn detail(
                         @for m in &government {
                             li class="flex items-baseline justify-between gap-3 border-b border-hairline-light py-2.5" {
                                 a href={"/" (country.slug) "/people/" (m.person_slug)}
-                                  class="text-sm font-medium text-ink transition-colors hover:text-accent" {
+                                  class="text-sm font-medium text-ink transition-colors hover:text-link" {
                                     (m.person_name)
                                 }
                                 @if let Some(ref t) = m.title {
@@ -281,7 +281,7 @@ pub async fn detail(
                         @for (name, alliance_slug, parties) in &alliances {
                             div class="op-card p-4" {
                                 a href={"/" (country.slug) "/alliance/" (alliance_slug)}
-                                  class="mb-3 block text-sm font-semibold text-ink transition-colors hover:text-accent" {
+                                  class="mb-3 block text-sm font-semibold text-ink transition-colors hover:text-link" {
                                     (name)
                                 }
                                 div class="flex flex-wrap gap-1.5" {

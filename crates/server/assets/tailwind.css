@@ -3,107 +3,117 @@
 /* Tailwind scans the maud templates (Rust source) for class names. */
 @source "../src/**/*.rs";
 
-/* Self-hosted fonts only (no CDN, for privacy). All cover Turkish (İ ı ğ ş ç ö
-   ü). Archivo (heavy) is the display voice: a grotesque with the squared,
-   civic-signage character of official notices. Public Sans carries running
-   prose; IBM Plex Mono marks data (seat counts, shares, dates, source chits). */
+/* One self-hosted typeface (no CDN, for privacy): Source Sans 3, a humanist
+   sans that stays friendly at reading sizes and plain at display sizes. One
+   variable file per script subset; the browser fetches only the subsets a page
+   uses. Latin Extended covers Turkish and Serbian Latin, Cyrillic covers Serbian
+   Cyrillic. */
 @font-face {
-  font-family: "Archivo";
+  font-family: "Source Sans 3";
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("/static/fonts/Archivo-latin-700.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
+  src: url("/static/fonts/SourceSans3-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Archivo";
+  font-family: "Source Sans 3";
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("/static/fonts/Archivo-latinext-700.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
+  src: url("/static/fonts/SourceSans3-latinext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: "Archivo";
+  font-family: "Source Sans 3";
   font-style: normal;
-  font-weight: 800;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("/static/fonts/Archivo-latin-800.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2122, U+2191, U+2193, U+2212, U+2215;
-}
-@font-face {
-  font-family: "Archivo";
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url("/static/fonts/Archivo-latinext-800.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+1E00-1EFF, U+2020, U+20A0-20AB, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: "Public Sans";
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/static/fonts/PublicSans.woff2") format("woff2");
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/static/fonts/IBMPlexMono-Medium.woff2") format("woff2");
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/static/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
+  src: url("/static/fonts/SourceSans3-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
 @theme {
-  --font-display: "Archivo", "Public Sans", ui-sans-serif, sans-serif;
-  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: "Archivo", ui-sans-serif, sans-serif;
+  /* One family throughout. The display and mono names are kept as aliases so
+     older markup renders in the same face; figures align through tabular
+     numerals on the body instead of a monospace font. */
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: var(--font-sans);
+  --font-serif: var(--font-sans);
 
-  /* Quiet chrome, loud data. The interface is a near-neutral document tone so
-     that the one place colour appears, the seat compositions of real chambers,
-     carries all the signal. Colour is data; the chrome has no hue of its own.
-     Light only for launch. */
-  --color-paper: oklch(96.6% 0.003 250);        /* document off-white */
-  --color-paper-raised: oklch(99% 0.0015 250);  /* records */
-  --color-paper-sunken: oklch(93.2% 0.004 250); /* tracks, insets */
-  --color-ink: oklch(21% 0.012 260);            /* near-black, faint cool */
-  --color-ink-muted: oklch(44% 0.009 260);      /* secondary */
-  --color-ink-faint: oklch(60% 0.006 260);      /* meta */
-  --color-hairline: oklch(87% 0.004 255);       /* structure */
-  --color-hairline-light: oklch(91% 0.004 255);
-  --color-hairline-strong: oklch(72% 0.006 258);/* emphasis rules */
+  /* Calm and readable, with colour kept for data. The chrome is slate on white
+     with a pale blue-grey for bands and explanations; party colours appear only
+     inside data elements. Actions are slate rather than a brand hue, because
+     every hue is some party's colour somewhere. Light only for launch. */
+  --color-paper: #ffffff;           /* page ground */
+  --color-paper-raised: #ffffff;    /* cards */
+  --color-paper-sunken: #f2f5f9;    /* bands, tracks, side panels */
+  --color-ink: #1b1f24;             /* text, actions */
+  --color-ink-muted: #545b64;       /* secondary text, 7:1 on white */
+  --color-ink-faint: #69717a;       /* meta, 4.9:1 on white */
+  --color-hairline: #dfe3e8;        /* borders */
+  --color-hairline-light: #eef1f4;  /* row separators */
+  --color-hairline-strong: #b9c0c8; /* inputs, emphasis rules */
 
-  /* Bridge: pages not yet rebuilt reference an accent; map it to ink so the
-     interface stays monochrome (emphasis is weight and inversion, never a hue)
-     until each page moves onto the new language. */
-  --color-accent: oklch(21% 0.012 260);
-  --color-accent-strong: oklch(12% 0.012 260);
-  --color-accent-tint: oklch(93.2% 0.004 250);
+  /* Links are conventionally blue and underlined, so a reader can tell them
+     apart at a glance; that convention is the one hue the chrome uses. */
+  --color-link: #1f5fbf;
+  --color-link-strong: #164a96;
 
-  --radius-card: 0px;
+  /* Actions and emphasis. */
+  --color-accent: #1b1f24;
+  --color-accent-strong: #000000;
+  --color-accent-tint: #e9f0f8;     /* explanations, notices */
+
+  /* Status that is pending rather than settled (a count still running). */
+  --color-pending: #fff3bf;
+  --color-pending-ink: #4a3b00;
+
+  /* Keyboard focus: a yellow fill with a dark edge, visible on any ground. */
+  --color-focus: #ffd84d;
+
+  --radius-card: 12px;
 }
 
-/* The register's surfaces and marks. */
+@layer base {
+  body {
+    font-variant-numeric: tabular-nums;
+  }
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+    background-color: var(--color-focus);
+    color: var(--color-ink);
+    text-decoration: none;
+    border-radius: 4px;
+  }
+}
+
 @layer components {
   .op-card {
     background: var(--color-paper-raised);
     border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-card);
   }
   .op-card-link {
-    transition: border-color 0.12s ease, background-color 0.12s ease;
+    transition: border-color 0.12s ease;
   }
   .op-card-link:hover {
-    border-color: var(--color-ink);
+    border-color: var(--color-ink-faint);
   }
-  /* The solid ink block: an emphasis primitive (inverted chips, marks). */
+  /* A plain content link: blue and underlined, thicker on hover. */
+  .op-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .op-link:hover {
+    color: var(--color-link-strong);
+    text-decoration-thickness: 2px;
+  }
+  /* The slate fill: the primary action and inverted marks. */
   .op-block {
     background: var(--color-ink);
     color: var(--color-paper);

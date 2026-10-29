@@ -304,7 +304,7 @@ These are product rules, treat them like compiler errors:
 
 ## Design
 
-The design system lives in [`DESIGN.md`](./DESIGN.md); follow it when building UI. The load-bearing rule: color is data. The chrome stays near-monochrome, organization colors appear only inside data elements (such as party badges), and no interface accent may map to a political party. The only accent is a desaturated ink-blue (`#33527a`), used sparingly for links and focus states.
+The design system lives in [`DESIGN.md`](./DESIGN.md); follow it when building UI. The load-bearing rule: color is data. The chrome is slate on white with a pale blue-grey for bands and explanations, organization colors appear only inside data elements (such as party dots and seat charts), and no interface accent may map to a political party: actions are slate, and the one hue in the chrome is the conventional blue of underlined content links.
 
 ## Text handling
 

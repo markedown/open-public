@@ -1248,3 +1248,15 @@ msgstr "Hiçbirinin kanıtlamadığı: Bu katmanların hiçbiri, bir hesabın be
 
 msgid "Parliamentary republic"
 msgstr "Parlamenter cumhuriyet"
+
+msgid "Account"
+msgstr "Hesap"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Source code"
+msgstr "Kaynak kod"
+
+msgid "Data free to reuse (CC0)"
+msgstr "Veriler serbestçe kullanılabilir (CC0)"

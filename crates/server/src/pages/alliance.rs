@@ -57,7 +57,7 @@ pub async fn detail(
                         (i18n::t("Alliance"))
                     }
                     @if alliance.dissolved_date.is_none() {
-                        span class="rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
+                        span class="rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-link" {
                             (i18n::t("Active"))
                         }
                     } @else {
@@ -123,7 +123,7 @@ pub async fn detail(
                                     span class="shrink-0" { (ui::badge::party_chip(sn, m.party_color.as_deref())) }
                                 }
                                 a href={"/" (country_model.slug) "/parties/" (m.party_slug)}
-                                  class="grow text-sm font-medium text-ink transition-colors hover:text-accent" {
+                                  class="grow text-sm font-medium text-ink transition-colors hover:text-link" {
                                     (m.party_name)
                                 }
                                 @if m.seats > 0 {

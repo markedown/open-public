@@ -99,7 +99,7 @@ pub async fn detail(
                             }
                             span { "#" (seq) }
                             span { (hex_prefix(head)) "…" }
-                            a href="/data/polls.json" class="text-accent hover:underline" {
+                            a href="/data/polls.json" class="text-link hover:underline" {
                                 (i18n::t("Verify"))
                             }
                         }
@@ -305,7 +305,7 @@ fn reconciliation_panel(
             p class="mt-3 max-w-prose text-xs leading-relaxed text-ink-muted" {
                 (i18n::t("Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."))
                 " "
-                a href="/participation" class="text-accent hover:underline" {
+                a href="/participation" class="text-link hover:underline" {
                     (i18n::t("How these numbers work"))
                 }
             }

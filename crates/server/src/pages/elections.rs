@@ -179,7 +179,7 @@ pub async fn detail(
             @if let Some(url) = source {
                 p class="mt-4" {
                     a href=(url) rel="noopener" target="_blank"
-                      class="text-xs font-medium text-accent hover:underline" {
+                      class="text-xs font-medium text-link hover:underline" {
                         (i18n::t("source")) " ↗"
                     }
                 }

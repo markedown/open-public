@@ -6751,9 +6751,13 @@ async fn controls_and_decoration_are_reachable_by_a_screen_reader(pool: db::Pool
     // The external-link arrow is decoration; the link is still called "source".
     assert!(body.contains(r#"<span aria-hidden="true"> ↗</span>"#));
 
-    // The language chevron likewise: the language name is the accessible label.
+    // The language chevron and the search glass likewise: the language name and
+    // the search field's own label carry the meaning.
     let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
-    assert!(home.contains(r#"<span aria-hidden="true" class="text-[7px]"#));
+    assert!(home.contains(r#"<svg aria-hidden="true" focusable="false" width="12" height="12""#));
+    assert!(home.contains(r#"<svg aria-hidden="true" focusable="false" width="18" height="18""#));
+    // The header search is named like every other search box.
+    assert!(home.contains(r#"name="q" autocomplete="off" aria-label="Search""#));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

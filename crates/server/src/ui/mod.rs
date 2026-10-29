@@ -25,25 +25,25 @@ pub mod statement;
 pub mod timeline_entry;
 pub mod translated;
 
-/// A section heading in the dashboard idiom: a small uppercase label with an
-/// optional right-aligned action (a "see all" link, an admin add link). Kept in
-/// one place so every section on every page reads the same.
+/// A section heading: a plain sentence-case title, often phrased as the
+/// question the section answers, with an optional right-aligned action (a "see
+/// all" link, an admin add link). Kept in one place so every section on every
+/// page reads the same.
 pub fn section_header(title: &str, action: Option<Markup>) -> Markup {
     html! {
-        div class="mb-4 flex items-baseline justify-between gap-3" {
-            h2 class="text-[13px] font-bold uppercase tracking-wider text-ink-muted" { (title) }
+        div class="mb-5 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1" {
+            h2 class="text-[26px] font-extrabold leading-tight tracking-tight text-ink sm:text-[30px]" { (title) }
             @if let Some(a) = action { (a) }
         }
     }
 }
 
-/// The standard "see all →" link for a section header, pointing at a fuller
+/// The standard "see all" link for a section header, pointing at a fuller
 /// index page.
 pub fn see_all_link(href: &str) -> Markup {
     html! {
-        a href=(href)
-          class="shrink-0 text-[12px] font-semibold text-accent transition-colors hover:underline" {
-            (i18n::t("See all")) " →"
+        a href=(href) class="op-link shrink-0 text-[16px] font-semibold" {
+            (i18n::t("See all"))
         }
     }
 }
@@ -53,11 +53,11 @@ pub fn see_all_link(href: &str) -> Markup {
 /// button). Kept in one place so every index page opens the same way.
 pub fn page_header(title: &str, meta: Option<Markup>, action: Option<Markup>) -> Markup {
     html! {
-        header class="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-hairline pb-5" {
+        header class="mb-8 flex flex-wrap items-end justify-between gap-4" {
             div {
-                h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" { (title) }
+                h1 class="text-4xl font-extrabold leading-[1.05] tracking-tight text-ink sm:text-5xl" { (title) }
                 @if let Some(m) = meta {
-                    p class="mt-2 text-xs font-bold uppercase tracking-widest text-ink-muted" { (m) }
+                    p class="mt-2 text-lg text-ink-muted" { (m) }
                 }
             }
             @if let Some(a) = action { (a) }

@@ -38,9 +38,9 @@ pub fn document_described(
     // page to resolve a relative path against. Omitted, like the canonical URL,
     // when the deployment has not been told its own origin.
     let og_image = i18n::site_origin().map(|o| format!("{o}/static/brand/og.png"));
-    // Nav links share one monospace, uppercase, underline-on-hover style: the
-    // register has no coloured controls.
-    let link = "text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
+    // Header links are plain text that darkens and underlines on hover; the one
+    // filled control is the primary action (register).
+    let link = "rounded-md px-1 py-1 text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
     html! {
         (DOCTYPE)
         html lang=(i18n::html_tag()) {
@@ -88,41 +88,60 @@ pub fn document_described(
                 link rel="apple-touch-icon" href="/static/brand/apple-touch-icon.png";
                 script src="/static/htmx.min.js" defer {}
             }
-            body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased" {
+            body class="flex min-h-screen flex-col bg-paper font-sans text-[17px] leading-relaxed text-ink antialiased" {
                 // The first thing a keyboard user reaches: a way past the nav
                 // straight to the page content. Off-screen until focused.
                 a href="#main"
-                  class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-ink focus:px-3 focus:py-2 focus:font-mono focus:text-[11px] focus:uppercase focus:tracking-wide focus:text-paper" {
+                  class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-md focus:px-3 focus:py-2 focus:text-sm focus:font-semibold" {
                     (i18n::t("Skip to content"))
                 }
-                header class="sticky top-0 z-20 border-b border-hairline-strong bg-paper" {
-                    nav class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" {
-                        a href="/" class="inline-flex shrink-0 items-center" {
-                            img src="/static/brand/wordmark.svg" alt=(SITE_NAME)
-                                class="h-[18px] w-auto";
+                header class="border-b border-hairline bg-paper" {
+                    div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6" {
+                        a href="/" class="inline-flex shrink-0 items-center gap-2.5 text-[21px] font-extrabold tracking-tight text-ink" {
+                            (mark())
+                            (SITE_NAME)
                         }
-                        div class="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wide sm:gap-5" {
+                        // Search sits in the header on every page; on a phone it
+                        // drops to its own row under the logo and the links.
+                        form method="get" action="/search" role="search"
+                            class="relative order-last w-full sm:order-none sm:w-auto sm:min-w-[16rem] sm:max-w-md sm:flex-1" {
+                            input type="search" name="q" autocomplete="off"
+                                aria-label=(i18n::t("Search"))
+                                placeholder=(i18n::t("Search people and parties..."))
+                                class="h-11 w-full rounded-[10px] border border-hairline-strong bg-paper pl-10 pr-3 text-base text-ink placeholder:text-ink-faint";
+                            svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                class="pointer-events-none absolute left-3.5 top-3.5 text-ink-muted" {
+                                circle cx="11" cy="11" r="7" {}
+                                path d="M20 20l-3.5-3.5" {}
+                            }
+                        }
+                        nav class="ml-auto flex items-center gap-3 text-[15px] sm:gap-4" aria-label=(i18n::t("Account")) {
                             // Language switcher: a native dropdown (no JavaScript).
                             details class="group relative" {
-                                summary class="flex cursor-pointer list-none items-center gap-1 text-ink-muted transition-colors hover:text-ink [&::-webkit-details-marker]:hidden" {
-                                    (i18n::current().label())
-                                    span aria-hidden="true" class="text-[7px] leading-none transition-transform group-open:rotate-180" { "▼" }
+                                summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-md px-1 py-1 text-ink-muted transition-colors hover:text-ink [&::-webkit-details-marker]:hidden" {
+                                    (i18n::current().name())
+                                    svg aria-hidden="true" focusable="false" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        class="transition-transform group-open:rotate-180" {
+                                        path d="M6 9l6 6 6-6" {}
+                                    }
                                 }
-                                div class="absolute right-0 z-30 mt-2 min-w-[9rem] border border-hairline bg-paper-raised py-1" {
+                                div class="absolute right-0 z-30 mt-2 min-w-[10rem] overflow-hidden rounded-[10px] border border-hairline bg-paper py-1 shadow-sm" {
                                     @for lang in i18n::Lang::ALL {
-                                        a href={"/lang/" (lang.code())}
+                                        a href={"/lang/" (lang.code())} lang=(lang.html_tag())
+                                          aria-current=[lang.is_active().then_some("true")]
                                           class=(if lang.is_active() {
-                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[11px] text-ink"
+                                              "flex items-center justify-between gap-3 px-3.5 py-2 font-semibold text-ink"
                                           } else {
-                                              "flex items-center justify-between gap-3 px-3 py-1.5 text-[11px] text-ink-muted transition-colors hover:bg-paper-sunken hover:text-ink"
+                                              "flex items-center justify-between gap-3 px-3.5 py-2 text-ink-muted transition-colors hover:bg-paper-sunken hover:text-ink"
                                           }) {
-                                            span class="normal-case" { (lang.name()) }
-                                            span { (lang.label()) }
+                                            span { (lang.name()) }
+                                            span class="text-xs text-ink-faint" { (lang.label()) }
                                         }
                                     }
                                 }
                             }
-                            a href="/search" class=(link) { (i18n::t("Search")) }
                             @if is_admin {
                                 a href="/admin" class=(link) { (i18n::t("Admin panel")) }
                             }
@@ -135,26 +154,44 @@ pub fn document_described(
                             } @else {
                                 a href="/login" class=(link) { (i18n::t("Log in")) }
                                 a href="/register"
-                                   class="border border-ink bg-ink px-3.5 py-1.5 font-semibold text-paper transition-colors hover:bg-paper hover:text-ink" {
+                                   class="inline-flex min-h-10 items-center rounded-lg bg-ink px-4 font-semibold text-paper transition-colors hover:bg-accent-strong" {
                                     (i18n::t("Register"))
                                 }
                             }
                         }
                     }
                 }
-                main id="main" class="mx-auto w-full max-w-6xl grow px-4 py-8 sm:px-6 sm:py-12" {
+                main id="main" class="mx-auto w-full max-w-6xl grow px-4 py-8 sm:px-6 sm:py-10" {
                     (content)
                 }
-                footer class="mt-16 border-t border-hairline-strong" {
-                    div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 font-mono text-[11px] uppercase tracking-wide text-ink-faint sm:px-6" {
+                footer class="mt-16 border-t border-hairline bg-paper-sunken" {
+                    div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-2 px-4 py-7 text-[15px] text-ink-muted sm:px-6" {
+                        span class="font-extrabold text-ink" { (SITE_NAME) }
                         span { (i18n::t("Open political data.")) }
-                        nav class="flex gap-4" {
-                            a href="/search" class="transition-colors hover:text-ink" { (i18n::t("Search")) }
-                            a href="/participation" class="transition-colors hover:text-ink" { (i18n::t("Participation")) }
-                            a href="/privacy" class="transition-colors hover:text-ink" { (i18n::t("Privacy")) }
+                        nav class="flex flex-wrap gap-x-5 gap-y-1" aria-label=(i18n::t("Site")) {
+                            a href="/participation" class="op-link" { (i18n::t("Participation")) }
+                            a href="/privacy" class="op-link" { (i18n::t("Privacy")) }
+                            a href="https://github.com/markedown/open-public" class="op-link" { (i18n::t("Source code")) }
                         }
+                        span class="sm:ml-auto" { (i18n::t("Data free to reuse (CC0)")) }
                     }
                 }
+            }
+        }
+    }
+}
+
+/// The logo mark: six seats in two rows, three filled. It reads as a small
+/// chamber without claiming any party's colour.
+pub fn mark() -> Markup {
+    html! {
+        span aria-hidden="true" class="inline-grid grid-cols-3 gap-[2px]" {
+            @for filled in [true, true, false, true, false, false] {
+                span class=(if filled {
+                    "size-[6px] rounded-full bg-ink"
+                } else {
+                    "size-[6px] rounded-full bg-hairline-strong"
+                }) {}
             }
         }
     }
