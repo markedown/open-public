@@ -325,7 +325,10 @@ pub fn election_detail(
     }
 }
 
-/// The party seat chips (party contests only), each with its seat count.
+/// The seat chips, each with its seat count: a linked party chip for a party
+/// row, and the label with a neutral swatch for a seated label row (a list or
+/// coalition that is not one of our parties), which would otherwise hold seats
+/// in the bar with no name beside them.
 fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
     html! {
         div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" {
@@ -338,11 +341,21 @@ fn seat_chips(rows: &[db::elections::ResultRow], country: &str) -> Markup {
                             span class="font-mono text-xs font-semibold text-ink" { (s) }
                         }
                     }
+                } @else if let (Some(label), Some(s)) = (r.label.as_deref(), r.seats.filter(|s| *s > 0)) {
+                    span class="inline-flex items-center gap-1.5" {
+                        span class="inline-block h-3 w-3 rounded-sm" aria-hidden="true"
+                            style={"background-color:" (UNCOLOURED_SEAT)} {}
+                        span class="text-xs text-ink" { (label) }
+                        span class="font-mono text-xs font-semibold text-ink" { (s) }
+                    }
                 }
             }
         }
     }
 }
+
+/// The bar colour of a seat held by a row with no party colour.
+const UNCOLOURED_SEAT: &str = "#171717";
 
 /// A proportional seat-composition bar from the per-party seat counts.
 fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
@@ -355,7 +368,7 @@ fn seat_bar(rows: &[db::elections::ResultRow]) -> Markup {
             @for r in rows {
                 @if let Some(s) = r.seats.filter(|s| *s > 0) {
                     div class="h-full border-r border-r-paper-raised last:border-r-0"
-                        style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or("#171717"))} {}
+                        style={"flex:" (s) " 0 0;background-color:" (r.party_color.as_deref().unwrap_or(UNCOLOURED_SEAT))} {}
                 }
             }
         }

@@ -4667,6 +4667,45 @@ async fn vote_share_bars_order_by_votes_not_seats(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn seated_label_rows_are_named_beside_the_seat_bar(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/sl", None, Some("hsl"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar("insert into countries (name, slug, source_id) values ('Listland','listland',$1) returning id")
+        .bind(src).fetch_one(&pool).await.unwrap();
+    let eid: i64 = sqlx::query_scalar(
+        "insert into elections (country_id, name, slug, held_on, kind, source_id, valid_votes) \
+         values ($1,'List Election','list-election','2024-01-01','parliamentary',$2,300) returning id",
+    )
+    .bind(cid)
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    for (label, seats) in [
+        ("Test Lista Jedan", 7),
+        ("Test Lista Dva", 3),
+        ("Test Lista Bez", 0),
+    ] {
+        sqlx::query("insert into election_results (election_id, party_id, seats, votes, source_id, label) values ($1, null, $2, 100, $3, $4)")
+            .bind(eid).bind(seats).bind(src).bind(label).execute(&pool).await.unwrap();
+    }
+
+    let app = router(pool.clone());
+    let req = Request::builder()
+        .uri("/listland/election/list-election")
+        .header("accept-language", "en")
+        .body(Body::empty())
+        .unwrap();
+    let body = body_string(app.oneshot(req).await.unwrap()).await;
+    let seats = &body[..body.find("Vote share").expect("vote share section")];
+    // Both seated lists are named with their seats; the seatless one is not.
+    assert!(seats.contains("Test Lista Jedan"));
+    assert!(seats.contains("Test Lista Dva"));
+    assert!(!seats.contains("Test Lista Bez"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn party_page_shows_a_support_chart(pool: db::Pool) {
     let src = db::sources::insert_source(&pool, "manual", "https://ex.test/ch", None, Some("hch"))
         .await
