@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
-"""Generate the social preview image served at /static/brand/og.png.
+"""Generate the brand assets under crates/server/static/brand/.
 
-This is the card a link to the site shows when it is shared. It is a committed
-asset rather than something rendered per request, and this script is how it is
-regenerated so the file is not an unexplained binary blob.
+These are committed files rather than things rendered per request, and this
+script is how they are regenerated, so none of them is an unexplained binary:
 
-It is deliberately built from what the site already ships: the same palette as
-the stylesheet, the same two fonts as the pages, and the solid ink block that
-serves as the mark. Nothing is fetched; the fonts are read from the static
-directory and decompressed in memory.
+- og.png, the card a shared link shows (1200x630, the size every platform crops
+  to a 1.91:1 card);
+- favicon.svg, favicon-16.png, favicon-32.png and apple-touch-icon.png;
+- wordmark.svg and wordmark-dark.svg, the README banner, with the name drawn as
+  outlines so it looks the same without the font installed.
+
+Everything is built from what the site already ships: the stylesheet's palette,
+the one typeface (Source Sans 3, read from the static directory and set to the
+weight needed), and the mark, six seats in two rows with three filled. Nothing
+is fetched.
 
 Needs `pillow` and `fonttools[woff]`:
 
     pip install pillow "fonttools[woff]"
     python3 scripts/make_og_image.py
-
-The size is the one every platform crops to a 1.91:1 card.
 """
 
 import io
@@ -23,46 +26,69 @@ import pathlib
 import sys
 
 from PIL import Image, ImageDraw, ImageFont
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.pens.svgPathPen import SVGPathPen
+from fontTools.pens.transformPen import TransformPen
 from fontTools.ttLib import TTFont
+from fontTools.varLib.instancer import instantiateVariableFont
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-FONTS = ROOT / "crates/server/static/fonts"
-OUT = ROOT / "crates/server/static/brand/og.png"
+FONT = ROOT / "crates/server/static/fonts/SourceSans3-latin.woff2"
+BRAND = ROOT / "crates/server/static/brand"
 
-WIDTH, HEIGHT = 1200, 630
-MARGIN = 84
+# The stylesheet's palette (crates/server/assets/tailwind.css), kept in sync by
+# hand; there are few values and they change about never.
+PAPER = (255, 255, 255)
+SUNKEN = (242, 245, 249)
+INK = (27, 31, 36)
+INK_MUTED = (84, 91, 100)
+HAIRLINE = (223, 227, 232)
+RING = (185, 192, 200)  # the unfilled seats of the mark
 
-# The stylesheet's palette, resolved from oklch to sRGB. Kept in sync by hand;
-# there are three values and they change about never.
-PAPER = (242, 244, 246)
-INK = (21, 24, 30)
-INK_MUTED = (80, 83, 88)
-HAIRLINE = (214, 217, 221)
+# The mark: three columns, two rows, filled seats first-row-left to right.
+MARK = [True, True, False, True, False, False]
 
 HEADLINE = "An open, source-backed record of public political life."
 SUBLINE = "Every fact links to the source it came from."
 DOMAIN = "open-public.com"
+NAME = "open-public"
 
 
-def load(woff2: str, size: int) -> ImageFont.FreeTypeFont:
-    """A drawable font from the woff2 the site serves, decompressed in memory."""
-    path = FONTS / woff2
-    if not path.exists():
-        sys.exit(f"missing font: {path}")
-    font = TTFont(str(path))
+def instance(weight: int) -> TTFont:
+    """The variable font fixed at one weight, as plain TrueType."""
+    if not FONT.exists():
+        sys.exit(f"missing font: {FONT}")
+    font = TTFont(str(FONT))
+    if "fvar" in font:
+        font = instantiateVariableFont(font, {"wght": weight})
+    font.flavor = None
+    return font
+
+
+def pil_font(weight: int, size: int) -> ImageFont.FreeTypeFont:
     buf = io.BytesIO()
-    font.flavor = None  # write plain TrueType rather than woff2
-    font.save(buf)
+    instance(weight).save(buf)
     buf.seek(0)
     return ImageFont.truetype(buf, size)
 
 
-def wrap(draw, text, font, max_width):
+def hex_of(rgb) -> str:
+    return "#%02x%02x%02x" % rgb
+
+
+def draw_mark(d: ImageDraw.ImageDraw, x: float, y: float, dot: float, gap: float, filled, empty):
+    for i, on in enumerate(MARK):
+        cx = x + (i % 3) * (dot + gap)
+        cy = y + (i // 3) * (dot + gap)
+        d.ellipse([cx, cy, cx + dot, cy + dot], fill=filled if on else empty)
+
+
+def wrap(d, text, font, max_width):
     """Break text into lines that fit, on whole words."""
     words, lines, line = text.split(), [], ""
     for word in words:
         trial = f"{line} {word}".strip()
-        if draw.textlength(trial, font=font) <= max_width or not line:
+        if d.textlength(trial, font=font) <= max_width or not line:
             line = trial
         else:
             lines.append(line)
@@ -72,39 +98,126 @@ def wrap(draw, text, font, max_width):
     return lines
 
 
-def main() -> int:
-    img = Image.new("RGB", (WIDTH, HEIGHT), PAPER)
+def og_image():
+    width, height, margin = 1200, 630, 84
+    img = Image.new("RGB", (width, height), PAPER)
     d = ImageDraw.Draw(img)
+    # The pale band the pages open with, behind the claim.
+    d.rectangle([0, 0, width, height - 150], fill=SUNKEN)
+    d.line([(0, height - 150), (width, height - 150)], fill=HAIRLINE, width=2)
 
-    mono = load("IBMPlexMono-SemiBold.woff2", 30)
-    mono_small = load("IBMPlexMono-Medium.woff2", 24)
-    sans = load("PublicSans.woff2", 62)
-    sans_small = load("PublicSans.woff2", 28)
+    name = pil_font(800, 40)
+    head = pil_font(800, 64)
+    sub = pil_font(400, 30)
+    foot = pil_font(600, 26)
 
-    # The mark: a solid ink block, then the wordmark in monospace beside it.
-    block = 34
-    d.rectangle([MARGIN, MARGIN, MARGIN + block, MARGIN + block], fill=INK)
-    d.text((MARGIN + block + 18, MARGIN + block / 2), "open-public",
-           font=mono, fill=INK, anchor="lm")
+    dot, gap = 11, 4
+    draw_mark(d, margin, margin + 2, dot, gap, INK, RING)
+    d.text((margin + 3 * dot + 2 * gap + 18, margin + dot + gap / 2), NAME,
+           font=name, fill=INK, anchor="lm")
 
-    # The claim, wrapped, set large. This image is shown for every page, so it
-    # says what the site is rather than anything page-specific.
-    y = 250
-    for line in wrap(d, HEADLINE, sans, WIDTH - 2 * MARGIN):
-        d.text((MARGIN, y), line, font=sans, fill=INK)
-        y += 78
+    y = 210
+    for line in wrap(d, HEADLINE, head, width - 2 * margin):
+        d.text((margin, y), line, font=head, fill=INK)
+        y += 76
+    d.text((margin, y + 14), SUBLINE, font=sub, fill=INK_MUTED)
 
-    d.text((MARGIN, y + 16), SUBLINE, font=sans_small, fill=INK_MUTED)
+    d.text((margin, height - 75), DOMAIN, font=foot, fill=INK_MUTED, anchor="lm")
+    out = BRAND / "og.png"
+    img.save(out, "PNG", optimize=True)
+    return out
 
-    # A hairline above the footer, the same structural rule the pages use.
-    rule_y = HEIGHT - MARGIN - 52
-    d.line([(MARGIN, rule_y), (WIDTH - MARGIN, rule_y)], fill=HAIRLINE, width=2)
-    d.text((MARGIN, HEIGHT - MARGIN - 16), DOMAIN,
-           font=mono_small, fill=INK_MUTED, anchor="ls")
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    img.save(OUT, "PNG", optimize=True)
-    print(f"{OUT.relative_to(ROOT)}  {OUT.stat().st_size // 1024} KB  {WIDTH}x{HEIGHT}")
+def icon_png(size: int, name: str):
+    """The mark on white, scaled to the icon size."""
+    scale = 8  # draw large, then downsample, for smooth edges
+    s = size * scale
+    img = Image.new("RGB", (s, s), PAPER)
+    d = ImageDraw.Draw(img)
+    pad = s * 0.14
+    gap = s * 0.06
+    dot = (s - 2 * pad - 2 * gap) / 3
+    top = (s - (2 * dot + gap)) / 2
+    draw_mark(d, pad, top, dot, gap, INK, RING)
+    img = img.resize((size, size), Image.LANCZOS)
+    out = BRAND / name
+    img.save(out, "PNG", optimize=True)
+    return out
+
+
+def favicon_svg():
+    pad, gap = 4.5, 1.9
+    dot = (32 - 2 * pad - 2 * gap) / 3
+    top = (32 - (2 * dot + gap)) / 2
+    circles = []
+    for i, on in enumerate(MARK):
+        cx = pad + (i % 3) * (dot + gap) + dot / 2
+        cy = top + (i // 3) * (dot + gap) + dot / 2
+        fill = hex_of(INK) if on else hex_of(RING)
+        circles.append(f'  <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{dot / 2:.2f}" fill="{fill}"/>')
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="open-public">\n'
+           f'  <rect width="32" height="32" rx="6" fill="{hex_of(PAPER)}"/>\n'
+           + "\n".join(circles) + "\n</svg>\n")
+    out = BRAND / "favicon.svg"
+    out.write_text(svg)
+    return out
+
+
+def text_path(font: TTFont, text: str, size: float, x: float, baseline: float):
+    """The text's outlines as one SVG path, and its advance width."""
+    cmap = font.getBestCmap()
+    glyphs = font.getGlyphSet()
+    upm = font["head"].unitsPerEm
+    k = size / upm
+    pen = SVGPathPen(glyphs)
+    cursor = 0.0
+    for ch in text:
+        gname = cmap[ord(ch)]
+        # Font units are y-up; SVG is y-down, so flip around the baseline.
+        tp = TransformPen(pen, (k, 0, 0, -k, x + cursor * k, baseline))
+        glyphs[gname].draw(tp)
+        cursor += font["hmtx"][gname][0]
+    return pen.getCommands(), cursor * k
+
+
+def wordmark(dark: bool):
+    ink = (238, 241, 244) if dark else INK
+    ring = (110, 118, 128) if dark else RING
+    font = instance(800)
+    size = 40
+    dot, gap = 9, 3.5
+    x0 = 3 * dot + 2 * gap + 14
+    d, advance = text_path(font, NAME, size, x0, 38)
+    width = x0 + advance + 2
+    circles = []
+    top = 10.0
+    for i, on in enumerate(MARK):
+        cx = (i % 3) * (dot + gap) + dot / 2
+        cy = top + (i // 3) * (dot + gap) + dot / 2
+        fill = hex_of(ink) if on else hex_of(ring)
+        circles.append(f'  <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{dot / 2:.2f}" fill="{fill}"/>')
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width:.1f} 50" '
+           f'width="{width:.0f}" height="50" role="img" aria-label="open-public">\n'
+           + "\n".join(circles) + "\n"
+           f'  <path fill="{hex_of(ink)}" d="{d}"/>\n</svg>\n')
+    out = BRAND / ("wordmark-dark.svg" if dark else "wordmark.svg")
+    out.write_text(svg)
+    return out
+
+
+def main() -> int:
+    BRAND.mkdir(parents=True, exist_ok=True)
+    made = [
+        og_image(),
+        icon_png(16, "favicon-16.png"),
+        icon_png(32, "favicon-32.png"),
+        icon_png(180, "apple-touch-icon.png"),
+        favicon_svg(),
+        wordmark(dark=False),
+        wordmark(dark=True),
+    ]
+    for p in made:
+        print(f"{p.relative_to(ROOT)}  {p.stat().st_size // 1024 or 1} KB")
     return 0
 
 

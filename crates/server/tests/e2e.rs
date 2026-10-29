@@ -8272,7 +8272,7 @@ async fn the_admin_api_reaches_a_gated_instance(pool: db::Pool) {
 
     // The public site is dark.
     let home = body_string(get(&gated, "/").await).await;
-    assert!(home.contains("Still being assembled"), "the site is gated");
+    assert!(home.contains("Under construction"), "the site is gated");
 
     // But the pipeline can still deliver through the API: its bearer key, not the
     // construction page, is the gate for /api.
