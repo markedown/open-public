@@ -1200,6 +1200,10 @@ async fn locale_from_header_cookie_and_switcher(pool: db::Pool) {
     let tr = home(vec![("accept-language", "tr-TR,tr;q=0.9")]).await;
     assert!(tr.contains(r#"html lang="tr""#));
     assert!(tr.contains("Kişiler, partiler, seçimler")); // Turkish copy
+                                                         // Serbian is served from its Latin catalog and says so in the lang tag.
+    let sr = home(vec![("accept-language", "sr-RS,sr;q=0.9")]).await;
+    assert!(sr.contains(r#"html lang="sr-Latn""#));
+    assert!(sr.contains("Osobe, stranke, izbori")); // Serbian copy
 
     // An explicit cookie overrides the header.
     let cookie_en = home(vec![("accept-language", "tr"), ("cookie", "lang=en")]).await;
@@ -1208,6 +1212,8 @@ async fn locale_from_header_cookie_and_switcher(pool: db::Pool) {
     // The switcher is present.
     assert!(en.contains(r#"href="/lang/en""#));
     assert!(en.contains(r#"href="/lang/tr""#));
+    assert!(en.contains(r#"href="/lang/sr""#));
+    assert!(en.contains("Srpski"));
 
     // Choosing a language sets the cookie and returns to the previous page.
     let req = Request::builder()

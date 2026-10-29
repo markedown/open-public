@@ -1,0 +1,1238 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "A source-backed platform for political data"
+msgstr "Platforma za političke podatke zasnovane na izvorima"
+
+msgid "People, parties, roles and polls. Every record references a source."
+msgstr "Osobe, stranke, funkcije i ankete. Svaki zapis upućuje na izvor."
+
+msgid "Open source · Source-backed political data."
+msgstr "Otvoreni kod · Politički podaci zasnovani na izvorima."
+
+msgid "People"
+msgstr "Osobe"
+
+msgid "people"
+msgstr "osobe"
+
+msgid "people listed"
+msgstr "navedenih osoba"
+
+msgid "No people found."
+msgstr "Nije pronađena nijedna osoba."
+
+msgid "Previous"
+msgstr "Prethodna"
+
+msgid "Next"
+msgstr "Sledeća"
+
+msgid "Page"
+msgstr "Strana"
+
+msgid "Parties"
+msgstr "Stranke"
+
+msgid "parties listed"
+msgstr "navedenih stranaka"
+
+msgid "No parties found."
+msgstr "Nije pronađena nijedna stranka."
+
+msgid "Role"
+msgstr "Funkcija"
+
+msgid "Roles"
+msgstr "Funkcije"
+
+msgid "Party memberships"
+msgstr "Stranačka članstva"
+
+msgid "Party"
+msgstr "Stranka"
+
+msgid "Founded"
+msgstr "Osnovana"
+
+msgid "Dissolved"
+msgstr "Raspuštena"
+
+msgid "Leader"
+msgstr "Predsednik"
+
+msgid "Alliance"
+msgstr "Savez"
+
+msgid "Members"
+msgstr "Članovi"
+
+msgid "Member"
+msgstr "Član"
+
+msgid "No members listed."
+msgstr "Nema navedenih članova."
+
+msgid "Person"
+msgstr "Osoba"
+
+msgid "Search"
+msgstr "Pretraga"
+
+msgid "Search people and parties..."
+msgstr "Pretražite osobe i stranke..."
+
+msgid "No results found."
+msgstr "Nema rezultata."
+
+msgid "results"
+msgstr "rezultata"
+
+msgid "Page not found."
+msgstr "Stranica nije pronađena."
+
+msgid "Something went wrong. Please try again."
+msgstr "Nešto nije u redu. Pokušajte ponovo."
+
+msgid "Register"
+msgstr "Registracija"
+
+msgid "Log in"
+msgstr "Prijava"
+
+msgid "Log out"
+msgstr "Odjava"
+
+msgid "Email"
+msgstr "Imejl"
+
+msgid "Password"
+msgstr "Lozinka"
+
+msgid "Already have an account?"
+msgstr "Već imate nalog?"
+
+msgid "No account?"
+msgstr "Nemate nalog?"
+
+msgid "Invalid email or password."
+msgstr "Neispravan imejl ili lozinka."
+
+msgid "Internal error. Please try again."
+msgstr "Interna greška. Pokušajte ponovo."
+
+msgid "This address is not complete. A link may have been broken on the way here."
+msgstr "Ova adresa nije potpuna. Moguće je da je link na putu do ovde prekinut."
+
+msgid "Constitutional monarchy"
+msgstr "Ustavna monarhija"
+
+msgid "Approval"
+msgstr "Podrška"
+
+msgid "Disapprove"
+msgstr "Ne podržavam"
+
+msgid "No opinion"
+msgstr "Bez mišljenja"
+
+msgid "took part"
+msgstr "učestvovalo"
+
+msgid "You said"
+msgstr "Vaš odgovor"
+
+msgid "Log in to take part"
+msgstr "Prijavite se da biste učestvovali"
+
+msgid "Counts among verified participants here, not a representative sample."
+msgstr "Broj među verifikovanim učesnicima ovde, a ne reprezentativni uzorak."
+
+msgid "Approval over time"
+msgstr "Podrška kroz vreme"
+
+msgid "Back to home"
+msgstr "Nazad na početnu"
+
+msgid "Structured political information: people, parties, roles, statements and polls. Every fact references a verifiable source."
+msgstr "Strukturisane političke informacije: osobe, stranke, funkcije, izjave i ankete. Svaki podatak upućuje na proverljiv izvor."
+
+msgid "Browse profiles, roles, party affiliations and timelines."
+msgstr "Pregledajte profile, funkcije, stranačke pripadnosti i hronologije."
+
+msgid "Explore party histories, ideologies and current members."
+msgstr "Istražite istorije stranaka, ideologije i sadašnje članove."
+
+msgid "Full-text search across people and parties."
+msgstr "Pretraga celog teksta kroz osobe i stranke."
+
+msgid "Open source. Source-backed political data."
+msgstr "Otvoreni kod. Politički podaci zasnovani na izvorima."
+
+msgid "present"
+msgstr "danas"
+
+msgid "Former members"
+msgstr "Bivši članovi"
+
+msgid "source"
+msgstr "izvor"
+
+msgid "Background"
+msgstr "Biografija"
+
+msgid "Education"
+msgstr "Obrazovanje"
+
+msgid "Occupation"
+msgstr "Zanimanje"
+
+msgid "Ideology"
+msgstr "Ideologija"
+
+msgid "Religion"
+msgstr "Veroispovest"
+
+msgid "Attributes"
+msgstr "Obeležja"
+
+msgid "Institution"
+msgstr "Ustanova"
+
+msgid "Degree"
+msgstr "Zvanje"
+
+msgid "Field of study"
+msgstr "Oblast studija"
+
+msgid "Start date"
+msgstr "Početak"
+
+msgid "End date"
+msgstr "Kraj"
+
+msgid "Source URL"
+msgstr "URL izvora"
+
+msgid "Add education"
+msgstr "Dodaj obrazovanje"
+
+msgid "Add attribute"
+msgstr "Dodaj obeležje"
+
+msgid "Value"
+msgstr "Vrednost"
+
+msgid "Kind"
+msgstr "Vrsta"
+
+msgid "Delete"
+msgstr "Obriši"
+
+msgid "Show original"
+msgstr "Prikaži original"
+
+msgid "Review translations"
+msgstr "Pregled prevoda"
+
+msgid "Each draft translation stays hidden until you review it. Compare it with the original, edit the text if needed, then publish it, or discard the draft."
+msgstr "Svaki nacrt prevoda ostaje skriven dok ga ne pregledate. Uporedite ga sa originalom, po potrebi izmenite tekst, pa ga objavite ili odbacite nacrt."
+
+msgid "Overview"
+msgstr "Pregled"
+
+msgid "Capital"
+msgstr "Glavni grad"
+
+msgid "Presidential government system"
+msgstr "Predsednički sistem vlasti"
+
+msgid "Federal presidential republic"
+msgstr "Savezna predsednička republika"
+
+msgid "Federal parliamentary republic"
+msgstr "Savezna parlamentarna republika"
+
+msgid "Government"
+msgstr "Vlast"
+
+msgid "Parliament"
+msgstr "Parlament"
+
+msgid "Congress"
+msgstr "Kongres"
+
+msgid "United States Senate"
+msgstr "Senat Sjedinjenih Američkih Država"
+
+msgid "United States House of Representatives"
+msgstr "Predstavnički dom Sjedinjenih Američkih Država"
+
+msgid "Independent"
+msgstr "Nestranački"
+
+msgid "seats"
+msgstr "mesta"
+
+msgid "Coalitions"
+msgstr "Koalicije"
+
+msgid "People, parties, roles and polls."
+msgstr "Osobe, stranke, funkcije i ankete."
+
+msgid "People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."
+msgstr "Osobe, stranke, izbori i ankete. Svaki podatak povezan je sa svojim izvorom, jedan proverljiv skup podataka po zemlji."
+
+msgid "Open political data."
+msgstr "Otvoreni politički podaci."
+
+msgid "Polls"
+msgstr "Ankete"
+
+msgid "News"
+msgstr "Vesti"
+
+msgid "References"
+msgstr "Reference"
+
+msgid "Photo"
+msgstr "Fotografija"
+
+msgid "Statements"
+msgstr "Izjave"
+
+msgid "Statement"
+msgstr "Izjava"
+
+msgid "Add statement"
+msgstr "Dodaj izjavu"
+
+msgid "No statements yet."
+msgstr "Još nema izjava."
+
+msgid "paraphrase"
+msgstr "parafraza"
+
+msgid "Paraphrase in our own words"
+msgstr "Parafraza našim rečima"
+
+msgid "Add poll"
+msgstr "Dodaj anketu"
+
+msgid "No polls yet."
+msgstr "Još nema anketa."
+
+msgid "Question"
+msgstr "Pitanje"
+
+msgid "Option"
+msgstr "Opcija"
+
+msgid "Options"
+msgstr "Opcije"
+
+msgid "Add news"
+msgstr "Dodaj vest"
+
+msgid "No news yet."
+msgstr "Još nema vesti."
+
+msgid "Headline"
+msgstr "Naslov"
+
+msgid "Source URL"
+msgstr "URL izvora"
+
+msgid "Outlet"
+msgstr "Medij"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Summary"
+msgstr "Sažetak"
+
+msgid "Save"
+msgstr "Sačuvaj"
+
+msgid "Integrity"
+msgstr "Integritet"
+
+msgid "Verify"
+msgstr "Proveri"
+
+msgid "This fingerprint lets anyone confirm no vote was altered or removed after casting."
+msgstr "Ovaj otisak omogućava svakome da potvrdi da nijedan glas nije izmenjen niti uklonjen nakon glasanja."
+
+msgid "Vote"
+msgstr "Glasaj"
+
+msgid "votes"
+msgstr "glasova"
+
+msgid "You have voted."
+msgstr "Glasali ste."
+
+msgid "Log in to vote."
+msgstr "Prijavite se da biste glasali."
+
+msgid "Tap an option to vote."
+msgstr "Dodirnite opciju da biste glasali."
+
+msgid "Enter a valid email address."
+msgstr "Unesite ispravnu imejl adresu."
+
+msgid "Password must be at least 8 characters."
+msgstr "Lozinka mora imati najmanje 8 znakova."
+
+msgid "Please verify your email before logging in."
+msgstr "Potvrdite svoju imejl adresu pre prijave."
+
+msgid "Check your email for a link to verify your account and finish signing up."
+msgstr "Proverite imejl: poslali smo Vam link za potvrdu naloga i završetak registracije."
+
+msgid "Verify your email"
+msgstr "Potvrdite imejl adresu"
+
+msgid "This verification link is invalid or has expired."
+msgstr "Ovaj link za potvrdu je neispravan ili je istekao."
+
+msgid "Email verified"
+msgstr "Imejl adresa je potvrđena"
+
+msgid "Your account is active. You can log in now."
+msgstr "Vaš nalog je aktivan. Sada se možete prijaviti."
+
+msgid "Confirm your email address to activate your account:"
+msgstr "Potvrdite svoju imejl adresu da biste aktivirali nalog:"
+
+msgid "If you did not create an account, ignore this message. The link expires in 24 hours."
+msgstr "Ako niste napravili nalog, zanemarite ovu poruku. Link ističe za 24 sata."
+
+msgid "Electoral history"
+msgstr "Izborna istorija"
+
+msgid "Elections"
+msgstr "Izbori"
+
+msgid "Timeline"
+msgstr "Hronologija"
+
+msgid "Founding"
+msgstr "Osnivanje"
+
+msgid "Election"
+msgstr "Izbori"
+
+msgid "Milestone"
+msgstr "Prekretnica"
+
+msgid "Admin panel"
+msgstr "Administracija"
+
+msgid "Curated content is editable and always sourced. Cast votes are immutable and are never editable here."
+msgstr "Uređeni sadržaj može se menjati i uvek ima izvor. Dati glasovi su nepromenljivi i ovde se nikada ne mogu menjati."
+
+msgid "News and statements are added from a person or party page."
+msgstr "Vesti i izjave dodaju se sa stranice osobe ili stranke."
+
+msgid "parties"
+msgstr "stranke"
+
+msgid "polls"
+msgstr "ankete"
+
+msgid "Poll type"
+msgstr "Vrsta ankete"
+
+msgid "Single choice"
+msgstr "Jedan izbor"
+
+msgid "Yes / No"
+msgstr "Da / Ne"
+
+msgid "Rating scale"
+msgstr "Skala ocena"
+
+msgid "Vote"
+msgstr "Glasaj"
+
+msgid "Select one or more options, then vote."
+msgstr "Izaberite jednu ili više opcija, pa glasajte."
+
+msgid "Multiple choice"
+msgstr "Višestruki izbor"
+
+msgid "Open"
+msgstr "Otvorena"
+
+msgid "Closed"
+msgstr "Zatvorena"
+
+msgid "Turnout"
+msgstr "Izlaznost"
+
+msgid "Add option"
+msgstr "Dodaj opciju"
+
+msgid "image URL"
+msgstr "URL slike"
+
+msgid "Alliances"
+msgstr "Savezi"
+
+msgid "Active"
+msgstr "Aktivan"
+
+msgid "Inactive"
+msgstr "Neaktivan"
+
+msgid "No alliances yet."
+msgstr "Još nema saveza."
+
+msgid "See all"
+msgstr "Prikaži sve"
+
+msgid "Presidential"
+msgstr "Predsednički"
+
+msgid "Referendum"
+msgstr "Referendum"
+
+msgid "Local"
+msgstr "Lokalni"
+
+msgid "Parliamentary"
+msgstr "Parlamentarni"
+
+msgid "No elections yet."
+msgstr "Još nema izbora."
+
+msgid "Full results at the source:"
+msgstr "Potpuni rezultati u izvoru:"
+
+msgid "No events yet."
+msgstr "Još nema događaja."
+
+msgid "Others"
+msgstr "Ostali"
+
+msgid "Vote share"
+msgstr "Udeo glasova"
+
+msgid "Registered"
+msgstr "Upisani birači"
+
+msgid "Votes cast"
+msgstr "Glasalo"
+
+msgid "Valid votes"
+msgstr "Važeći glasovi"
+
+msgid "Manage"
+msgstr "Upravljanje"
+
+msgid "Add sourced content for this entity."
+msgstr "Dodajte sadržaj sa izvorom za ovaj unos."
+
+msgid "Vacant"
+msgstr "Upražnjeno"
+
+msgid "Review data conflicts"
+msgstr "Pregled sukoba podataka"
+
+msgid "Data conflicts"
+msgstr "Sukobi podataka"
+
+msgid "A source disagreed with a value we already hold. Nothing was overwritten. Correct the record through the normal editing flow, then mark the conflict resolved."
+msgstr "Izvor se nije slagao sa vrednošću koju već imamo. Ništa nije prepisano. Ispravite zapis kroz uobičajeni postupak uređivanja, a zatim označite sukob kao rešen."
+
+msgid "No open conflicts."
+msgstr "Nema otvorenih sukoba."
+
+msgid "Mark resolved"
+msgstr "Označi kao rešeno"
+
+msgid "Ours"
+msgstr "Naša vrednost"
+
+msgid "Incoming"
+msgstr "Nova vrednost"
+
+msgid "Outlets"
+msgstr "Mediji"
+
+msgid "No outlets yet."
+msgstr "Još nema medija."
+
+msgid "Left"
+msgstr "Levica"
+
+msgid "Lean left"
+msgstr "Levi centar"
+
+msgid "Center"
+msgstr "Centar"
+
+msgid "Lean right"
+msgstr "Desni centar"
+
+msgid "Right"
+msgstr "Desnica"
+
+msgid "Unrated"
+msgstr "Bez ocene"
+
+msgid "Pagination"
+msgstr "Navigacija po stranicama"
+
+msgid "Review summaries"
+msgstr "Pregled sažetaka"
+
+msgid "Each draft summary stays unpublished until you review it. Edit the text if needed, then publish it, or discard the draft."
+msgstr "Svaki nacrt sažetka ostaje neobjavljen dok ga ne pregledate. Po potrebi izmenite tekst, pa ga objavite ili odbacite nacrt."
+
+msgid "No drafts to review."
+msgstr "Nema nacrta za pregled."
+
+msgid "Publish"
+msgstr "Objavi"
+
+msgid "Discard"
+msgstr "Odbaci"
+
+msgid "Add outlet"
+msgstr "Dodaj medij"
+
+msgid "Edit outlet"
+msgstr "Izmeni medij"
+
+msgid "Edit"
+msgstr "Izmeni"
+
+msgid "Name"
+msgstr "Naziv"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Homepage"
+msgstr "Veb-sajt"
+
+msgid "Logo URL"
+msgstr "URL logotipa"
+
+msgid "Logo license"
+msgstr "Licenca logotipa"
+
+msgid "Political leaning"
+msgstr "Politička orijentacija"
+
+msgid "Leaning source URL"
+msgstr "URL izvora za orijentaciju"
+
+msgid "Edit news"
+msgstr "Izmeni vest"
+
+msgid "Relations"
+msgstr "Veze"
+
+msgid "Attach a person or party"
+msgstr "Poveži osobu ili stranku"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "By"
+msgstr "Autor:"
+
+msgid "Mentions"
+msgstr "Pominjanja"
+
+msgid "Read at the source"
+msgstr "Pročitajte u izvoru"
+
+msgid "Countries"
+msgstr "Zemlje"
+
+msgid "Semi-presidential republic"
+msgstr "Polupredsednička republika"
+
+msgid "National Assembly"
+msgstr "Narodna skupština"
+
+msgid "Propose a poll"
+msgstr "Predložite anketu"
+
+msgid "Your poll is checked automatically and then by an editor before it appears. Keep it neutral and on topic."
+msgstr "Vašu anketu najpre automatski, a zatim i urednik proverava pre nego što se pojavi. Neka bude neutralna i u vezi sa temom."
+
+msgid "Question image (optional)"
+msgstr "Slika uz pitanje (opciono)"
+
+msgid "PNG, JPEG, or WebP, up to 5 MB. Images are re-encoded on upload."
+msgstr "PNG, JPEG ili WebP, do 5 MB. Slike se pri otpremanju ponovo kodiraju."
+
+msgid "Submit for review"
+msgstr "Pošalji na proveru"
+
+msgid "My submissions"
+msgstr "Moji predlozi"
+
+msgid "Every poll you propose is listed here with its current state."
+msgstr "Svaka anketa koju predložite navedena je ovde sa svojim trenutnim statusom."
+
+msgid "You have not proposed any polls yet."
+msgstr "Još niste predložili nijednu anketu."
+
+msgid "View published poll"
+msgstr "Pogledaj objavljenu anketu"
+
+msgid "Reason"
+msgstr "Razlog"
+
+msgid "Under review"
+msgstr "Na proveri"
+
+msgid "Published"
+msgstr "Objavljeno"
+
+msgid "Not accepted"
+msgstr "Nije prihvaćeno"
+
+msgid "Review poll submissions"
+msgstr "Pregled predloženih anketa"
+
+msgid "Each proposal was screened automatically and waits for you. Approving creates the poll. Mark a rejection as a violation only for genuine policy breaches; repeated violations suspend the account."
+msgstr "Svaki predlog je automatski proveren i čeka na Vas. Odobravanjem se pravi anketa. Odbijanje označite kao prekršaj samo kod stvarnog kršenja pravila; ponovljeni prekršaji suspenduju nalog."
+
+msgid "No submissions to review."
+msgstr "Nema predloga za pregled."
+
+msgid "Automated note"
+msgstr "Automatska napomena"
+
+msgid "Approve"
+msgstr "Odobri"
+
+msgid "Reason (optional)"
+msgstr "Razlog (opciono)"
+
+msgid "Policy violation (counts toward a ban)"
+msgstr "Kršenje pravila (računa se za zabranu)"
+
+msgid "Reject"
+msgstr "Odbij"
+
+msgid "This account has been suspended."
+msgstr "Ovaj nalog je suspendovan."
+
+msgid "Support over time"
+msgstr "Podrška kroz vreme"
+
+msgid "Seats"
+msgstr "Mesta"
+
+msgid "Question image URL"
+msgstr "URL slike uz pitanje"
+
+msgid "Image license"
+msgstr "Licenca slike"
+
+msgid "A question is required."
+msgstr "Pitanje je obavezno."
+
+msgid "A poll needs at least two options."
+msgstr "Anketi su potrebne najmanje dve opcije."
+
+msgid "The upload could not be read. Please try again."
+msgstr "Otpremljeni fajl nije mogao da se pročita. Pokušajte ponovo."
+
+msgid "Feed"
+msgstr "Moj pregled"
+
+msgid "Follow"
+msgstr "Prati"
+
+msgid "Following"
+msgstr "Pratite"
+
+msgid "Log in to follow"
+msgstr "Prijavite se da biste pratili"
+
+msgid "followed"
+msgstr "praćeno"
+
+msgid "Explore"
+msgstr "Istraži"
+
+msgid "Poll"
+msgstr "Anketa"
+
+msgid "Your pick"
+msgstr "Vaš izbor"
+
+msgid "the leading answer"
+msgstr "vodeći odgovor"
+
+msgid "Nothing new from what you follow yet."
+msgstr "Još nema ničeg novog od onoga što pratite."
+
+msgid "Follow people, parties and countries to see new polls, news and elections here."
+msgstr "Pratite osobe, stranke i zemlje da biste ovde videli nove ankete, vesti i izbore."
+
+msgid "Review biographies"
+msgstr "Pregled biografija"
+
+msgid "Replaces"
+msgstr "Zamenjuje"
+
+msgid "Each proposed summary stays unpublished until you review it. Edit the text if needed, then approve it, or discard the draft."
+msgstr "Svaki predloženi sažetak ostaje neobjavljen dok ga ne pregledate. Po potrebi izmenite tekst, pa ga odobrite ili odbacite nacrt."
+
+msgid "A public register of political data."
+msgstr "Javni registar političkih podataka."
+
+msgid "Every chamber, at a glance."
+msgstr "Svaki dom, na prvi pogled."
+
+msgid "Strongly disagree"
+msgstr "Uopšte se ne slažem"
+
+msgid "Disagree"
+msgstr "Ne slažem se"
+
+msgid "Neutral"
+msgstr "Neutralno"
+
+msgid "Agree"
+msgstr "Slažem se"
+
+msgid "Strongly agree"
+msgstr "Potpuno se slažem"
+
+msgid "Compass"
+msgstr "Kompas"
+
+msgid "positions"
+msgstr "teze"
+
+msgid "No positions have been recorded for this country yet."
+msgstr "Za ovu zemlju još nisu zabeležene teze."
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Recite gde stojite po svakoj tezi. Označite one do kojih Vam je stalo kao važne, da bi se više računale. Ništa što unesete ne čuva se: Vaše poklapanje izračunava se odmah i nikada se ne beleži."
+
+msgid "See my match"
+msgstr "Prikaži moje poklapanje"
+
+msgid "Skip"
+msgstr "Preskoči"
+
+msgid "Important"
+msgstr "Važno"
+
+msgid "Your match"
+msgstr "Vaše poklapanje"
+
+msgid "You did not answer any positions, so there is nothing to match."
+msgstr "Niste odgovorili ni na jednu tezu, pa nema šta da se uporedi."
+
+msgid "Go back"
+msgstr "Nazad"
+
+msgid "Positions answered"
+msgstr "Odgovorene teze"
+
+msgid "No party has recorded a stance on the positions you answered."
+msgstr "Nijedna stranka nema zabeležen stav o tezama na koje ste odgovorili."
+
+msgid "Start over"
+msgstr "Počni iznova"
+
+msgid "How the parties compare"
+msgstr "Kako se stranke porede"
+
+msgid "Your answer"
+msgstr "Vaš odgovor"
+
+msgid "Compass positions"
+msgstr "Teze kompasa"
+
+msgid "Each position needs a source, and so does every party stance on it. Visitors answer these; their answers are never stored."
+msgstr "Svaka teza mora imati izvor, kao i svaki stav stranke o njoj. Posetioci na njih odgovaraju; njihovi odgovori se nikada ne čuvaju."
+
+msgid "Position"
+msgstr "Teza"
+
+msgid "Order"
+msgstr "Redosled"
+
+msgid "Add position"
+msgstr "Dodaj tezu"
+
+msgid "Stances"
+msgstr "Stavovi"
+
+msgid "Record where each party stands. A party with no stance is left out of that party's match."
+msgstr "Zabeležite gde svaka stranka stoji. Stranka bez stava izostavlja se iz poklapanja za tu tezu."
+
+msgid "Stance"
+msgstr "Stav"
+
+msgid "Clear stance"
+msgstr "Ukloni stav"
+
+msgid "Parties are ranked by how closely their recorded stances match your answers."
+msgstr "Stranke su poređane prema tome koliko se njihovi zabeleženi stavovi poklapaju sa Vašim odgovorima."
+
+msgid "Party stances here are our readings of what each party published and how it voted, not statements by the parties themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Stavovi stranaka ovde su naše tumačenje onoga što je svaka stranka objavila i kako je glasala, a ne izjave samih stranaka. Svaki stav upućuje na svoj izvor, pa se svaki može proveriti i ispraviti ako je pogrešan."
+
+msgid "Law"
+msgstr "Zakon"
+
+msgid "Decree"
+msgstr "Uredba"
+
+msgid "Manifesto"
+msgstr "Izborni program"
+
+msgid "Pledge differs from record"
+msgstr "Obećanje se razlikuje od postupaka"
+
+msgid "Record what each party pledged and what it actually did. A recorded act outranks a pledge when the stance is resolved, and where they disagree both are shown."
+msgstr "Zabeležite šta je svaka stranka obećala i šta je zaista uradila. Pri utvrđivanju stava zabeleženi postupak ima prednost nad obećanjem, a gde se razlikuju, prikazuju se oba."
+
+msgid "Evidence"
+msgstr "Dokaz"
+
+msgid "Reference"
+msgstr "Mesto u izvoru"
+
+msgid "Add"
+msgstr "Dodaj"
+
+msgid "Bill"
+msgstr "Predlog zakona"
+
+msgid "Court application"
+msgstr "Ustavna žalba"
+
+msgid "Next election"
+msgstr "Sledeći izbori"
+
+msgid "days"
+msgstr "dana"
+
+msgid "Compare your positions"
+msgstr "Uporedite svoje stavove"
+
+msgid "Upcoming"
+msgstr "Predstojeći"
+
+msgid "Answered about"
+msgstr "Odnosi se na"
+
+msgid "Candidate"
+msgstr "Kandidat"
+
+msgid "Candidates"
+msgstr "Kandidati"
+
+msgid "Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."
+msgstr "Stavovi kandidata ovde su naše tumačenje onoga što je svaki kandidat objavio ili uradio na funkciji, a ne izjave samih kandidata. Svaki stav upućuje na svoj izvor, pa se svaki može proveriti i ispraviti ako je pogrešan."
+
+msgid "Not held yet"
+msgstr "Još nisu održani"
+
+msgid "No candidate has a recorded stance on the positions you answered."
+msgstr "Nijedan kandidat nema zabeležen stav o tezama na koje ste odgovorili."
+
+msgid "Candidates are ranked by how closely their recorded stances match your answers."
+msgstr "Kandidati su poređani prema tome koliko se njihovi zabeleženi stavovi poklapaju sa Vašim odgovorima."
+
+msgid "How the candidates compare"
+msgstr "Kako se kandidati porede"
+
+msgid "Date not fixed"
+msgstr "Datum nije utvrđen"
+
+msgid "Page or article"
+msgstr "Strana ili član"
+
+msgid "archived"
+msgstr "arhivirano"
+
+msgid "Set a new password"
+msgstr "Postavite novu lozinku"
+
+msgid "Use this link to set a new password:"
+msgstr "Pomoću ovog linka postavite novu lozinku:"
+
+msgid "If you did not ask for this, ignore this message and your password stays as it is. The link expires in one hour."
+msgstr "Ako ovo niste tražili, zanemarite poruku i Vaša lozinka ostaje ista. Link ističe za jedan sat."
+
+msgid "If that address has an account, a link to set a new password is on its way."
+msgstr "Ako za tu adresu postoji nalog, link za postavljanje nove lozinke je na putu."
+
+msgid "This link is invalid or has expired."
+msgstr "Ovaj link je neispravan ili je istekao."
+
+msgid "Your password has been changed. You can log in with it now."
+msgstr "Vaša lozinka je promenjena. Sada se možete prijaviti njome."
+
+msgid "Enter the address you registered with and we will send a link."
+msgstr "Unesite adresu sa kojom ste se registrovali i poslaćemo Vam link."
+
+msgid "Send the link"
+msgstr "Pošalji link"
+
+msgid "Back to log in"
+msgstr "Nazad na prijavu"
+
+msgid "Forgotten your password?"
+msgstr "Zaboravili ste lozinku?"
+
+msgid "New password"
+msgstr "Nova lozinka"
+
+msgid "Privacy"
+msgstr "Privatnost"
+
+msgid "Reading the site"
+msgstr "Čitanje sajta"
+
+msgid "If you create an account"
+msgstr "Ako napravite nalog"
+
+msgid "If you vote in a poll"
+msgstr "Ako glasate u anketi"
+
+msgid "If you propose a poll"
+msgstr "Ako predložite anketu"
+
+msgid "What the platform cannot tell you"
+msgstr "Šta Vam platforma ne može reći"
+
+msgid "Your data"
+msgstr "Vaši podaci"
+
+msgid "This page describes what the platform stores, why, and for how long. Everything on it can be checked against the published source code and the database schema, both of which are open."
+msgstr "Ova stranica opisuje šta platforma čuva, zašto i koliko dugo. Sve na njoj može se proveriti u objavljenom izvornom kodu i šemi baze podataka, koji su oba otvoreni."
+
+msgid "Nothing is required to read anything here. There is no account needed, no tracking script, no advertising network, and no third-party analytics."
+msgstr "Za čitanje bilo čega ovde ništa nije potrebno. Nema potrebe za nalogom, nema skripte za praćenje, nema reklamne mreže i nema analitike trećih strana."
+
+msgid "The site sets one cookie for the language you choose. It holds a language code and nothing else."
+msgstr "Sajt postavlja jedan kolačić za jezik koji izaberete. On sadrži kôd jezika i ništa više."
+
+msgid "Your email address is never stored. What is stored is a keyed hash of it, which is what lets the platform recognise a returning address without being able to read it. The address itself is used to send a message and then discarded, so it cannot be recovered from the database, by us or by anyone who obtains a copy of it."
+msgstr "Vaša imejl adresa se nikada ne čuva. Čuva se njen heš izračunat pomoću ključa, koji platformi omogućava da prepozna adresu koja se vraća, a da ne može da je pročita. Sama adresa koristi se za slanje poruke i zatim odbacuje, pa se ne može povratiti iz baze podataka, ni od strane nas ni od strane bilo koga ko dođe do njene kopije."
+
+msgid "Your password is stored only as an argon2 hash, which cannot be reversed into the password."
+msgstr "Vaša lozinka čuva se samo kao argon2 heš, iz kog se lozinka ne može povratiti."
+
+msgid "A session is a random token. Only its hash is stored, and it expires. Signing out deletes it, and setting a new password ends every session of that account."
+msgstr "Sesija je nasumični token. Čuva se samo njegov heš, i on ističe. Odjava ga briše, a postavljanje nove lozinke završava sve sesije tog naloga."
+
+msgid "Your vote is anonymous. When you vote, your account is issued a single token for that poll, and the ballot is cast with that token. The token is blinded before the platform ever sees it, so the platform signs it without learning its value. That is what makes the ballot anonymous: it cannot be linked back to your account, not by us and not by anyone holding a copy of the database."
+msgstr "Vaš glas je anoniman. Kada glasate, Vašem nalogu izdaje se jedan token za tu anketu, i glas se daje tim tokenom. Token se zaslepljuje pre nego što ga platforma ikada vidi, pa ga platforma potpisuje ne saznajući njegovu vrednost. Upravo to čini glas anonimnim: ne može se povezati sa Vašim nalogom, ni od strane nas ni od strane bilo koga ko ima kopiju baze podataka."
+
+msgid "What is recorded is kept deliberately apart. One record notes that your account was issued a token for this poll, so it cannot be issued a second one. A separate record holds the anonymous ballots. The two share only which poll they belong to, and nothing joins a ballot to the account that cast it."
+msgstr "Ono što se beleži namerno se drži odvojeno. Jedan zapis beleži da je Vašem nalogu izdat token za ovu anketu, pa mu se ne može izdati drugi. Poseban zapis sadrži anonimne glasove. Ta dva dele samo podatak o anketi kojoj pripadaju, i ništa ne povezuje glas sa nalogom koji ga je dao."
+
+msgid "A ballot is never changed and never deleted, by anyone, including administrators. There is no code path that does either. A poll that needs correcting is closed and a new one opened."
+msgstr "Glas se nikada ne menja i nikada ne briše, ni od strane koga, uključujući administratore. Ne postoji deo koda koji radi bilo šta od toga. Anketa koju treba ispraviti zatvara se i otvara se nova."
+
+msgid "The published participation record contains, for each ballot, the poll, the options, the time, and the token it was cast with. It contains no account reference and no address hash, because the platform has none to link to it."
+msgstr "Objavljeni zapis o učešću sadrži, za svaki glas, anketu, opcije, vreme i token kojim je dat. Ne sadrži nikakvu vezu sa nalogom niti heš adrese, jer platforma nema ništa s čim bi ga povezala."
+
+msgid "What you write and any image you upload are visible only to you and to administrators until the proposal is approved. An uploaded image is decoded and re-encoded before it is stored, which removes any metadata it carried, including location."
+msgstr "Ono što napišete i svaka slika koju otpremite vidljivi su samo Vama i administratorima dok predlog ne bude odobren. Otpremljena slika se dekodira i ponovo kodira pre čuvanja, čime se uklanjaju svi metapodaci koje je nosila, uključujući lokaciju."
+
+msgid "Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."
+msgstr "Rezultati anketa nisu istraživanje javnog mnjenja. Potvrda adrese sprečava da jedna osoba više puta glasa sa jednog naloga; ona ne izvlači uzorak nijedne populacije, i nijedan rezultat ovde nije reprezentativan ni za koga osim za one koji su odgovorili."
+
+msgid "The ballot record is tamper-evident: anyone can recompute a poll's count from the published data and confirm that no ballot was altered, removed, or counted twice. It does not prove that one person voted once, an account is not a person, and that difference is not blurred anywhere on this site."
+msgstr "Zapis o glasovima je otporan na neprimetne izmene: svako može ponovo izračunati rezultat ankete iz objavljenih podataka i potvrditi da nijedan glas nije izmenjen, uklonjen ili dvaput prebrojan. On ne dokazuje da je jedna osoba glasala jednom, nalog nije osoba, i ta razlika se nigde na ovom sajtu ne zamagljuje."
+
+msgid "One limit is worth stating plainly. The platform issues the tokens, so in principle it could issue more of them than there are accounts and inflate a count. It cannot use this to learn how anyone voted, only to pad a total, and even that is bounded and public: the published data records how many tokens each poll issued, so anyone can check that a poll never counted more ballots than it issued and that issuance stays within the number of verified accounts."
+msgstr "Jedno ograničenje vredi jasno navesti. Platforma izdaje tokene, pa bi u principu mogla da ih izda više nego što ima naloga i tako naduva rezultat. Time ne može saznati kako je iko glasao, već samo da uveća zbir, a i to je ograničeno i javno: objavljeni podaci beleže koliko je tokena izdato za svaku anketu, pa svako može proveriti da anketa nikada nije prebrojala više glasova nego što je izdala tokena i da izdavanje ostaje u granicama broja verifikovanih naloga."
+
+msgid "Because an address is stored only as a hash, an account cannot be looked up by anyone reading the database, and that includes us. Write to the contact address to ask about an account, and expect to be asked to prove control of the address it was created with."
+msgstr "Pošto se adresa čuva samo kao heš, niko ko čita bazu podataka ne može pronaći nalog, uključujući i nas. Pišite na kontakt adresu da biste pitali o nalogu i očekujte da ćete morati da dokažete kontrolu nad adresom sa kojom je napravljen."
+
+msgid "A cast vote cannot be withdrawn. It carries no identifying information, and removing it would break the record that lets anyone verify the count."
+msgstr "Dati glas ne može se povući. On ne nosi nikakve podatke o identitetu, a njegovo uklanjanje narušilo bi zapis koji svakome omogućava da proveri rezultat."
+
+msgid "Back"
+msgstr "Nazad"
+
+msgid "Next elections"
+msgstr "Sledeći izbori"
+
+msgid "The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."
+msgstr "Zabeleženi postupak određuje ocenu, čak i kada je obećanje novije: ono što je stranka uradila ima prednost nad onim što je rekla da će uraditi."
+
+msgid "Verify email"
+msgstr "Potvrdite imejl"
+
+msgid "members"
+msgstr "članova"
+
+msgid "combined members"
+msgstr "članova ukupno"
+
+msgid "An open, source-backed record of public political life: who holds office, the parties they belong to, and where they stand. Every fact links to the source it came from."
+msgstr "Otvoren registar javnog političkog života zasnovan na izvorima: ko obavlja funkcije, kojim strankama pripadaju i gde stoje. Svaki podatak upućuje na izvor iz kog potiče."
+
+msgid "gained"
+msgstr "dobijeno"
+
+msgid "lost"
+msgstr "izgubljeno"
+
+msgid "unchanged"
+msgstr "bez promene"
+
+msgid "Discarded"
+msgstr "Odbačeno"
+
+msgid "Please complete the verification and try again."
+msgstr "Završite proveru i pokušajte ponovo."
+
+msgid "This form needs JavaScript enabled to verify your request."
+msgstr "Za proveru zahteva ovaj obrazac zahteva uključen JavaScript."
+
+msgid "Please use a non-disposable email address."
+msgstr "Koristite imejl adresu koja nije privremena."
+
+msgid "Skip to content"
+msgstr "Preskoči na sadržaj"
+
+msgid "Remove"
+msgstr "Ukloni"
+
+msgid "Voting needs JavaScript enabled."
+msgstr "Za glasanje je potreban uključen JavaScript."
+
+msgid "Something went wrong casting your vote. Please try again."
+msgstr "Došlo je do greške pri davanju glasa. Pokušajte ponovo."
+
+msgid "A ballot for this poll was already issued to your account."
+msgstr "Vašem nalogu je već izdat glasački listić za ovu anketu."
+
+msgid "You have cast your anonymous ballot for this poll."
+msgstr "Dali ste svoj anonimni glas u ovoj anketi."
+
+msgid "Your vote is anonymous: we cannot tell how you voted, even with full access to our own systems. It does not prove one person, one vote."
+msgstr "Vaš glas je anoniman: ne možemo znati kako ste glasali, čak ni sa punim pristupom sopstvenim sistemima. To ne dokazuje princip jedna osoba, jedan glas."
+
+msgid "Participation"
+msgstr "Učešće"
+
+msgid "requested"
+msgstr "zatraženo"
+
+msgid "cast"
+msgstr "dato"
+
+msgid "eligible"
+msgstr "s pravom glasa"
+
+msgid "Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."
+msgstr "Nalozi koji su zatražili glasački listić, stvarno dati glasovi i verifikovani nalozi koji su to mogli. Svako može proveriti da dato nikada ne premašuje zatraženo, a zatraženo nikada ne premašuje broj s pravom glasa."
+
+msgid "How these numbers work"
+msgstr "Kako ovi brojevi funkcionišu"
+
+msgid "How participation numbers work"
+msgstr "Kako funkcionišu brojevi o učešću"
+
+msgid "Each poll shows a few plain counts of how its participation formed. They let anyone judge how a poll's numbers came about, without revealing who took part. This page explains each one and, just as importantly, what it does not show."
+msgstr "Svaka anketa prikazuje nekoliko jednostavnih brojeva o tome kako se formiralo njeno učešće. Oni omogućavaju svakome da proceni kako su nastali brojevi ankete, a da se ne otkrije ko je učestvovao. Ova stranica objašnjava svaki od njih i, jednako važno, šta ne pokazuje."
+
+msgid "The three counts"
+msgstr "Tri broja"
+
+msgid "Requested is how many accounts asked for a ballot for this poll. It is a count of accounts that took part, never a list of which ones."
+msgstr "Zatraženo je broj naloga koji su tražili glasački listić za ovu anketu. To je broj naloga koji su učestvovali, nikada spisak koji su to bili."
+
+msgid "Cast is how many anonymous ballots were actually cast. A ballot cannot be linked to any account, so this counts votes, not people."
+msgstr "Dato je broj anonimnih glasova koji su stvarno dati. Glas se ne može povezati ni sa jednim nalogom, pa se ovde broje glasovi, ne ljudi."
+
+msgid "Eligible is how many verified, unbanned accounts exist on the platform: the most any poll could possibly reach. It is a ceiling, not a figure for this poll."
+msgstr "S pravom glasa je broj verifikovanih naloga bez zabrane na platformi: najviše što bilo koja anketa može da dostigne. To je gornja granica, a ne broj za ovu anketu."
+
+msgid "The bound anyone can check"
+msgstr "Granica koju svako može da proveri"
+
+msgid "Cast can never exceed requested, and requested can never exceed eligible. Written out: cast is at most requested, which is at most eligible. The published data at /data/polls.json carries all three, so anyone can confirm the relationship holds for every poll."
+msgstr "Dato nikada ne može premašiti zatraženo, a zatraženo nikada ne može premašiti broj s pravom glasa. Napisano: dato je najviše zatraženo, a to je najviše broj s pravom glasa. Objavljeni podaci na /data/polls.json sadrže sva tri, pa svako može potvrditi da odnos važi za svaku anketu."
+
+msgid "This is what makes manufactured participation visible rather than preventable. A poll whose requested count jumped far beyond the usual, with cast sitting right against it, is the honest tell, without anyone having to assert that it happened."
+msgstr "Upravo to izmišljeno učešće čini vidljivim, a ne sprečivim. Anketa čiji je broj zatraženih skočio daleko iznad uobičajenog, dok je broj datih tik uz njega, iskren je znak, a da niko ne mora da tvrdi da se to dogodilo."
+
+msgid "What these numbers do not show"
+msgstr "Šta ovi brojevi ne pokazuju"
+
+msgid "They do not prove one person, one vote. An account is not a person, and nothing here establishes that one human is behind one account. They raise the cost of manipulating a poll and make it visible; they do not make it impossible."
+msgstr "Oni ne dokazuju princip jedna osoba, jedan glas. Nalog nije osoba, i ništa ovde ne utvrđuje da iza jednog naloga stoji jedan čovek. Oni povećavaju cenu manipulisanja anketom i čine je vidljivom; ne čine je nemogućom."
+
+msgid "Two of the counts, requested and eligible, are reported by us and cannot be recomputed from the published data, because recomputing them would need the account details we deliberately do not publish. Cast is recomputable: it is simply the number of that poll's ballots in the dump."
+msgstr "Dva broja, zatraženo i s pravom glasa, objavljujemo mi i ne mogu se ponovo izračunati iz objavljenih podataka, jer bi za to bili potrebni podaci o nalozima koje namerno ne objavljujemo. Dato se može ponovo izračunati: to je jednostavno broj glasova te ankete u objavljenom skupu podataka."
+
+msgid "when votes were cast"
+msgstr "kada su glasovi dati"
+
+msgid "When the votes were cast"
+msgstr "Kada su glasovi dati"
+
+msgid "Each poll also shows a small chart of when its ballots were cast, from the first to the last, so the shape of its participation is visible. Votes that arrive steadily look even; a burst all at once looks like a spike. The chart appears once a poll has enough ballots to read as a shape, and anyone can recompute it from the times in the published ballots."
+msgstr "Svaka anketa prikazuje i mali grafikon o tome kada su njeni glasovi dati, od prvog do poslednjeg, pa je oblik njenog učešća vidljiv. Glasovi koji pristižu ravnomerno izgledaju ujednačeno; nalet odjednom izgleda kao šiljak. Grafikon se pojavljuje kada anketa ima dovoljno glasova da se oblik može pročitati, i svako ga može ponovo izračunati iz vremena u objavljenim glasovima."
+
+msgid "Accounts under a week old when they took part:"
+msgstr "Nalozi mlađi od nedelju dana u trenutku učešća:"
+
+msgid "How new the accounts were"
+msgstr "Koliko su nalozi bili novi"
+
+msgid "A poll can also show what share of the accounts that took part were newly created, less than a week old when they were issued a ballot. Accounts made in bulk just before a poll are the usual way someone tries to manufacture participation, and a high share is where that would show."
+msgstr "Anketa može pokazati i koliki je udeo naloga koji su učestvovali bio tek napravljen, mlađi od nedelju dana kada im je izdat glasački listić. Nalozi napravljeni u velikom broju neposredno pre ankete uobičajen su način na koji neko pokušava da izmisli učešće, a visok udeo je mesto gde bi se to videlo."
+
+msgid "This is worked out over the accounts that took part, not over the votes, so it reveals nothing about how anyone voted; a ballot still cannot be tied to an account. Like the timeline, it appears only once enough accounts have taken part, and it is a figure we report rather than one recomputable from the published data."
+msgstr "Ovo se računa nad nalozima koji su učestvovali, a ne nad glasovima, pa ne otkriva ništa o tome kako je iko glasao; glas se i dalje ne može povezati sa nalogom. Kao i vremenski grafikon, pojavljuje se tek kada je učestvovalo dovoljno naloga, i to je broj koji objavljujemo, a ne broj koji se može ponovo izračunati iz objavljenih podataka."
+
+msgid "Also reported by"
+msgstr "Izveštavali su i"
+
+msgid "Publish all"
+msgstr "Objavi sve"
+
+msgid "Discard all"
+msgstr "Odbaci sve"
+
+msgid "These bios are generated the same way from sourced structured data. Read the sample, then publish or discard the whole batch."
+msgstr "Ove biografije nastaju na isti način iz strukturisanih podataka sa izvorima. Pročitajte uzorak, pa objavite ili odbacite celu grupu."
+
+msgid "Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."
+msgstr "Ankete na open-public broje učešće među verifikovanim nalozima, a ne predstavljaju reprezentativno istraživanje niti statistički uzorak bilo koje populacije. Rezultati pokazuju kako su učesnici ovde glasali, pri čemu je svaki glas anoniman i otporan na neprimetne izmene."
+
+msgid "What the layers prove, and what they cannot"
+msgstr "Šta slojevi dokazuju, a šta ne mogu"
+
+msgid "Unaltered (the hash chain): each cast ballot is hashed into an append-only chain. Anyone can verify that no ballot has been altered, reordered, inserted, or removed after casting."
+msgstr "Neizmenjeno (heš lanac): svaki dati glas hešira se u lanac u koji se samo dodaje. Svako može proveriti da nijedan glas nije izmenjen, premešten, ubačen ili uklonjen nakon glasanja."
+
+msgid "Cost-raised (proof-of-work and validation): proof-of-work challenges on write actions, disposable-domain blocking, email deliverability verification, and email canonicalization raise the computational and operational cost of automated account creation."
+msgstr "Povećana cena (dokaz rada i provere): izazovi dokaza rada pri radnjama upisa, blokiranje privremenih domena, provera isporučivosti imejla i kanonizacija imejl adresa povećavaju računarsku i operativnu cenu automatskog pravljenja naloga."
+
+msgid "One per account (blind-signed tokens): cryptographic blind signatures ensure that each verified account can obtain at most one token per poll and cast at most one ballot, while preventing the platform from linking any ballot to the account that cast it."
+msgstr "Jedan po nalogu (slepo potpisani tokeni): kriptografski slepi potpisi obezbeđuju da svaki verifikovani nalog može dobiti najviše jedan token po anketi i dati najviše jedan glas, dok platformu sprečavaju da poveže bilo koji glas sa nalogom koji ga je dao."
+
+msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
+msgstr "Šta nijedan od njih ne dokazuje: nijedan od ovih slojeva ne dokazuje da nalog odgovara jedinstvenoj živoj osobi, niti da učesnici čine reprezentativni uzorak ili statistički presek bilo koje populacije. Učešće ovde odražava isključivo verifikovane naloge koji su odlučili da učestvuju."
+
+msgid "Parliamentary republic"
+msgstr "Parlamentarna republika"
