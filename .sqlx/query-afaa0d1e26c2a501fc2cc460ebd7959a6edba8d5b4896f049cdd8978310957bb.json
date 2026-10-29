@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.full_name as person_name, p.slug as person_slug, p.photo_url,\n               r.title, r.role_type, r.start_date\n        from roles r\n        join people p on p.id = r.person_id\n        where r.role_type in\n            ('monarch', 'president', 'chancellor', 'prime_minister',\n             'vice_president', 'minister')\n          and r.end_date is null\n          and p.country_id = $1\n        -- Head of state first, then head of government. A monarch is a head of\n        -- state like a president, and sorts with one: a constitutional monarchy\n        -- has both, and listing the head of government above the head of state\n        -- would misdescribe the arrangement.\n        order by case r.role_type\n                   when 'monarch' then 0\n                   when 'president' then 0\n                   when 'chancellor' then 1\n                   when 'prime_minister' then 1\n                   when 'vice_president' then 2\n                   else 3\n                 end,\n                 r.title\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "person_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "photo_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "photo_url"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "role_type",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "role_type"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "start_date",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "start_date"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "afaa0d1e26c2a501fc2cc460ebd7959a6edba8d5b4896f049cdd8978310957bb"
+}

@@ -1248,3 +1248,24 @@ msgstr "Code source"
 
 msgid "Data free to reuse (CC0)"
 msgstr "Données librement réutilisables (CC0)"
+
+msgid "Who governs?"
+msgstr "Qui gouverne ?"
+
+msgid "Who sits in parliament?"
+msgstr "Qui siège au parlement ?"
+
+msgid "members of no party"
+msgstr "membres sans parti"
+
+msgid "In office since"
+msgstr "en fonction depuis le"
+
+msgid "Other parties"
+msgstr "Autres partis"
+
+msgid "Each dot is one seat. Grey: a party with no documented colour. Hollow: a member of no party."
+msgstr "Chaque point est un siège. Gris : parti sans couleur documentée. Creux : membre sans parti."
+
+msgid "Sections"
+msgstr "Sections"

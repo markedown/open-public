@@ -1273,6 +1273,16 @@ async fn country_page_renders(pool: db::Pool) {
     assert!(body.contains("Tarihçe")); // the history navigation chip
     assert!(body.contains("/tr/history")); // the chip links to the full history page
     assert!(body.contains("Ulke gidisati?")); // country-level poll surfaced here
+                                              // Sections answer questions, and the overview tab is marked as current.
+    assert!(body.contains("Kim yönetiyor?"));
+    assert!(body.contains("Mecliste kimler var?"));
+    assert!(body.contains(r#"aria-current="page""#));
+    // The chamber is drawn as dots, one per seat, described as one sentence for
+    // a screen reader, with the legend explained underneath.
+    assert!(body.contains(r#"role="img" aria-label="Test Partisi"#));
+    assert!(body.contains("Her nokta bir sandalyedir."));
+    // The independent member is counted in the at-a-glance figures too.
+    assert!(body.contains("partisiz üye"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

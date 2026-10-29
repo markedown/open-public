@@ -1260,3 +1260,24 @@ msgstr "Kaynak kod"
 
 msgid "Data free to reuse (CC0)"
 msgstr "Veriler serbestçe kullanılabilir (CC0)"
+
+msgid "Who governs?"
+msgstr "Kim yönetiyor?"
+
+msgid "Who sits in parliament?"
+msgstr "Mecliste kimler var?"
+
+msgid "members of no party"
+msgstr "partisiz üye"
+
+msgid "In office since"
+msgstr "Göreve başlama:"
+
+msgid "Other parties"
+msgstr "Diğer partiler"
+
+msgid "Each dot is one seat. Grey: a party with no documented colour. Hollow: a member of no party."
+msgstr "Her nokta bir sandalyedir. Gri: belgelenmiş rengi olmayan bir parti. İçi boş: partisiz üye."
+
+msgid "Sections"
+msgstr "Bölümler"
