@@ -16,7 +16,7 @@ pub fn references(wikidata_id: Option<&str>, photo_license: Option<&str>) -> Mar
                 @if let Some(qid) = wikidata_id {
                     li {
                         a href={"https://www.wikidata.org/wiki/" (qid)}
-                          class="text-accent hover:underline" target="_blank" rel="noopener noreferrer" {
+                          class="text-link hover:underline" target="_blank" rel="noopener noreferrer" {
                             "Wikidata · " (qid)
                         }
                     }

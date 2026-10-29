@@ -64,7 +64,7 @@ pub async fn index(
                       class="flex items-center justify-between gap-3 rounded-lg border border-hairline px-5 py-3 transition-colors hover:border-accent" {
                         span class="text-sm font-medium text-ink" { (label) }
                         span class={"font-mono text-xs font-bold "
-                            (if count > 0 { "text-accent" } else { "text-ink-muted" })} {
+                            (if count > 0 { "text-link" } else { "text-ink-muted" })} {
                             (count)
                         }
                     }
@@ -79,11 +79,11 @@ pub async fn index(
                     }
                     div class="mt-4 flex flex-wrap gap-2" {
                         a href={"/" (c.slug) "/people"}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("People"))
                         }
                         a href={"/" (c.slug) "/parties"}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("Parties"))
                         }
                         a href={"/admin/poll/new?country=" (c.slug)}
@@ -95,7 +95,7 @@ pub async fn index(
                             (i18n::t("Add outlet"))
                         }
                         a href={"/admin/compass?country=" (c.slug)}
-                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                          class="rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("Compass positions"))
                         }
                     }
@@ -109,7 +109,7 @@ pub async fn index(
                                     li class="flex items-center justify-between gap-3 py-2" {
                                         span class="text-sm text-ink" { (o.name) }
                                         a href={"/admin/outlet/" (o.slug) "/edit?country=" (c.slug)}
-                                          class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                                          class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
                                             (i18n::t("Edit"))
                                         }
                                     }
@@ -146,7 +146,7 @@ pub async fn summaries(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -165,7 +165,7 @@ pub async fn summaries(
                     @for d in &drafts {
                         li class="border border-hairline p-4" {
                             a href=(d.url) rel="noopener" target="_blank"
-                              class="block text-sm font-medium text-ink transition-colors hover:text-accent" {
+                              class="block text-sm font-medium text-ink transition-colors hover:text-link" {
                                 (d.headline)
                             }
                             @if let Some(ref o) = d.outlet {
@@ -252,7 +252,7 @@ pub async fn bios(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 flex flex-wrap items-baseline gap-3 text-3xl font-bold tracking-tight text-ink" {
@@ -369,7 +369,7 @@ fn bio_card(d: &db::parties::SummaryDraft) -> Markup {
                             div class="flex items-baseline justify-between gap-3" {
                                 span class="flex flex-wrap items-baseline gap-2" {
                                     a href={"/" (d.country_slug) "/parties/" (d.slug)}
-                                      class="text-sm font-semibold text-ink transition-colors hover:text-accent" {
+                                      class="text-sm font-semibold text-ink transition-colors hover:text-link" {
                                         (d.name)
                                     }
                                     // Which country, since a queue spans several
@@ -380,7 +380,7 @@ fn bio_card(d: &db::parties::SummaryDraft) -> Markup {
                                 }
                                 @if let Some(ref qid) = d.wikidata_id {
                                     a href={"https://www.wikidata.org/wiki/" (qid)} target="_blank" rel="noopener noreferrer"
-                                      class="shrink-0 font-mono text-[10px] uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
+                                      class="shrink-0 font-mono text-[10px] uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
                                         "Wikidata ↗"
                                     }
                                 }
@@ -487,7 +487,7 @@ pub async fn translations(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -594,7 +594,7 @@ pub async fn conflicts(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -620,7 +620,7 @@ pub async fn conflicts(
                                 }
                                 form method="post" action={"/admin/conflicts/" (c.id) "/resolve"} {
                                     button type="submit"
-                                      class="rounded-lg border border-hairline px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+                                      class="rounded-lg border border-hairline px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
                                         (i18n::t("Mark resolved"))
                                     }
                                 }
@@ -659,7 +659,7 @@ fn conflict_side(label: &str, value: Option<&str>, source: Option<&str>) -> Mark
             div class="mt-1 text-sm text-ink" { (value.unwrap_or("-")) }
             @if let Some(url) = source {
                 a href=(url) rel="noopener" target="_blank"
-                  class="mt-1 block truncate font-mono text-[11px] text-accent hover:underline" { (url) }
+                  class="mt-1 block truncate font-mono text-[11px] text-link hover:underline" { (url) }
             }
         }
     }
@@ -697,7 +697,7 @@ fn manage_page(name: &str, country: &str, kind: &str, slug: &str, back: &str) ->
     let add = |what: &str| format!("/admin/{what}/new?country={country}&{kind}={slug}");
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (name)
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -774,13 +774,13 @@ fn person_manage_page(
     let base = format!("/admin/person/{slug}");
     let del_btn = html! {
         button type="submit"
-          class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
+          class="font-mono text-[10px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
             (i18n::t("Delete"))
         }
     };
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href=(back) class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (name)
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -1008,7 +1008,7 @@ fn outlet_form_page(o: Option<&db::outlets::Outlet>, country: &str) -> Markup {
     };
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" { (heading) }
@@ -1163,7 +1163,7 @@ pub async fn news_edit(
                                 form method="post" action={"/admin/news/" (id) "/unlink"} {
                                     input type="hidden" name="kind" value=(kind);
                                     input type="hidden" name="id" value=(e.id);
-                                    button type="submit" aria-label=(i18n::t("Remove")) class="-my-1 inline-flex h-7 w-7 items-center justify-center rounded text-ink-muted transition-colors hover:text-accent" { "×" }
+                                    button type="submit" aria-label=(i18n::t("Remove")) class="-my-1 inline-flex h-7 w-7 items-center justify-center rounded text-ink-muted transition-colors hover:text-link" { "×" }
                                 }
                             }
                         }
@@ -1175,14 +1175,14 @@ pub async fn news_edit(
 
     let content = html! {
         section class="mx-auto max-w-xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
                 (i18n::t("Edit news"))
             }
             a href=(item.url) rel="noopener" target="_blank"
-              class="mt-1 block truncate font-mono text-[11px] text-accent hover:underline" { (item.url) }
+              class="mt-1 block truncate font-mono text-[11px] text-link hover:underline" { (item.url) }
 
             form class="mt-6 space-y-4" method="post" action={"/admin/news/" (id)} {
                 (prefilled("headline", i18n::t("Headline"), "text", true, Some(item.headline.as_str())))
@@ -1212,7 +1212,7 @@ pub async fn news_edit(
                         hx-get={"/admin/news/" (id) "/search"} hx-target="#search-results"
                         hx-trigger="keyup changed delay:300ms, search"
                         class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
-                    noscript { button type="submit" class="mt-2 text-xs font-bold uppercase tracking-wide text-accent" { (i18n::t("Search")) } }
+                    noscript { button type="submit" class="mt-2 text-xs font-bold uppercase tracking-wide text-link" { (i18n::t("Search")) } }
                 }
                 div id="search-results" {}
             }
@@ -1274,7 +1274,7 @@ pub async fn news_relation_search(
     } else {
         Ok(ui::layout::document(Some(i18n::t("Search")), true, true, html! {
             section class="mx-auto max-w-xl" {
-                a href={"/admin/news/" (id) "/edit"} class="text-xs text-ink-muted hover:text-accent" {
+                a href={"/admin/news/" (id) "/edit"} class="text-xs text-ink-muted hover:text-link" {
                     "← " (i18n::t("Edit news"))
                 }
                 h1 class="mt-2 text-2xl font-bold text-ink" { (i18n::t("Attach a person or party")) }
@@ -1607,7 +1607,7 @@ pub async fn poll_form(
                 }
                 button type="button"
                     hx-get="/admin/poll/option-row" hx-target="#poll-options" hx-swap="beforeend"
-                    class="text-[11px] font-bold uppercase tracking-wide text-accent transition-colors hover:underline" {
+                    class="text-[11px] font-bold uppercase tracking-wide text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add option"))
                 }
                 (ui::button::primary(i18n::t("Save")))
@@ -1755,7 +1755,7 @@ pub async fn submissions(
 
     let content = html! {
         section class="mx-auto max-w-3xl" {
-            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-accent" {
+            a href="/admin" class="text-xs text-ink-muted transition-colors hover:text-link" {
                 "← " (i18n::t("Admin panel"))
             }
             h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
@@ -1993,7 +1993,7 @@ pub async fn compass(
                             }
                             span class="flex shrink-0 items-center gap-3" {
                                 a href={"/admin/compass/thesis/" (t.id)}
-                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                                  class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
                                     (i18n::t("Stances"))
                                 }
                                 form method="post" action={"/admin/compass/thesis/" (t.id) "/delete"} {
@@ -2181,7 +2181,7 @@ pub async fn compass_thesis(
     let content = html! {
         section class="mx-auto max-w-3xl" {
             a href={"/admin/compass?country=" (thesis.country_slug)}
-              class="font-mono text-[11px] font-bold uppercase tracking-wide text-accent hover:underline" {
+              class="font-mono text-[11px] font-bold uppercase tracking-wide text-link hover:underline" {
                 "← " (i18n::t("Compass positions"))
             }
             h1 class="mt-3 text-2xl font-bold tracking-tight text-ink" { (thesis.text) }
@@ -2195,7 +2195,7 @@ pub async fn compass_thesis(
                         @if let Some(first) = people.iter().find(|r| r.person_id == *pid) {
                             li class="op-card px-4 py-3" {
                                 a href={"/" (thesis.country_slug) "/people/" (first.person_slug)}
-                                  class="text-sm font-medium text-ink hover:text-accent" {
+                                  class="text-sm font-medium text-ink hover:text-link" {
                                     (first.person_name)
                                 }
                                 ul class="mt-2 space-y-1" {

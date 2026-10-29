@@ -56,7 +56,7 @@ pub async fn list(
                                     span class="text-sm font-medium text-ink" { (a.name) }
                                     // Active while not dissolved.
                                     @if a.dissolved_date.is_none() {
-                                        span class="shrink-0 rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
+                                        span class="shrink-0 rounded-full border border-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-link" {
                                             (i18n::t("Active"))
                                         }
                                     } @else {

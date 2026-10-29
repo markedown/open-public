@@ -235,17 +235,15 @@ review.
 
 ## Branding and fonts
 
-The identity is intentionally plain, and temporary. Fonts are self-hosted, with no web-font CDN, for
-privacy:
+The identity is intentionally plain. Fonts are self-hosted, with no web-font CDN, for privacy:
 
-- **Interface:** [Public Sans](https://public-sans.digital.gov) (SIL OFL), a self-hosted variable
-  `woff2` in `crates/server/static/fonts/`, with its license committed next to it. It covers the
-  extended-Latin diacritics the locale-aware UI needs.
-- **Wordmark:** [Spectral](https://github.com/productiontype/Spectral) (SIL OFL), converted to SVG
-  paths in `crates/server/static/brand/wordmark.svg` (with a dark variant) so it renders the same
-  without the font.
-- **Accent:** a desaturated ink-blue (`#33527a`), used sparingly for links, focus, and the wordmark
-  hyphen. Party colors appear only inside data elements, never as interface chrome.
+- **Typeface:** [Source Sans 3](https://github.com/adobe-fonts/source-sans) (SIL OFL), one variable
+  `woff2` per script subset (Latin, Latin Extended, Cyrillic) in `crates/server/static/fonts/`, with its
+  license committed next to it.
+- **Mark:** six dots in two rows, three filled: a small chamber that claims no party's color. It is
+  drawn in HTML next to the name, so it needs no image.
+- **Color:** slate on white; the conventional blue of underlined links is the only hue in the chrome.
+  Party colors appear only inside data elements. See [`DESIGN.md`](./DESIGN.md).
 - **Social card:** `crates/server/static/brand/og.png`, the image a shared link shows. It is served
   from this origin like every other asset, and regenerated with
   [`scripts/make_og_image.py`](./scripts/make_og_image.py) from the same palette and fonts the pages

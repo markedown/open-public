@@ -162,7 +162,7 @@ fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
     match viewer {
         Viewer::Anonymous => html! {
             a href="/login"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-colors hover:border-accent hover:text-link" {
                 (i18n::t("Log in to take part"))
             }
         },
@@ -187,7 +187,7 @@ fn control(action: &str, viewer: &Viewer, next: &str) -> Markup {
                 input type="hidden" name="next" value=(next);
                 @for (choice, label) in [("approve", i18n::t("Approve")), ("disapprove", i18n::t("Disapprove")), ("no_opinion", i18n::t("No opinion"))] {
                     button type="submit" name="choice" value=(choice)
-                        class="inline-flex items-center rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink transition-colors hover:border-accent hover:bg-accent-tint hover:text-accent" {
+                        class="inline-flex items-center rounded-lg border border-hairline px-3 py-1.5 text-[12px] font-semibold text-ink transition-colors hover:border-accent hover:bg-accent-tint hover:text-link" {
                         (label)
                     }
                 }

@@ -38,7 +38,7 @@ fn timeline_entry(entry: Entry) -> Markup {
 
             // Navigation-first: the title links to its own page, not to a source.
             @if let Some(href) = &entry.link_href {
-                a href=(href) class="block text-sm font-medium text-ink transition-colors hover:text-accent" {
+                a href=(href) class="block text-sm font-medium text-ink transition-colors hover:text-link" {
                     (entry.title)
                 }
             } @else {

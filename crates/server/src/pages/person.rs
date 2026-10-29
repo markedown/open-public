@@ -141,7 +141,7 @@ pub async fn detail(
                         (ui::election::compass_cta(compass_href.as_deref()))
                         @if let Some(ref href) = manage_href {
                             a href=(href)
-                              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-link" {
                                 (i18n::t("Manage"))
                             }
                         }

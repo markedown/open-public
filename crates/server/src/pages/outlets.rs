@@ -114,7 +114,7 @@ pub async fn detail(
                 }
                 @if let Some(ref home) = outlet.homepage_url {
                     a href=(home) rel="noopener" target="_blank"
-                      class="mt-4 inline-block font-mono text-[11px] text-accent hover:underline" {
+                      class="mt-4 inline-block font-mono text-[11px] text-link hover:underline" {
                         (home) " ↗"
                     }
                 }

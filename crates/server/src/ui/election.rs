@@ -125,7 +125,7 @@ pub fn party_history(entries: &[db::elections::PartyHistoryEntry], country: &str
                         // party's own record is a way into every election it
                         // contested rather than a list of plain names.
                         a href={"/" (country) "/election/" (e.election_slug)}
-                          class="text-sm font-medium text-ink transition-colors hover:text-accent" {
+                          class="text-sm font-medium text-ink transition-colors hover:text-link" {
                             (e.election_name)
                             @if let Some(d) = e.held_on {
                                 " "
@@ -194,7 +194,7 @@ pub fn election_box(
             div class="flex flex-wrap items-baseline justify-between gap-2" {
                 @if linked {
                     a href={"/" (country) "/election/" (election.slug)}
-                      class="text-sm font-semibold text-ink transition-colors hover:text-accent" {
+                      class="text-sm font-semibold text-ink transition-colors hover:text-link" {
                         (election.name)
                     }
                 } @else {
@@ -618,7 +618,7 @@ fn next_election_entry(
     html! {
         div class="mt-3 border-t border-hairline-light pt-3 first:border-0 first:pt-1" {
             a href={"/" (country) "/election/" (election.slug)}
-              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-accent hover:underline" {
+              class="mt-1 block text-lg font-bold tracking-tight text-ink hover:text-link hover:underline" {
                 (election.name)
             }
             div class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[13px] text-ink-muted" {

@@ -193,7 +193,7 @@ async fn form_scoped(
                         span class="font-medium text-ink" { (i18n::t("Parties")) }
                     }
                     " · "
-                    a href=(href) class="text-accent hover:underline" { (label) }
+                    a href=(href) class="text-link hover:underline" { (label) }
                 }
             }
 
@@ -264,19 +264,19 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
             div class="flex flex-wrap gap-2" {
                 // Skip is the default so an unanswered position is simply left
                 // out of the score.
-                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-accent" {
+                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-link" {
                     input type="radio" name=(name) value="skip" checked class="sr-only";
                     (i18n::t("Skip"))
                 }
                 @for (value, label) in scale() {
-                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-accent" {
+                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-link" {
                         input type="radio" name=(name) value=(value) class="sr-only";
                         (label)
                     }
                 }
-                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-accent" {
+                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-link" {
                     input type="checkbox" name={"w" (t.id)} value="1"
-                      class="h-3.5 w-3.5 rounded border-hairline text-accent";
+                      class="h-3.5 w-3.5 rounded border-hairline text-link";
                     (i18n::t("Important"))
                 }
             }
@@ -412,7 +412,7 @@ async fn result_scoped(
             @if answers.is_empty() {
                 p class="py-8 text-sm text-ink-muted" {
                     (i18n::t("You did not answer any positions, so there is nothing to match.")) " "
-                    a href=(compass_url) class="text-accent hover:underline" { (i18n::t("Go back")) }
+                    a href=(compass_url) class="text-link hover:underline" { (i18n::t("Go back")) }
                 }
             } @else {
                 p class="mb-6 text-sm text-ink-muted" {
@@ -449,7 +449,7 @@ async fn result_scoped(
                 }
 
                 div class="mt-8 border-t border-hairline pt-5" {
-                    a href=(compass_url) class="text-sm font-semibold text-accent hover:underline" {
+                    a href=(compass_url) class="text-sm font-semibold text-link hover:underline" {
                         (i18n::t("Start over"))
                     }
                 }
@@ -477,7 +477,7 @@ fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Marku
             (ui::badge::party_chip(label, c.colour.as_deref()))
             div class="min-w-0 flex-1" {
                 a href=(c.href)
-                  class="text-sm font-medium text-ink hover:text-accent hover:underline" { (c.name) }
+                  class="text-sm font-medium text-ink hover:text-link hover:underline" { (c.name) }
                 div class="mt-1.5 h-2 overflow-hidden rounded-full bg-paper-sunken" {
                     div class="h-full rounded-full"
                       style={(width) ";background-color:" (c.colour.as_deref().unwrap_or("#33527a"))} {}
@@ -598,7 +598,7 @@ fn party_stance(
                     // take the evidence with it.
                     @if let Some(snap) = &e.snapshot_url {
                         a href=(snap) rel="noopener" target="_blank"
-                          class="font-mono text-[10px] text-ink-muted hover:text-accent hover:underline" {
+                          class="font-mono text-[10px] text-ink-muted hover:text-link hover:underline" {
                             (i18n::t("archived"))
                         }
                     }

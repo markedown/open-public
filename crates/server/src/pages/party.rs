@@ -107,7 +107,7 @@ pub async fn detail(
                             (i18n::t("Leader"))
                         }
                         a href={"/" (country_model.slug) "/people/" (l.person_slug)}
-                          class="font-medium text-ink transition-colors hover:text-accent" {
+                          class="font-medium text-ink transition-colors hover:text-link" {
                             (l.person_name)
                         }
                         (ui::citation::source_marker(&l.source_url))
@@ -149,7 +149,7 @@ pub async fn detail(
                     (ui::election::compass_cta(compass_href.as_deref()))
                     @if let Some(ref href) = manage_href {
                         a href=(href)
-                          class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-accent" {
+                          class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-link" {
                             (i18n::t("Manage"))
                         }
                     }
@@ -207,7 +207,7 @@ pub async fn detail(
                                         (ui::initials(&m.person_name))
                                     }
                                     a href={"/" (country_model.slug) "/people/" (m.person_slug)}
-                                      class="grow text-sm font-medium text-ink transition-colors hover:text-accent" {
+                                      class="grow text-sm font-medium text-ink transition-colors hover:text-link" {
                                         (m.person_name)
                                     }
                                 }

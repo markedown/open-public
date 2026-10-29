@@ -92,7 +92,7 @@ pub async fn page(
                                         span class="w-14 shrink-0 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted" {
                                             (label)
                                         }
-                                        span class="text-sm font-medium text-ink transition-colors group-hover:text-accent" {
+                                        span class="text-sm font-medium text-ink transition-colors group-hover:text-link" {
                                             (hit.name)
                                         }
                                         @if let Some(country) = &hit.country {

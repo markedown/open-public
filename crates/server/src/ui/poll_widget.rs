@@ -91,7 +91,7 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
                     }
                 },
                 Viewer::Anonymous => p class="mt-1 text-sm text-ink-muted" {
-                    a href="/login" class="font-medium text-accent hover:underline" { (i18n::t("Log in to vote.")) }
+                    a href="/login" class="font-medium text-link hover:underline" { (i18n::t("Log in to vote.")) }
                 },
             }
         }
@@ -120,7 +120,7 @@ pub fn poll_previews(
     let action = html! {
         div class="flex items-center gap-4" {
             @if let Some(href) = add_href {
-                a href=(href) class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+                a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
                     "+ " (i18n::t("Add poll"))
                 }
             }

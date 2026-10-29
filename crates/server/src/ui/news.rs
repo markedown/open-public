@@ -10,7 +10,7 @@ use crate::ui;
 pub fn person_chip(name: &str, slug: &str, country: &str) -> Markup {
     html! {
         a href={"/" (country) "/people/" (slug)}
-          class="inline-flex items-center rounded-md border border-hairline px-2 py-0.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-accent" {
+          class="inline-flex items-center rounded-md border border-hairline px-2 py-0.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-link" {
             (name)
         }
     }
@@ -50,12 +50,12 @@ pub fn index(items: &[db::news::NewsCard], country: &str, admin: bool) -> Markup
                 li class="py-4 first:pt-0" {
                     div class="flex items-start justify-between gap-3" {
                         a href={"/" (country) "/news/" (it.id)}
-                          class="block text-base font-semibold leading-snug text-ink transition-colors hover:text-accent" {
+                          class="block text-base font-semibold leading-snug text-ink transition-colors hover:text-link" {
                             (it.headline)
                         }
                         @if admin {
                             a href={"/admin/news/" (it.id) "/edit"}
-                              class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                              class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-wide text-link hover:underline" {
                                 (i18n::t("Edit"))
                             }
                         }
@@ -76,7 +76,7 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
         return html! {};
     }
     let add = add_href.map(|href| html! {
-        a href=(href) class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+        a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
             "+ " (i18n::t("Add news"))
         }
     });
@@ -90,7 +90,7 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
                     @for it in items {
                         li {
                             a href={"/" (country) "/news/" (it.id)}
-                              class="block text-sm font-medium text-ink transition-colors hover:text-accent" {
+                              class="block text-sm font-medium text-ink transition-colors hover:text-link" {
                                 (it.headline)
                             }
                         }
@@ -126,7 +126,7 @@ pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Marku
                                     }
                                 }
                             }
-                            span class="block text-sm font-medium text-ink transition-colors group-hover:text-accent" {
+                            span class="block text-sm font-medium text-ink transition-colors group-hover:text-link" {
                                 (it.headline)
                             }
                         }

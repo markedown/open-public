@@ -62,7 +62,7 @@ pub async fn page(
                     @for it in &items {
                         li {
                             a href=(it.href) class="op-card op-card-link flex items-baseline gap-3 p-4" {
-                                span class="shrink-0 rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent" {
+                                span class="shrink-0 rounded-full bg-accent-tint px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-link" {
                                     (kind_label(&it.kind))
                                 }
                                 span class="grow text-sm font-medium text-ink" { (it.title) }

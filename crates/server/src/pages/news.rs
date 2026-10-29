@@ -32,7 +32,7 @@ pub async fn list(
                 Some(html! { span class="font-mono" { (items.len()) } " " (i18n::t("News")) }),
                 Some(html! {
                     a href={"/" (country.slug) "/outlets"}
-                      class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+                      class="text-[12px] font-semibold text-link transition-colors hover:underline" {
                         (i18n::t("Outlets")) " →"
                     }
                 }),
@@ -113,7 +113,7 @@ pub async fn detail(
                 }
                 @if is_admin {
                     a href={"/admin/news/" (item.id) "/edit"}
-                      class="mt-4 inline-block font-mono text-[10px] font-bold uppercase tracking-wide text-accent hover:underline" {
+                      class="mt-4 inline-block font-mono text-[10px] font-bold uppercase tracking-wide text-link hover:underline" {
                         (i18n::t("Edit"))
                     }
                 }
@@ -138,7 +138,7 @@ pub async fn detail(
             }
 
             a href=(item.url) rel="noopener" target="_blank"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-accent" {
+              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
                 (i18n::t("Read at the source")) " ↗"
             }
 

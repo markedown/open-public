@@ -24,7 +24,7 @@ pub fn original_disclosure(original: Option<&str>) -> Markup {
     html! {
         @if let Some(orig) = original {
             details class="mt-1 max-w-prose" {
-                summary class="cursor-pointer list-none text-[11px] font-medium uppercase tracking-wide text-ink-muted transition-colors hover:text-accent [&::-webkit-details-marker]:hidden" {
+                summary class="cursor-pointer list-none text-[11px] font-medium uppercase tracking-wide text-ink-muted transition-colors hover:text-link [&::-webkit-details-marker]:hidden" {
                     (i18n::t("Show original"))
                 }
                 p class="mt-2 text-[15px] leading-relaxed text-ink-muted" { (orig) }

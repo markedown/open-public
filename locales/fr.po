@@ -1236,3 +1236,15 @@ msgstr "Ce qu'aucune ne prouve : aucune de ces couches ne prouve qu'un compte co
 
 msgid "Parliamentary republic"
 msgstr "République parlementaire"
+
+msgid "Account"
+msgstr "Compte"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Source code"
+msgstr "Code source"
+
+msgid "Data free to reuse (CC0)"
+msgstr "Données librement réutilisables (CC0)"

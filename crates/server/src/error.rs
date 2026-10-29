@@ -53,7 +53,7 @@ pub fn not_found() -> Markup {
             div class="flex flex-col items-center py-20 text-center" {
                 p class="font-mono text-4xl font-semibold text-ink" { "404" }
                 p class="mt-2 text-sm text-ink-muted" { (i18n::t("Page not found.")) }
-                a href="/" class="mt-6 text-sm text-accent hover:underline" {
+                a href="/" class="mt-6 text-sm text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }
@@ -80,7 +80,7 @@ pub fn malformed_request(status: StatusCode) -> Markup {
                 p class="mt-2 max-w-prose text-sm text-ink-muted" {
                     (i18n::t("This address is not complete. A link may have been broken on the way here."))
                 }
-                a href="/" class="mt-6 text-sm text-accent hover:underline" {
+                a href="/" class="mt-6 text-sm text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }
@@ -99,7 +99,7 @@ fn server_error() -> Markup {
                 p class="mt-2 max-w-prose text-sm text-ink-muted" {
                     (i18n::t("Something went wrong. Please try again."))
                 }
-                a href="/" class="mt-6 text-sm text-accent hover:underline" {
+                a href="/" class="mt-6 text-sm text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }

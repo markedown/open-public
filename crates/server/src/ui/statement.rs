@@ -12,7 +12,7 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
         return html! {};
     }
     let add = add_href.map(|href| html! {
-        a href=(href) class="text-[12px] font-semibold text-accent transition-colors hover:underline" {
+        a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
             "+ " (i18n::t("Add statement"))
         }
     });
@@ -35,7 +35,7 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
                                     }
                                 }
                                 a href=(s.url) target="_blank" rel="noopener noreferrer"
-                                  class="uppercase tracking-wide text-ink-muted transition-colors hover:text-accent" {
+                                  class="uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
                                     (i18n::t("source")) " ↗"
                                 }
                             }
