@@ -21,6 +21,9 @@ static DE: LazyLock<Catalog> =
 static FR: LazyLock<Catalog> =
     LazyLock::new(|| Catalog::parse(include_str!("../../../locales/fr.po")));
 
+static SR: LazyLock<Catalog> =
+    LazyLock::new(|| Catalog::parse(include_str!("../../../locales/sr.po")));
+
 /// The deployment default locale, resolved once from the `LOCALE` environment
 /// variable. Used as the final fallback when a request neither carries a
 /// language cookie nor a matching `Accept-Language`.
@@ -106,16 +109,29 @@ pub enum Lang {
     Tr,
     De,
     Fr,
+    /// Serbian, in the Latin script.
+    Sr,
 }
 
 impl Lang {
-    /// BCP-47 code for the `<html lang>` attribute.
+    /// The language code used in the cookie, the switcher URL and the
+    /// translations table.
     pub fn code(self) -> &'static str {
         match self {
             Lang::En => "en",
             Lang::Tr => "tr",
             Lang::De => "de",
             Lang::Fr => "fr",
+            Lang::Sr => "sr",
+        }
+    }
+
+    /// BCP-47 tag for the `<html lang>` attribute. Serbian is written in two
+    /// scripts, so its tag names the one the catalog uses.
+    pub fn html_tag(self) -> &'static str {
+        match self {
+            Lang::Sr => "sr-Latn",
+            other => other.code(),
         }
     }
 
@@ -126,6 +142,7 @@ impl Lang {
             "tr" => Lang::Tr,
             "de" => Lang::De,
             "fr" => Lang::Fr,
+            "sr" => Lang::Sr,
             _ => Lang::En,
         }
     }
@@ -137,12 +154,13 @@ impl Lang {
             "tr" => Some(Lang::Tr),
             "de" => Some(Lang::De),
             "fr" => Some(Lang::Fr),
+            "sr" => Some(Lang::Sr),
             _ => None,
         }
     }
 
     /// Every supported language, in switcher order.
-    pub const ALL: [Lang; 4] = [Lang::En, Lang::Tr, Lang::De, Lang::Fr];
+    pub const ALL: [Lang; 5] = [Lang::En, Lang::Tr, Lang::De, Lang::Fr, Lang::Sr];
 
     /// Whether this is the currently active locale.
     pub fn is_active(self) -> bool {
@@ -156,6 +174,7 @@ impl Lang {
             Lang::Tr => "TR",
             Lang::De => "DE",
             Lang::Fr => "FR",
+            Lang::Sr => "SR",
         }
     }
 
@@ -166,6 +185,7 @@ impl Lang {
             Lang::Tr => "Türkçe",
             Lang::De => "Deutsch",
             Lang::Fr => "Français",
+            Lang::Sr => "Srpski",
         }
     }
 
@@ -177,6 +197,7 @@ impl Lang {
             Lang::Tr => TR.get(msgid),
             Lang::De => DE.get(msgid),
             Lang::Fr => FR.get(msgid),
+            Lang::Sr => SR.get(msgid),
         }
     }
 }
@@ -202,6 +223,7 @@ pub fn t_dyn(s: &str) -> &str {
         Lang::Tr => TR.get(s),
         Lang::De => DE.get(s),
         Lang::Fr => FR.get(s),
+        Lang::Sr => SR.get(s),
     }
 }
 
@@ -221,18 +243,27 @@ pub fn month_abbr(month: u32) -> &'static str {
         "janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.",
         "déc.",
     ];
+    const SR: [&str; 12] = [
+        "jan", "feb", "mar", "apr", "maj", "jun", "jul", "avg", "sep", "okt", "nov", "dec",
+    ];
     let i = (month.clamp(1, 12) - 1) as usize;
     match active() {
         Lang::Tr => TR[i],
         Lang::En => EN[i],
         Lang::De => DE[i],
         Lang::Fr => FR[i],
+        Lang::Sr => SR[i],
     }
 }
 
-/// The active locale's `<html lang>` code.
+/// The active locale's language code (see [`Lang::code`]).
 pub fn lang_code() -> &'static str {
     active().code()
+}
+
+/// The active locale's `<html lang>` tag (see [`Lang::html_tag`]).
+pub fn html_tag() -> &'static str {
+    active().html_tag()
 }
 
 /// A parsed gettext catalog: `msgid` -> `msgstr` for one locale.
@@ -349,6 +380,9 @@ mod tests {
         assert_eq!(resolve(None, Some("tr-TR,tr;q=0.9,en;q=0.8")), Lang::Tr);
         assert_eq!(resolve(None, Some("de-DE,de;q=0.9,en;q=0.8")), Lang::De);
         assert_eq!(resolve(None, Some("fr-FR,fr;q=0.9,en;q=0.8")), Lang::Fr);
+        // Serbian in either script, or a region, resolves to the Latin catalog.
+        assert_eq!(resolve(None, Some("sr-Latn-RS,sr;q=0.9")), Lang::Sr);
+        assert_eq!(resolve(None, Some("sr-Cyrl,en;q=0.5")), Lang::Sr);
         // An unsupported first tag is skipped; the next supported one wins.
         assert_eq!(resolve(None, Some("es-ES,es;q=0.9,en;q=0.8")), Lang::En);
     }
@@ -431,5 +465,37 @@ msgstr ""
         assert_eq!(Lang::from_code("en"), Lang::En);
         assert_eq!(Lang::from_code("zz"), Lang::En); // unknown falls back
         assert_eq!(Lang::from_code("tr"), Lang::Tr);
+    }
+
+    #[test]
+    fn serbian_names_its_script() {
+        assert_eq!(Lang::from_code("sr"), Lang::Sr);
+        assert_eq!(Lang::Sr.code(), "sr");
+        assert_eq!(Lang::Sr.html_tag(), "sr-Latn");
+        assert_eq!(Lang::Tr.html_tag(), "tr");
+        assert_eq!(Lang::Sr.t("Parties"), "Stranke");
+    }
+
+    #[test]
+    fn every_catalog_has_the_same_messages() {
+        // A string added to one catalog and forgotten in another silently
+        // falls back to English, so the catalogs must stay in step.
+        let ids = |src: &str| {
+            let mut v: Vec<String> = src
+                .lines()
+                .filter_map(|l| l.strip_prefix("msgid "))
+                .map(str::to_owned)
+                .collect();
+            v.sort();
+            v
+        };
+        let tr = ids(include_str!("../../../locales/tr.po"));
+        for (name, src) in [
+            ("de", include_str!("../../../locales/de.po")),
+            ("fr", include_str!("../../../locales/fr.po")),
+            ("sr", include_str!("../../../locales/sr.po")),
+        ] {
+            assert_eq!(ids(src), tr, "{name}.po differs from tr.po");
+        }
     }
 }

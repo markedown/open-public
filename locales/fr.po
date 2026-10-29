@@ -1233,3 +1233,6 @@ msgstr "Un par compte (jetons signés en aveugle) : les signatures aveugles cryp
 
 msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
 msgstr "Ce qu'aucune ne prouve : aucune de ces couches ne prouve qu'un compte correspond à une personne vivante unique, ni que les participants forment un échantillon représentatif ou une coupe statistique d'une quelconque population. La participation ici reflète uniquement les comptes vérifiés qui ont choisi de prendre part."
+
+msgid "Parliamentary republic"
+msgstr "République parlementaire"

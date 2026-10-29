@@ -43,7 +43,7 @@ pub fn document_described(
     let link = "text-ink-muted underline-offset-4 transition-colors hover:text-ink hover:underline";
     html! {
         (DOCTYPE)
-        html lang=(i18n::lang_code()) {
+        html lang=(i18n::html_tag()) {
             head {
                 meta charset="utf-8";
                 meta name="viewport" content="width=device-width, initial-scale=1";

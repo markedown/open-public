@@ -1233,3 +1233,6 @@ msgstr "Eins pro Konto (blind signierte Token): Kryptografische Blindsignaturen 
 
 msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
 msgstr "Was keine davon beweist: Keine dieser Schichten beweist, dass ein Konto einer eindeutigen lebenden Person entspricht, noch dass die Teilnehmenden eine repräsentative Stichprobe oder einen statistischen Querschnitt einer Bevölkerung bilden. Die Teilnahme hier spiegelt ausschließlich die verifizierten Konten wider, die sich für die Teilnahme entschieden haben."
+
+msgid "Parliamentary republic"
+msgstr "Parlamentarische Republik"

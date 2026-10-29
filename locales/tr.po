@@ -1245,3 +1245,6 @@ msgstr "Hesap başına bir (kör imzalı jetonlar): Kriptografik kör imzalar, h
 
 msgid "What none of them prove: none of these layers prove that an account corresponds to a unique living person, nor that the participants form a representative sample or statistical cross-section of any population. Participation here reflects solely the verified accounts that chose to take part."
 msgstr "Hiçbirinin kanıtlamadığı: Bu katmanların hiçbiri, bir hesabın benzersiz yaşayan bir kişiye karşılık geldiğini veya katılımcıların herhangi bir nüfusun temsili bir örneklemini ya da istatistiksel bir kesitini oluşturduğunu kanıtlamaz. Buradaki katılım yalnızca katılmayı seçen doğrulanmış hesapları yansıtır."
+
+msgid "Parliamentary republic"
+msgstr "Parlamenter cumhuriyet"
