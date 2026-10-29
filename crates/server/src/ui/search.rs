@@ -31,3 +31,19 @@ pub fn bar(action: &str, target: &str, value: &str) -> Markup {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::matches;
+
+    #[test]
+    fn folds_case_accents_and_script() {
+        assert!(matches("Parlamentarni izbori 2026", ""));
+        assert!(matches("Parlamentarni izbori 2026", "IZBORI"));
+        assert!(matches("Élection présidentielle", "election"));
+        // A Serbian name written in Latin is found by a Cyrillic or an ASCII query.
+        assert!(matches("Savez za Šumadiju", "шумадију"));
+        assert!(matches("Savez za Šumadiju", "sumadiju"));
+        assert!(!matches("Savez za Šumadiju", "vojvodinu"));
+    }
+}
