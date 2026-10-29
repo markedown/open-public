@@ -1,7 +1,7 @@
 use std::sync::OnceLock;
 
 use argon2::{
-    password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    password_hash::{phc::PasswordHash, PasswordHasher, PasswordVerifier},
     Argon2,
 };
 use axum::{
@@ -88,10 +88,9 @@ pub fn hash_email(email: &str, secret: &[u8]) -> Option<String> {
 }
 
 pub fn hash_password(password: &str) -> Result<String, argon2::password_hash::Error> {
-    let salt = SaltString::generate(&mut OsRng);
-    let argon2 = Argon2::default();
-    Ok(argon2
-        .hash_password(password.as_bytes(), &salt)?
+    // The salt is drawn from the OS RNG inside `hash_password`.
+    Ok(Argon2::default()
+        .hash_password(password.as_bytes())?
         .to_string())
 }
 
@@ -324,6 +323,17 @@ mod tests {
         let hash = hash_password("correct horse").unwrap();
         assert!(verify_password("correct horse", &hash).unwrap());
         assert!(!verify_password("wrong", &hash).unwrap());
+    }
+
+    #[test]
+    fn stored_hashes_from_other_parameters_still_verify() {
+        // Reference argon2id vector (m=256, t=2, p=1): a stored hash carries its
+        // own parameters, so hashes written before a crate or default change
+        // must keep verifying.
+        let stored =
+            "$argon2id$v=19$m=256,t=2,p=1$c29tZXNhbHQ$nf65EOgLrQMR/uIPnA4rEsF5h7TKyQwu9U1bMCHGi/4";
+        assert!(verify_password("password", stored).unwrap());
+        assert!(!verify_password("passwort", stored).unwrap());
     }
 
     #[test]
