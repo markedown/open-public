@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select distinct on (m.person_id)\n               m.person_id, pa.slug as party_slug, pa.short_name, pa.color\n        from party_memberships m\n        join parties pa on pa.id = m.party_id\n        where m.person_id = any($1) and m.end_date is null\n        order by m.person_id, pa.name collate \"name_sort\"\n        ",
+  "query": "\n        select distinct on (m.person_id)\n               m.person_id, pa.slug as party_slug,\n               -- A party publishes no abbreviation in some countries; its name\n               -- is then the label, so the membership is never left unshown.\n               coalesce(pa.short_name, pa.name) as short_name, pa.color\n        from party_memberships m\n        join parties pa on pa.id = m.party_id\n        where m.person_id = any($1) and m.end_date is null\n        order by m.person_id, pa.name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -29,12 +29,7 @@
         "ordinal": 2,
         "name": "short_name",
         "type_info": "Text",
-        "origin": {
-          "Table": {
-            "table": "parties",
-            "name": "short_name"
-          }
-        }
+        "origin": "Expression"
       },
       {
         "ordinal": 3,
@@ -56,9 +51,9 @@
     "nullable": [
       false,
       false,
-      true,
+      null,
       true
     ]
   },
-  "hash": "83a7f3f6e5fdad53e5bb712e5438745a82e612bdfae16a4a8abd13314079737c"
+  "hash": "bf86cee3488f4ec45721b80abea3069e3e7661272543dfcebba5b57939e99ca5"
 }

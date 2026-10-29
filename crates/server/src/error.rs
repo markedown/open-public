@@ -51,9 +51,9 @@ pub fn not_found() -> Markup {
         false,
         html! {
             div class="flex flex-col items-center py-20 text-center" {
-                p class="font-mono text-4xl font-semibold text-ink" { "404" }
-                p class="mt-2 text-sm text-ink-muted" { (i18n::t("Page not found.")) }
-                a href="/" class="mt-6 text-sm text-link hover:underline" {
+                p class="text-4xl font-semibold text-ink" { "404" }
+                p class="mt-2 text-[16px] text-ink-muted" { (i18n::t("Page not found.")) }
+                a href="/" class="mt-6 text-[16px] text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }
@@ -76,11 +76,11 @@ pub fn malformed_request(status: StatusCode) -> Markup {
         false,
         html! {
             div class="flex flex-col items-center py-20 text-center" {
-                p class="font-mono text-4xl font-semibold text-ink" { (status.as_u16()) }
-                p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                p class="text-4xl font-semibold text-ink" { (status.as_u16()) }
+                p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                     (i18n::t("This address is not complete. A link may have been broken on the way here."))
                 }
-                a href="/" class="mt-6 text-sm text-link hover:underline" {
+                a href="/" class="mt-6 text-[16px] text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }
@@ -95,11 +95,11 @@ fn server_error() -> Markup {
         false,
         html! {
             div class="flex flex-col items-center py-20 text-center" {
-                p class="font-mono text-4xl font-semibold text-ink" { "500" }
-                p class="mt-2 max-w-prose text-sm text-ink-muted" {
+                p class="text-4xl font-semibold text-ink" { "500" }
+                p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
                     (i18n::t("Something went wrong. Please try again."))
                 }
-                a href="/" class="mt-6 text-sm text-link hover:underline" {
+                a href="/" class="mt-6 text-[16px] text-link hover:underline" {
                     (i18n::t("Back to home"))
                 }
             }

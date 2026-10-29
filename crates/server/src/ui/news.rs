@@ -10,7 +10,7 @@ use crate::ui;
 pub fn person_chip(name: &str, slug: &str, country: &str) -> Markup {
     html! {
         a href={"/" (country) "/people/" (slug)}
-          class="inline-flex items-center rounded-md border border-hairline px-2 py-0.5 text-xs font-medium text-ink transition-colors hover:border-accent hover:text-link" {
+          class="inline-flex items-center rounded-md border border-hairline px-2 py-0.5 text-[14px] font-medium text-ink transition-colors hover:border-accent hover:text-link" {
             (name)
         }
     }
@@ -55,7 +55,7 @@ pub fn index(items: &[db::news::NewsCard], country: &str, admin: bool) -> Markup
                         }
                         @if admin {
                             a href={"/admin/news/" (it.id) "/edit"}
-                              class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-wide text-link hover:underline" {
+                              class="shrink-0 text-[15px] font-bold text-link hover:underline" {
                                 (i18n::t("Edit"))
                             }
                         }
@@ -76,7 +76,7 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
         return html! {};
     }
     let add = add_href.map(|href| html! {
-        a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
+        a href=(href) class="text-[15px] font-semibold text-link transition-colors hover:underline" {
             "+ " (i18n::t("Add news"))
         }
     });
@@ -84,13 +84,13 @@ pub fn news_section(items: &[NewsItem], country: &str, add_href: Option<&str>) -
         section class="mb-8" {
             (ui::section_header(i18n::t("News"), add))
             @if items.is_empty() {
-                p class="text-sm text-ink-muted" { (i18n::t("No news yet.")) }
+                p class="text-[16px] text-ink-muted" { (i18n::t("No news yet.")) }
             } @else {
                 ul class="space-y-3" {
                     @for it in items {
                         li {
                             a href={"/" (country) "/news/" (it.id)}
-                              class="block text-sm font-medium text-ink transition-colors hover:text-link" {
+                              class="block text-[16px] font-medium text-ink transition-colors hover:text-link" {
                                 (it.headline)
                             }
                         }
@@ -110,7 +110,7 @@ pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Marku
     }
     html! {
         section class="mt-8 border-t border-hairline pt-6" {
-            h2 class="mb-3 text-[10px] font-bold uppercase tracking-widest text-ink-muted" {
+            h2 class="mb-3 text-[15px] font-bold text-ink-muted" {
                 (i18n::t("Also reported by"))
             }
             ul class="space-y-2.5" {
@@ -119,14 +119,14 @@ pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Marku
                         a href={"/" (country) "/news/" (it.id)}
                           class="group block" {
                             @if let Some(ref o) = it.outlet {
-                                span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+                                span class="text-[15px] text-ink-muted" {
                                     (o)
                                     @if let Some(d) = it.published_at {
                                         " · " (fmt::date(Some(d.date_naive())))
                                     }
                                 }
                             }
-                            span class="block text-sm font-medium text-ink transition-colors group-hover:text-link" {
+                            span class="block text-[16px] font-medium text-ink transition-colors group-hover:text-link" {
                                 (it.headline)
                             }
                         }

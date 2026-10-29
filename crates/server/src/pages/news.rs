@@ -29,17 +29,17 @@ pub async fn list(
             ]))
             (ui::page_header(
                 i18n::t("News"),
-                Some(html! { span class="font-mono" { (items.len()) } " " (i18n::t("News")) }),
+                Some(html! { span class="" { (items.len()) } " " (i18n::t("News")) }),
                 Some(html! {
                     a href={"/" (country.slug) "/outlets"}
-                      class="text-[12px] font-semibold text-link transition-colors hover:underline" {
+                      class="text-[15px] font-semibold text-link transition-colors hover:underline" {
                         (i18n::t("Outlets")) " →"
                     }
                 }),
             ))
 
             @if items.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No news yet.")) }
+                p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No news yet.")) }
             } @else {
                 (ui::news::index(&items, &country.slug, is_admin))
             }
@@ -97,13 +97,13 @@ pub async fn detail(
                             img src=(logo) alt="" loading="lazy"
                                 class="h-6 w-6 rounded border border-hairline object-contain";
                         }
-                        span class="text-xs font-bold uppercase tracking-widest text-ink-muted" { (o.name) }
+                        span class="text-[14px] font-bold text-ink-muted" { (o.name) }
                     }
                 }
                 h1 class="text-2xl font-bold leading-snug tracking-tight text-ink sm:text-3xl" {
                     (headline)
                 }
-                div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-ink-muted" {
+                div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-ink-muted" {
                     @if let Some(ref a) = item.author {
                         span { (i18n::t("By")) " " span class="text-ink" { (a) } }
                     }
@@ -113,7 +113,7 @@ pub async fn detail(
                 }
                 @if is_admin {
                     a href={"/admin/news/" (item.id) "/edit"}
-                      class="mt-4 inline-block font-mono text-[10px] font-bold uppercase tracking-wide text-link hover:underline" {
+                      class="mt-4 inline-block text-[15px] font-bold text-link hover:underline" {
                         (i18n::t("Edit"))
                     }
                 }
@@ -130,7 +130,7 @@ pub async fn detail(
 
             @if !item.people.is_empty() || !item.parties.is_empty() {
                 section class="mb-6" {
-                    h2 class="mb-2 text-[10px] font-bold uppercase tracking-widest text-ink-muted" {
+                    h2 class="mb-2 text-[15px] font-bold text-ink-muted" {
                         (i18n::t("Mentions"))
                     }
                     (ui::news::mentions(&item.people, &item.parties, &country.slug))
@@ -138,7 +138,7 @@ pub async fn detail(
             }
 
             a href=(item.url) rel="noopener" target="_blank"
-              class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-ink transition-colors hover:border-accent hover:text-link" {
+              class="inline-flex items-center gap-1.5 rounded-[10px] border border-hairline px-4 py-2 text-[14px] font-bold text-ink transition-colors hover:border-accent hover:text-link" {
                 (i18n::t("Read at the source")) " ↗"
             }
 

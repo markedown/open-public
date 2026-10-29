@@ -46,7 +46,7 @@ pub async fn page(
                         value=(query_str)
                         aria-label=(i18n::t("Search people and parties..."))
                         placeholder=(i18n::t("Search people and parties..."))
-                        class="flex-1 rounded-lg border border-hairline bg-paper-raised px-4 py-2.5 text-sm text-ink placeholder-ink-muted transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                        class="flex-1 rounded-[10px] border border-hairline bg-paper-raised px-4 py-2.5 text-[16px] text-ink placeholder-ink-muted transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                         autofocus
                         hx-get="/search"
                         hx-trigger="keyup changed delay:250ms"
@@ -55,7 +55,7 @@ pub async fn page(
                         hx-include="[name='q']";
                     button
                         type="submit"
-                        class="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                        class="inline-flex items-center gap-1.5 rounded-[10px] bg-accent px-4 py-2.5 text-[16px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                         svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" {
                             circle cx="11" cy="11" r="8" {}
                             path d="M21 21l-4.35-4.35" {}
@@ -69,12 +69,12 @@ pub async fn page(
                 @if has_query {
                     @if hits.is_empty() {
                         div class="flex flex-col items-center py-12 text-center" {
-                            p class="text-sm text-ink-muted" {
+                            p class="text-[16px] text-ink-muted" {
                                 (i18n::t("No results found."))
                             }
                         }
                     } @else {
-                        p class="mb-4 font-mono text-xs text-ink-muted" {
+                        p class="mb-4 text-[14px] text-ink-muted" {
                             (format!("{} {}", hits.len(), i18n::t("results")))
                         }
                         ul class="op-card divide-y divide-hairline-light" {
@@ -89,14 +89,14 @@ pub async fn page(
                                     // A row with no country has no page to link
                                     // to, so it is listed rather than linked.
                                     @let row = html! {
-                                        span class="w-14 shrink-0 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted" {
+                                        span class="w-14 shrink-0 text-[14px] font-medium text-ink-muted" {
                                             (label)
                                         }
-                                        span class="text-sm font-medium text-ink transition-colors group-hover:text-link" {
+                                        span class="text-[16px] font-medium text-ink transition-colors group-hover:text-link" {
                                             (hit.name)
                                         }
                                         @if let Some(country) = &hit.country {
-                                            span class="ml-auto shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink-muted" {
+                                            span class="ml-auto shrink-0 text-[14px] text-ink-muted" {
                                                 (country.name)
                                             }
                                         }

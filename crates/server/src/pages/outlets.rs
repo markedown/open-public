@@ -28,11 +28,11 @@ pub async fn list(
             ]))
             (ui::page_header(
                 i18n::t("Outlets"),
-                Some(html! { span class="font-mono" { (outlets.len()) } " " (i18n::t("Outlets")) }),
+                Some(html! { span class="" { (outlets.len()) } " " (i18n::t("Outlets")) }),
                 None,
             ))
             @if outlets.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No outlets yet.")) }
+                p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No outlets yet.")) }
             } @else {
                 ul class="grid gap-3 sm:grid-cols-2" {
                     @for o in &outlets {
@@ -93,7 +93,7 @@ pub async fn detail(
                 div class="flex items-center gap-4" {
                     @if let Some(ref logo) = outlet.logo_url {
                         img src=(logo) alt=(&outlet.name) loading="lazy"
-                            class="h-12 w-12 shrink-0 rounded-lg border border-hairline object-contain";
+                            class="h-12 w-12 shrink-0 rounded-[10px] border border-hairline object-contain";
                     }
                     h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
                         (outlet.name)
@@ -106,7 +106,7 @@ pub async fn detail(
                 }
                 @if let Some(text) = summary {
                     div class="mt-4" {
-                        p class="max-w-prose text-sm leading-relaxed text-ink" { (text) }
+                        p class="max-w-prose text-[16px] leading-relaxed text-ink" { (text) }
                         (ui::translated::original_disclosure(
                             loc.is_translated("summary").then_some(outlet.summary.as_deref()).flatten(),
                         ))
@@ -114,7 +114,7 @@ pub async fn detail(
                 }
                 @if let Some(ref home) = outlet.homepage_url {
                     a href=(home) rel="noopener" target="_blank"
-                      class="mt-4 inline-block font-mono text-[11px] text-link hover:underline" {
+                      class="mt-4 inline-block text-[14px] text-link hover:underline" {
                         (home) " ↗"
                     }
                 }
@@ -122,10 +122,10 @@ pub async fn detail(
 
             (ui::section_header(
                 i18n::t("News"),
-                Some(html! { span class="font-mono text-xs text-ink-muted" { (outlet.article_count) } }),
+                Some(html! { span class="text-[14px] text-ink-muted" { (outlet.article_count) } }),
             ))
             @if articles.is_empty() {
-                p class="py-10 text-center text-sm text-ink-muted" { (i18n::t("No news yet.")) }
+                p class="py-10 text-center text-[16px] text-ink-muted" { (i18n::t("No news yet.")) }
             } @else {
                 (ui::news::index(&articles, &country.slug, session.as_ref().is_some_and(|s| s.is_admin)))
                 (ui::pagination::controls(&base, current, total_pages))

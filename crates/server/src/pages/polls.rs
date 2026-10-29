@@ -40,7 +40,7 @@ pub async fn list(
         // Signed-in visitors can propose a poll; it is reviewed before it
         // appears. Anonymous visitors are pointed to sign in.
         a href=(if session.is_some() { format!("/{}/polls/submit", country.slug) } else { "/login".to_string() })
-          class="rounded-lg bg-accent px-4 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+          class="rounded-[10px] bg-accent px-4 py-2 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
             (i18n::t("Propose a poll"))
         }
     };
@@ -53,10 +53,10 @@ pub async fn list(
             ]))
             (ui::page_header(
                 i18n::t("Polls"),
-                Some(html! { span class="font-mono" { (polls.len()) } " " (i18n::t("Polls")) }),
+                Some(html! { span class="" { (polls.len()) } " " (i18n::t("Polls")) }),
                 Some(propose),
             ))
-            p class="mb-6 max-w-prose text-xs leading-relaxed text-ink-muted" {
+            p class="mb-6 max-w-prose text-[14px] leading-relaxed text-ink-muted" {
                 (i18n::t("Polls on open-public count participation among verified accounts, not a representative survey or statistical sample of any population. Results show how participants here voted, with each ballot anonymous and tamper-evident."))
             }
             (ui::search::bar(&list_url, "#polls-results", &query))
@@ -64,7 +64,7 @@ pub async fn list(
             // The search box swaps this container in place as the query changes.
             div id="polls-results" {
                 @if polls.is_empty() {
-                    p class="py-12 text-center text-sm text-ink-muted" { (i18n::t("No polls yet.")) }
+                    p class="py-12 text-center text-[16px] text-ink-muted" { (i18n::t("No polls yet.")) }
                 }
                 @if !open.is_empty() {
                     (poll_group(i18n::t("Open"), &open, &country.slug))
@@ -89,8 +89,8 @@ pub async fn list(
 fn poll_group(title: &str, polls: &[&db::polls::PollListItem], country: &str) -> Markup {
     html! {
         section class="mb-10" {
-            h2 class="mb-3 text-xs font-bold uppercase tracking-widest text-ink-muted" {
-                (title) " " span class="font-mono" { "(" (polls.len()) ")" }
+            h2 class="mb-3 text-[14px] font-bold text-ink-muted" {
+                (title) " " span class="" { "(" (polls.len()) ")" }
             }
             ul class="grid gap-3 sm:grid-cols-2" {
                 @for p in polls {
@@ -98,9 +98,9 @@ fn poll_group(title: &str, polls: &[&db::polls::PollListItem], country: &str) ->
                         a href={"/" (country) "/poll/" (p.slug)}
                           class="op-card op-card-link block px-4 py-3.5" {
                             div class="flex items-baseline justify-between gap-3" {
-                                span class="text-sm font-medium text-ink" { (p.question) }
-                                span class="flex shrink-0 items-baseline gap-3 font-mono text-xs text-ink-muted" {
-                                    span class="uppercase tracking-wide" { (kind_label(&p.kind)) }
+                                span class="text-[16px] font-medium text-ink" { (p.question) }
+                                span class="flex shrink-0 items-baseline gap-3 text-[14px] text-ink-muted" {
+                                    span class="" { (kind_label(&p.kind)) }
                                     span { (p.votes) " " (i18n::t("votes")) }
                                 }
                             }

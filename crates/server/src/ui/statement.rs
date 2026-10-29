@@ -12,7 +12,7 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
         return html! {};
     }
     let add = add_href.map(|href| html! {
-        a href=(href) class="text-[12px] font-semibold text-link transition-colors hover:underline" {
+        a href=(href) class="text-[15px] font-semibold text-link transition-colors hover:underline" {
             "+ " (i18n::t("Add statement"))
         }
     });
@@ -20,22 +20,22 @@ pub fn statement_section(items: &[Statement], add_href: Option<&str>) -> Markup 
         section class="mb-8" {
             (crate::ui::section_header(i18n::t("Statements"), add))
             @if items.is_empty() {
-                p class="text-sm text-ink-muted" { (i18n::t("No statements yet.")) }
+                p class="text-[16px] text-ink-muted" { (i18n::t("No statements yet.")) }
             } @else {
                 ul class="space-y-5" {
                     @for s in items {
                         li class="border-l-2 border-accent/25 pl-4" {
                             p class="text-[15px] leading-relaxed text-ink" { (s.text_original) }
-                            div class="mt-2 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-muted" {
+                            div class="mt-2 flex flex-wrap items-center gap-2 text-[14px] text-ink-muted" {
                                 @if let Some(d) = s.stated_at { span { (fmt::date(Some(d))) } }
                                 @if let Some(ref o) = s.outlet { span { (o) } }
                                 @if s.is_paraphrase {
-                                    span class="rounded border border-hairline px-1.5 py-0.5 uppercase tracking-wide" {
+                                    span class="rounded border border-hairline px-1.5 py-0.5" {
                                         (i18n::t("paraphrase"))
                                     }
                                 }
                                 a href=(s.url) target="_blank" rel="noopener noreferrer"
-                                  class="uppercase tracking-wide text-ink-muted transition-colors hover:text-link" {
+                                  class="text-ink-muted transition-colors hover:text-link" {
                                     (i18n::t("source")) " ↗"
                                 }
                             }

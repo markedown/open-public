@@ -91,7 +91,7 @@ fn scale() -> [(i8, &'static str); 5] {
 /// source instead, so this claim never overstates what is behind the data.
 fn methodology_note(scope: &str) -> Markup {
     html! {
-        p class="mt-4 max-w-prose text-xs text-ink-muted" {
+        p class="mt-4 max-w-prose text-[14px] text-ink-muted" {
             @if scope == db::compass::SCOPE_PERSON {
                 (i18n::t("Candidate stances here are our readings of what each candidate published or did in office, not statements by the candidates themselves. Every stance links to its source, so any of them can be checked, and corrected if it is wrong."))
             } @else {
@@ -180,12 +180,12 @@ async fn form_scoped(
             ]))
             (ui::page_header(
                 i18n::t("Compass"),
-                Some(html! { span class="font-mono" { (theses.len()) } " " (i18n::t("positions")) }),
+                Some(html! { span class="" { (theses.len()) } " " (i18n::t("positions")) }),
                 None,
             ))
 
             @if let Some((href, label)) = &other_link {
-                p class="-mt-3 mb-6 text-[13px] text-ink-muted" {
+                p class="-mt-3 mb-6 text-[15px] text-ink-muted" {
                     (i18n::t("Answered about")) ": "
                     @if scope == db::compass::SCOPE_PERSON {
                         span class="font-medium text-ink" { (i18n::t("Candidates")) }
@@ -198,12 +198,12 @@ async fn form_scoped(
             }
 
             @if theses.is_empty() {
-                p class="py-12 text-center text-sm text-ink-muted" {
+                p class="py-12 text-center text-[16px] text-ink-muted" {
                     (i18n::t("No positions have been recorded for this country yet."))
                 }
             } @else {
                 div class="mb-8" {
-                    p class="max-w-prose text-sm text-ink-muted" {
+                    p class="max-w-prose text-[16px] text-ink-muted" {
                         (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
                     }
                     (methodology_note(&scope))
@@ -216,7 +216,7 @@ async fn form_scoped(
                     }
                     div class="sticky bottom-0 -mx-4 border-t border-hairline bg-paper/90 px-4 py-4 backdrop-blur-sm" {
                         button type="submit"
-                          class="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                          class="rounded-[10px] bg-accent px-5 py-2.5 text-[16px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
                             (i18n::t("See my match"))
                         }
                     }
@@ -251,30 +251,30 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
         fieldset class="op-card px-4 py-4 sm:px-5" {
             legend class="sr-only" { (t.text) }
             div class="mb-3 flex items-start gap-3" {
-                span class="mt-0.5 shrink-0 font-mono text-xs font-semibold text-ink-muted" {
+                span class="mt-0.5 shrink-0 text-[14px] font-semibold text-ink-muted" {
                     (number) "/" (total)
                 }
                 div class="min-w-0" {
                     p class="text-[15px] font-medium leading-snug text-ink sm:text-sm" { (t.text) }
                     @if let Some(topic) = &t.topic {
-                        span class="mt-1 inline-block font-mono text-[10px] uppercase tracking-wide text-ink-muted" { (topic) }
+                        span class="mt-1 inline-block text-[15px] text-ink-muted" { (topic) }
                     }
                 }
             }
             div class="flex flex-wrap gap-2" {
                 // Skip is the default so an unanswered position is simply left
                 // out of the score.
-                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-link" {
+                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-[14px] text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-link" {
                     input type="radio" name=(name) value="skip" checked class="sr-only";
                     (i18n::t("Skip"))
                 }
                 @for (value, label) in scale() {
-                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-xs text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-link" {
+                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-[14px] text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-link" {
                         input type="radio" name=(name) value=(value) class="sr-only";
                         (label)
                     }
                 }
-                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-link" {
+                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[14px] text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-link" {
                     input type="checkbox" name={"w" (t.id)} value="1"
                       class="h-3.5 w-3.5 rounded border-hairline text-link";
                     (i18n::t("Important"))
@@ -283,7 +283,7 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
             div class="compass-nav mt-4 items-center justify-between gap-3 border-t border-hairline-light pt-3" {
                 @if number > 1 {
                     a href={"#q" (number - 1)}
-                      class="rounded-lg border border-hairline px-4 py-2 text-[13px] font-medium text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                      class="rounded-[10px] border border-hairline px-4 py-2 text-[15px] font-medium text-ink-muted transition-colors hover:border-ink hover:text-ink" {
                         (i18n::t("Back"))
                     }
                 } @else {
@@ -291,7 +291,7 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
                 }
                 @if number < total {
                     a href={"#q" (number + 1)}
-                      class="rounded-lg bg-accent px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-strong" {
+                      class="rounded-[10px] bg-accent px-5 py-2 text-[15px] font-semibold text-white transition-colors hover:bg-accent-strong" {
                         (i18n::t("Next"))
                     }
                 }
@@ -410,18 +410,18 @@ async fn result_scoped(
             (ui::page_header(i18n::t("Your match"), None, None))
 
             @if answers.is_empty() {
-                p class="py-8 text-sm text-ink-muted" {
+                p class="py-8 text-[16px] text-ink-muted" {
                     (i18n::t("You did not answer any positions, so there is nothing to match.")) " "
                     a href=(compass_url) class="text-link hover:underline" { (i18n::t("Go back")) }
                 }
             } @else {
-                p class="mb-6 text-sm text-ink-muted" {
+                p class="mb-6 text-[16px] text-ink-muted" {
                     (i18n::t("Positions answered")) ": "
-                    span class="font-mono text-ink" { (answers.len()) " / " (theses.len()) }
+                    span class="text-ink" { (answers.len()) " / " (theses.len()) }
                 }
 
                 @if scores.is_empty() {
-                    p class="py-8 text-sm text-ink-muted" {
+                    p class="py-8 text-[16px] text-ink-muted" {
                         @if scope == db::compass::SCOPE_PERSON {
                             (i18n::t("No candidate has a recorded stance on the positions you answered."))
                         } @else {
@@ -436,7 +436,7 @@ async fn result_scoped(
                             }
                         }
                     }
-                    p class="mt-5 max-w-prose text-xs text-ink-muted" {
+                    p class="mt-5 max-w-prose text-[14px] text-ink-muted" {
                         @if scope == db::compass::SCOPE_PERSON {
                             (i18n::t("Candidates are ranked by how closely their recorded stances match your answers."))
                         } @else {
@@ -449,7 +449,7 @@ async fn result_scoped(
                 }
 
                 div class="mt-8 border-t border-hairline pt-5" {
-                    a href=(compass_url) class="text-sm font-semibold text-link hover:underline" {
+                    a href=(compass_url) class="text-[16px] font-semibold text-link hover:underline" {
                         (i18n::t("Start over"))
                     }
                 }
@@ -473,22 +473,22 @@ fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Marku
     let width = format!("width:{:.1}%", s.percent);
     html! {
         li class="op-card flex items-center gap-3 px-4 py-3" {
-            span class="w-5 shrink-0 text-center font-mono text-xs text-ink-muted" { (rank) }
+            span class="w-5 shrink-0 text-center text-[14px] text-ink-muted" { (rank) }
             (ui::badge::party_chip(label, c.colour.as_deref()))
             div class="min-w-0 flex-1" {
                 a href=(c.href)
-                  class="text-sm font-medium text-ink hover:text-link hover:underline" { (c.name) }
+                  class="text-[16px] font-medium text-ink hover:text-link hover:underline" { (c.name) }
                 div class="mt-1.5 h-2 overflow-hidden rounded-full bg-paper-sunken" {
                     div class="h-full rounded-full"
                       style={(width) ";background-color:" (c.colour.as_deref().unwrap_or("#33527a"))} {}
                 }
             }
             span class="shrink-0 text-right" {
-                span class="block font-mono text-sm font-semibold tabular-nums text-ink" { (pct) }
+                span class="block text-[16px] font-semibold tabular-nums text-ink" { (pct) }
                 // How many positions the percentage actually rests on. Without
                 // this a party scored on three positions looks as solid as one
                 // scored on twenty.
-                span class="block font-mono text-[10px] text-ink-muted" {
+                span class="block text-[15px] text-ink-muted" {
                     (s.matched) " " (i18n::t("positions"))
                 }
             }
@@ -522,8 +522,8 @@ fn comparison(
                 @for t in theses {
                     @if let Some(&mine) = answered.get(&t.id) {
                         div class="op-card px-4 py-3.5" {
-                            p class="text-sm font-medium text-ink" { (t.text) }
-                            p class="mt-1 text-xs text-ink-muted" {
+                            p class="text-[16px] font-medium text-ink" { (t.text) }
+                            p class="mt-1 text-[14px] text-ink-muted" {
                                 (i18n::t("Your answer")) ": "
                                 span class="font-semibold text-ink" { (value_label(mine)) }
                             }
@@ -561,11 +561,11 @@ fn party_stance(
     html! {
         div class="flex flex-wrap items-baseline gap-x-2 gap-y-1" {
             (ui::badge::party_chip(&c.short, c.colour.as_deref()))
-            span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+            span class="text-[15px] text-ink-muted" {
                 (value_label(position.stance as i8))
             }
             @if diverges {
-                span class="rounded border border-hairline px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink" {
+                span class="rounded border border-hairline px-1.5 py-0.5 text-[15px] text-ink" {
                     (i18n::t("Pledge differs from record"))
                 }
             }
@@ -576,21 +576,21 @@ fn party_stance(
             // pledge, and it does so even when the pledge is more recent,
             // because what a party did is stronger evidence than what it said
             // it would do.
-            p class="mt-1 max-w-prose text-[11px] italic text-ink-muted" {
+            p class="mt-1 max-w-prose text-[14px] italic text-ink-muted" {
                 (i18n::t("The recorded act sets the score, even when the pledge is more recent: what a party did outranks what it said it would do."))
             }
         }
         ul class="mt-1 space-y-0.5 pl-1" {
             @for e in &items {
-                li class="flex flex-wrap items-baseline gap-x-2 text-xs text-ink-muted" {
-                    span class="font-mono text-[10px] uppercase tracking-wide text-ink" { (kind_label(&e.kind)) }
+                li class="flex flex-wrap items-baseline gap-x-2 text-[14px] text-ink-muted" {
+                    span class="text-[15px] text-ink" { (kind_label(&e.kind)) }
                     span { (value_label(e.stance as i8)) }
                     @if let Some(d) = e.occurred_on {
-                        span class="font-mono text-[10px]" { (crate::fmt::date(Some(d))) }
+                        span class="text-[15px]" { (crate::fmt::date(Some(d))) }
                     }
                     @if let Some(q) = &e.quote { span { (q) } }
                     @if let Some(l) = &e.locator {
-                        span class="font-mono text-[10px] text-ink" { (l) }
+                        span class="text-[15px] text-ink" { (l) }
                     }
                     (ui::citation::source_marker(&e.source_url))
                     // Where the original has been archived, the copy is offered
@@ -598,7 +598,7 @@ fn party_stance(
                     // take the evidence with it.
                     @if let Some(snap) = &e.snapshot_url {
                         a href=(snap) rel="noopener" target="_blank"
-                          class="font-mono text-[10px] text-ink-muted hover:text-link hover:underline" {
+                          class="text-[15px] text-ink-muted hover:text-link hover:underline" {
                             (i18n::t("archived"))
                         }
                     }

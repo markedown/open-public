@@ -444,7 +444,10 @@ pub async fn current_parties(pool: &Pool, person_ids: &[i64]) -> Result<Vec<Pers
         PersonParty,
         r#"
         select distinct on (m.person_id)
-               m.person_id, pa.slug as party_slug, pa.short_name, pa.color
+               m.person_id, pa.slug as party_slug,
+               -- A party publishes no abbreviation in some countries; its name
+               -- is then the label, so the membership is never left unshown.
+               coalesce(pa.short_name, pa.name) as short_name, pa.color
         from party_memberships m
         join parties pa on pa.id = m.party_id
         where m.person_id = any($1) and m.end_date is null

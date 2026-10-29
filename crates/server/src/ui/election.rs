@@ -125,14 +125,14 @@ pub fn party_history(entries: &[db::elections::PartyHistoryEntry], country: &str
                         // party's own record is a way into every election it
                         // contested rather than a list of plain names.
                         a href={"/" (country) "/election/" (e.election_slug)}
-                          class="text-sm font-medium text-ink transition-colors hover:text-link" {
+                          class="text-[16px] font-medium text-ink transition-colors hover:text-link" {
                             (e.election_name)
                             @if let Some(d) = e.held_on {
                                 " "
-                                span class="font-mono text-xs text-ink-muted" { "(" (d.format("%Y")) ")" }
+                                span class="text-[14px] text-ink-muted" { "(" (d.format("%Y")) ")" }
                             }
                         }
-                        span class="flex shrink-0 items-baseline gap-3 font-mono text-xs text-ink-muted" {
+                        span class="flex shrink-0 items-baseline gap-3 text-[14px] text-ink-muted" {
                             @if let Some(s) = e.seats {
                                 span class="font-semibold text-ink" { (s) " " (i18n::t("seats")) }
                             }

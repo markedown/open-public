@@ -28,7 +28,7 @@ pub fn widget() -> Markup {
                 hidefooter
                 style="--altcha-max-width:100%;--altcha-border-radius:8px;" {}
             noscript {
-                p class="text-sm text-ink-muted" {
+                p class="text-[16px] text-ink-muted" {
                     (i18n::t("This form needs JavaScript enabled to verify your request."))
                 }
             }

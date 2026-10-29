@@ -42,7 +42,7 @@ pub fn leaning_bar(leaning: &str, compact: bool) -> Markup {
                 }
             }
             @if !compact {
-                span class="text-[10px] font-bold uppercase tracking-widest text-ink-muted" {
+                span class="text-[15px] font-bold text-ink-muted" {
                     (leaning_label(leaning))
                 }
             }
@@ -59,15 +59,15 @@ pub fn card(o: &db::outlets::OutletCard, country: &str) -> Markup {
                 img src=(logo) alt="" loading="lazy"
                     class="h-8 w-8 shrink-0 rounded border border-hairline object-contain";
             } @else {
-                span class="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-hairline bg-paper-sunken font-mono text-[11px] font-semibold text-ink-muted" {
+                span class="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-hairline bg-paper-sunken text-[14px] font-semibold text-ink-muted" {
                     (crate::ui::initials(&o.name))
                 }
             }
-            span class="grow text-sm font-medium text-ink" { (o.name) }
+            span class="grow text-[16px] font-medium text-ink" { (o.name) }
             @if let Some(ref l) = o.leaning {
                 (leaning_bar(l, true))
             }
-            span class="shrink-0 font-mono text-xs text-ink-muted" { (o.article_count) }
+            span class="shrink-0 text-[14px] text-ink-muted" { (o.article_count) }
         }
     }
 }

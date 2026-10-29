@@ -237,43 +237,43 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                     (i18n::t(title))
                 }
                 @if let Some(msg) = message {
-                    p class="mt-3 text-sm text-red-600" { (msg) }
+                    p class="mt-3 text-[16px] text-red-600" { (msg) }
                 }
                 form class="mt-6 space-y-4" method="post" action=(action) {
                     div {
-                        label class="block text-sm font-medium text-ink" for="email" {
+                        label class="block text-[16px] font-medium text-ink" for="email" {
                             (i18n::t("Email"))
                         }
                         input
                             type="email" name="email" id="email" required autocomplete="email"
-                            class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                            class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                     }
                     div {
-                        label class="block text-sm font-medium text-ink" for="password" {
+                        label class="block text-[16px] font-medium text-ink" for="password" {
                             (i18n::t("Password"))
                         }
                         @if login {
                             input
                                 type="password" name="password" id="password" required
                                 autocomplete="current-password"
-                                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                         } @else {
                             input
                                 type="password" name="password" id="password" required minlength="8"
                                 autocomplete="new-password"
-                                class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                                class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                         }
                     }
                     (ui::captcha::widget())
                     (ui::button::primary(i18n::t(title)))
                 }
                 @if login {
-                    p class="mt-4 text-sm text-ink-muted" {
+                    p class="mt-4 text-[16px] text-ink-muted" {
                         a href="/forgot" class="text-link hover:underline" {
                             (i18n::t("Forgotten your password?"))
                         }
                     }
-                    p class="mt-2 text-sm text-ink-muted" {
+                    p class="mt-2 text-[16px] text-ink-muted" {
                         (i18n::t("No account?"))
                         " "
                         a href="/register" class="text-link hover:underline" {
@@ -281,7 +281,7 @@ fn auth_form_page(title: &'static str, action: &str, login: bool, message: Optio
                         }
                     }
                 } @else {
-                    p class="mt-4 text-sm text-ink-muted" {
+                    p class="mt-4 text-[16px] text-ink-muted" {
                         (i18n::t("Already have an account?"))
                         " "
                         a href="/login" class="text-link hover:underline" {
@@ -311,7 +311,7 @@ fn verified_page() -> Markup {
                 h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t("Email verified"))
                 }
-                p class="mt-3 text-sm text-ink-muted" {
+                p class="mt-3 text-[16px] text-ink-muted" {
                     (i18n::t("Your account is active. You can log in now."))
                 }
                 div class="mt-6" {
@@ -332,7 +332,7 @@ fn notice_page(title: &'static str, body: &str) -> Markup {
                 h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t(title))
                 }
-                p class="mt-3 text-sm text-ink-muted" { (body) }
+                p class="mt-3 text-[16px] text-ink-muted" { (body) }
             }
         },
     )
@@ -475,23 +475,23 @@ fn forgot_page(message: Option<&str>) -> Markup {
                 h1 class="text-3xl font-bold tracking-tight text-ink" {
                     (i18n::t("Set a new password"))
                 }
-                p class="mt-3 max-w-prose text-sm text-ink-muted" {
+                p class="mt-3 max-w-prose text-[16px] text-ink-muted" {
                     (i18n::t("Enter the address you registered with and we will send a link."))
                 }
                 @if let Some(msg) = message {
-                    p class="mt-3 text-sm text-red-600" { (msg) }
+                    p class="mt-3 text-[16px] text-red-600" { (msg) }
                 }
                 form class="mt-6 space-y-4" method="post" action="/forgot" {
                     div {
-                        label class="block text-sm font-medium text-ink" for="email" {
+                        label class="block text-[16px] font-medium text-ink" for="email" {
                             (i18n::t("Email"))
                         }
                         input type="email" name="email" id="email" required autocomplete="email"
-                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                          class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                     }
                     (ui::button::primary(i18n::t("Send the link")))
                 }
-                p class="mt-4 text-sm text-ink-muted" {
+                p class="mt-4 text-[16px] text-ink-muted" {
                     a href="/login" class="text-link hover:underline" { (i18n::t("Back to log in")) }
                 }
             }
@@ -510,17 +510,17 @@ fn reset_page(token: &str, message: Option<&str>) -> Markup {
                     (i18n::t("Set a new password"))
                 }
                 @if let Some(msg) = message {
-                    p class="mt-3 text-sm text-red-600" { (msg) }
+                    p class="mt-3 text-[16px] text-red-600" { (msg) }
                 }
                 form class="mt-6 space-y-4" method="post" action="/reset" {
                     input type="hidden" name="token" value=(token);
                     div {
-                        label class="block text-sm font-medium text-ink" for="password" {
+                        label class="block text-[16px] font-medium text-ink" for="password" {
                             (i18n::t("New password"))
                         }
                         input type="password" name="password" id="password" required minlength="8"
                           autocomplete="new-password"
-                          class="mt-1 block w-full rounded-lg border border-hairline bg-paper-raised px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
+                          class="mt-1 block w-full rounded-[10px] border border-hairline bg-paper-raised px-3 py-2 text-[16px] text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
                     }
                     (ui::button::primary(i18n::t("Set a new password")))
                 }

@@ -93,8 +93,8 @@ pub async fn detail(
                 // published dump to confirm no ballot was altered or removed.
                 @if let Some((seq, ref head)) = chain {
                     div class="mt-8" {
-                        div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 font-mono text-xs text-ink-muted" {
-                            span class="font-semibold uppercase tracking-wide text-ink" {
+                        div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[14px] text-ink-muted" {
+                            span class="font-semibold text-ink" {
                                 (i18n::t("Integrity"))
                             }
                             span { "#" (seq) }
@@ -103,7 +103,7 @@ pub async fn detail(
                                 (i18n::t("Verify"))
                             }
                         }
-                        p class="mt-2 max-w-prose text-xs text-ink-muted" {
+                        p class="mt-2 max-w-prose text-[14px] text-ink-muted" {
                             (i18n::t("This fingerprint lets anyone confirm no vote was altered or removed after casting."))
                         }
                     }
@@ -277,14 +277,14 @@ fn reconciliation_panel(
     let stat = |value: i64, label: &str| {
         html! {
             div class="flex flex-col" {
-                span class="font-mono text-xl font-semibold text-ink" { (value) }
-                span class="font-mono text-[10px] uppercase tracking-wide text-ink-muted" { (label) }
+                span class="text-xl font-semibold text-ink" { (value) }
+                span class="text-[15px] text-ink-muted" { (label) }
             }
         }
     };
     html! {
         div class="mt-8 border-t border-hairline pt-4" {
-            span class="font-mono text-xs font-semibold uppercase tracking-wide text-ink" {
+            span class="text-[14px] font-semibold text-ink" {
                 (i18n::t("Participation"))
             }
             div class="mt-3 flex gap-8" {
@@ -296,13 +296,13 @@ fn reconciliation_panel(
                 (sparkline(counts))
             }
             @if let Some(pct) = cohort_pct {
-                p class="mt-3 text-xs leading-relaxed text-ink-muted" {
+                p class="mt-3 text-[14px] leading-relaxed text-ink-muted" {
                     (i18n::t("Accounts under a week old when they took part:"))
                     " "
-                    span class="font-mono font-semibold text-ink" { (pct) "%" }
+                    span class="font-semibold text-ink" { (pct) "%" }
                 }
             }
-            p class="mt-3 max-w-prose text-xs leading-relaxed text-ink-muted" {
+            p class="mt-3 max-w-prose text-[14px] leading-relaxed text-ink-muted" {
                 (i18n::t("Accounts that requested a ballot, ballots actually cast, and the verified accounts that could have. Anyone can check that cast never exceeds requested, and requested never exceeds eligible."))
                 " "
                 a href="/participation" class="text-link hover:underline" {
@@ -327,7 +327,7 @@ fn sparkline(counts: &[i64]) -> Markup {
                     div class="flex-1 bg-ink-muted" style={"height:" (pct) "%"} {}
                 }
             }
-            span class="mt-1 block font-mono text-[10px] uppercase tracking-wide text-ink-muted" {
+            span class="mt-1 block text-[15px] text-ink-muted" {
                 (i18n::t("when votes were cast"))
             }
         }
