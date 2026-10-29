@@ -1279,3 +1279,12 @@ msgstr "Najviše glasova"
 
 msgid "Where this comes from"
 msgstr "Odakle ovi podaci"
+
+msgid "At a glance"
+msgstr "Ukratko"
+
+msgid "Born"
+msgstr "Rođen(a)"
+
+msgid "Country"
+msgstr "Zemlja"

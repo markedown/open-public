@@ -15,7 +15,7 @@ pub struct Entry {
 
 pub fn timeline_list(entries: impl Iterator<Item = Entry>) -> Markup {
     html! {
-        div class="space-y-0" {
+        ol class="ml-2 border-l-2 border-hairline" {
             @for entry in entries {
                 (timeline_entry(entry))
             }
@@ -25,34 +25,28 @@ pub fn timeline_list(entries: impl Iterator<Item = Entry>) -> Markup {
 
 fn timeline_entry(entry: Entry) -> Markup {
     html! {
-        div class="relative ml-2 border-l border-hairline pb-6 pl-8 last:border-l-0 last:pb-0" {
-            div class="absolute left-0 top-1.5 h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-accent bg-paper-raised" {}
-
-            @if !entry.kind.is_empty() {
-                div class="mb-0.5" {
-                    span class="font-mono text-[11px] font-medium uppercase tracking-wider text-ink-muted" {
-                        (entry.kind)
-                    }
+        li class="relative pb-7 pl-7 last:pb-1" {
+            span aria-hidden="true" class="absolute -left-[9px] top-1.5 size-4 rounded-full bg-ink" {}
+            div class="text-[15px] text-ink-muted" {
+                (entry.date_range)
+                @if !entry.kind.is_empty() {
+                    " · " (entry.kind)
                 }
             }
-
             // Navigation-first: the title links to its own page, not to a source.
             @if let Some(href) = &entry.link_href {
-                a href=(href) class="block text-sm font-medium text-ink transition-colors hover:text-link" {
-                    (entry.title)
-                }
+                a href=(href) class="op-link block text-[20px] font-bold" { (entry.title) }
             } @else {
-                p class="text-sm font-medium text-ink" { (entry.title) }
+                p class="text-[20px] font-bold text-ink" { (entry.title) }
             }
-
-            @if !entry.subtitle.is_empty() {
-                p class="mt-0.5 text-xs text-ink-muted" { (entry.subtitle) }
-            }
-
-            div class="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-muted" {
-                span { (entry.date_range) }
-                @if let Some(url) = &entry.source_url {
-                    (crate::ui::citation::source_marker(url))
+            @if !entry.subtitle.is_empty() || entry.source_url.is_some() {
+                div class="mt-0.5 flex flex-wrap items-center gap-x-2 text-[16px] text-ink-muted" {
+                    @if !entry.subtitle.is_empty() {
+                        span { (entry.subtitle) }
+                    }
+                    @if let Some(url) = &entry.source_url {
+                        (crate::ui::citation::source_marker(url))
+                    }
                 }
             }
         }

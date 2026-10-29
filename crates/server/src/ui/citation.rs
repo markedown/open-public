@@ -10,7 +10,7 @@ use crate::i18n;
 pub fn source_marker(url: &str) -> Markup {
     html! {
         a href=(url)
-           class="inline-flex items-center gap-0.5 text-[10px] uppercase tracking-wide text-ink-muted transition-colors hover:text-link"
+           class="inline-flex items-center gap-0.5 rounded-full bg-hairline-light px-2 text-[13px] font-semibold leading-5 text-ink-muted no-underline transition-colors hover:bg-hairline hover:text-ink"
            target="_blank"
            rel="noopener noreferrer" {
             (i18n::t("source"))

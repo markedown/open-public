@@ -1291,3 +1291,12 @@ msgstr "En çok oy"
 
 msgid "Where this comes from"
 msgstr "Bu bilgi nereden geliyor"
+
+msgid "At a glance"
+msgstr "Bir bakışta"
+
+msgid "Born"
+msgstr "Doğum"
+
+msgid "Country"
+msgstr "Ülke"

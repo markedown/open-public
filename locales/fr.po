@@ -1279,3 +1279,12 @@ msgstr "Le plus de voix"
 
 msgid "Where this comes from"
 msgstr "D'où viennent ces données"
+
+msgid "At a glance"
+msgstr "En bref"
+
+msgid "Born"
+msgstr "Naissance"
+
+msgid "Country"
+msgstr "Pays"

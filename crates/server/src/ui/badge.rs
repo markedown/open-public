@@ -1,22 +1,16 @@
 use maud::{html, Markup};
 
-/// A party chip: the abbreviation as a hard-edged block filled with the party's
-/// organization color, or a black-outlined block when there is no color. Text
-/// color flips with the fill's luminance so it stays legible. A plain span, safe
-/// inside a link. Color only ever appears inside this data element.
+/// A party chip: a rounded pill with a dot in the party's colour and its short
+/// name. A party with no documented colour gets a neutral grey dot rather than
+/// one we picked. A plain span, safe inside a link. Colour only ever appears in
+/// the dot, inside this data element.
 pub fn party_chip(label: &str, color: Option<&str>) -> Markup {
-    // Uniform size: fixed width and height, single line, truncated with an
-    // ellipsis if an abbreviation is unexpectedly long. leading matches the
-    // height so the text centers vertically.
-    const BASE: &str =
-        "inline-block h-5 w-16 truncate rounded px-1 text-center align-middle font-mono text-[10px] font-semibold uppercase leading-5 tracking-wide";
-    match color {
-        Some(c) => html! {
-            span class={(BASE) " " (text_on(c))} style={"background-color:" (c)} { (label) }
-        },
-        None => html! {
-            span class={(BASE) " border border-hairline bg-paper-raised text-ink"} { (label) }
-        },
+    html! {
+        span class="inline-flex max-w-full items-center gap-1.5 rounded-full border border-hairline bg-paper px-2.5 py-0.5 align-middle text-[14px] font-semibold leading-6 text-ink" {
+            span aria-hidden="true" class="size-2.5 shrink-0 rounded-full"
+                style={"background-color:" (super::css_color(color, "#b7bec6"))} {}
+            span class="truncate" { (label) }
+        }
     }
 }
 
@@ -30,30 +24,21 @@ pub fn party_badge(label: &str, slug: &str, color: Option<&str>, country: &str) 
     }
 }
 
-/// Black or white text depending on the fill's perceived brightness.
-fn text_on(hex: &str) -> &'static str {
-    let h = hex.trim_start_matches('#');
-    if h.len() == 6 {
-        let channel = |i: usize| u8::from_str_radix(&h[i..i + 2], 16).unwrap_or(0) as f32;
-        let luminance = 0.299 * channel(0) + 0.587 * channel(2) + 0.114 * channel(4);
-        if luminance > 140.0 {
-            return "text-ink";
-        }
-    }
-    "text-white"
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn badge_text_colors() {
-        assert_eq!(text_on("#ffffff"), "text-ink");
-        assert_eq!(text_on("#000000"), "text-white");
-        assert_eq!(text_on("invalid"), "text-white");
-        let html_none = party_chip("TP", None).into_string();
-        assert!(html_none.contains("border-hairline"));
+    fn chip_shows_the_party_colour_or_a_neutral_grey() {
+        let coloured = party_chip("TP", Some("#123456")).into_string();
+        assert!(coloured.contains("background-color:#123456"));
+        assert!(coloured.contains("TP"));
+        // No documented colour: a neutral grey, never one we picked.
+        let plain = party_chip("TP", None).into_string();
+        assert!(plain.contains("background-color:#b7bec6"));
+        // A malformed colour cannot escape the style attribute.
+        let bad = party_chip("TP", Some("red;x:y")).into_string();
+        assert!(bad.contains("background-color:#b7bec6"));
         let badge = party_badge("TP", "test", Some("#fff"), "tr").into_string();
         assert!(badge.contains("parties/test"));
     }

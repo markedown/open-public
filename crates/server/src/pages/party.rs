@@ -82,103 +82,89 @@ pub async fn detail(
 
     let content = html! {
         article {
-            (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country_model.name.clone(), href: Some(format!("/{}", country_model.slug)) },
-                Crumb { label: i18n::t("Parties").to_string(), href: Some(format!("/{}/parties", country_model.slug)) },
-                Crumb { label: party.name.clone(), href: None },
-            ]))
-            // Identity block: the party color shows only as the chip and a short
-            // 3px underline rule, never as chrome. A hero record card.
-            header class="op-card mb-8 p-6 sm:p-8" {
-                div class="flex flex-wrap items-center gap-3" {
-                    @if let Some(ref sn) = party.short_name {
-                        (ui::badge::party_chip(sn, party.color.as_deref()))
-                    }
-                    h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {
-                        (party.name)
-                    }
-                }
-                div class="mt-3 h-[3px] w-16"
-                    style={"background-color:" (party.color.as_deref().unwrap_or("#33527a"))} {}
-
-                @if let Some(ref l) = leader {
-                    p class="mt-5 flex flex-wrap items-baseline gap-2 text-sm text-ink" {
-                        span class="text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
-                            (i18n::t("Leader"))
+            (ui::hero_band(html! {
+                (ui::breadcrumb::trail(&[
+                    Crumb { label: country_model.name.clone(), href: Some(format!("/{}", country_model.slug)) },
+                    Crumb { label: i18n::t("Parties").to_string(), href: Some(format!("/{}/parties", country_model.slug)) },
+                    Crumb { label: party.name.clone(), href: None },
+                ]))
+                div class="mt-4 flex flex-wrap items-start justify-between gap-4" {
+                    div class="min-w-0" {
+                        h1 class="flex flex-wrap items-center gap-x-4 gap-y-2 text-[40px] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-[48px]" {
+                            // The party's colour shows only as this dot, inside
+                            // the identity, never as page chrome.
+                            span aria-hidden="true" class="size-6 shrink-0 rounded-full"
+                                style={"background-color:" (ui::css_color(party.color.as_deref(), "#b7bec6"))} {}
+                            (party.name)
                         }
-                        a href={"/" (country_model.slug) "/people/" (l.person_slug)}
-                          class="font-medium text-ink transition-colors hover:text-link" {
-                            (l.person_name)
-                        }
-                        (ui::citation::source_marker(&l.source_url))
-                    }
-                }
-
-                // Headline stats as verifiable figures (mono).
-                div class="mt-6 flex flex-wrap gap-x-10 gap-y-4" {
-                    @if seats > 0 {
-                        div {
-                            div class="font-mono text-3xl font-semibold text-ink" { (seats) }
-                            div class="mt-0.5 text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
-                                (i18n::t("seats"))
-                            }
+                        @if let Some(ref sn) = party.short_name {
+                            p class="mt-2 text-[18px] text-ink-muted" { (sn) }
                         }
                     }
-                    @if let Some(fd) = party.founded_date {
-                        div {
-                            div class="font-mono text-3xl font-semibold text-ink" { (fd.format("%Y")) }
-                            div class="mt-0.5 text-[11px] font-bold uppercase tracking-widest text-ink-muted" {
-                                (i18n::t("Founded"))
+                    div class="flex flex-wrap items-center gap-2" {
+                        (ui::follow::button("party", party.id, follow_state, &follow_next))
+                        (ui::election::compass_cta(compass_href.as_deref()))
+                        @if let Some(ref href) = manage_href {
+                            a href=(href)
+                              class="inline-flex min-h-11 items-center rounded-[10px] border border-hairline-strong bg-paper px-4 text-[16px] font-semibold text-ink transition-colors hover:border-ink" {
+                                (i18n::t("Manage"))
                             }
                         }
                     }
                 }
-
+                @if let Some(text) = summary {
+                    div class="mt-5 max-w-[42em] text-[20px] leading-relaxed text-ink" {
+                        (ui::translated::prose(
+                            text,
+                            loc.is_translated("summary").then_some(party.summary.as_deref()).flatten(),
+                        ))
+                    }
+                }
                 @if !party.ideology_tags.is_empty() {
-                    div class="mt-6 flex flex-wrap gap-1.5" {
+                    div class="mt-4 flex flex-wrap gap-1.5" {
                         @for tag in &party.ideology_tags {
-                            span class="rounded-md border border-hairline px-2.5 py-0.5 text-xs text-ink-muted" {
+                            span class="rounded-full border border-hairline bg-paper px-3 py-0.5 text-[15px] text-ink-muted" {
                                 (tag)
                             }
                         }
                     }
                 }
-
-                div class="mt-6 flex flex-wrap items-center gap-2" {
-                    (ui::follow::button("party", party.id, follow_state, &follow_next))
-                    (ui::election::compass_cta(compass_href.as_deref()))
-                    @if let Some(ref href) = manage_href {
-                        a href=(href)
-                          class="inline-flex items-center gap-1.5 rounded-lg border border-hairline px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-muted transition-colors hover:border-accent hover:text-link" {
-                            (i18n::t("Manage"))
+                @if seats > 0 || party.founded_date.is_some() || leader.is_some() {
+                    div class="mt-7 grid gap-4 sm:grid-cols-3" {
+                        @if seats > 0 {
+                            (ui::fact_card(html! { (seats) }, i18n::t("seats"), None))
+                        }
+                        @if let Some(ref l) = leader {
+                            (ui::fact_card(
+                                html! {
+                                    a href={"/" (country_model.slug) "/people/" (l.person_slug)}
+                                      class="op-link text-[24px] font-bold" { (l.person_name) }
+                                },
+                                i18n::t("Leader"),
+                                Some(ui::citation::source_marker(&l.source_url)),
+                            ))
+                        }
+                        @if let Some(fd) = party.founded_date {
+                            (ui::fact_card(html! { (fd.format("%Y")) }, i18n::t("Founded"), Some(html! { (fmt::date(Some(fd))) })))
                         }
                     }
                 }
-            }
+            }))
 
-            @if let Some(text) = summary {
-                div class="mb-8 max-w-prose" {
-                    (ui::translated::prose(
-                        text,
-                        loc.is_translated("summary").then_some(party.summary.as_deref()).flatten(),
-                    ))
-                }
-            }
-
-            section class="mb-8" { (approval) }
+            section class="mb-12" { (approval) }
 
             (approval_history)
 
             // Alliance membership: the coalition and its full roster, this party
             // ringed.
             @for (name, parties) in &alliances {
-                section class="mb-8" {
+                section class="mb-12" {
                     (ui::section_header(&format!("{} · {}", i18n::t("Alliance"), name), None))
                     div class="flex flex-wrap gap-1.5" {
                         @for p in parties {
                             @if let Some(ref sn) = p.short_name {
                                 @if p.party_id == party.id {
-                                    span class="inline-flex rounded ring-2 ring-accent ring-offset-2 ring-offset-paper" {
+                                    span class="inline-flex rounded-full ring-2 ring-ink ring-offset-2 ring-offset-paper" {
                                         (ui::badge::party_chip(sn, p.color.as_deref()))
                                     }
                                 } @else {
@@ -193,21 +179,19 @@ pub async fn detail(
             }
 
             @if !members.is_empty() {
-                section class="mb-8" {
+                section class="mb-12" {
                     (ui::section_header(
                         i18n::t("Members"),
-                        Some(html! { span class="font-mono text-xs text-ink-muted" { (members.len()) } }),
+                        Some(html! { span class="text-[16px] text-ink-muted" { (members.len()) } }),
                     ))
 
                     @if !current_members.is_empty() {
-                        ul class="op-card grid gap-x-10 px-5 sm:grid-cols-2" {
+                        ul class="grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3" {
                             @for m in &current_members {
                                 li class="flex items-center gap-3 border-b border-hairline-light py-2.5" {
-                                    span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-hairline bg-paper-sunken font-mono text-[10px] font-semibold text-ink-muted" {
-                                        (ui::initials(&m.person_name))
-                                    }
+                                    (ui::portrait(None, &m.person_name, "size-8"))
                                     a href={"/" (country_model.slug) "/people/" (m.person_slug)}
-                                      class="grow text-sm font-medium text-ink transition-colors hover:text-link" {
+                                      class="grow text-[16px] text-ink hover:underline" {
                                         (m.person_name)
                                     }
                                 }
@@ -216,9 +200,9 @@ pub async fn detail(
                     }
 
                     @if !former_members.is_empty() {
-                        h3 class="mb-3 mt-8 flex items-baseline gap-2 text-xs font-bold uppercase tracking-widest text-ink-muted" {
+                        h3 class="mb-4 mt-10 flex items-baseline gap-2 text-[20px] font-bold text-ink" {
                             (i18n::t("Former members"))
-                            span class="font-mono" { (former_members.len()) }
+                            span class="text-[16px] font-normal text-ink-muted" { (former_members.len()) }
                         }
                         (ui::timeline_entry::timeline_list(former_members.iter().map(|m| {
                             ui::timeline_entry::Entry {
