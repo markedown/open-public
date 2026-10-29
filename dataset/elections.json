@@ -98,6 +98,34 @@
     "votes_cast": null
   },
   {
+    "country": "serbia",
+    "description": "Izbor svih 250 narodnih poslanika. Cela Srbija je jedna izborna jedinica, a mandati se dele srazmerno broju glasova (D'Ontov sistem) listama koje osvoje najmanje 3 odsto glasova birača koji su glasali; za liste nacionalnih manjina taj prag ne važi.",
+    "electorate": 6500666,
+    "expected_note": null,
+    "held_on": "2023-12-17",
+    "kind": "parliamentary",
+    "name": "Parlamentarni izbori 2023",
+    "slug": "srbija-parlamentarni-izbori-2023",
+    "source_hash": "rik-round-341140",
+    "source_url": "https://www.rik.parlament.gov.rs/542645/rezultati/",
+    "valid_votes": 3710978,
+    "votes_cast": 3820746
+  },
+  {
+    "country": "serbia",
+    "description": "Izbor predsednika Republike, nakon što je prethodnom predsedniku mandat prestao pre isteka vremena na koje je biran.",
+    "electorate": null,
+    "expected_note": "Ustav, član 120: \"Izbore za predsednika Republike predsednik Narodne Skupštine je obavezan da raspiše tako da se održe najkasnije tri meseca od nastanka sprečenosti predsednika Republike odnosno prestanka mandata na koji je biran.\" Mandat je prestao ostavkom 27. septembra 2026, pa izbori moraju biti održani najkasnije do 27. decembra 2026. Dan izbora još nije određen.",
+    "held_on": null,
+    "kind": "presidential",
+    "name": "Predsednički izbori 2026",
+    "slug": "srbija-predsednicki-izbori-2026",
+    "source_hash": "upcoming-rs-ustav-120",
+    "source_url": "https://www.ustavni.sud.rs/ustav-rs-i-propisi/ustav-republike-srbije?lang_type=lat",
+    "valid_votes": null,
+    "votes_cast": null
+  },
+  {
     "country": "turkiye",
     "description": null,
     "electorate": 56606510,
