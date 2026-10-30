@@ -2060,6 +2060,8 @@ async fn home_lists_countries(pool: db::Pool) {
     // The landing page leads with the country cards (each its own dataset), not
     // a global figures strip that would be meaningless across countries.
     assert!(body.contains("Test Ulke")); // the seeded country card
+                                         // No positions recorded yet, so the compass is not offered.
+    assert!(!body.contains("/compass"));
     assert!(body.contains(r#"href="/tr""#)); // linking to the country
     assert!(!body.contains("<dl")); // no global stats strip
 }
@@ -4288,6 +4290,77 @@ async fn a_party_page_names_every_leader(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn a_country_speaks_the_readers_language(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/c", None, Some("hc"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, capital, founded_date, source_id) \
+         values ('Serbia','rs-test','Belgrade','2006-06-05',$1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    // A head of government and a minister: one gets a card, the other a row.
+    for (name, slug, role, title) in [
+        (
+            "Testa Premijer",
+            "t-premijer",
+            "prime_minister",
+            "Premijerka",
+        ),
+        (
+            "Testa Ministar",
+            "t-ministar",
+            "minister",
+            "Ministarka finansija",
+        ),
+    ] {
+        let id: i64 = sqlx::query_scalar(
+            "insert into people (full_name, slug, source_id, country_id) values ($1,$2,$3,$4) returning id",
+        )
+        .bind(name)
+        .bind(slug)
+        .bind(src)
+        .bind(cid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        db::people::upsert_role(
+            &pool,
+            id,
+            role,
+            Some(title),
+            Some("Vlada"),
+            None,
+            NaiveDate::from_ymd_opt(2025, 5, 6),
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+    let app = router(pool);
+
+    let de = body_string(get_cookie(&app, "/rs-test", "lang=de").await).await;
+    assert!(de.contains("Serbien"), "the country name is translated");
+    assert!(de.contains("Belgrad"), "and the capital");
+    assert!(!de.contains(">Serbia<"));
+    // German writes the day as an ordinal, without a leading zero.
+    assert!(de.contains("5. Jun 2006"));
+    assert!(de.contains("6. Mai 2025"));
+    // The head of government has a large card, the minister a compact row.
+    assert!(de.contains("Testa Premijer"));
+    assert!(de.contains("Testa Ministar"));
+    assert!(de.contains("size-10"));
+
+    let en = body_string(get_cookie(&app, "/rs-test", "lang=en").await).await;
+    assert!(en.contains("Serbia"));
+    assert!(en.contains("6 May 2025"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn people_list_paginates(pool: db::Pool) {
     let src = db::sources::insert_source(&pool, "manual", "https://ex.test/p", None, Some("hp"))
         .await
@@ -6395,6 +6468,13 @@ async fn the_compass_steps_through_positions_without_needing_javascript(pool: db
     assert!(
         body.contains("1/3") && body.contains("3/3"),
         "progress shown"
+    );
+
+    // The home page offers the compass of a country that has positions.
+    let home = body_string(get(&app, "/").await).await;
+    assert!(
+        home.contains("/tr/compass"),
+        "the compass is reachable from home"
     );
 
     // Answering still scores from a single submit, whichever card was on screen.

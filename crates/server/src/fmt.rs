@@ -8,8 +8,13 @@ pub fn date(d: Option<NaiveDate>) -> String {
 }
 
 fn date_naive(d: NaiveDate) -> String {
+    // German and Serbian write the day as an ordinal: "6. Mai 2025".
+    let dot = match crate::i18n::current() {
+        crate::i18n::Lang::De | crate::i18n::Lang::Sr => ".",
+        _ => "",
+    };
     format!(
-        "{:02} {} {}",
+        "{}{dot} {} {}",
         d.day(),
         crate::i18n::month_abbr(d.month()),
         d.year()
@@ -45,7 +50,7 @@ mod tests {
     fn date_range_covers_every_case() {
         assert_eq!(
             date_range(Some(d(2019, 1, 1)), Some(d(2023, 3, 4))),
-            "01 Oca 2019 - 04 Mar 2023"
+            "1 Oca 2019 - 4 Mar 2023"
         );
         assert!(date_range(Some(d(2019, 1, 1)), None).ends_with(" - günümüz"));
         assert!(date_range(None, Some(d(2023, 1, 1))).starts_with("? - "));

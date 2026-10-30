@@ -46,7 +46,7 @@ pub async fn detail(
     let content = html! {
         article {
             (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country_model.name.clone(), href: Some(format!("/{}", country_model.slug)) },
+                Crumb { label: i18n::t_dyn(&country_model.name).to_string(), href: Some(format!("/{}", country_model.slug)) },
                 Crumb { label: i18n::t("Alliances").to_string(), href: Some(format!("/{}/alliances", country_model.slug)) },
                 Crumb { label: name.to_string(), href: None },
             ]))
