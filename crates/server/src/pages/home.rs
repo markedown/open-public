@@ -48,27 +48,27 @@ pub async fn page(
                 }
             }
 
-            header class="max-w-3xl" {
-                p class="text-[15px] font-semibold text-ink-faint" {
-                    (i18n::t("Open political data."))
+            // The compass opens the page wherever a country has one: it is what a
+            // first-time visitor can do straight away, with no account. The record
+            // of each chamber follows.
+            @if compasses.is_empty() {
+                header class="max-w-3xl" {
+                    h1 class="font-display text-[2.6rem] font-extrabold leading-[0.98] tracking-tight text-ink sm:text-6xl" {
+                        (i18n::t("Every chamber, at a glance."))
+                    }
+                    p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted" {
+                        (i18n::t("People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."))
+                    }
                 }
-                h1 class="mt-3 font-display text-[2.6rem] font-extrabold leading-[0.98] tracking-tight text-ink sm:text-6xl" {
-                    (i18n::t("Every chamber, at a glance."))
-                }
-                p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted" {
-                    (i18n::t("People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."))
-                }
-            }
-
-            @if !compasses.is_empty() {
-                section class="mt-10 rounded-[12px] bg-accent-tint px-6 py-6 sm:px-8 sm:py-7" {
-                    h2 class="text-[28px] font-extrabold leading-tight tracking-tight text-ink sm:text-[32px]" {
+            } @else {
+                section class="rounded-[12px] bg-accent-tint px-6 py-8 sm:px-10 sm:py-11" {
+                    h1 class="font-display text-[2.4rem] font-extrabold leading-[1.02] tracking-tight text-ink sm:text-[3.4rem]" {
                         (i18n::t("Which party is closest to your views?"))
                     }
-                    p class="mt-2 max-w-[42em] text-[18px] text-ink-muted" {
+                    p class="mt-4 max-w-[42em] text-[20px] leading-snug text-ink-muted" {
                         (i18n::t("Answer a few positions and see how the parties compare. No account needed, and nothing you enter is stored."))
                     }
-                    ul class="mt-5 flex flex-wrap gap-2.5" {
+                    ul class="mt-6 flex flex-wrap gap-2.5" {
                         @for (c, href, n) in &compasses {
                             li {
                                 a href=(href)
@@ -83,15 +83,18 @@ pub async fn page(
                         }
                     }
                 }
+                div class="mt-12 max-w-3xl" {
+                    h2 class="font-display text-[28px] font-extrabold tracking-tight text-ink sm:text-[32px]" {
+                        (i18n::t("Every chamber, at a glance."))
+                    }
+                    p class="mt-2 max-w-2xl text-[18px] leading-relaxed text-ink-muted" {
+                        (i18n::t("People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."))
+                    }
+                }
             }
 
             @if !chambers.is_empty() {
-                div class="mb-4 mt-12 flex items-baseline justify-between border-b border-hairline-strong pb-2" {
-                    h2 class="text-[15px] font-semibold text-ink-muted" {
-                        (i18n::t("Countries"))
-                    }
-                }
-                ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" {
+                ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" {
                     @for (c, seats, independents, total) in &chambers {
                         li {
                             a href={"/" (c.slug)}

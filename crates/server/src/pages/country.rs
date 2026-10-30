@@ -129,6 +129,7 @@ pub async fn detail(
         .collect();
     let tabs = [
         (i18n::t("Overview"), "", 0),
+        (i18n::t("Compass"), compass_path.as_str(), compass_count),
         (i18n::t("People"), "people", counts.people),
         (i18n::t("Parties"), "parties", counts.parties),
         (i18n::t("Alliances"), "alliances", counts.alliances),
@@ -136,7 +137,6 @@ pub async fn detail(
         (i18n::t("Votes"), "votes", counts.votes),
         (i18n::t("News"), "news", counts.news),
         (i18n::t("Polls"), "polls", counts.polls),
-        (i18n::t("Compass"), compass_path.as_str(), compass_count),
         (i18n::t("Timeline"), "history", counts.events),
     ];
     let legislature = match country.legislature_name.as_deref() {
@@ -221,6 +221,22 @@ pub async fn detail(
             }))
 
             (ui::section_tabs(&country.slug, "", &tabs))
+
+            // The way in that asks nothing of a visitor: no account, nothing stored.
+            @if theses > 0 {
+                section class="mb-12 rounded-[12px] bg-accent-tint px-6 py-7 sm:px-8" {
+                    h2 class="text-[28px] font-extrabold leading-tight tracking-tight text-ink sm:text-[32px]" {
+                        (i18n::t("Which party is closest to your views?"))
+                    }
+                    p class="mt-2 max-w-[42em] text-[18px] text-ink-muted" {
+                        (i18n::t("Answer a few positions and see how the parties compare. No account needed, and nothing you enter is stored."))
+                    }
+                    a href={"/" (country.slug) "/compass"}
+                      class="mt-5 inline-flex min-h-12 items-center rounded-[10px] bg-ink px-5 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
+                        (i18n::t("Start the compass"))
+                    }
+                }
+            }
 
             @if !next_with_compass.is_empty() {
                 (ui::election::next_elections(&next_with_compass, &country.slug))
@@ -311,16 +327,6 @@ pub async fn detail(
                 }
             }
 
-            // Country-level polls: participation is a primary draw. Only the two
-            // most recent are shown; the rest are one link away.
-            (ui::poll_widget::poll_previews(
-                &polls,
-                &country.slug,
-                Some(2),
-                (counts.polls > 2).then_some(format!("/{}/polls", country.slug)).as_deref(),
-                add_poll.as_deref(),
-            ))
-
             // Coalitions.
             @if !alliances.is_empty() {
                 section class="mb-12" {
@@ -351,6 +357,26 @@ pub async fn detail(
             }
 
             (ui::election::country_elections(&elections, &country.slug))
+
+            // Polls are questions people here put to each other, so the section
+            // leads with the invitation to ask one. Only the two most recent are
+            // shown; the rest are one link away.
+            section class="mb-8" {
+                (ui::poll_widget::poll_previews(
+                    &polls,
+                    &country.slug,
+                    Some(2),
+                    (counts.polls > 2).then_some(format!("/{}/polls", country.slug)).as_deref(),
+                    add_poll.as_deref(),
+                ))
+                p class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[16px] text-ink-muted" {
+                    (i18n::t("Have a question for others?"))
+                    a href=(if session.is_some() { format!("/{}/polls/submit", country.slug) } else { "/login".to_string() })
+                      class="op-link font-semibold" {
+                        (i18n::t("Propose a poll"))
+                    }
+                }
+            }
         }
     };
 

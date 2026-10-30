@@ -1386,3 +1386,9 @@ msgstr "Oui"
 
 msgid "No"
 msgstr "Non"
+
+msgid "Start the compass"
+msgstr "Commencer la boussole"
+
+msgid "Have a question for others?"
+msgstr "Vous avez une question à poser aux autres ?"

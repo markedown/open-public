@@ -5012,6 +5012,53 @@ async fn two_parties(pool: &db::Pool, country_id: i64, src: i64) -> (i64, i64) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn the_compass_opens_home_and_country_and_polls_invite_a_question(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+
+    // No compass yet: the home page leads with its chambers, and the country
+    // page still invites a poll.
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    assert!(home.contains("<h1"));
+    assert_eq!(home.matches("<h1").count(), 1);
+    assert!(!home.contains("Which party is closest"));
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    assert!(!country.contains("Start the compass"));
+    assert!(country.contains("Have a question for others?"));
+    assert!(country.contains(r#"href="/login""#));
+
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+
+    // With one, the question is the page's only top-level heading, ahead of the
+    // chambers.
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    assert_eq!(home.matches("<h1").count(), 1);
+    let question = home.find("Which party is closest").unwrap();
+    assert!(question < home.find("Every chamber, at a glance.").unwrap());
+    assert!(home[..question].contains("<h1"));
+    assert!(home.contains(r#"href="/tr/compass""#));
+
+    // On the country page it comes before who governs, and polls come last.
+    let country = body_string(get_cookie(&app, "/tr", "lang=en").await).await;
+    let start = country.find("Start the compass").unwrap();
+    assert!(start < country.find("Have a question for others?").unwrap());
+    if let Some(governs) = country.find("Who governs?") {
+        assert!(start < governs);
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn compass_form_lists_positions_and_country_links_to_it(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());

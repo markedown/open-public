@@ -1398,3 +1398,9 @@ msgstr "Evet"
 
 msgid "No"
 msgstr "Hayır"
+
+msgid "Start the compass"
+msgstr "Pusulayı başlat"
+
+msgid "Have a question for others?"
+msgstr "Başkalarına sormak istediğiniz bir soru mu var?"
