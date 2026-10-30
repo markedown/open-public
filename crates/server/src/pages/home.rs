@@ -21,6 +21,23 @@ pub async fn page(
         let total: i64 = seats.iter().map(|s| s.seats).sum::<i64>() + independents;
         chambers.push((c, seats, independents, total));
     }
+    // The compass is the way in that asks nothing of a visitor: no account, and
+    // nothing stored. A country is offered once it has positions to answer.
+    let mut compasses = Vec::new();
+    for c in &countries {
+        let party = db::compass::count_theses(&state.pool, c.id, db::compass::SCOPE_PARTY).await?;
+        let person =
+            db::compass::count_theses(&state.pool, c.id, db::compass::SCOPE_PERSON).await?;
+        if party > 0 {
+            compasses.push((c, format!("/{}/compass", c.slug), party));
+        } else if person > 0 {
+            compasses.push((
+                c,
+                format!("/{}/compass/{}", c.slug, db::compass::SCOPE_PERSON),
+                person,
+            ));
+        }
+    }
 
     let content = html! {
         section {
@@ -40,6 +57,31 @@ pub async fn page(
                 }
                 p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted" {
                     (i18n::t("People, parties, elections and polls. Every fact linked to its source, one verifiable dataset per country."))
+                }
+            }
+
+            @if !compasses.is_empty() {
+                section class="mt-10 rounded-[12px] bg-accent-tint px-6 py-6 sm:px-8 sm:py-7" {
+                    h2 class="text-[28px] font-extrabold leading-tight tracking-tight text-ink sm:text-[32px]" {
+                        (i18n::t("Which party is closest to your views?"))
+                    }
+                    p class="mt-2 max-w-[42em] text-[18px] text-ink-muted" {
+                        (i18n::t("Answer a few positions and see how the parties compare. No account needed, and nothing you enter is stored."))
+                    }
+                    ul class="mt-5 flex flex-wrap gap-2.5" {
+                        @for (c, href, n) in &compasses {
+                            li {
+                                a href=(href)
+                                  class="inline-flex min-h-12 items-center gap-2.5 rounded-[10px] bg-ink px-4 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
+                                    @if let Some(ref flag) = c.flag_url {
+                                        img src=(flag) alt="" loading="lazy" class="h-4 w-auto rounded-[2px]";
+                                    }
+                                    (i18n::t_dyn(&c.name))
+                                    span class="text-[15px] font-normal opacity-80" { (n) }
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -78,20 +120,6 @@ pub async fn page(
                         }
                     }
                 }
-            }
-
-            a href="/search"
-              class="group mt-8 flex items-center gap-4 border border-hairline bg-paper-raised px-4 py-4 transition-colors hover:border-ink" {
-                span class="grid h-8 w-8 shrink-0 place-items-center border border-hairline text-[14px] text-ink-muted" { "⌕" }
-                div class="min-w-0 flex-1" {
-                    div class="font-display text-lg font-bold tracking-tight text-ink underline-offset-4 group-hover:underline" {
-                        (i18n::t("Search"))
-                    }
-                    div class="mt-0.5 text-[14px] text-ink-faint" {
-                        (i18n::t("Full-text search across people and parties."))
-                    }
-                }
-                span class="shrink-0 text-ink-faint transition-colors group-hover:text-ink" { "→" }
             }
         }
     };

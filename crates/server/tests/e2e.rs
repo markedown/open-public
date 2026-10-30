@@ -2060,6 +2060,8 @@ async fn home_lists_countries(pool: db::Pool) {
     // The landing page leads with the country cards (each its own dataset), not
     // a global figures strip that would be meaningless across countries.
     assert!(body.contains("Test Ulke")); // the seeded country card
+                                         // No positions recorded yet, so the compass is not offered.
+    assert!(!body.contains("/compass"));
     assert!(body.contains(r#"href="/tr""#)); // linking to the country
     assert!(!body.contains("<dl")); // no global stats strip
 }
@@ -6422,6 +6424,13 @@ async fn the_compass_steps_through_positions_without_needing_javascript(pool: db
     assert!(
         body.contains("1/3") && body.contains("3/3"),
         "progress shown"
+    );
+
+    // The home page offers the compass of a country that has positions.
+    let home = body_string(get(&app, "/").await).await;
+    assert!(
+        home.contains("/tr/compass"),
+        "the compass is reachable from home"
     );
 
     // Answering still scores from a single submit, whichever card was on screen.

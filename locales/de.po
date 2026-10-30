@@ -1315,3 +1315,9 @@ msgstr "Paris"
 
 msgid "London"
 msgstr "London"
+
+msgid "Which party is closest to your views?"
+msgstr "Welche Partei steht Ihnen am nächsten?"
+
+msgid "Answer a few positions and see how the parties compare. No account needed, and nothing you enter is stored."
+msgstr "Beantworten Sie ein paar Thesen und sehen Sie, wie die Parteien im Vergleich stehen. Kein Konto nötig, und nichts, was Sie eingeben, wird gespeichert."
