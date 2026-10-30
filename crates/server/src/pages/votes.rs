@@ -115,7 +115,7 @@ pub async fn groups(
             p class="mb-6 max-w-prose text-[18px] text-ink-muted" {
                 (i18n::t("Most votes have no list of names. The record of the sitting says which groups voted which way, and we read it from there. Each entry shows the wording it rests on. We keep a vote only if it matches the official outcome of the proceedings, and leave out any we cannot read fully."))
             }
-            p class="mb-4 text-[14px] font-bold text-ink-muted" { (total) " " (i18n::t("votes")) }
+            p class="mb-4 text-[14px] font-bold text-ink-muted" { (total) " " (i18n::t("Votes")) }
             ul class="space-y-3" {
                 @for v in &rows {
                     (group_vote_row(v, &sides))
