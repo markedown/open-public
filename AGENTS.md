@@ -221,6 +221,11 @@ alliances ( id, country_id FK, slug UNIQUE, name, founded_date, dissolved_date,
             summary, source_id NOT NULL )
 party_alliances ( id, party_id FK, alliance_id FK, start_date, end_date, source_id NOT NULL )
 
+-- A recorded vote in a chamber and each member's choice (yes, no, abstain, absent).
+-- A member's party is read from party_memberships as of held_on, never stored here.
+roll_calls ( id, country_id FK, slug UNIQUE, chamber, held_on, title, source_id NOT NULL )
+roll_call_votes ( roll_call_id FK, person_id FK, choice, PK (roll_call_id, person_id) )
+
 events ( id, country_id FK NULL, party_id FK NULL, person_id FK NULL,
          kind, title, happened_on date, source_id NOT NULL )
 

@@ -132,6 +132,15 @@ is fully rendered server-side, reading needs no JavaScript, and most enhanced ac
 plain form POST. The exceptions are deliberate: casting an anonymous vote and the captcha-gated actions
 require client-side code and say so on the page.
 
+## Images
+
+A browser never loads a photo, flag or logo from another host, because that hands the host every
+visitor's IP address. The data keeps the original address as provenance; pages link to
+`/img/<hash of the address>`; a background task in the server (`mirror.rs`) copies each image into
+`ASSET_DIR`, re-encoded like an upload, and retries what failed on its next pass. Until a copy exists
+the route serves a neutral placeholder. A content security policy (`img-src 'self' data:`) makes the
+browser refuse anything else.
+
 ## Styling and assets
 
 Styling is Tailwind CSS compiled by the standalone Tailwind CLI into a single stylesheet, served as a
