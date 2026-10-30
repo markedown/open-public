@@ -32,7 +32,7 @@ pub async fn form(
         .ok_or(PageError::NotFound)?;
     Ok(submit_page(
         &c.slug,
-        &c.name,
+        i18n::t_dyn(&c.name),
         "",
         "single",
         &[],
@@ -306,7 +306,7 @@ fn re_render(
 ) -> Response {
     submit_page(
         &c.slug,
-        &c.name,
+        i18n::t_dyn(&c.name),
         question,
         kind,
         labels,

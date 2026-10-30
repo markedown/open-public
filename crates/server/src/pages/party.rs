@@ -84,7 +84,7 @@ pub async fn detail(
         article {
             (ui::hero_band(html! {
                 (ui::breadcrumb::trail(&[
-                    Crumb { label: country_model.name.clone(), href: Some(format!("/{}", country_model.slug)) },
+                    Crumb { label: i18n::t_dyn(&country_model.name).to_string(), href: Some(format!("/{}", country_model.slug)) },
                     Crumb { label: i18n::t("Parties").to_string(), href: Some(format!("/{}/parties", country_model.slug)) },
                     Crumb { label: party.name.clone(), href: None },
                 ]))
@@ -240,12 +240,12 @@ pub async fn detail(
         format!(
             "{} · {} · {} {}",
             party.name,
-            country_model.name,
+            i18n::t_dyn(&country_model.name),
             seats,
             i18n::t("members")
         )
     } else {
-        format!("{} · {}", party.name, country_model.name)
+        format!("{} · {}", party.name, i18n::t_dyn(&country_model.name))
     };
 
     Ok(ui::layout::document_described(

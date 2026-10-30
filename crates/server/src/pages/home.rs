@@ -59,7 +59,7 @@ pub async fn page(
                                 }
                                 div class="mt-5 border-t border-hairline pt-3" {
                                     h3 class="font-display text-2xl font-extrabold tracking-tight text-ink underline-offset-4 group-hover:underline" {
-                                        (c.name)
+                                        (i18n::t_dyn(&c.name))
                                     }
                                     div class="mt-2 flex items-baseline justify-between gap-2" {
                                         span class="min-w-0 truncate text-[14px] text-ink-faint" {

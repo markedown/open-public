@@ -48,7 +48,7 @@ pub async fn list(
     let content = html! {
         section {
             (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Polls").to_string(), href: None },
             ]))
             (ui::page_header(

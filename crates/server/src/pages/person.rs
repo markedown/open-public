@@ -81,7 +81,7 @@ pub async fn detail(
         article {
             (ui::hero_band(html! {
                 (ui::breadcrumb::trail(&[
-                    Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                    Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                     Crumb { label: i18n::t("People").to_string(), href: Some(format!("/{}/people", country.slug)) },
                     Crumb { label: person.full_name.clone(), href: None },
                 ]))
@@ -210,7 +210,7 @@ pub async fn detail(
                         div class="border-b border-hairline py-2.5 last:border-0" {
                             dt class="text-ink-muted" { (i18n::t("Country")) }
                             dd class="mt-0.5 font-semibold" {
-                                a href={"/" (country.slug)} class="op-link" { (country.name) }
+                                a href={"/" (country.slug)} class="op-link" { (i18n::t_dyn(&country.name)) }
                             }
                         }
                         @if let Some(ref q) = person.wikidata_id {
@@ -247,7 +247,7 @@ pub async fn detail(
         (None, Some(m)) => format!("{} · {}", person.full_name, m.party_name),
         (None, None) => summary
             .map(str::to_string)
-            .unwrap_or_else(|| format!("{} · {}", person.full_name, country.name)),
+            .unwrap_or_else(|| format!("{} · {}", person.full_name, i18n::t_dyn(&country.name))),
     };
 
     Ok(ui::layout::document_described(
