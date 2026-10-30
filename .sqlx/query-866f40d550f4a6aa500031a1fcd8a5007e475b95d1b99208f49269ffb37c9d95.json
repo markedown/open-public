@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into group_vote_parties (group_vote_id, party_id, side)\n                     values ($1, $2, $3)\n                     on conflict (group_vote_id, party_id) do update set side = excluded.side",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "866f40d550f4a6aa500031a1fcd8a5007e475b95d1b99208f49269ffb37c9d95"
+}

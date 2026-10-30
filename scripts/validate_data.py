@@ -35,7 +35,7 @@ NEEDS_SOURCE = {
     "countries", "people", "parties", "party_memberships", "roles", "elections",
     "election_results", "alliances", "party_alliances", "events", "statements",
     "news_items", "person_attributes", "person_education", "theses",
-    "position_evidence", "roll_calls", "constituency_places",
+    "position_evidence", "roll_calls", "constituency_places", "initiatives", "group_votes",
 }
 # file -> (field in that file, file the value must exist in, key there)
 REFERENCES = [
@@ -46,6 +46,13 @@ REFERENCES = [
     ("roles", "person", "people", "slug"),
     ("elections", "country", "countries", "slug"),
     ("position_evidence", "roll_call", "roll_calls", "slug"),
+    ("initiatives", "country", "countries", "slug"),
+    ("initiatives", "parties", "parties", "slug"),
+    ("group_votes", "country", "countries", "slug"),
+    ("group_votes", "initiative", "initiatives", "slug"),
+    ("group_votes", "for", "parties", "slug"),
+    ("group_votes", "against", "parties", "slug"),
+    ("group_votes", "abstain", "parties", "slug"),
     ("thesis_roll_calls", "country", "countries", "slug"),
     ("thesis_roll_calls", "roll_call", "roll_calls", "slug"),
     ("constituency_places", "country", "countries", "slug"),

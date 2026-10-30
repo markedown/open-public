@@ -9423,6 +9423,144 @@ async fn parties_on_the_same_evidence_are_one_row(pool: db::Pool) {
     assert!(!body.contains("How do your members vote?"));
 }
 
+/// One motion by the seeded party, voted down by show of hands. `extra` adds more
+/// votes and initiatives so the lists page.
+async fn seed_group_vote(pool: &db::Pool, extra: i64) {
+    let (country, src) = compass_country_and_source(pool).await;
+    let (tp, dp) = two_parties(pool, country, src).await;
+    for n in 0..=extra {
+        let init: i64 = sqlx::query_scalar(
+            "insert into initiatives (country_id, slug, kind, title, document, tabled_on, status, source_id) \
+             values ($1, $2, 'motion', $3, $4, '2026-02-01', 'Abgelehnt', $5) returning id",
+        )
+        .bind(country)
+        .bind(format!("oneri-{n}"))
+        .bind(format!("Test Onergesi {n}"))
+        .bind(format!("21/{n}"))
+        .bind(src)
+        .fetch_one(pool)
+        .await
+        .unwrap();
+        sqlx::query("insert into initiative_parties (initiative_id, party_id) values ($1, $2)")
+            .bind(init)
+            .bind(tp)
+            .execute(pool)
+            .await
+            .unwrap();
+        let vote: i64 = sqlx::query_scalar(
+            "insert into group_votes (country_id, slug, chamber, held_on, title, document, initiative_id, \
+               adopted, excerpt, locator, source_id) \
+             values ($1, $2, 'Meclis', '2026-03-01', $3, $4, $5, $6, 'Wer stimmt dafuer? Wortlaut.', 'Tutanak 21/9', $7) returning id",
+        )
+        .bind(country)
+        .bind(format!("oylama-{n}"))
+        .bind(format!("Test Onergesi {n}"))
+        .bind(format!("21/{n}"))
+        .bind(init)
+        .bind(n % 2 == 1)
+        .bind(src)
+        .fetch_one(pool)
+        .await
+        .unwrap();
+        for (party, side) in [(tp, "for"), (dp, "against")] {
+            sqlx::query("insert into group_vote_parties (group_vote_id, party_id, side) values ($1, $2, $3)")
+                .bind(vote)
+                .bind(party)
+                .bind(side)
+                .execute(pool)
+                .await
+                .unwrap();
+        }
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn group_votes_and_initiatives_have_their_pages(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // Nothing recorded yet: no page, and the party page does not offer one.
+    assert_eq!(
+        get(&app, "/tr/votes/groups").await.status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get(&app, "/tr/parties/test-partisi/initiatives")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+    let party = body_string(get_cookie(&app, "/tr/parties/test-partisi", "lang=en").await).await;
+    assert!(!party.contains("Bills and motions"));
+
+    seed_group_vote(&pool, 0).await;
+    let body = body_string(get_cookie(&app, "/tr/votes/groups", "lang=en").await).await;
+    assert!(body.contains("Test Onergesi 0"));
+    assert!(body.contains("Wer stimmt dafuer? Wortlaut."));
+    assert!(body.contains("Tutanak 21/9"));
+    assert!(body.contains("Rejected"));
+    assert!(body.contains(">DP<"));
+
+    // The recorded-votes page points to it, and the party page lists what it tabled.
+    let votes = body_string(get_cookie(&app, "/tr/votes", "lang=en").await).await;
+    assert!(votes.contains("/tr/votes/groups"));
+    let party = body_string(get_cookie(&app, "/tr/parties/test-partisi", "lang=en").await).await;
+    assert!(party.contains("Bills and motions"));
+    assert!(party.contains("/tr/parties/test-partisi/initiatives"));
+    assert!(party.contains("/tr/votes/groups?party=test-partisi"));
+
+    let list =
+        body_string(get_cookie(&app, "/tr/parties/test-partisi/initiatives", "lang=en").await)
+            .await;
+    assert!(list.contains("Test Onergesi 0"));
+    assert!(list.contains("Motion"));
+    assert!(list.contains("Abgelehnt"));
+
+    // Filtering by party keeps its votes; an unknown party is not found.
+    let filtered =
+        body_string(get_cookie(&app, "/tr/votes/groups?party=diger-parti", "lang=en").await).await;
+    assert!(filtered.contains("Test Onergesi 0"));
+    assert_eq!(
+        get(&app, "/tr/votes/groups?party=yok").await.status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get(&app, "/tr/parties/yok/initiatives").await.status(),
+        StatusCode::NOT_FOUND
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn long_group_vote_lists_are_paged(pool: db::Pool) {
+    seed(&pool).await;
+    seed_group_vote(&pool, 35).await;
+    let app = router(pool.clone());
+    let first =
+        body_string(get_cookie(&app, "/tr/votes/groups?party=test-partisi", "lang=en").await).await;
+    assert!(first.contains("page=2&amp;party=test-partisi"));
+    assert!(first.contains("Adopted"));
+    let second = body_string(
+        get_cookie(
+            &app,
+            "/tr/votes/groups?page=2&party=test-partisi",
+            "lang=en",
+        )
+        .await,
+    )
+    .await;
+    assert!(second.contains("page=1&amp;party=test-partisi"));
+    let list = body_string(
+        get_cookie(
+            &app,
+            "/tr/parties/test-partisi/initiatives?page=2",
+            "lang=en",
+        )
+        .await,
+    )
+    .await;
+    assert!(list.contains("Test Onergesi"));
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn long_lists_of_votes_are_paged(pool: db::Pool) {
     seed(&pool).await;

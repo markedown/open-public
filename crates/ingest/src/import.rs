@@ -292,6 +292,39 @@ row!(Evidence {
     roll_call: Option<String>,
 });
 
+row!(InitiativeRow {
+    slug: String,
+    country: String,
+    kind: String,
+    title: String,
+    document: String,
+    tabled_on: NaiveDate,
+    status: Option<String>,
+    by_government: bool,
+    topics: Vec<String>,
+    parties: Vec<String>,
+});
+
+#[derive(Deserialize)]
+struct GroupVoteRow {
+    slug: String,
+    country: String,
+    chamber: String,
+    held_on: NaiveDate,
+    title: String,
+    document: Option<String>,
+    initiative: Option<String>,
+    adopted: Option<bool>,
+    excerpt: String,
+    locator: Option<String>,
+    #[serde(rename = "for")]
+    in_favour: Vec<String>,
+    against: Vec<String>,
+    abstain: Vec<String>,
+    #[serde(flatten)]
+    src: SourceRef,
+}
+
 #[derive(Deserialize)]
 struct ThesisRollCall {
     country: String,
@@ -987,6 +1020,108 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         )
         .execute(pool)
         .await?;
+    }
+
+    let mut initiatives: HashMap<String, i64> = HashMap::new();
+    for i in read::<InitiativeRow>(dir, "initiatives")? {
+        let source_id = src!(i, format!("initiative {}", i.slug));
+        let Some(&country_id) = countries.get(&i.country) else {
+            anyhow::bail!("initiative {} names a country not in the dataset", i.slug);
+        };
+        let id = sqlx::query_scalar!(
+            "insert into initiatives
+               (slug, country_id, kind, title, document, tabled_on, status, by_government,
+                topics, source_id)
+             values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+             on conflict (slug) do update set title = excluded.title, status = excluded.status
+             returning id",
+            i.slug,
+            country_id,
+            i.kind,
+            i.title,
+            i.document,
+            i.tabled_on,
+            i.status,
+            i.by_government,
+            &i.topics,
+            source_id,
+        )
+        .fetch_one(pool)
+        .await?;
+        for party in &i.parties {
+            let Some(&party_id) = parties.get(party) else {
+                anyhow::bail!(
+                    "initiative {} names a party not in the dataset: {party}",
+                    i.slug
+                );
+            };
+            sqlx::query!(
+                "insert into initiative_parties (initiative_id, party_id) values ($1, $2)
+                 on conflict do nothing",
+                id,
+                party_id,
+            )
+            .execute(pool)
+            .await?;
+        }
+        initiatives.insert(i.slug, id);
+        n.other += 1;
+    }
+
+    for g in read::<GroupVoteRow>(dir, "group_votes")? {
+        let source_id = src!(g, format!("group vote {}", g.slug));
+        let Some(&country_id) = countries.get(&g.country) else {
+            anyhow::bail!("group vote {} names a country not in the dataset", g.slug);
+        };
+        let id = sqlx::query_scalar!(
+            "insert into group_votes
+               (slug, country_id, chamber, held_on, title, document, initiative_id, adopted,
+                excerpt, locator, source_id)
+             values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+             on conflict (slug) do update set title = excluded.title, excerpt = excluded.excerpt
+             returning id",
+            g.slug,
+            country_id,
+            g.chamber,
+            g.held_on,
+            g.title,
+            g.document,
+            g.initiative
+                .as_ref()
+                .and_then(|x| initiatives.get(x))
+                .copied(),
+            g.adopted,
+            g.excerpt,
+            g.locator,
+            source_id,
+        )
+        .fetch_one(pool)
+        .await?;
+        for (side, names) in [
+            ("for", &g.in_favour),
+            ("against", &g.against),
+            ("abstain", &g.abstain),
+        ] {
+            for party in names {
+                let Some(&party_id) = parties.get(party) else {
+                    anyhow::bail!(
+                        "group vote {} names a party not in the dataset: {party}",
+                        g.slug
+                    );
+                };
+                sqlx::query!(
+                    "insert into group_vote_parties (group_vote_id, party_id, side)
+                     values ($1, $2, $3)
+                     on conflict (group_vote_id, party_id) do update set side = excluded.side",
+                    id,
+                    party_id,
+                    side,
+                )
+                .execute(pool)
+                .await?;
+            }
+        }
+        n.other += 1;
     }
 
     for l in read::<ThesisRollCall>(dir, "thesis_roll_calls")? {

@@ -1,0 +1,76 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select gp.group_vote_id, gp.side, p.slug as party_slug, p.short_name, p.color\n        from group_vote_parties gp\n        join parties p on p.id = gp.party_id\n        where gp.group_vote_id = any($1)\n        order by p.short_name\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "group_vote_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "group_vote_parties",
+            "name": "group_vote_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "side",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "group_vote_parties",
+            "name": "side"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "short_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "color",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8Array"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true
+    ]
+  },
+  "hash": "89ec5b27d8366d9b6300ec93ccc1fc2d6ea1dd0cb122d6db8c2dca21f99d360d"
+}

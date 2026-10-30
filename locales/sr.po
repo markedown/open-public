@@ -1461,3 +1461,30 @@ msgstr "Demokratija i prava"
 
 msgid "Society"
 msgstr "Društvo"
+
+msgid "Motion"
+msgstr "Predlog"
+
+msgid "Votes by show of hands"
+msgstr "Glasanja dizanjem ruke"
+
+msgid "Most votes have no list of names. The record of the sitting says which groups voted which way, and we read it from there. Each entry shows the wording it rests on. We keep a vote only if it matches the official outcome of the proceedings, and leave out any we cannot read fully."
+msgstr "Većina glasanja nema spisak imena. Zapisnik sednice navodi kako je koja grupa glasala i odatle to čitamo. Svaki unos prikazuje tekst na kom se zasniva. Glasanje zadržavamo samo ako odgovara zvaničnom ishodu postupka, a ono što ne možemo u potpunosti da pročitamo izostavljamo."
+
+msgid "Adopted"
+msgstr "Usvojeno"
+
+msgid "Rejected"
+msgstr "Odbijeno"
+
+msgid "For"
+msgstr "Za"
+
+msgid "Against"
+msgstr "Protiv"
+
+msgid "Wording in the record"
+msgstr "Tekst u zapisniku"
+
+msgid "Bills and motions"
+msgstr "Predlozi zakona i predlozi"

@@ -226,6 +226,18 @@ party_alliances ( id, party_id FK, alliance_id FK, start_date, end_date, source_
 roll_calls ( id, country_id FK, slug UNIQUE, chamber, held_on, title, source_id NOT NULL )
 roll_call_votes ( roll_call_id FK, person_id FK, choice, PK (roll_call_id, person_id) )
 
+-- A vote by show of hands: no names, but the record of the sitting says which groups
+-- voted which way. side is relative to the subject, even where the chamber voted on a
+-- recommendation to reject it. excerpt holds the record's wording, verbatim.
+group_votes ( id, country_id FK, slug UNIQUE, chamber, held_on, title, document,
+              initiative_id FK NULL, adopted, excerpt, locator, source_id NOT NULL )
+group_vote_parties ( group_vote_id FK, party_id FK, side, PK (group_vote_id, party_id) )
+
+-- A bill or motion tabled: the act open to a party that cannot legislate.
+initiatives ( id, country_id FK, slug UNIQUE, kind, title, document, tabled_on, status,
+              by_government, topics, source_id NOT NULL )
+initiative_parties ( initiative_id FK, party_id FK, PK (initiative_id, party_id) )
+
 -- How each side of a vote reads on a thesis. Either side may be null: a no can mean
 -- "not far enough", and a side that does not say where someone stands stays unread.
 thesis_roll_calls ( thesis_id FK, roll_call_id FK, yes_stance, no_stance, note,

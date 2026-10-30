@@ -36,7 +36,7 @@ import os
 import random
 import sys
 
-RECORDED = {"bill", "court", "vote", "law", "decree", "alliance"}
+RECORDED = {"bill", "motion", "court", "vote", "law", "decree", "alliance"}
 MAX_MEAN = 0.5
 MAX_SPREAD = 25
 MIN_COVERAGE = 0.5

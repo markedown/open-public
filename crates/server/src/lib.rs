@@ -134,6 +134,11 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
             get(pages::votes::for_person),
         )
         .route("/{country}/votes", get(pages::votes::list))
+        .route("/{country}/votes/groups", get(pages::votes::groups))
+        .route(
+            "/{country}/parties/{slug}/initiatives",
+            get(pages::votes::initiatives),
+        )
         .route("/{country}/vote/{slug}", get(pages::votes::detail))
         .route("/{country}/parties", get(pages::parties::list))
         .route("/{country}/parties/{slug}", get(pages::party::detail))

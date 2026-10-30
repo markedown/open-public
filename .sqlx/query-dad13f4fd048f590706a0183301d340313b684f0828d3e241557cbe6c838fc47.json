@@ -1,0 +1,102 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select i.id, i.kind, i.title, i.document, i.tabled_on, i.status, s.url as source_url\n        from initiatives i\n        join initiative_parties ip on ip.initiative_id = i.id\n        join sources s on s.id = i.source_id\n        where ip.party_id = $1\n        order by i.tabled_on desc, i.id desc\n        limit $2 offset $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "kind",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "document",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "document"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "tabled_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "tabled_on"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "status",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "initiatives",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "dad13f4fd048f590706a0183301d340313b684f0828d3e241557cbe6c838fc47"
+}

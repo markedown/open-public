@@ -64,7 +64,9 @@ pub struct Position {
 /// Includes the acts available to a party that cannot legislate: tabling a bill
 /// and asking the Constitutional Court to annul a law. Without those, only a
 /// governing party could ever be judged on its record.
-pub const RECORDED_ACTION: [&str; 6] = ["bill", "court", "vote", "law", "decree", "alliance"];
+pub const RECORDED_ACTION: [&str; 7] = [
+    "bill", "motion", "court", "vote", "law", "decree", "alliance",
+];
 
 /// Thesis scopes: a parliamentary compass ranks parties, a presidential one
 /// ranks people.

@@ -102,6 +102,13 @@ vote was read on that thesis, or when they broke from their party's line. Contes
 exactly the same evidence, such as two parties with one programme and one parliamentary group, are one
 measurement and are scored and shown as one row.
 
+Evidence also comes from what a group did without a list of names. `group_votes` holds votes by show of
+hands as the record of the sitting states them, with the wording kept beside the reading, and
+`initiatives` holds the bills and motions a party tabled. A motion counts as a stance only where its own
+title says which way it points. A reader of these records must expect that a vote on a committee's
+recommendation to reject means the opposite of a vote on the motion itself, which is why `side` is stored
+relative to the subject.
+
 `scripts/check_compass.py` measures what wording and coverage do to the result, from the published data
 alone: whether saying yes to everything favours a side, whether every thesis separates someone, whether
 a party's figure rests on enough stances. It reports the share of random voters each party attracts but

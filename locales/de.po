@@ -1461,3 +1461,30 @@ msgstr "Demokratie und Grundrechte"
 
 msgid "Society"
 msgstr "Gesellschaft"
+
+msgid "Motion"
+msgstr "Antrag"
+
+msgid "Votes by show of hands"
+msgstr "Abstimmungen per Handzeichen"
+
+msgid "Most votes have no list of names. The record of the sitting says which groups voted which way, and we read it from there. Each entry shows the wording it rests on. We keep a vote only if it matches the official outcome of the proceedings, and leave out any we cannot read fully."
+msgstr "Die meisten Abstimmungen haben keine Namensliste. Das Protokoll der Sitzung hält fest, welche Fraktion wie gestimmt hat, und von dort lesen wir es ab. Jeder Eintrag zeigt den Wortlaut, auf dem er beruht. Eine Abstimmung bleibt nur drin, wenn sie zum amtlichen Ausgang des Verfahrens passt. Was wir nicht vollständig lesen können, lassen wir weg."
+
+msgid "Adopted"
+msgstr "Angenommen"
+
+msgid "Rejected"
+msgstr "Abgelehnt"
+
+msgid "For"
+msgstr "Dafür"
+
+msgid "Against"
+msgstr "Dagegen"
+
+msgid "Wording in the record"
+msgstr "Wortlaut im Protokoll"
+
+msgid "Bills and motions"
+msgstr "Gesetzentwürfe und Anträge"

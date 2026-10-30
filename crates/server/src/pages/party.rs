@@ -28,6 +28,8 @@ pub async fn detail(
     let mut polls = db::polls::full_for_party(&pool, party.id).await?;
     crate::content::localize_polls(&pool, &mut polls).await?;
     let news = db::news::for_party(&pool, party.id).await?;
+    let initiative_count = db::group_votes::count_initiatives(&pool, party.id).await?;
+    let initiatives = db::group_votes::initiatives_for_party(&pool, party.id, 5, 0).await?;
     let mut statements = db::statements::for_party(&pool, party.id).await?;
     crate::content::localize_statements(&pool, &mut statements).await?;
     let electoral_history = db::elections::history_for_party(&pool, party.id).await?;
@@ -221,6 +223,21 @@ pub async fn detail(
                                 source_url: Some(m.source_url.clone()),
                             }
                         })))
+                    }
+                }
+            }
+
+            @if initiative_count > 0 {
+                section class="mb-12" {
+                    (ui::section_header(
+                        i18n::t("Bills and motions"),
+                        Some(ui::see_all_link(&format!("/{}/parties/{}/initiatives", country_model.slug, party.slug))),
+                    ))
+                    (crate::pages::votes::initiative_list(&initiatives))
+                    p class="mt-3 text-[16px]" {
+                        a href={"/" (country_model.slug) "/votes/groups?party=" (party.slug)} class="op-link" {
+                            (i18n::t("Votes by show of hands"))
+                        }
                     }
                 }
             }

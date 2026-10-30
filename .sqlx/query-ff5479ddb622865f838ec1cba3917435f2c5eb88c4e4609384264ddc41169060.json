@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"count!\"\n        from group_votes g\n        where g.country_id = $1\n          and ($2::text is null or exists (\n              select 1 from group_vote_parties gp join parties p on p.id = gp.party_id\n              where gp.group_vote_id = g.id and p.slug = $2))\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "ff5479ddb622865f838ec1cba3917435f2c5eb88c4e4609384264ddc41169060"
+}

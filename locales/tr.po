@@ -1473,3 +1473,30 @@ msgstr "Demokrasi ve haklar"
 
 msgid "Society"
 msgstr "Toplum"
+
+msgid "Motion"
+msgstr "Önerge"
+
+msgid "Votes by show of hands"
+msgstr "El kaldırarak yapılan oylamalar"
+
+msgid "Most votes have no list of names. The record of the sitting says which groups voted which way, and we read it from there. Each entry shows the wording it rests on. We keep a vote only if it matches the official outcome of the proceedings, and leave out any we cannot read fully."
+msgstr "Çoğu oylamanın isim listesi yoktur. Hangi grubun nasıl oy verdiğini oturum tutanağı belirtir ve biz bunu oradan okuruz. Her kayıt dayandığı ifadeyi gösterir. Bir oylamayı yalnızca sürecin resmî sonucuyla uyuşuyorsa tutarız, tam okuyamadıklarımızı dışarıda bırakırız."
+
+msgid "Adopted"
+msgstr "Kabul edildi"
+
+msgid "Rejected"
+msgstr "Reddedildi"
+
+msgid "For"
+msgstr "Lehte"
+
+msgid "Against"
+msgstr "Aleyhte"
+
+msgid "Wording in the record"
+msgstr "Tutanaktaki ifade"
+
+msgid "Bills and motions"
+msgstr "Yasa teklifleri ve önergeler"

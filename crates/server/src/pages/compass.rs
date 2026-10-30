@@ -325,6 +325,7 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
 fn kind_label(kind: &str) -> &'static str {
     match kind {
         "bill" => i18n::t("Bill"),
+        "motion" => i18n::t("Motion"),
         "court" => i18n::t("Court application"),
         "vote" => i18n::t("Vote"),
         "law" => i18n::t("Law"),

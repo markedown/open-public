@@ -15,6 +15,7 @@ pub mod email_verifications;
 pub mod events;
 pub mod export;
 pub mod follows;
+pub mod group_votes;
 pub mod news;
 pub mod outlets;
 pub mod parties;
