@@ -2037,10 +2037,9 @@ async fn db_reachable_branches_batch(pool: sqlx::PgPool) {
         .bind(person_id).bind(src).execute(&pool).await.unwrap();
     sqlx::query("insert into party_memberships (person_id, party_id, start_date, source_id) values ($1,$2,'2020-01-01',$3)")
         .bind(person_id).bind(party_id).bind(src).execute(&pool).await.unwrap();
-    assert!(db::parties::leader(&pool, party_id)
-        .await
-        .unwrap()
-        .is_some());
+    let leaders = db::parties::leaders(&pool, party_id).await.unwrap();
+    assert_eq!(leaders.len(), 1);
+    assert_eq!(leaders[0].title.as_deref(), Some("Leader"));
 
     // people: education + attribute upsert then delete
     let edu = db::people::upsert_education(

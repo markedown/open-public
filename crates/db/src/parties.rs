@@ -178,7 +178,7 @@ pub struct PartyMember {
     pub source_url: String,
 }
 
-/// The current leader of a party.
+/// A current leader of a party.
 #[derive(Debug, Clone)]
 pub struct PartyLeader {
     pub person_name: String,
@@ -188,32 +188,37 @@ pub struct PartyLeader {
     pub source_url: String,
 }
 
-/// The party's current leader: someone holding a `party_leader` role who is
-/// also a current member of the party. `None` when no leader is recorded.
-pub async fn leader(pool: &Pool, party_id: i64) -> Result<Option<PartyLeader>> {
-    let row = sqlx::query!(
+/// The party's current leaders: everyone holding a `party_leader` role who is
+/// also a current member of the party. Many parties have two; empty when none
+/// is recorded.
+pub async fn leaders(pool: &Pool, party_id: i64) -> Result<Vec<PartyLeader>> {
+    let rows = sqlx::query!(
         r#"
         select p.full_name, p.slug, r.title, s.id as source_id, s.url as source_url
         from roles r
         join people p on p.id = r.person_id
-        join party_memberships m
-          on m.person_id = p.id and m.party_id = $1 and m.end_date is null
         join sources s on s.id = r.source_id
         where r.role_type = 'party_leader' and r.end_date is null
-        order by r.start_date desc nulls last
-        limit 1
+          and exists (
+            select 1 from party_memberships m
+            where m.person_id = p.id and m.party_id = $1 and m.end_date is null
+          )
+        order by p.full_name collate "name_sort"
         "#,
         party_id,
     )
-    .fetch_optional(pool)
+    .fetch_all(pool)
     .await?;
-    Ok(row.map(|r| PartyLeader {
-        person_name: r.full_name,
-        person_slug: r.slug,
-        title: r.title,
-        source_id: r.source_id,
-        source_url: r.source_url,
-    }))
+    Ok(rows
+        .into_iter()
+        .map(|r| PartyLeader {
+            person_name: r.full_name,
+            person_slug: r.slug,
+            title: r.title,
+            source_id: r.source_id,
+            source_url: r.source_url,
+        })
+        .collect())
 }
 
 /// How many of the party's current members currently hold an MP seat.
