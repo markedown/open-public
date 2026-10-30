@@ -162,7 +162,7 @@ pub async fn detail(
                 div class="mt-4 flex flex-wrap items-start justify-between gap-4" {
                     div class="flex items-center gap-4" {
                         @if let Some(ref flag) = country.flag_url {
-                            img src=(flag) alt="" loading="lazy"
+                            img src=(crate::mirror::local_src(flag)) alt="" loading="lazy"
                                 class="h-10 w-auto shrink-0 rounded-md border border-hairline";
                         }
                         h1 class="text-[42px] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-[50px]" {

@@ -1321,3 +1321,6 @@ msgstr "Koja stranka vam je najbliža?"
 
 msgid "Answer a few positions and see how the parties compare. No account needed, and nothing you enter is stored."
 msgstr "Odgovorite na nekoliko teza i pogledajte kako se stranke porede. Nalog nije potreban, a ništa što unesete se ne čuva."
+
+msgid "Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."
+msgstr "Fotografije, zastave i logotipi kopiraju se na ovaj server i odavde se prikazuju, tako da vaš pregledač zbog njih ne kontaktira Vikimediju, neki parlament ni bilo koga drugog. I fontovi i skripte dolaze odavde. Drugi sajt saznaje za vas samo ako pratite link ka njemu, na primer ka izvoru."

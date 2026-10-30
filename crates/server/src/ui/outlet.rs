@@ -56,7 +56,7 @@ pub fn card(o: &db::outlets::OutletCard, country: &str) -> Markup {
         a href={"/" (country) "/outlet/" (o.slug)}
           class="op-card op-card-link flex items-center gap-4 px-4 py-3" {
             @if let Some(ref logo) = o.logo_url {
-                img src=(logo) alt="" loading="lazy"
+                img src=(crate::mirror::local_src(logo)) alt="" loading="lazy"
                     class="h-8 w-8 shrink-0 rounded border border-hairline object-contain";
             } @else {
                 span class="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-hairline bg-paper-sunken text-[14px] font-semibold text-ink-muted" {

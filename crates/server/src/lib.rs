@@ -15,6 +15,7 @@ pub mod fmt;
 pub mod i18n;
 pub mod mail;
 pub mod media;
+pub mod mirror;
 pub mod pages;
 pub mod reviewer;
 pub mod state;
@@ -24,7 +25,7 @@ pub mod voting;
 use std::path::Path;
 
 use axum::extract::{DefaultBodyLimit, Path as UrlPath, Request, State};
-use axum::http::{header, HeaderMap, StatusCode};
+use axum::http::{header, HeaderMap, HeaderValue, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
@@ -101,6 +102,20 @@ async fn construction_gate(
     coming_soon().await
 }
 
+/// Tell the browser to load images and fonts from this origin only, so a stray
+/// foreign address in the data fails visibly instead of quietly sending visitors'
+/// IP addresses to another host. A response that set its own policy keeps it.
+async fn only_our_images(request: Request, next: Next) -> Response {
+    let mut response = next.run(request).await;
+    response
+        .headers_mut()
+        .entry(header::CONTENT_SECURITY_POLICY)
+        .or_insert(HeaderValue::from_static(
+            "img-src 'self' data:; font-src 'self'",
+        ));
+    response
+}
+
 /// Every route of the platform. Construction mode wraps this rather than
 /// replacing it, so there is one definition of what the site is.
 fn routes(state: AppState, static_dir: &Path) -> Router {
@@ -168,6 +183,7 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
             post(pages::approve::cast),
         )
         .route("/media/{sha}", get(media::serve))
+        .route("/img/{hash}", get(mirror::serve))
         .route(
             "/register",
             get(pages::auth::register_form).post(pages::auth::register_submit),
@@ -292,6 +308,7 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         // Inside the locale layer, so the page it renders is in the visitor's
         // language rather than the framework's.
         .layer(middleware::from_fn(own_the_refusals))
+        .layer(middleware::from_fn(only_our_images))
         // The locale layer runs before every handler, so `i18n::t` in the
         // templates reads the request's chosen language.
         .layer(middleware::from_fn_with_state(state.clone(), locale))

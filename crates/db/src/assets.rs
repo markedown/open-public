@@ -78,3 +78,24 @@ pub async fn mark_published(pool: &Pool, id: i64) -> Result<()> {
         .await?;
     Ok(())
 }
+
+/// Every image address in the data that points at another host, for the task
+/// that copies them here. Approved uploads are already ours.
+pub async fn external_image_urls(pool: &Pool) -> Result<Vec<String>> {
+    let rows = sqlx::query_scalar!(
+        r#"
+        select url as "url!" from (
+            select photo_url as url from people
+            union select flag_url from countries
+            union select logo_url from outlets
+            union select media_url from polls
+            union select media_url from poll_options
+        ) images
+        where url like 'http://%' or url like 'https://%'
+        order by 1
+        "#
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}

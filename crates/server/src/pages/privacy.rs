@@ -25,6 +25,7 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
                 i18n::t("Reading the site"),
                 &[
                     i18n::t("Nothing is required to read anything here. There is no account needed, no tracking script, no advertising network, and no third-party analytics."),
+                    i18n::t("Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."),
                     i18n::t("The site sets one cookie for the language you choose. It holds a language code and nothing else."),
                 ],
             ))

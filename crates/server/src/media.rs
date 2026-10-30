@@ -40,8 +40,8 @@ pub enum AssetError {
 }
 
 /// The result of processing an upload, ready to store.
-struct Processed {
-    bytes: Vec<u8>,
+pub(crate) struct Processed {
+    pub(crate) bytes: Vec<u8>,
     mime: &'static str,
     width: i32,
     height: i32,
@@ -65,7 +65,7 @@ pub async fn store_upload(
         ));
     }
 
-    let processed = tokio::task::spawn_blocking(move || process(bytes))
+    let processed = tokio::task::spawn_blocking(move || process(bytes, OUTPUT_MAX_DIM))
         .await
         .map_err(|e| AssetError::Io(anyhow::anyhow!(e)))??;
 
@@ -100,7 +100,7 @@ pub async fn store_upload(
 }
 
 /// The synchronous, CPU-bound part: decode under limits, downscale, re-encode.
-fn process(bytes: Vec<u8>) -> Result<Processed, AssetError> {
+pub(crate) fn process(bytes: Vec<u8>, max_side: u32) -> Result<Processed, AssetError> {
     let reject = |m: &str| AssetError::Rejected(m.to_string());
 
     let format =
@@ -124,8 +124,8 @@ fn process(bytes: Vec<u8>) -> Result<Processed, AssetError> {
         .map_err(|_| reject("the image could not be read, or is too large"))?;
 
     // Only ever shrink, never upscale.
-    let img = if img.width() > OUTPUT_MAX_DIM || img.height() > OUTPUT_MAX_DIM {
-        img.thumbnail(OUTPUT_MAX_DIM, OUTPUT_MAX_DIM)
+    let img = if img.width() > max_side || img.height() > max_side {
+        img.thumbnail(max_side, max_side)
     } else {
         img
     };
@@ -229,7 +229,7 @@ pub async fn serve(
     resp
 }
 
-fn hex(bytes: impl AsRef<[u8]>) -> String {
+pub(crate) fn hex(bytes: impl AsRef<[u8]>) -> String {
     bytes.as_ref().iter().map(|b| format!("{b:02x}")).collect()
 }
 
@@ -249,7 +249,7 @@ mod tests {
 
     #[test]
     fn processes_a_valid_png_into_a_normalized_image() {
-        let p = process(tiny_png()).unwrap();
+        let p = process(tiny_png(), OUTPUT_MAX_DIM).unwrap();
         assert_eq!(p.width, 2);
         assert_eq!(p.height, 3);
         // No alpha, so it becomes JPEG; the hash is over the re-encoded bytes.
@@ -261,20 +261,20 @@ mod tests {
     #[test]
     fn rejects_non_images_and_svg() {
         assert!(matches!(
-            process(b"not an image".to_vec()),
+            process(b"not an image".to_vec(), OUTPUT_MAX_DIM),
             Err(AssetError::Rejected(_))
         ));
         let svg = br#"<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>"#;
         assert!(matches!(
-            process(svg.to_vec()),
+            process(svg.to_vec(), OUTPUT_MAX_DIM),
             Err(AssetError::Rejected(_))
         ));
     }
 
     #[test]
     fn identical_bytes_hash_identically() {
-        let a = process(tiny_png()).unwrap();
-        let b = process(tiny_png()).unwrap();
+        let a = process(tiny_png(), OUTPUT_MAX_DIM).unwrap();
+        let b = process(tiny_png(), OUTPUT_MAX_DIM).unwrap();
         assert_eq!(a.sha, b.sha);
     }
 
@@ -289,7 +289,10 @@ mod tests {
         // A GIF is a real image format the platform does not accept.
         let mut gif = b"GIF89a".to_vec();
         gif.extend_from_slice(&[0u8; 32]);
-        assert!(matches!(process(gif), Err(AssetError::Rejected(_))));
+        assert!(matches!(
+            process(gif, OUTPUT_MAX_DIM),
+            Err(AssetError::Rejected(_))
+        ));
     }
 
     #[test]
@@ -299,7 +302,7 @@ mod tests {
         image::DynamicImage::ImageRgb8(wide)
             .write_to(&mut Cursor::new(&mut buf), ImageFormat::Png)
             .unwrap();
-        let p = process(buf).unwrap();
+        let p = process(buf, OUTPUT_MAX_DIM).unwrap();
         assert!(p.width <= OUTPUT_MAX_DIM as i32);
         assert!(p.width < 1700); // it really was scaled down
     }

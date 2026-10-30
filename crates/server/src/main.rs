@@ -10,6 +10,7 @@ use server::state::AppState;
 
 /// How often the background loop screens pending poll submissions.
 const REVIEW_INTERVAL: Duration = Duration::from_secs(15);
+const MIRROR_INTERVAL: Duration = Duration::from_secs(6 * 60 * 60);
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -68,6 +69,16 @@ async fn main() -> anyhow::Result<()> {
             tokio::spawn(reviewer::run(pool.clone(), DeferReviewer, REVIEW_INTERVAL));
         }
     }
+
+    // Keep local copies of the images the data refers to, so no page makes a
+    // visitor's browser contact another host.
+    let http = server::mirror::client(&config.base_url).context("configuring image copies")?;
+    tokio::spawn(server::mirror::run(
+        pool.clone(),
+        config.asset_dir.clone(),
+        http,
+        MIRROR_INTERVAL,
+    ));
 
     let state = AppState {
         pool,

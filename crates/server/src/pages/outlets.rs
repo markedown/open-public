@@ -92,7 +92,7 @@ pub async fn detail(
             header class="op-card mb-8 p-6 sm:p-8" {
                 div class="flex items-center gap-4" {
                     @if let Some(ref logo) = outlet.logo_url {
-                        img src=(logo) alt=(&outlet.name) loading="lazy"
+                        img src=(crate::mirror::local_src(logo)) alt=(&outlet.name) loading="lazy"
                             class="h-12 w-12 shrink-0 rounded-[10px] border border-hairline object-contain";
                     }
                     h1 class="text-3xl font-bold tracking-tight text-ink sm:text-4xl" {

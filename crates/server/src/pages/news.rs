@@ -94,7 +94,7 @@ pub async fn detail(
                     a href={"/" (country.slug) "/outlet/" (o.slug)}
                       class="mb-4 inline-flex items-center gap-2 transition-opacity hover:opacity-80" {
                         @if let Some(ref logo) = o.logo_url {
-                            img src=(logo) alt="" loading="lazy"
+                            img src=(crate::mirror::local_src(logo)) alt="" loading="lazy"
                                 class="h-6 w-6 rounded border border-hairline object-contain";
                         }
                         span class="text-[14px] font-bold text-ink-muted" { (o.name) }

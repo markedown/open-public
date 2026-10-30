@@ -30,7 +30,7 @@ pub fn poll_widget(poll: &Poll, viewer: Viewer, country: &str, pubkey: Option<&s
 
             @if let Some(ref url) = poll.media_url {
                 figure class="mt-4" {
-                    img src=(url) alt="" loading="lazy"
+                    img src=(crate::mirror::local_src(url)) alt="" loading="lazy"
                         class="max-h-56 w-full rounded-[10px] border border-hairline object-contain";
                     @if let Some(ref lic) = poll.media_license {
                         figcaption class="mt-1 text-[15px] text-ink-muted" { (lic) }
@@ -177,7 +177,7 @@ fn result_row(label: &str, pct: i64, votes: i64, media: Option<&str>) -> Markup 
         div class="relative flex items-center justify-between gap-3 px-3 py-2.5 text-[16px]" {
             div class="flex min-w-0 items-center gap-3" {
                 @if let Some(url) = media {
-                    img src=(url) alt="" loading="lazy"
+                    img src=(crate::mirror::local_src(url)) alt="" loading="lazy"
                         class="h-9 w-9 shrink-0 rounded border border-hairline object-cover";
                 }
                 span class="truncate text-ink" { (label) }
@@ -234,7 +234,7 @@ fn grid_options(poll: &Poll, total: i64, can_vote: bool, container: &str) -> Mar
                         div class="absolute inset-y-0 left-0 bg-accent-tint" style={"width:" (pct) "%"} {}
                         div class="relative" {
                             @if let Some(url) = opt.media_url.as_deref() {
-                                img src=(url) alt="" loading="lazy"
+                                img src=(crate::mirror::local_src(url)) alt="" loading="lazy"
                                     class="mx-auto mb-2 h-20 w-20 rounded border border-hairline object-cover";
                             }
                             div class="text-[16px] font-semibold text-ink" { (opt.label) }
@@ -261,7 +261,7 @@ fn multi_options(poll: &Poll, total: i64) -> Markup {
                         input type="checkbox" name="option" value=(opt.id)
                             class="relative z-10 h-4 w-4 shrink-0 rounded border border-hairline accent-accent";
                         @if let Some(url) = opt.media_url.as_deref() {
-                            img src=(url) alt="" loading="lazy"
+                            img src=(crate::mirror::local_src(url)) alt="" loading="lazy"
                                 class="relative z-10 h-9 w-9 shrink-0 rounded border border-hairline object-cover";
                         }
                         span class="relative z-10 grow text-[16px] text-ink" { (opt.label) }

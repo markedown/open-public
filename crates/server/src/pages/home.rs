@@ -74,7 +74,7 @@ pub async fn page(
                                 a href=(href)
                                   class="inline-flex min-h-12 items-center gap-2.5 rounded-[10px] bg-ink px-4 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                                     @if let Some(ref flag) = c.flag_url {
-                                        img src=(flag) alt="" loading="lazy" class="h-4 w-auto rounded-[2px]";
+                                        img src=(crate::mirror::local_src(flag)) alt="" loading="lazy" class="h-4 w-auto rounded-[2px]";
                                     }
                                     (i18n::t_dyn(&c.name))
                                     span class="text-[15px] font-normal opacity-80" { (n) }

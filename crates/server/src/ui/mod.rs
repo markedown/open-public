@@ -122,7 +122,7 @@ pub fn section_tabs(country: &str, current: &str, tabs: &[(&str, &str, i64)]) ->
 pub fn portrait(photo: Option<&str>, name: &str, size: &str) -> Markup {
     html! {
         @if let Some(src) = photo {
-            img src=(src) alt=(name) loading="lazy"
+            img src=(crate::mirror::local_src(src)) alt=(name) loading="lazy"
                 class={(size) " shrink-0 rounded-full border border-hairline bg-paper-sunken object-cover"};
         } @else {
             span aria-hidden="true"

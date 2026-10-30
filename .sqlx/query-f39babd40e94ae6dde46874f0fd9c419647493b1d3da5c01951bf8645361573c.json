@@ -1,0 +1,21 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select url as \"url!\" from (\n            select photo_url as url from people\n            union select flag_url from countries\n            union select logo_url from outlets\n            union select media_url from polls\n            union select media_url from poll_options\n        ) images\n        where url like 'http://%' or url like 'https://%'\n        order by 1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "url!",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "f39babd40e94ae6dde46874f0fd9c419647493b1d3da5c01951bf8645361573c"
+}

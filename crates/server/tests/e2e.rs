@@ -6,7 +6,7 @@ use std::path::Path;
 use std::sync::Arc;
 
 use axum::body::Body;
-use axum::http::{Request, StatusCode};
+use axum::http::{header, Request, StatusCode};
 use axum::response::Response;
 use axum::Router;
 use http_body_util::BodyExt;
@@ -326,6 +326,29 @@ fn router(pool: db::Pool) -> Router {
         cookie_secure: false,
         // Content-addressed, so a shared temp dir across tests is safe.
         asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: false,
+        base_url: "https://open-public.test".into(),
+        admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
+    };
+    server::app(state, Path::new("static"))
+}
+
+/// Build the router over its own asset directory, for tests that read files back.
+fn router_with_assets(pool: db::Pool, dir: &Path) -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(dir.to_path_buf()),
         site_notice: None,
         construction: false,
         base_url: "https://open-public.test".into(),
@@ -1254,7 +1277,7 @@ async fn country_page_renders(pool: db::Pool) {
 
     let body = body_string(get(&app, &format!("/{COUNTRY}")).await).await;
     assert!(body.contains("Test Ulke")); // country name
-    assert!(body.contains("https://flag.test/tr.svg")); // country flag
+    assert!(body.contains(&server::mirror::local_src("https://flag.test/tr.svg"))); // country flag
     assert!(body.contains("Zeynep Kaya")); // government (president)
     assert!(body.contains("TP")); // party chip in the seat bar
     assert!(body.contains("Test Ittifaki")); // coalition
@@ -1424,7 +1447,7 @@ async fn news_detail_shows_outlet_author_and_chips(pool: db::Pool) {
     assert!(detail.contains("Onemli haber")); // headline
     assert!(detail.contains("Test Gazetesi")); // the outlet
     assert!(detail.contains("/tr/outlet/test-gazetesi")); // links to the outlet
-    assert!(detail.contains("https://tg.test/logo.png")); // the outlet logo
+    assert!(detail.contains(&server::mirror::local_src("https://tg.test/logo.png"))); // the outlet logo
     assert!(detail.contains("Ali Veli")); // the author
     assert!(detail.contains("Yazan")); // "By" label
     assert!(detail.contains("Tarafsiz ozet.")); // our summary
@@ -2222,8 +2245,8 @@ async fn image_poll_renders_its_media(pool: db::Pool) {
     }
 
     let body = body_string(get(&app, "/tr/poll/img-poll").await).await;
-    assert!(body.contains("https://img.test/q.png")); // question image
-    assert!(body.contains("https://img.test/a.png")); // option image
+    assert!(body.contains(&server::mirror::local_src("https://img.test/q.png"))); // question image
+    assert!(body.contains(&server::mirror::local_src("https://img.test/a.png"))); // option image
     assert!(body.contains("CC0")); // license credit
 }
 
@@ -8705,4 +8728,124 @@ async fn issuance_rolls_back_the_entitlement_when_signing_fails(pool: db::Pool) 
     assert!(!db::voting::has_entitlement(&pool, poll_id, uid)
         .await
         .unwrap());
+}
+
+/// Serves one PNG for any request, standing in for an image host.
+async fn image_host() -> String {
+    let img = image::RgbImage::from_pixel(2, 2, image::Rgb([10, 200, 10]));
+    let mut png = Vec::new();
+    image::DynamicImage::ImageRgb8(img)
+        .write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png)
+        .unwrap();
+    let app = axum::Router::new()
+        .route(
+            "/ok.png",
+            axum::routing::get(move || {
+                let png = png.clone();
+                async move { png }
+            }),
+        )
+        .route(
+            "/busy.png",
+            axum::routing::get(|| async { axum::http::StatusCode::TOO_MANY_REQUESTS }),
+        );
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let addr = listener.local_addr().unwrap();
+    tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+    format!("http://{addr}")
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn images_are_copied_here_and_never_loaded_from_elsewhere(pool: db::Pool) {
+    seed(&pool).await;
+    let host = image_host().await;
+    let ok = format!("{host}/ok.png");
+    sqlx::query("update people set photo_url = $1 where slug = 'ayse-yilmaz'")
+        .bind(&ok)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    // Before the copy exists, the page still points here and a placeholder shows.
+    let app = router(pool.clone());
+    let resp = get(&app, "/tr/people/ayse-yilmaz").await;
+    assert_eq!(
+        resp.headers()
+            .get(header::CONTENT_SECURITY_POLICY)
+            .unwrap()
+            .to_str()
+            .unwrap(),
+        "img-src 'self' data:; font-src 'self'"
+    );
+    let body = body_string(resp).await;
+    assert!(
+        !body.contains(&ok),
+        "the foreign address never reaches a page"
+    );
+    let src = server::mirror::local_src(&ok);
+    assert!(body.contains(&src));
+    let dir = tempfile_dir("op-mirror-test");
+    let state_app = router_with_assets(pool.clone(), &dir);
+    let waiting = get(&state_app, &src).await;
+    assert_eq!(waiting.status(), StatusCode::OK);
+    assert_eq!(waiting.headers()[header::CONTENT_TYPE], "image/svg+xml");
+    assert_eq!(waiting.headers()[header::CACHE_CONTROL], "no-store");
+
+    let http = server::mirror::client("https://example.test").unwrap();
+    let pass = server::mirror::mirror_pending(&pool, &dir, &http, std::time::Duration::ZERO)
+        .await
+        .unwrap();
+    assert_eq!(pass.copied, 1);
+
+    let copied = get(&state_app, &src).await;
+    assert_eq!(copied.status(), StatusCode::OK);
+    assert_eq!(copied.headers()[header::CONTENT_TYPE], "image/jpeg");
+
+    // A second pass finds nothing to do.
+    let pass = server::mirror::mirror_pending(&pool, &dir, &http, std::time::Duration::ZERO)
+        .await
+        .unwrap();
+    assert_eq!((pass.copied, pass.already), (0, 1));
+
+    // A malformed hash is not a placeholder, it is nothing.
+    assert_eq!(
+        get(&state_app, "/img/not-a-hash").await.status(),
+        StatusCode::NOT_FOUND
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_busy_or_broken_image_host_is_left_for_the_next_pass(pool: db::Pool) {
+    seed(&pool).await;
+    let host = image_host().await;
+    for clear in [
+        "update people set photo_url = null",
+        "update countries set flag_url = null",
+    ] {
+        sqlx::query(clear).execute(&pool).await.unwrap();
+    }
+    // Two refused by the same busy host: only the first is asked.
+    sqlx::query("update people set photo_url = $1 where slug = 'ayse-yilmaz'")
+        .bind(format!("{host}/busy.png"))
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("update people set photo_url = $1 where slug = 'mehmet-demir'")
+        .bind(format!("{host}/busy.png?again"))
+        .execute(&pool)
+        .await
+        .unwrap();
+    let dir = tempfile_dir("op-mirror-busy");
+    let http = server::mirror::client("https://example.test").unwrap();
+    let pass = server::mirror::mirror_pending(&pool, &dir, &http, std::time::Duration::ZERO)
+        .await
+        .unwrap();
+    assert_eq!((pass.copied, pass.failed), (0, 2));
+    assert!(!dir.join("mirror").exists(), "nothing half-written");
+}
+
+fn tempfile_dir(name: &str) -> std::path::PathBuf {
+    let dir = std::env::temp_dir().join(format!("{name}-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    dir
 }
