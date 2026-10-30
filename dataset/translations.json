@@ -1062,6 +1062,60 @@
     "text": "Élections au Congrès des États-Unis de 2026"
   },
   {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Election of the head of state by the 18th Federal Convention. It consists of the members of the Bundestag and an equal number of members chosen by the state parliaments; the public does not vote directly."
+  },
+  {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élection du chef de l'État par la 18e Assemblée fédérale. Elle se compose des membres du Bundestag et d'un nombre égal de membres élus par les parlements des Länder ; le peuple ne vote pas directement."
+  },
+  {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "description",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Devlet başkanının 18. Federal Kurul tarafından seçilmesi. Kurul, Federal Meclis üyeleri ile eyalet parlamentolarının seçtiği eşit sayıda üyeden oluşur; halk doğrudan oy kullanmaz."
+  },
+  {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2027 Federal Presidential Election"
+  },
+  {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Élection présidentielle fédérale 2027"
+  },
+  {
+    "entity": "2027-bundesversammlung",
+    "entity_type": "election",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "2027 Federal Cumhurbaşkanlığı Seçimi"
+  },
+  {
     "entity": "2027-presidentielle",
     "entity_type": "election",
     "field": "description",
