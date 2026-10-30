@@ -21,6 +21,86 @@
   },
   {
     "closes_at": null,
+    "country": "germany",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Sollte das Staatsoberhaupt direkt von den Bürgerinnen und Bürgern gewählt werden?",
+    "slug": "de-bundespraesident-direktwahl"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Sollten Mieten stärker gesetzlich begrenzt werden?",
+    "slug": "de-mieten-begrenzen"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Sollte auf Autobahnen ein allgemeines Tempolimit gelten?",
+    "slug": "de-tempolimit-autobahn"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "scale",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Wie gut fühlen Sie sich durch den Bundestag vertreten?",
+    "slug": "de-vertretung-bundestag"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Sollte das Wahlalter bei Bundestagswahlen auf 16 Jahre gesenkt werden?",
+    "slug": "de-wahlalter-16"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "yesno",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Sollte die Wehrpflicht wieder eingeführt werden?",
+    "slug": "de-wehrpflicht"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "single",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Welches Thema sollte die Bundespolitik Ihrer Meinung nach zuerst angehen?",
+    "slug": "de-wichtigstes-thema"
+  },
+  {
+    "closes_at": null,
+    "country": "germany",
+    "kind": "scale",
+    "opens_at": null,
+    "party": null,
+    "person": null,
+    "question": "Wie zufrieden sind Sie mit der Arbeit der Bundesregierung?",
+    "slug": "de-zufriedenheit-bundesregierung"
+  },
+  {
+    "closes_at": null,
     "country": null,
     "kind": "single",
     "opens_at": null,

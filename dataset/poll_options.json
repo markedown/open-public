@@ -35,6 +35,171 @@
     "position": 2
   },
   {
+    "label": "Ja",
+    "poll": "de-bundespraesident-direktwahl",
+    "position": 0
+  },
+  {
+    "label": "Nein",
+    "poll": "de-bundespraesident-direktwahl",
+    "position": 1
+  },
+  {
+    "label": "Weiß nicht",
+    "poll": "de-bundespraesident-direktwahl",
+    "position": 2
+  },
+  {
+    "label": "Ja",
+    "poll": "de-mieten-begrenzen",
+    "position": 0
+  },
+  {
+    "label": "Nein",
+    "poll": "de-mieten-begrenzen",
+    "position": 1
+  },
+  {
+    "label": "Weiß nicht",
+    "poll": "de-mieten-begrenzen",
+    "position": 2
+  },
+  {
+    "label": "Ja",
+    "poll": "de-tempolimit-autobahn",
+    "position": 0
+  },
+  {
+    "label": "Nein",
+    "poll": "de-tempolimit-autobahn",
+    "position": 1
+  },
+  {
+    "label": "Weiß nicht",
+    "poll": "de-tempolimit-autobahn",
+    "position": 2
+  },
+  {
+    "label": "Sehr gut",
+    "poll": "de-vertretung-bundestag",
+    "position": 0
+  },
+  {
+    "label": "Eher gut",
+    "poll": "de-vertretung-bundestag",
+    "position": 1
+  },
+  {
+    "label": "Teils, teils",
+    "poll": "de-vertretung-bundestag",
+    "position": 2
+  },
+  {
+    "label": "Eher schlecht",
+    "poll": "de-vertretung-bundestag",
+    "position": 3
+  },
+  {
+    "label": "Sehr schlecht",
+    "poll": "de-vertretung-bundestag",
+    "position": 4
+  },
+  {
+    "label": "Ja",
+    "poll": "de-wahlalter-16",
+    "position": 0
+  },
+  {
+    "label": "Nein",
+    "poll": "de-wahlalter-16",
+    "position": 1
+  },
+  {
+    "label": "Weiß nicht",
+    "poll": "de-wahlalter-16",
+    "position": 2
+  },
+  {
+    "label": "Ja",
+    "poll": "de-wehrpflicht",
+    "position": 0
+  },
+  {
+    "label": "Nein",
+    "poll": "de-wehrpflicht",
+    "position": 1
+  },
+  {
+    "label": "Weiß nicht",
+    "poll": "de-wehrpflicht",
+    "position": 2
+  },
+  {
+    "label": "Wirtschaft und Arbeitsplätze",
+    "poll": "de-wichtigstes-thema",
+    "position": 0
+  },
+  {
+    "label": "Migration",
+    "poll": "de-wichtigstes-thema",
+    "position": 1
+  },
+  {
+    "label": "Klima und Energie",
+    "poll": "de-wichtigstes-thema",
+    "position": 2
+  },
+  {
+    "label": "Rente und Soziales",
+    "poll": "de-wichtigstes-thema",
+    "position": 3
+  },
+  {
+    "label": "Sicherheit und Verteidigung",
+    "poll": "de-wichtigstes-thema",
+    "position": 4
+  },
+  {
+    "label": "Bildung",
+    "poll": "de-wichtigstes-thema",
+    "position": 5
+  },
+  {
+    "label": "Wohnen",
+    "poll": "de-wichtigstes-thema",
+    "position": 6
+  },
+  {
+    "label": "Gesundheit und Pflege",
+    "poll": "de-wichtigstes-thema",
+    "position": 7
+  },
+  {
+    "label": "Sehr zufrieden",
+    "poll": "de-zufriedenheit-bundesregierung",
+    "position": 0
+  },
+  {
+    "label": "Eher zufrieden",
+    "poll": "de-zufriedenheit-bundesregierung",
+    "position": 1
+  },
+  {
+    "label": "Teils, teils",
+    "poll": "de-zufriedenheit-bundesregierung",
+    "position": 2
+  },
+  {
+    "label": "Eher unzufrieden",
+    "poll": "de-zufriedenheit-bundesregierung",
+    "position": 3
+  },
+  {
+    "label": "Sehr unzufrieden",
+    "poll": "de-zufriedenheit-bundesregierung",
+    "position": 4
+  },
+  {
     "label": "Evet",
     "poll": "muhalefet-yeterince-etkili-mi",
     "position": 1
