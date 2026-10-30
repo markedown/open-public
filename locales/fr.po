@@ -1288,3 +1288,30 @@ msgstr "Naissance"
 
 msgid "Country"
 msgstr "Pays"
+
+msgid "Germany"
+msgstr "Allemagne"
+
+msgid "France"
+msgstr "France"
+
+msgid "Serbia"
+msgstr "Serbie"
+
+msgid "Türkiye"
+msgstr "Turquie"
+
+msgid "United Kingdom"
+msgstr "Royaume-Uni"
+
+msgid "United States"
+msgstr "États-Unis"
+
+msgid "Belgrade"
+msgstr "Belgrade"
+
+msgid "Paris"
+msgstr "Paris"
+
+msgid "London"
+msgstr "Londres"

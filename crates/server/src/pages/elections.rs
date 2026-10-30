@@ -48,7 +48,7 @@ pub async fn list(
     let content = html! {
         section {
             (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: None },
             ]))
             (ui::page_header(i18n::t("Elections"), None, None))
@@ -166,7 +166,7 @@ pub async fn detail(
     let content = html! {
         article {
             (ui::election::election_detail(&election, &rows, prev.as_ref(), &country.slug, &[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Elections").to_string(), href: Some(format!("/{}/elections", country.slug)) },
                 Crumb { label: election.name.clone(), href: None },
             ]))

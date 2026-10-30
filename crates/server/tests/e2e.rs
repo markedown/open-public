@@ -4244,6 +4244,77 @@ async fn rich_country_detail_renders_seats_chambers_alliances(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn a_country_speaks_the_readers_language(pool: db::Pool) {
+    let src = db::sources::insert_source(&pool, "manual", "https://ex.test/c", None, Some("hc"))
+        .await
+        .unwrap();
+    let cid: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, capital, founded_date, source_id) \
+         values ('Serbia','rs-test','Belgrade','2006-06-05',$1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    // A head of government and a minister: one gets a card, the other a row.
+    for (name, slug, role, title) in [
+        (
+            "Testa Premijer",
+            "t-premijer",
+            "prime_minister",
+            "Premijerka",
+        ),
+        (
+            "Testa Ministar",
+            "t-ministar",
+            "minister",
+            "Ministarka finansija",
+        ),
+    ] {
+        let id: i64 = sqlx::query_scalar(
+            "insert into people (full_name, slug, source_id, country_id) values ($1,$2,$3,$4) returning id",
+        )
+        .bind(name)
+        .bind(slug)
+        .bind(src)
+        .bind(cid)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        db::people::upsert_role(
+            &pool,
+            id,
+            role,
+            Some(title),
+            Some("Vlada"),
+            None,
+            NaiveDate::from_ymd_opt(2025, 5, 6),
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+    let app = router(pool);
+
+    let de = body_string(get_cookie(&app, "/rs-test", "lang=de").await).await;
+    assert!(de.contains("Serbien"), "the country name is translated");
+    assert!(de.contains("Belgrad"), "and the capital");
+    assert!(!de.contains(">Serbia<"));
+    // German writes the day as an ordinal, without a leading zero.
+    assert!(de.contains("5. Jun 2006"));
+    assert!(de.contains("6. Mai 2025"));
+    // The head of government has a large card, the minister a compact row.
+    assert!(de.contains("Testa Premijer"));
+    assert!(de.contains("Testa Ministar"));
+    assert!(de.contains("size-10"));
+
+    let en = body_string(get_cookie(&app, "/rs-test", "lang=en").await).await;
+    assert!(en.contains("Serbia"));
+    assert!(en.contains("6 May 2025"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn people_list_paginates(pool: db::Pool) {
     let src = db::sources::insert_source(&pool, "manual", "https://ex.test/p", None, Some("hp"))
         .await

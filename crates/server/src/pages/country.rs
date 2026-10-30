@@ -148,13 +148,16 @@ pub async fn detail(
         total_seats
     };
     let next = next_elections.first();
+    // Heads of state and government get a card each; ministers a compact list.
+    let (ministers, heads): (Vec<_>, Vec<_>) =
+        government.iter().partition(|m| m.role_type == "minister");
 
     let content = html! {
         article {
             (ui::hero_band(html! {
                 (ui::breadcrumb::trail(&[
                     ui::breadcrumb::Crumb { label: i18n::t("Countries").to_string(), href: Some("/".to_string()) },
-                    ui::breadcrumb::Crumb { label: country.name.clone(), href: None },
+                    ui::breadcrumb::Crumb { label: i18n::t_dyn(&country.name).to_string(), href: None },
                 ]))
                 div class="mt-4 flex flex-wrap items-start justify-between gap-4" {
                     div class="flex items-center gap-4" {
@@ -163,7 +166,7 @@ pub async fn detail(
                                 class="h-10 w-auto shrink-0 rounded-md border border-hairline";
                         }
                         h1 class="text-[42px] font-extrabold leading-[1.05] tracking-tight text-ink sm:text-[50px]" {
-                            (country.name)
+                            (i18n::t_dyn(&country.name))
                         }
                     }
                     (ui::follow::button("country", country.id, follow_state, &follow_next))
@@ -174,7 +177,7 @@ pub async fn detail(
                     }
                     @if let Some(ref c) = country.capital {
                         @if country.government_type.is_some() { " · " }
-                        (i18n::t("Capital")) ": " (c)
+                        (i18n::t("Capital")) ": " (i18n::t_dyn(c))
                     }
                     @if let Some(fd) = country.founded_date {
                         " · " (i18n::t("Founded")) " " (fmt::date(Some(fd)))
@@ -230,7 +233,7 @@ pub async fn detail(
                         (counts.people > 0).then(|| ui::see_all_link(&format!("/{}/people", country.slug))),
                     ))
                     div class="grid gap-4 sm:grid-cols-2" {
-                        @for m in &government {
+                        @for m in heads {
                             a href={"/" (country.slug) "/people/" (m.person_slug)}
                               class="op-card op-card-link flex items-center gap-4 px-5 py-4" {
                                 (ui::portrait(m.photo_url.as_deref(), &m.person_name, "size-16"))
@@ -242,6 +245,26 @@ pub async fn detail(
                                     @if let Some(d) = m.start_date {
                                         span class="block text-[15px] text-ink-muted" {
                                             (i18n::t("In office since")) " " (fmt::date(Some(d)))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // A cabinet can run to twenty people, so ministers are listed
+                    // compactly rather than pushing the chamber off the page.
+                    @if !ministers.is_empty() {
+                        ul class="mt-5 grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3" {
+                            @for m in ministers {
+                                li class="border-b border-hairline-light" {
+                                    a href={"/" (country.slug) "/people/" (m.person_slug)}
+                                      class="flex items-center gap-3 py-2.5" {
+                                        (ui::portrait(m.photo_url.as_deref(), &m.person_name, "size-10"))
+                                        span class="min-w-0" {
+                                            span class="op-link block text-[16px] font-semibold" { (m.person_name) }
+                                            @if let Some(ref t) = m.title {
+                                                span class="block text-[14px] leading-snug text-ink-muted" { (t) }
+                                            }
                                         }
                                     }
                                 }
@@ -335,7 +358,7 @@ pub async fn detail(
     let description = summary.map(str::to_string).unwrap_or_else(|| {
         format!(
             "{} · {} {} · {} {}",
-            country.name,
+            i18n::t_dyn(&country.name),
             counts.people,
             i18n::t("People"),
             counts.parties,
@@ -344,7 +367,7 @@ pub async fn detail(
     });
 
     Ok(ui::layout::document_described(
-        Some(&country.name),
+        Some(i18n::t_dyn(&country.name)),
         Some(&description),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),

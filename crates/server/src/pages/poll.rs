@@ -70,7 +70,7 @@ pub async fn detail(
         html! {
             section class="mx-auto max-w-xl" {
                 (ui::breadcrumb::breadcrumbs(&[
-                    Crumb { label: country_model.name.clone(), href: Some(format!("/{}", country_model.slug)) },
+                    Crumb { label: i18n::t_dyn(&country_model.name).to_string(), href: Some(format!("/{}", country_model.slug)) },
                     Crumb { label: i18n::t("Polls").to_string(), href: Some(format!("/{}/polls", country_model.slug)) },
                     Crumb { label: poll.question.clone(), href: None },
                 ]))

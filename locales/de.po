@@ -1288,3 +1288,30 @@ msgstr "Geboren"
 
 msgid "Country"
 msgstr "Land"
+
+msgid "Germany"
+msgstr "Deutschland"
+
+msgid "France"
+msgstr "Frankreich"
+
+msgid "Serbia"
+msgstr "Serbien"
+
+msgid "Türkiye"
+msgstr "Türkei"
+
+msgid "United Kingdom"
+msgstr "Vereinigtes Königreich"
+
+msgid "United States"
+msgstr "Vereinigte Staaten"
+
+msgid "Belgrade"
+msgstr "Belgrad"
+
+msgid "Paris"
+msgstr "Paris"
+
+msgid "London"
+msgstr "London"

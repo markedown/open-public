@@ -1300,3 +1300,30 @@ msgstr "Doğum"
 
 msgid "Country"
 msgstr "Ülke"
+
+msgid "Germany"
+msgstr "Almanya"
+
+msgid "France"
+msgstr "Fransa"
+
+msgid "Serbia"
+msgstr "Sırbistan"
+
+msgid "Türkiye"
+msgstr "Türkiye"
+
+msgid "United Kingdom"
+msgstr "Birleşik Krallık"
+
+msgid "United States"
+msgstr "Amerika Birleşik Devletleri"
+
+msgid "Belgrade"
+msgstr "Belgrad"
+
+msgid "Paris"
+msgstr "Paris"
+
+msgid "London"
+msgstr "Londra"

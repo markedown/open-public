@@ -97,7 +97,7 @@ pub async fn page(
                                         }
                                         @if let Some(country) = &hit.country {
                                             span class="ml-auto shrink-0 text-[14px] text-ink-muted" {
-                                                (country.name)
+                                                (i18n::t_dyn(&country.name))
                                             }
                                         }
                                         @if href.is_some() {

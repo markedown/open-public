@@ -1288,3 +1288,30 @@ msgstr "Rođen(a)"
 
 msgid "Country"
 msgstr "Zemlja"
+
+msgid "Germany"
+msgstr "Nemačka"
+
+msgid "France"
+msgstr "Francuska"
+
+msgid "Serbia"
+msgstr "Srbija"
+
+msgid "Türkiye"
+msgstr "Turska"
+
+msgid "United Kingdom"
+msgstr "Ujedinjeno Kraljevstvo"
+
+msgid "United States"
+msgstr "Sjedinjene Američke Države"
+
+msgid "Belgrade"
+msgstr "Beograd"
+
+msgid "Paris"
+msgstr "Pariz"
+
+msgid "London"
+msgstr "London"

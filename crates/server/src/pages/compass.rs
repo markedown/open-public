@@ -175,7 +175,7 @@ async fn form_scoped(
     let content = html! {
         section class="mx-auto max-w-3xl" {
             (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Compass").to_string(), href: None },
             ]))
             (ui::page_header(
@@ -403,7 +403,7 @@ async fn result_scoped(
     let content = html! {
         section class="mx-auto max-w-3xl" {
             (ui::breadcrumb::breadcrumbs(&[
-                Crumb { label: country.name.clone(), href: Some(format!("/{}", country.slug)) },
+                Crumb { label: i18n::t_dyn(&country.name).to_string(), href: Some(format!("/{}", country.slug)) },
                 Crumb { label: i18n::t("Compass").to_string(), href: Some(compass_url.clone()) },
                 Crumb { label: i18n::t("Your match").to_string(), href: None },
             ]))
@@ -477,7 +477,7 @@ fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Marku
             (ui::badge::party_chip(label, c.colour.as_deref()))
             div class="min-w-0 flex-1" {
                 a href=(c.href)
-                  class="text-[16px] font-medium text-ink hover:text-link hover:underline" { (c.name) }
+                  class="text-[16px] font-medium text-ink hover:text-link hover:underline" { (i18n::t_dyn(&c.name)) }
                 div class="mt-1.5 h-2 overflow-hidden rounded-full bg-paper-sunken" {
                     div class="h-full rounded-full"
                       style={(width) ";background-color:" (c.colour.as_deref().unwrap_or("#33527a"))} {}
