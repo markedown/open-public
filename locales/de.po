@@ -1392,3 +1392,72 @@ msgstr "Kompass starten"
 
 msgid "Have a question for others?"
 msgstr "Haben Sie eine Frage an andere?"
+
+msgid "Closest to you, by topic"
+msgstr "Wer Ihnen je Thema am nächsten steht"
+
+msgid "How do your members vote?"
+msgstr "Wie stimmen Ihre Abgeordneten ab?"
+
+msgid "Compare your answers with how the members for your area actually voted. Your place is not stored."
+msgstr "Vergleichen Sie Ihre Antworten damit, wie die Abgeordneten aus Ihrer Gegend tatsächlich abgestimmt haben. Ihr Wohnort wird nicht gespeichert."
+
+msgid "Town or municipality"
+msgstr "Stadt oder Gemeinde"
+
+msgid "Compare"
+msgstr "Vergleichen"
+
+msgid "No place found."
+msgstr "Kein Ort gefunden."
+
+msgid "Which one is yours?"
+msgstr "Welcher ist Ihrer?"
+
+msgid "Elected here"
+msgstr "Direkt gewählt"
+
+msgid "On the regional list"
+msgstr "Über die Landesliste"
+
+msgid "Show all"
+msgstr "Alle anzeigen"
+
+msgid "No member elected in this constituency holds a seat at present."
+msgstr "Aus diesem Wahlkreis sitzt zurzeit kein direkt gewähltes Mitglied im Parlament."
+
+msgid "This rests only on recorded votes linked to the positions you answered. A member who was absent, or who followed their group in voting down an opposition motion, is not counted on that position."
+msgstr "Das beruht nur auf namentlichen Abstimmungen zu den Thesen, die Sie beantwortet haben. Wer fehlte oder mit der eigenen Fraktion einen Oppositionsantrag ablehnte, zählt bei dieser These nicht."
+
+msgid "further members have no vote we can read on your answers."
+msgstr "weitere Abgeordnete haben keine Stimme, die wir zu Ihren Antworten auswerten können."
+
+msgid "Economy and taxes"
+msgstr "Wirtschaft und Steuern"
+
+msgid "Work and social policy"
+msgstr "Arbeit und Soziales"
+
+msgid "Housing"
+msgstr "Wohnen"
+
+msgid "Health"
+msgstr "Gesundheit"
+
+msgid "Migration and citizenship"
+msgstr "Migration und Staatsbürgerschaft"
+
+msgid "Energy and climate"
+msgstr "Energie und Klima"
+
+msgid "Foreign policy and defence"
+msgstr "Außenpolitik und Verteidigung"
+
+msgid "Europe"
+msgstr "Europa"
+
+msgid "Democracy and rights"
+msgstr "Demokratie und Grundrechte"
+
+msgid "Society"
+msgstr "Gesellschaft"

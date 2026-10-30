@@ -106,6 +106,30 @@ pub fn score(answers: &[Answer], stances: &[Stance]) -> Vec<ContestantScore> {
     scores
 }
 
+/// Which contestant stands in for which, where several rest on exactly the same
+/// evidence.
+///
+/// Two parties that share one programme and vote as one group are a single
+/// measurement, and scoring them separately would count that measurement twice.
+/// Each contestant's evidence arrives as a list of comparable signatures; those
+/// with identical, non-empty lists map to the lowest id among them, and every
+/// other contestant maps to itself.
+pub fn merge_identical(evidence: &BTreeMap<i64, Vec<String>>) -> BTreeMap<i64, i64> {
+    let mut first: BTreeMap<Vec<String>, i64> = BTreeMap::new();
+    let mut out = BTreeMap::new();
+    for (&id, signature) in evidence {
+        let mut key = signature.clone();
+        key.sort();
+        let stands_for = if key.is_empty() {
+            id
+        } else {
+            *first.entry(key).or_insert(id)
+        };
+        out.insert(id, stands_for);
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -331,5 +355,22 @@ mod tests {
             scores.iter().map(|s| s.contestant_id).collect::<Vec<_>>(),
             vec![10, 20, 30]
         );
+    }
+
+    #[test]
+    fn identical_evidence_merges_onto_the_lowest_id() {
+        let mut e = BTreeMap::new();
+        e.insert(5, vec!["a".to_string(), "b".to_string()]);
+        e.insert(2, vec!["b".to_string(), "a".to_string()]);
+        e.insert(7, vec!["a".to_string()]);
+        e.insert(9, vec![]);
+        e.insert(11, vec![]);
+        let m = merge_identical(&e);
+        assert_eq!(m[&2], 2);
+        assert_eq!(m[&5], 2);
+        assert_eq!(m[&7], 7);
+        // Having no evidence is not sameness.
+        assert_eq!(m[&9], 9);
+        assert_eq!(m[&11], 11);
     }
 }

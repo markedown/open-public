@@ -9070,6 +9070,359 @@ async fn an_image_that_cannot_be_used_is_counted_and_not_stored(pool: db::Pool) 
     assert_eq!((pass.copied, pass.failed), (0, 2));
 }
 
+/// Link the seeded roll call to a thesis and give its members seats. Returns the
+/// thesis id. Test Partisi's vote is read as evidence only when `read_party`.
+async fn compass_vote_fixture(pool: &db::Pool, read_party: bool) -> i64 {
+    seed_roll_call(pool).await;
+    let (country_id, src) = compass_country_and_source(pool).await;
+    let topic = |name: &'static str, slug: &'static str| async move {
+        sqlx::query_scalar::<_, i64>("insert into topics (name, slug) values ($1, $2) returning id")
+            .bind(name)
+            .bind(slug)
+            .fetch_one(pool)
+            .await
+            .unwrap()
+    };
+    let economy = topic("Economy and taxes", "economy").await;
+    let energy = topic("Energy and climate", "energy").await;
+    let thesis = db::compass::add_thesis(
+        pool,
+        country_id,
+        "Test yasasi cikmalidir.",
+        Some(economy),
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let other = db::compass::add_thesis(
+        pool,
+        country_id,
+        "Nukleer santral kurulmalidir.",
+        Some(energy),
+        2,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let (tp, dp) = two_parties(pool, country_id, src).await;
+    let rc: i64 = sqlx::query_scalar("select id from roll_calls where slug = 'test-oylamasi'")
+        .fetch_one(pool)
+        .await
+        .unwrap();
+    sqlx::query(
+        "insert into thesis_roll_calls (thesis_id, roll_call_id, yes_stance, no_stance, note) \
+         values ($1, $2, 2, -2, 'Why')",
+    )
+    .bind(thesis)
+    .bind(rc)
+    .execute(pool)
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        pool,
+        other,
+        db::compass::SCOPE_PARTY,
+        tp,
+        "manifesto",
+        2,
+        None,
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        pool,
+        other,
+        db::compass::SCOPE_PARTY,
+        dp,
+        "manifesto",
+        -2,
+        None,
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    db::compass::add_evidence(
+        pool,
+        thesis,
+        db::compass::SCOPE_PARTY,
+        dp,
+        "manifesto",
+        -2,
+        None,
+        None,
+        None,
+        src,
+    )
+    .await
+    .unwrap();
+    if read_party {
+        sqlx::query(
+            "insert into position_evidence \
+               (thesis_id, party_id, kind, stance, source_id, roll_call_id) \
+             values ($1, $2, 'vote', 2, $3, $4)",
+        )
+        .bind(thesis)
+        .bind(tp)
+        .bind(src)
+        .bind(rc)
+        .execute(pool)
+        .await
+        .unwrap();
+    }
+    // Two members elected in the constituency, one on the list; several places
+    // answer to one name, and one constituency has nobody elected in it.
+    for (slug, district) in [
+        ("uye-bir", "Wahlkreis 1: Bir"),
+        ("uye-uc", "Wahlkreis 1: Bir"),
+        ("uye-iki", "Landesliste Test"),
+        ("uye-dort", "Landesliste Test"),
+    ] {
+        sqlx::query(
+            "insert into roles (person_id, role_type, title, org, district, start_date, source_id) \
+             select id, 'mp', 'Uye', 'Meclis', $2, '2025-01-01', $3 from people where slug = $1",
+        )
+        .bind(slug)
+        .bind(district)
+        .bind(src)
+        .execute(pool)
+        .await
+        .unwrap();
+    }
+    for (place, plz, district, region) in [
+        (
+            "Birstadt",
+            Some("11111"),
+            "Wahlkreis 1: Bir",
+            Some("Landesliste Test"),
+        ),
+        ("Ikiburg", None, "Wahlkreis 2: Iki", Some("Landesliste Yok")),
+        (
+            "Ikiburg",
+            None,
+            "Wahlkreis 1: Bir",
+            Some("Landesliste Test"),
+        ),
+    ] {
+        sqlx::query(
+            "insert into constituency_places \
+               (country_id, place, postal_code, district, region, source_id) \
+             values ($1, $2, $3, $4, $5, $6)",
+        )
+        .bind(country_id)
+        .bind(place)
+        .bind(plz)
+        .bind(district)
+        .bind(region)
+        .bind(src)
+        .execute(pool)
+        .await
+        .unwrap();
+    }
+    thesis
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_result_compares_your_members_on_their_own_votes(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let thesis = compass_vote_fixture(&pool, true).await;
+    let answer = format!("a{thesis}=2");
+
+    // The question appears, and carries the answers back in hidden fields.
+    let body = body_string(post_form(&app, "/tr/compass", &answer, Some("lang=en")).await).await;
+    assert!(body.contains("How do your members vote?"));
+    assert!(body.contains(&format!(r#"name="a{thesis}" value="2""#)));
+    // The vote behind the party's stance is one click away.
+    assert!(body.contains("/tr/vote/test-oylamasi"));
+
+    // One place: members for the constituency and the list, each on their votes.
+    let form = format!("{answer}&place=birstadt");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("Elected here"));
+    assert!(body.contains("On the regional list"));
+    assert!(body.contains("Uye Bir"));
+    assert!(body.contains("/tr/people/uye-uc/votes"));
+    // Agreeing with the yes side: the member who voted yes is 100%, no is 0%.
+    let bir = body.find("Uye Bir").unwrap();
+    let uc = body.find("Uye Uc").unwrap();
+    assert!(body[bir..].contains("100%") && body[uc..].contains("0%"));
+    // The member who was absent has no reading and is counted as such.
+    assert!(body.contains("further members have no vote"));
+
+    // Also found by the postal code on record, and ignoring case and accents.
+    let by_code = format!("{answer}&place=11111");
+    let body = body_string(post_form(&app, "/tr/compass", &by_code, Some("lang=en")).await).await;
+    assert!(body.contains("Elected here"));
+
+    // A name with several constituencies asks which, then answers for that one.
+    let form = format!("{answer}&place=Ikiburg");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("Which one is yours?"));
+    assert!(body.contains("Wahlkreis 2: Iki"));
+    let id: i64 = sqlx::query_scalar(
+        "select id from constituency_places where place = 'Ikiburg' and district = 'Wahlkreis 2: Iki'",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let form = format!("{answer}&place=Ikiburg&place_id={id}");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("No member elected in this constituency"));
+
+    // Nothing matches.
+    let form = format!("{answer}&place=Yokyer");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("No place found."));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_member_following_an_unread_party_line_is_not_counted(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // The party's vote is not read as evidence: the two yes votes are its line,
+    // so only the member who broke from it says something.
+    let thesis = compass_vote_fixture(&pool, false).await;
+    let stances = db::compass::member_stances(
+        &pool,
+        sqlx::query_scalar("select id from countries where slug = 'tr'")
+            .fetch_one(&pool)
+            .await
+            .unwrap(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(stances.len(), 1);
+    assert_eq!(stances[0].stance, -2);
+
+    let form = format!("a{thesis}=-2&place=birstadt");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("Uye Uc"));
+    assert!(!body.contains("/tr/people/uye-bir/votes"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_long_regional_list_folds_and_topics_compare_separately(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let thesis = compass_vote_fixture(&pool, true).await;
+    let other: i64 = sqlx::query_scalar("select id from theses where position = 2")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let country: i64 = sqlx::query_scalar("select id from countries where slug = 'tr'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let src: i64 = sqlx::query_scalar("select source_id from theses where id = $1")
+        .bind(thesis)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let rc: i64 = sqlx::query_scalar("select id from roll_calls where slug = 'test-oylamasi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    for i in 0..7 {
+        let person: i64 = sqlx::query_scalar(
+            "insert into people (full_name, slug, source_id, country_id) \
+             values ($1, $2, $3, $4) returning id",
+        )
+        .bind(format!("Liste Uye {i}"))
+        .bind(format!("liste-uye-{i}"))
+        .bind(src)
+        .bind(country)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+        sqlx::query(
+            "insert into roles (person_id, role_type, title, org, district, start_date, source_id) \
+             values ($1, 'mp', 'Uye', 'Meclis', 'Landesliste Test', '2025-01-01', $2)",
+        )
+        .bind(person)
+        .bind(src)
+        .execute(&pool)
+        .await
+        .unwrap();
+        sqlx::query(
+            "insert into roll_call_votes (roll_call_id, person_id, choice) values ($1, $2, 'yes')",
+        )
+        .bind(rc)
+        .bind(person)
+        .execute(&pool)
+        .await
+        .unwrap();
+    }
+    let form = format!("a{thesis}=2&a{other}=-2&w{thesis}=1&place=birstadt");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("Show all"));
+    assert!(body.contains(r#"name="w"#));
+    // On one topic one party is closest, on the other topic the other.
+    assert!(body.contains("Closest to you, by topic"));
+    assert!(body.contains("Economy and taxes"));
+    assert!(body.contains("Energy and climate"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn parties_on_the_same_evidence_are_one_row(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let thesis = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Ortak program.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let (tp, dp) = two_parties(&pool, country_id, src).await;
+    for party in [tp, dp] {
+        db::compass::add_evidence(
+            &pool,
+            thesis,
+            db::compass::SCOPE_PARTY,
+            party,
+            "manifesto",
+            2,
+            None,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+    let body = body_string(
+        post_form(
+            &app,
+            "/tr/compass",
+            &format!("a{thesis}=2"),
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    // One ranked row, carrying both parties' chips. The second party's own row,
+    // which would link to its page, is gone.
+    assert!(body.contains("/tr/parties/test-partisi"));
+    assert!(!body.contains("/tr/parties/diger-parti"));
+    assert!(body.contains(">DP<"));
+    // A single topic has nothing to compare, and no votes means no member section.
+    assert!(!body.contains("Closest to you, by topic"));
+    assert!(!body.contains("How do your members vote?"));
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn long_lists_of_votes_are_paged(pool: db::Pool) {
     seed(&pool).await;

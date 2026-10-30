@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select e.thesis_id,\n               coalesce(e.person_id, e.party_id) as \"contestant_id!\",\n               e.kind, e.stance, e.quote, e.locator, e.occurred_on,\n               s.url as source_url, s.snapshot_url\n        from position_evidence e\n        join theses t on t.id = e.thesis_id\n        join sources s on s.id = e.source_id\n        where t.country_id = $1 and t.scope = $3\n          and case when $3 = 'person' then e.person_id else e.party_id end is not null\n        order by e.thesis_id, coalesce(e.person_id, e.party_id),\n                 case when e.kind = any($2) then 0 else 1 end,\n                 e.occurred_on desc nulls last, e.id desc\n        ",
+  "query": "\n        select e.thesis_id,\n               coalesce(e.person_id, e.party_id) as \"contestant_id!\",\n               e.kind, e.stance, e.quote, e.locator, e.occurred_on,\n               s.url as source_url, s.snapshot_url,\n               r.slug as \"roll_call_slug?\"\n        from position_evidence e\n        join theses t on t.id = e.thesis_id\n        join sources s on s.id = e.source_id\n        left join roll_calls r on r.id = e.roll_call_id\n        where t.country_id = $1 and t.scope = $3\n          and case when $3 = 'person' then e.person_id else e.party_id end is not null\n        order by e.thesis_id, coalesce(e.person_id, e.party_id),\n                 case when e.kind = any($2) then 0 else 1 end,\n                 e.occurred_on desc nulls last, e.id desc\n        ",
   "describe": {
     "columns": [
       {
@@ -96,6 +96,17 @@
             "name": "snapshot_url"
           }
         }
+      },
+      {
+        "ordinal": 9,
+        "name": "roll_call_slug?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "slug"
+          }
+        }
       }
     ],
     "parameters": {
@@ -114,8 +125,9 @@
       true,
       true,
       false,
-      true
+      true,
+      false
     ]
   },
-  "hash": "f8dfb74241b7f8c78c005a84a3a1e2249008618d92ec8b6823275ecb1e271790"
+  "hash": "a2c4ea04d6f966adc7f836e4eae744ca27915f4963653125af33bb073cfdfac4"
 }

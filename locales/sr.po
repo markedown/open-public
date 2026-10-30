@@ -1392,3 +1392,72 @@ msgstr "Pokrenite kompas"
 
 msgid "Have a question for others?"
 msgstr "Imate pitanje za druge?"
+
+msgid "Closest to you, by topic"
+msgstr "Najbliži vama, po temi"
+
+msgid "How do your members vote?"
+msgstr "Kako glasaju vaši poslanici?"
+
+msgid "Compare your answers with how the members for your area actually voted. Your place is not stored."
+msgstr "Uporedite svoje odgovore sa tim kako su poslanici iz vašeg kraja zaista glasali. Vaše mesto se ne čuva."
+
+msgid "Town or municipality"
+msgstr "Grad ili opština"
+
+msgid "Compare"
+msgstr "Uporedite"
+
+msgid "No place found."
+msgstr "Mesto nije pronađeno."
+
+msgid "Which one is yours?"
+msgstr "Koje je vaše?"
+
+msgid "Elected here"
+msgstr "Izabrani ovde"
+
+msgid "On the regional list"
+msgstr "Na regionalnoj listi"
+
+msgid "Show all"
+msgstr "Prikaži sve"
+
+msgid "No member elected in this constituency holds a seat at present."
+msgstr "Iz ove izborne jedinice trenutno nema izabranog poslanika u parlamentu."
+
+msgid "This rests only on recorded votes linked to the positions you answered. A member who was absent, or who followed their group in voting down an opposition motion, is not counted on that position."
+msgstr "Ovo se oslanja samo na poimenična glasanja povezana sa tezama na koje ste odgovorili. Poslanik koji je bio odsutan, ili je sa svojom grupom odbio predlog opozicije, ne računa se na toj tezi."
+
+msgid "further members have no vote we can read on your answers."
+msgstr "poslanika više nema glas koji možemo da uporedimo sa vašim odgovorima."
+
+msgid "Economy and taxes"
+msgstr "Privreda i porezi"
+
+msgid "Work and social policy"
+msgstr "Rad i socijalna politika"
+
+msgid "Housing"
+msgstr "Stanovanje"
+
+msgid "Health"
+msgstr "Zdravstvo"
+
+msgid "Migration and citizenship"
+msgstr "Migracije i državljanstvo"
+
+msgid "Energy and climate"
+msgstr "Energetika i klima"
+
+msgid "Foreign policy and defence"
+msgstr "Spoljna politika i odbrana"
+
+msgid "Europe"
+msgstr "Evropa"
+
+msgid "Democracy and rights"
+msgstr "Demokratija i prava"
+
+msgid "Society"
+msgstr "Društvo"

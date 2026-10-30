@@ -94,8 +94,22 @@ both are deliberate.
 - Opposition parties can be judged on their record too, which is why tabling a bill and going to court
   count as action. Without them, only whoever holds power could ever be measured by deeds.
 
+A vote is read per party, and sometimes only on one side. A governing party voting down an opposition
+motion is not evidence it opposes the subject, so that reading is left out and its programme still
+speaks for it. `thesis_roll_calls` records how each side of a vote reads on a thesis, which also lets a
+visitor's answers be compared with one member's own votes. A member's vote counts when their party's
+vote was read on that thesis, or when they broke from their party's line. Contestants resting on
+exactly the same evidence, such as two parties with one programme and one parliamentary group, are one
+measurement and are scored and shown as one row.
+
+`scripts/check_compass.py` measures what wording and coverage do to the result, from the published data
+alone: whether saying yes to everything favours a side, whether every thesis separates someone, whether
+a party's figure rests on enough stances. It reports the share of random voters each party attracts but
+does not enforce it, because a party in the middle is closer to a moderate voter for a real reason.
+
 The questionnaire itself is stateless and anonymous: answers arrive in the POST body, drive the score
-in memory, and are gone when the response is rendered. Nothing a visitor enters is stored or logged.
+in memory, and are gone when the response is rendered. A place typed to find one's members is handled
+the same way. Nothing a visitor enters is stored or logged.
 
 ## The published dataset
 

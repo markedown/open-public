@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update position_evidence set roll_call_id = $1\n             where thesis_id = $2 and kind = $3 and source_id = $4\n               and party_id is not distinct from $5 and person_id is not distinct from $6",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Text",
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "0d8f10c3fe548980ab82a302da5d78231ed395deb70e7082fae9bdd7075e765f"
+}

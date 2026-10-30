@@ -289,6 +289,26 @@ row!(Evidence {
     quote: Option<String>,
     locator: Option<String>,
     occurred_on: Option<NaiveDate>,
+    roll_call: Option<String>,
+});
+
+#[derive(Deserialize)]
+struct ThesisRollCall {
+    country: String,
+    thesis: String,
+    roll_call: String,
+    yes_stance: Option<i16>,
+    no_stance: Option<i16>,
+    note: String,
+}
+
+row!(ConstituencyPlace {
+    country: String,
+    place: String,
+    part: Option<String>,
+    postal_code: Option<String>,
+    district: String,
+    region: Option<String>,
 });
 
 #[derive(Deserialize)]
@@ -794,10 +814,11 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         let id = match existing {
             Some(id) => {
                 sqlx::query!(
-                    "update theses set position = $2, scope = $3 where id = $1",
+                    "update theses set position = $2, scope = $3, topic_id = $4 where id = $1",
                     id,
                     t.position,
                     t.scope,
+                    t.topic.as_ref().and_then(|x| topics.get(x)).copied(),
                 )
                 .execute(pool)
                 .await?;
@@ -889,6 +910,7 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         n.other += 1;
     }
 
+    let mut roll_calls: HashMap<String, i64> = HashMap::new();
     for r in read::<RollCall>(dir, "roll_calls")? {
         let source_id = src!(r, format!("roll call {}", r.slug));
         let Some(&country_id) = countries.get(&r.country) else {
@@ -908,6 +930,7 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         )
         .fetch_one(pool)
         .await?;
+        roll_calls.insert(r.slug.clone(), id);
         let mut member_ids = Vec::new();
         let mut choices = Vec::new();
         for (choice, names) in [
@@ -934,6 +957,83 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
             id,
             &member_ids,
             &choices,
+        )
+        .execute(pool)
+        .await?;
+        n.other += 1;
+    }
+
+    // Roll calls load after the evidence that points at them, so the pointer is
+    // set here, and the readings of each vote with it.
+    for e in read::<Evidence>(dir, "position_evidence")? {
+        let Some(slug) = &e.roll_call else { continue };
+        let Some(&roll_call_id) = roll_calls.get(slug) else {
+            anyhow::bail!("evidence names a roll call not in the dataset: {slug}");
+        };
+        let Some(&thesis_id) = theses.get(&(e.country.clone(), e.thesis.clone())) else {
+            anyhow::bail!("evidence names a thesis not in the dataset");
+        };
+        let source_id = src!(e, "evidence");
+        sqlx::query!(
+            "update position_evidence set roll_call_id = $1
+             where thesis_id = $2 and kind = $3 and source_id = $4
+               and party_id is not distinct from $5 and person_id is not distinct from $6",
+            roll_call_id,
+            thesis_id,
+            e.kind,
+            source_id,
+            e.party.as_ref().and_then(|p| parties.get(p)).copied(),
+            e.person.as_ref().and_then(|p| people.get(p)).copied(),
+        )
+        .execute(pool)
+        .await?;
+    }
+
+    for l in read::<ThesisRollCall>(dir, "thesis_roll_calls")? {
+        let Some(&thesis_id) = theses.get(&(l.country.clone(), l.thesis.clone())) else {
+            anyhow::bail!("a vote reading names a thesis not in the dataset");
+        };
+        let Some(&roll_call_id) = roll_calls.get(&l.roll_call) else {
+            anyhow::bail!(
+                "a vote reading names a roll call not in the dataset: {}",
+                l.roll_call
+            );
+        };
+        sqlx::query!(
+            "insert into thesis_roll_calls (thesis_id, roll_call_id, yes_stance, no_stance, note)
+             values ($1, $2, $3, $4, $5)
+             on conflict (thesis_id, roll_call_id) do update set
+               yes_stance = excluded.yes_stance, no_stance = excluded.no_stance,
+               note = excluded.note",
+            thesis_id,
+            roll_call_id,
+            l.yes_stance,
+            l.no_stance,
+            l.note,
+        )
+        .execute(pool)
+        .await?;
+        n.other += 1;
+    }
+
+    for p in read::<ConstituencyPlace>(dir, "constituency_places")? {
+        let source_id = src!(p, format!("place {}", p.place));
+        let Some(&country_id) = countries.get(&p.country) else {
+            anyhow::bail!("a place names a country not in the dataset: {}", p.country);
+        };
+        sqlx::query!(
+            "insert into constituency_places
+               (country_id, place, part, postal_code, district, region, source_id)
+             values ($1, $2, $3, $4, $5, $6, $7)
+             on conflict (country_id, place, part, district) do update set
+               postal_code = excluded.postal_code, region = excluded.region",
+            country_id,
+            p.place,
+            p.part,
+            p.postal_code,
+            p.district,
+            p.region,
+            source_id,
         )
         .execute(pool)
         .await?;

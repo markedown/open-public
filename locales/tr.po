@@ -1404,3 +1404,72 @@ msgstr "Pusulayı başlat"
 
 msgid "Have a question for others?"
 msgstr "Başkalarına sormak istediğiniz bir soru mu var?"
+
+msgid "Closest to you, by topic"
+msgstr "Konuya göre size en yakın olan"
+
+msgid "How do your members vote?"
+msgstr "Milletvekilleriniz nasıl oy veriyor?"
+
+msgid "Compare your answers with how the members for your area actually voted. Your place is not stored."
+msgstr "Yanıtlarınızı, bölgenizin vekillerinin gerçekte nasıl oy verdiğiyle karşılaştırın. Yeriniz saklanmaz."
+
+msgid "Town or municipality"
+msgstr "Şehir veya belediye"
+
+msgid "Compare"
+msgstr "Karşılaştır"
+
+msgid "No place found."
+msgstr "Yer bulunamadı."
+
+msgid "Which one is yours?"
+msgstr "Sizinki hangisi?"
+
+msgid "Elected here"
+msgstr "Burada seçilen"
+
+msgid "On the regional list"
+msgstr "Bölge listesinden"
+
+msgid "Show all"
+msgstr "Tümünü göster"
+
+msgid "No member elected in this constituency holds a seat at present."
+msgstr "Bu seçim bölgesinden seçilmiş bir vekil şu anda sandalyede değil."
+
+msgid "This rests only on recorded votes linked to the positions you answered. A member who was absent, or who followed their group in voting down an opposition motion, is not counted on that position."
+msgstr "Bu yalnızca yanıtladığınız görüşlerle ilişkili kayıtlı oylamalara dayanır. Oylamaya katılmayan veya grubuyla birlikte bir muhalefet önergesini reddeden vekil o görüşte sayılmaz."
+
+msgid "further members have no vote we can read on your answers."
+msgstr "vekilin daha yanıtlarınızla karşılaştırılabilecek bir oyu yok."
+
+msgid "Economy and taxes"
+msgstr "Ekonomi ve vergiler"
+
+msgid "Work and social policy"
+msgstr "Çalışma ve sosyal politika"
+
+msgid "Housing"
+msgstr "Konut"
+
+msgid "Health"
+msgstr "Sağlık"
+
+msgid "Migration and citizenship"
+msgstr "Göç ve vatandaşlık"
+
+msgid "Energy and climate"
+msgstr "Enerji ve iklim"
+
+msgid "Foreign policy and defence"
+msgstr "Dış politika ve savunma"
+
+msgid "Europe"
+msgstr "Avrupa"
+
+msgid "Democracy and rights"
+msgstr "Demokrasi ve haklar"
+
+msgid "Society"
+msgstr "Toplum"

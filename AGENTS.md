@@ -226,6 +226,16 @@ party_alliances ( id, party_id FK, alliance_id FK, start_date, end_date, source_
 roll_calls ( id, country_id FK, slug UNIQUE, chamber, held_on, title, source_id NOT NULL )
 roll_call_votes ( roll_call_id FK, person_id FK, choice, PK (roll_call_id, person_id) )
 
+-- How each side of a vote reads on a thesis. Either side may be null: a no can mean
+-- "not far enough", and a side that does not say where someone stands stays unread.
+thesis_roll_calls ( thesis_id FK, roll_call_id FK, yes_stance, no_stance, note,
+                    PK (thesis_id, roll_call_id) )
+
+-- A place and the constituency it votes in. district and region hold the same text
+-- as roles.district, so a sitting member is found by matching it.
+constituency_places ( id, country_id FK, place, part, postal_code, district, region,
+                      source_id NOT NULL )
+
 events ( id, country_id FK NULL, party_id FK NULL, person_id FK NULL,
          kind, title, happened_on date, source_id NOT NULL )
 

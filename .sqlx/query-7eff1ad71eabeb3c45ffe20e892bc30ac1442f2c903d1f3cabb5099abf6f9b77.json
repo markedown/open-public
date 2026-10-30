@@ -1,0 +1,47 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        with cast_votes as (\n            select l.thesis_id, l.yes_stance, l.no_stance, r.id as roll_call_id, r.held_on,\n                   v.person_id, v.choice, m.party_id\n            from thesis_roll_calls l\n            join theses t on t.id = l.thesis_id\n            join roll_calls r on r.id = l.roll_call_id\n            join roll_call_votes v on v.roll_call_id = r.id and v.choice in ('yes', 'no')\n            left join party_memberships m on m.person_id = v.person_id\n                 and m.start_date <= r.held_on\n                 and (m.end_date is null or m.end_date >= r.held_on)\n            where t.country_id = $1\n        ),\n        party_line as (\n            select distinct on (roll_call_id, party_id) roll_call_id, party_id, choice\n            from (select roll_call_id, party_id, choice, count(*) as n\n                  from cast_votes where party_id is not null\n                  group by roll_call_id, party_id, choice) c\n            order by roll_call_id, party_id, n desc\n        )\n        select distinct on (c.thesis_id, c.person_id)\n               c.thesis_id, c.person_id,\n               (case c.choice when 'yes' then c.yes_stance else c.no_stance end) as \"stance!\"\n        from cast_votes c\n        left join party_line p on p.roll_call_id = c.roll_call_id and p.party_id = c.party_id\n        where (case c.choice when 'yes' then c.yes_stance else c.no_stance end) is not null\n          and (c.party_id is null\n               or p.choice <> c.choice\n               or exists (select 1 from position_evidence e\n                          where e.thesis_id = c.thesis_id\n                            and e.roll_call_id = c.roll_call_id\n                            and e.party_id = c.party_id))\n        order by c.thesis_id, c.person_id, c.held_on desc, c.roll_call_id desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "thesis_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "thesis_roll_calls",
+            "name": "thesis_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "person_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "roll_call_votes",
+            "name": "person_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "stance!",
+        "type_info": "Int2",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "7eff1ad71eabeb3c45ffe20e892bc30ac1442f2c903d1f3cabb5099abf6f9b77"
+}

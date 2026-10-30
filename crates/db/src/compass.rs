@@ -122,6 +122,8 @@ pub struct Evidence {
     /// An archived copy of the source, where one has been recorded. Political
     /// documents rot, and a dead link takes the evidence with it.
     pub snapshot_url: Option<String>,
+    /// The vote this was read from, where we hold that vote's own page.
+    pub roll_call_slug: Option<String>,
 }
 
 /// All evidence for a country's theses of one scope, strongest first.
@@ -136,10 +138,12 @@ pub async fn evidence_for_country(
         select e.thesis_id,
                coalesce(e.person_id, e.party_id) as "contestant_id!",
                e.kind, e.stance, e.quote, e.locator, e.occurred_on,
-               s.url as source_url, s.snapshot_url
+               s.url as source_url, s.snapshot_url,
+               r.slug as "roll_call_slug?"
         from position_evidence e
         join theses t on t.id = e.thesis_id
         join sources s on s.id = e.source_id
+        left join roll_calls r on r.id = e.roll_call_id
         where t.country_id = $1 and t.scope = $3
           and case when $3 = 'person' then e.person_id else e.party_id end is not null
         order by e.thesis_id, coalesce(e.person_id, e.party_id),
@@ -149,6 +153,157 @@ pub async fn evidence_for_country(
         country_id,
         &RECORDED_ACTION.map(String::from)[..],
         scope,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// A member's own reading on a thesis, taken from how they voted.
+pub struct MemberStance {
+    pub thesis_id: i64,
+    pub person_id: i64,
+    pub stance: i16,
+}
+
+/// What each member's own votes say on the country's theses.
+///
+/// One row per (thesis, member), the most recent vote winning. A vote counts for
+/// a member when their party's vote was read as evidence on that thesis, or when
+/// they broke from their party's line. A governing party voting down an
+/// opposition motion says little about the subject, and the same goes for each of
+/// its members who simply followed; a member who broke with it said something.
+pub async fn member_stances(pool: &Pool, country_id: i64) -> Result<Vec<MemberStance>> {
+    let rows = sqlx::query_as!(
+        MemberStance,
+        r#"
+        with cast_votes as (
+            select l.thesis_id, l.yes_stance, l.no_stance, r.id as roll_call_id, r.held_on,
+                   v.person_id, v.choice, m.party_id
+            from thesis_roll_calls l
+            join theses t on t.id = l.thesis_id
+            join roll_calls r on r.id = l.roll_call_id
+            join roll_call_votes v on v.roll_call_id = r.id and v.choice in ('yes', 'no')
+            left join party_memberships m on m.person_id = v.person_id
+                 and m.start_date <= r.held_on
+                 and (m.end_date is null or m.end_date >= r.held_on)
+            where t.country_id = $1
+        ),
+        party_line as (
+            select distinct on (roll_call_id, party_id) roll_call_id, party_id, choice
+            from (select roll_call_id, party_id, choice, count(*) as n
+                  from cast_votes where party_id is not null
+                  group by roll_call_id, party_id, choice) c
+            order by roll_call_id, party_id, n desc
+        )
+        select distinct on (c.thesis_id, c.person_id)
+               c.thesis_id, c.person_id,
+               (case c.choice when 'yes' then c.yes_stance else c.no_stance end) as "stance!"
+        from cast_votes c
+        left join party_line p on p.roll_call_id = c.roll_call_id and p.party_id = c.party_id
+        where (case c.choice when 'yes' then c.yes_stance else c.no_stance end) is not null
+          and (c.party_id is null
+               or p.choice <> c.choice
+               or exists (select 1 from position_evidence e
+                          where e.thesis_id = c.thesis_id
+                            and e.roll_call_id = c.roll_call_id
+                            and e.party_id = c.party_id))
+        order by c.thesis_id, c.person_id, c.held_on desc, c.roll_call_id desc
+        "#,
+        country_id,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// A place a visitor can name, and the constituency it votes in.
+pub struct Place {
+    pub id: i64,
+    pub place: String,
+    pub part: Option<String>,
+    pub postal_code: Option<String>,
+    pub district: String,
+    pub region: Option<String>,
+}
+
+/// Places matching what a visitor typed: a postal code, or the start of a name,
+/// ignoring case and accents. Capped, because the page lists them to choose from.
+pub async fn find_places(pool: &Pool, country_id: i64, query: &str) -> Result<Vec<Place>> {
+    let query = query.trim();
+    if query.is_empty() {
+        return Ok(Vec::new());
+    }
+    let rows = sqlx::query_as!(
+        Place,
+        r#"
+        select id, place, part, postal_code, district, region
+        from constituency_places
+        where country_id = $1
+          and (postal_code = $2
+               or unaccent(lower(place)) like unaccent(lower($2)) || '%')
+        order by place, part nulls first, district
+        limit 30
+        "#,
+        country_id,
+        query,
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(rows)
+}
+
+/// One place by id, within a country.
+pub async fn get_place(pool: &Pool, country_id: i64, id: i64) -> Result<Option<Place>> {
+    let row = sqlx::query_as!(
+        Place,
+        r#"
+        select id, place, part, postal_code, district, region
+        from constituency_places
+        where country_id = $1 and id = $2
+        "#,
+        country_id,
+        id,
+    )
+    .fetch_optional(pool)
+    .await?;
+    Ok(row)
+}
+
+/// A sitting member for a constituency or a regional list.
+pub struct LocalMember {
+    pub person_id: i64,
+    pub full_name: String,
+    pub slug: String,
+    pub district: String,
+    pub party_short: Option<String>,
+    pub party_color: Option<String>,
+}
+
+/// The sitting members elected in these districts or on these regional lists,
+/// matched on the text the role records.
+pub async fn members_for_districts(
+    pool: &Pool,
+    country_id: i64,
+    districts: &[String],
+) -> Result<Vec<LocalMember>> {
+    let rows = sqlx::query_as!(
+        LocalMember,
+        r#"
+        select distinct on (p.id)
+               p.id as person_id, p.full_name, p.slug, ro.district as "district!",
+               pa.short_name as "party_short?", pa.color as "party_color?"
+        from roles ro
+        join people p on p.id = ro.person_id
+        left join party_memberships m on m.person_id = p.id and m.end_date is null
+        left join parties pa on pa.id = m.party_id
+        where p.country_id = $1
+          and ro.end_date is null
+          and ro.district = any($2)
+        order by p.id
+        "#,
+        country_id,
+        districts,
     )
     .fetch_all(pool)
     .await?;

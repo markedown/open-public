@@ -1,0 +1,89 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select distinct on (p.id)\n               p.id as person_id, p.full_name, p.slug, ro.district as \"district!\",\n               pa.short_name as \"party_short?\", pa.color as \"party_color?\"\n        from roles ro\n        join people p on p.id = ro.person_id\n        left join party_memberships m on m.person_id = p.id and m.end_date is null\n        left join parties pa on pa.id = m.party_id\n        where p.country_id = $1\n          and ro.end_date is null\n          and ro.district = any($2)\n        order by p.id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "full_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "district!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roles",
+            "name": "district"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "party_short?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "party_color?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "7b35646c370d232d8c0790abe2384adfd48cbbc9f3c9970aaeae1d3b6349c4bc"
+}

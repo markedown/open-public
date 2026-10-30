@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update theses set position = $2, scope = $3, topic_id = $4 where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int4",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "25d9ba1deec0f1d65a2a1e327e87d08bc647360da1662e749150cd0d1428cffc"
+}

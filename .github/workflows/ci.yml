@@ -56,6 +56,9 @@ jobs:
             echo "no previous manifest; checking this export on its own"
             python3 scripts/validate_data.py dataset
           fi
+      # The compass must not lean by construction. A country is held to this once
+      # its theses have been reviewed for it; the others are reported.
+      - run: python3 scripts/check_compass.py dataset
         env:
           BEFORE: ${{ runner.temp }}/before.json
 
