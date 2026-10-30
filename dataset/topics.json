@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "name": "Democracy and rights",
+    "parent": null,
+    "slug": "democracy"
+  },
+  {
+    "name": "Economy and taxes",
+    "parent": null,
+    "slug": "economy"
+  },
+  {
+    "name": "Education",
+    "parent": null,
+    "slug": "education"
+  },
+  {
+    "name": "Energy and climate",
+    "parent": null,
+    "slug": "energy"
+  },
+  {
+    "name": "Europe",
+    "parent": null,
+    "slug": "europe"
+  },
+  {
+    "name": "Foreign policy and defence",
+    "parent": null,
+    "slug": "foreign"
+  },
+  {
+    "name": "Health",
+    "parent": null,
+    "slug": "health"
+  },
+  {
+    "name": "Housing",
+    "parent": null,
+    "slug": "housing"
+  },
+  {
+    "name": "Migration and citizenship",
+    "parent": null,
+    "slug": "migration"
+  },
+  {
+    "name": "Work and social policy",
+    "parent": null,
+    "slug": "social"
+  },
+  {
+    "name": "Society",
+    "parent": null,
+    "slug": "society"
+  }
+]

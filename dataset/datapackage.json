@@ -69,6 +69,58 @@
       "encoding": "utf-8",
       "format": "json",
       "mediatype": "application/json",
+      "name": "constituency_places",
+      "path": "constituency_places.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "district",
+            "type": "string"
+          },
+          {
+            "name": "part",
+            "type": "string"
+          },
+          {
+            "name": "place",
+            "type": "string"
+          },
+          {
+            "name": "postal_code",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
       "name": "countries",
       "path": "countries.json",
       "schema": {
@@ -818,6 +870,10 @@
             "type": "string"
           },
           {
+            "name": "roll_call",
+            "type": "string"
+          },
+          {
             "name": "source_hash",
             "type": "string"
           },
@@ -854,6 +910,13 @@
             "reference": {
               "fields": "slug",
               "resource": "people"
+            }
+          },
+          {
+            "fields": "roll_call",
+            "reference": {
+              "fields": "slug",
+              "resource": "roll_calls"
             }
           }
         ]
@@ -1128,10 +1191,77 @@
       "encoding": "utf-8",
       "format": "json",
       "mediatype": "application/json",
+      "name": "thesis_roll_calls",
+      "path": "thesis_roll_calls.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "no_stance",
+            "type": "integer"
+          },
+          {
+            "name": "note",
+            "type": "string"
+          },
+          {
+            "name": "roll_call",
+            "type": "string"
+          },
+          {
+            "name": "thesis",
+            "type": "string"
+          },
+          {
+            "name": "yes_stance",
+            "type": "integer"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          },
+          {
+            "fields": "roll_call",
+            "reference": {
+              "fields": "slug",
+              "resource": "roll_calls"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
       "name": "topics",
       "path": "topics.json",
       "schema": {
-        "fields": []
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "parent",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
       }
     },
     {

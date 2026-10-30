@@ -39721,6 +39721,17 @@
     "url": "https://www.bundestag.de/presse/pressemitteilungen/2026/pm-260226-bundesversammlung-1150358"
   },
   {
+    "content_hash": "de-vote-20250318_3",
+    "content_sha256": "949e96549c6f8db460e6bb0ab5bbc50df2bf07aef369a2c0b85ae7927528c87d",
+    "fetched_at": "2026-10-30T17:55:06.662663+00:00",
+    "kind": "official_gov",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Namentliche Abstimmung vom 18. März 2025: Gesetzentwurf zur Änderung der Artikel 109, 115 und 143h des Grundgesetzes",
+    "url": "https://www.bundestag.de/resource/blob/1057530/20250318_3_xls.xlsx"
+  },
+  {
     "content_hash": "de-rollcall-de-2025-06-25-1-antrag-gegen-weitere-nutzung-von-nord-stream-pip",
     "content_sha256": "d33be0dba50b82cf1964419eac3b31bb7cdb71ad19e88ddff10bd51b7f767683",
     "fetched_at": "2026-10-30T16:16:13.789933+00:00",
@@ -40062,17 +40073,6 @@
     "url": "https://www.bundestag.de/resource/blob/1129104/20251204_2_xls.xlsx"
   },
   {
-    "content_hash": "de-vote-20251204_2",
-    "content_sha256": "c3bd4e882b0aea2c21d536f625f4aa73d030d62d9b5f222479555c1a99356842",
-    "fetched_at": "2026-07-21T10:26:19.698997+00:00",
-    "kind": "official_gov",
-    "outlet": "Deutscher Bundestag",
-    "published_at": null,
-    "snapshot_url": null,
-    "title": "Namentliche Abstimmung vom 4. Dezember 2025: Beschlussempfehlung zum Antrag auf Abschaffung der CO2-Bepreisung",
-    "url": "https://www.bundestag.de/resource/blob/1129104/20251204_2_xls.xlsx"
-  },
-  {
     "content_hash": "de-rollcall-de-2025-12-05-1-wehrdienst-modernisierungsgesetz",
     "content_sha256": "6a2d941d6272e68537320e1dbe1445970f08b6fe2f09174e2b49a0c561b37784",
     "fetched_at": "2026-10-30T16:16:01.660684+00:00",
@@ -40213,17 +40213,6 @@
     "published_at": null,
     "snapshot_url": null,
     "title": "Namentliche Abstimmung: Umgestaltung des Bürgergelds zu neuer Grundsicherung",
-    "url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx"
-  },
-  {
-    "content_hash": "de-vote-20260305_1",
-    "content_sha256": "581b944b82b24a8fd721455844acdf604a4f466bad5733f248a80e45bcd7481f",
-    "fetched_at": "2026-07-21T10:26:19.643177+00:00",
-    "kind": "official_gov",
-    "outlet": "Deutscher Bundestag",
-    "published_at": null,
-    "snapshot_url": null,
-    "title": "Namentliche Abstimmung vom 5. März 2026: Umgestaltung des Bürgergelds zu neuer Grundsicherung",
     "url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx"
   },
   {
@@ -40775,6 +40764,17 @@
     "snapshot_url": null,
     "title": "Ergebnisse 2025, Bundeswahlleiterin",
     "url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2025/ergebnisse/bund-99.html"
+  },
+  {
+    "content_hash": "de-wkr-gemeinden-2025",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T17:52:43.198370+00:00",
+    "kind": "official_election",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Die Bundeswahlleiterin, Statistische Ämter des Bundes und der Länder: Wahlkreise und zugeordnete Gemeinden, Bundestagswahl 2025 (Datenlizenz Deutschland 2.0)",
+    "url": "https://www.bundeswahlleiterin.de/dam/jcr/aa868597-0e60-476c-bd2b-279c1e9a142a/btw25_wkr_gemeinden_20241130_utf8.csv"
   },
   {
     "content_hash": "compass-tr-doc",

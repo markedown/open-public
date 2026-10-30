@@ -1,6 +1,7 @@
 {
   "counts": {
     "alliances": 5,
+    "constituency_places": 10950,
     "countries": 6,
     "election_results": 217,
     "elections": 25,
@@ -14,13 +15,14 @@
     "person_education": 2617,
     "poll_options": 50,
     "polls": 13,
-    "position_evidence": 345,
+    "position_evidence": 420,
     "roles": 4445,
     "roll_calls": 85,
     "sources": 5999,
     "statements": 1,
-    "theses": 103,
-    "topics": 0,
+    "theses": 108,
+    "thesis_roll_calls": 12,
+    "topics": 11,
     "translations": 233
   },
   "note": "Row counts of this export. Generated file; see README for what is included and what is deliberately left out."

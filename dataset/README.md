@@ -34,6 +34,16 @@ counts of the export.
 lists of slugs. `absent` means the chamber's record says the member did not vote; it does not
 say why.
 
+`thesis_roll_calls.json` says how each side of a vote reads on a compass thesis. A side left null does
+not say where someone stands, and a `position_evidence` row with a `roll_call` is a party's vote read
+that way. `constituency_places.json` lists municipalities and the constituency they vote in. It is the
+one file under another licence: Datenlizenz Deutschland Namensnennung 2.0
+(https://www.govdata.de/dl-de/by-2-0), © Die Bundeswahlleiterin, Statistische Ämter des Bundes und der
+Länder, Wiesbaden 2024.
+
+`compass_reviewed.txt` lists the countries whose theses have been reviewed for balance.
+`scripts/check_compass.py` holds those to its limits and only reports on the others.
+
 ## Provenance
 
 Every fact row carries `source_url` and `source_hash`, and `sources.json` holds the full

@@ -1,0 +1,98 @@
+[
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Gesetz der Bundesregierung, das das Bürgergeld durch eine strengere Grundsicherung ersetzt. Das Nein der AfD bleibt ungelesen: Ihr Programm verlangt ebenfalls eine strengere Regelung.",
+    "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
+    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Mietwuchergesetz der Linken. Das Nein der Koalition zu einem Oppositionsentwurf bleibt ungelesen.",
+    "roll_call": "de-2025-11-06-1-gesetzentwurf-zur-bekampfung-uberhohter-mieten",
+    "thesis": "Mieten sollen stärker gesetzlich begrenzt werden.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": 2,
+    "note": "Gesetz, das die Einbürgerung nach drei Jahren wieder abschafft.",
+    "roll_call": "de-2025-10-08-1-anderung-des-staatsangehorigkeitsgesetzes",
+    "thesis": "Besonders gut integrierte Menschen sollen sich schon nach drei Jahren einbürgern lassen können.",
+    "yes_stance": -2
+  },
+  {
+    "country": "germany",
+    "no_stance": 2,
+    "note": "Gesetz, das den Familiennachzug zu subsidiär Schutzberechtigten für zwei Jahre aussetzt.",
+    "roll_call": "de-2025-06-27-1-aussetzung-des-familiennachzugs-zu-subsidiar-sch",
+    "thesis": "Der Familiennachzug zu subsidiär Schutzberechtigten soll wieder erlaubt werden.",
+    "yes_stance": -2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Gesetz, das sichere Herkunftsstaaten künftig per Rechtsverordnung bestimmen lässt.",
+    "roll_call": "de-2025-12-05-3-gesetzentwurf-zur-bestimmung-sicherer-herkunftss",
+    "thesis": "Die Bundesregierung soll sichere Herkunftsstaaten per Verordnung festlegen können.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": 2,
+    "note": "Empfehlung, den AfD-Antrag auf Rücknahme des Verbrenner-Aus abzulehnen: Ja heißt also gegen die Rücknahme. Die Koalition folgt hier der Ausschussmehrheit und bleibt ungelesen.",
+    "roll_call": "de-2025-10-16-2-ablehnung-eines-antrags-zur-rucknahme-des-verbre",
+    "thesis": "Das Verbrenner-Aus ab 2035 soll zurückgenommen werden.",
+    "yes_stance": -2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Empfehlung, den AfD-Antrag auf Abschaffung abzulehnen. Ein Ja hält den Preis, will ihn aber nicht zwingend erhöhen, und bleibt ungelesen.",
+    "roll_call": "de-2025-12-04-2-ablehnung-eines-antrags-zur-abschaffung-der-co-b",
+    "thesis": "Der CO2-Preis soll weiter steigen.",
+    "yes_stance": null
+  },
+  {
+    "country": "germany",
+    "no_stance": null,
+    "note": "Gesetz, das den CO2-Preis 2027 auf dem Stand von 2026 hält. Ein Nein kann vieles heißen und bleibt ungelesen.",
+    "roll_call": "de-2026-10-15-3-anderung-des-brennstoffemissionshandelsgesetzes",
+    "thesis": "Der CO2-Preis soll weiter steigen.",
+    "yes_stance": -1
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "AfD-Entwurf, der unter anderem den Ausstieg aus dem Pariser Abkommen verlangt. Das Nein der Koalition zu einem Oppositionsentwurf bleibt ungelesen.",
+    "roll_call": "de-2025-11-13-1-gesetzentwurf-zur-beseitigung-der-klimaschutzfol",
+    "thesis": "Deutschland soll aus dem Pariser Klimaabkommen austreten.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Grünen-Entwurf für Tempo 130 auf Autobahnen. Das Nein der Koalition zu einem Oppositionsentwurf bleibt ungelesen.",
+    "roll_call": "de-2026-07-09-1-einfuhrung-eines-allgemeinen-strassen-tempolimit",
+    "thesis": "Auf Autobahnen soll ein allgemeines Tempolimit gelten.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Grünen-Antrag, die Ukraine zusätzlich militärisch und humanitär zu stärken. Das Nein der Koalition zu einem Oppositionsantrag bleibt ungelesen.",
+    "roll_call": "de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
+    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen.",
+    "yes_stance": 2
+  },
+  {
+    "country": "germany",
+    "no_stance": -2,
+    "note": "Gesetz, das der Bundespolizei unter anderem die Quellen-Telekommunikationsüberwachung erlaubt. Die AfD enthielt sich.",
+    "roll_call": "de-2026-09-25-1-modernisierung-des-bundespolizeigesetzes",
+    "thesis": "Die Bundespolizei soll zusätzliche Überwachungsbefugnisse erhalten, auch für verschlüsselte Kommunikation.",
+    "yes_stance": 2
+  }
+]
