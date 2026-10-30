@@ -176,9 +176,10 @@ async fn copy_one(http: &reqwest::Client, url: &str, path: &FsPath) -> Result<()
             return Err(Failure::Other(anyhow::anyhow!("larger than the limit")));
         }
     }
-    let processed = tokio::task::spawn_blocking(move || crate::media::process(bytes, MAX_SIDE))
-        .await?
-        .map_err(|e| anyhow::anyhow!("not a usable image: {e:?}"))?;
+    let processed =
+        tokio::task::spawn_blocking(move || crate::media::process(without_bitmap(bytes), MAX_SIDE))
+            .await?
+            .map_err(|e| anyhow::anyhow!("not a usable image: {e:?}"))?;
     if let Some(parent) = path.parent() {
         tokio::fs::create_dir_all(parent).await?;
     }
@@ -192,6 +193,23 @@ async fn copy_one(http: &reqwest::Client, url: &str, path: &FsPath) -> Result<()
 
 /// What to actually download. Wikimedia keeps flags as SVG, which we do not
 /// decode and could not safely serve; it renders any file to PNG on request.
+/// Some publishers hand out Windows bitmaps labelled as JPEG (Parliament's
+/// portrait service does). Those are turned into PNG here, ahead of the normal
+/// processing, which keeps its short list of formats because it also serves
+/// visitors' uploads. Anything else passes through untouched.
+fn without_bitmap(bytes: Vec<u8>) -> Vec<u8> {
+    if !matches!(image::guess_format(&bytes), Ok(image::ImageFormat::Bmp)) {
+        return bytes;
+    }
+    let mut png = std::io::Cursor::new(Vec::new());
+    match image::load_from_memory_with_format(&bytes, image::ImageFormat::Bmp)
+        .and_then(|img| img.write_to(&mut png, image::ImageFormat::Png))
+    {
+        Ok(()) => png.into_inner(),
+        Err(_) => bytes,
+    }
+}
+
 fn fetch_address(url: &str) -> String {
     const COMMONS: &str = "https://upload.wikimedia.org/wikipedia/commons/";
     if let Some(rest) = url.strip_prefix(COMMONS) {
@@ -229,6 +247,29 @@ mod tests {
         assert!(src.starts_with("/img/"));
         assert_eq!(src.len(), "/img/".len() + 64);
         assert!(!src.contains("example"));
+    }
+
+    #[test]
+    fn a_bitmap_becomes_a_png_and_everything_else_is_left_alone() {
+        let mut bmp = std::io::Cursor::new(Vec::new());
+        image::RgbImage::new(4, 4)
+            .write_to(&mut bmp, image::ImageFormat::Bmp)
+            .unwrap();
+        let converted = without_bitmap(bmp.into_inner());
+        assert_eq!(
+            image::guess_format(&converted).unwrap(),
+            image::ImageFormat::Png
+        );
+        assert!(crate::media::process(converted, MAX_SIDE).is_ok());
+
+        // A bitmap header with nothing readable behind it stays as it was, so
+        // the normal processing refuses it with its usual reason.
+        let broken = b"BM not really a bitmap".to_vec();
+        assert_eq!(without_bitmap(broken.clone()), broken);
+        assert_eq!(
+            without_bitmap(b"plain text".to_vec()),
+            b"plain text".to_vec()
+        );
     }
 
     #[test]
