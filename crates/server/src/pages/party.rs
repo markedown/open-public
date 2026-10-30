@@ -21,7 +21,7 @@ pub async fn detail(
         .await?
         .ok_or(PageError::NotFound)?;
 
-    let leader = db::parties::leader(&pool, party.id).await?;
+    let leaders = db::parties::leaders(&pool, party.id).await?;
     let seats = db::parties::parliament_seats(&pool, party.id).await?;
     let alliance_rows = db::parties::alliance_members(&pool, party.id).await?;
     let members = db::parties::members(&pool, party.id).await?;
@@ -129,20 +129,27 @@ pub async fn detail(
                         }
                     }
                 }
-                @if seats > 0 || party.founded_date.is_some() || leader.is_some() {
+                @if seats > 0 || party.founded_date.is_some() || !leaders.is_empty() {
                     div class="mt-7 grid gap-4 sm:grid-cols-3" {
                         @if seats > 0 {
                             (ui::fact_card(html! { (seats) }, i18n::t("seats"), None))
                         }
-                        @if let Some(ref l) = leader {
-                            (ui::fact_card(
-                                html! {
-                                    a href={"/" (country_model.slug) "/people/" (l.person_slug)}
-                                      class="op-link text-[24px] font-bold" { (l.person_name) }
-                                },
-                                i18n::t("Leader"),
-                                Some(ui::citation::source_marker(&l.source_url)),
-                            ))
+                        @if !leaders.is_empty() {
+                            div class="rounded-[12px] border border-hairline bg-paper px-5 py-4" {
+                                div class="font-semibold text-ink" { (i18n::t("Leader")) }
+                                ul class="mt-1.5 space-y-2" {
+                                    @for l in &leaders {
+                                        li {
+                                            a href={"/" (country_model.slug) "/people/" (l.person_slug)}
+                                              class="op-link text-[21px] font-bold" { (l.person_name) }
+                                            div class="mt-0.5 flex flex-wrap items-center gap-2 text-[15px] text-ink-muted" {
+                                                @if let Some(ref t) = l.title { span { (t) } }
+                                                (ui::citation::source_marker(&l.source_url))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         @if let Some(fd) = party.founded_date {
                             (ui::fact_card(html! { (fd.format("%Y")) }, i18n::t("Founded"), Some(html! { (fmt::date(Some(fd))) })))

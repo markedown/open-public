@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select p.full_name, p.slug, r.title, s.id as source_id, s.url as source_url\n        from roles r\n        join people p on p.id = r.person_id\n        join party_memberships m\n          on m.person_id = p.id and m.party_id = $1 and m.end_date is null\n        join sources s on s.id = r.source_id\n        where r.role_type = 'party_leader' and r.end_date is null\n        order by r.start_date desc nulls last\n        limit 1\n        ",
+  "query": "\n        select p.full_name, p.slug, r.title, s.id as source_id, s.url as source_url\n        from roles r\n        join people p on p.id = r.person_id\n        join sources s on s.id = r.source_id\n        where r.role_type = 'party_leader' and r.end_date is null\n          and exists (\n            select 1 from party_memberships m\n            where m.person_id = p.id and m.party_id = $1 and m.end_date is null\n          )\n        order by p.full_name collate \"name_sort\"\n        ",
   "describe": {
     "columns": [
       {
@@ -72,5 +72,5 @@
       false
     ]
   },
-  "hash": "82c85d6e3214449a4f7cf80274b742e9be793e9aca428a1574c67ae22aaa2efa"
+  "hash": "4d9920bb2f01c5cb7420aa31951dbb30b17901959d6f971aa86be3189c16eb4f"
 }

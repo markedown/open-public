@@ -4244,6 +4244,50 @@ async fn rich_country_detail_renders_seats_chambers_alliances(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn a_party_page_names_every_leader(pool: db::Pool) {
+    seed(&pool).await;
+    let src: i64 = sqlx::query_scalar("select id from sources limit 1")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let party: i64 = sqlx::query_scalar("select id from parties where slug='test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    // A party with two leaders shows them both.
+    for slug in ["ayse-yilmaz", "mehmet-demir"] {
+        let id: i64 = sqlx::query_scalar("select id from people where slug=$1")
+            .bind(slug)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        db::people::upsert_role(
+            &pool,
+            id,
+            "party_leader",
+            Some("Es Genel Baskan"),
+            Some("Test Partisi"),
+            None,
+            NaiveDate::from_ymd_opt(2021, 1, 1),
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+        sqlx::query("insert into party_memberships (person_id, party_id, start_date, source_id) values ($1,$2,'2021-01-01',$3) on conflict do nothing")
+            .bind(id).bind(party).bind(src).execute(&pool).await.unwrap();
+    }
+    let leaders = db::parties::leaders(&pool, party).await.unwrap();
+    assert_eq!(leaders.len(), 2);
+
+    let app = router(pool.clone());
+    let body = body_string(get(&app, "/tr/parties/test-partisi").await).await;
+    assert!(body.contains("Es Genel Baskan"));
+    assert!(body.contains("/tr/people/ayse-yilmaz"));
+    assert!(body.contains("/tr/people/mehmet-demir"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn people_list_paginates(pool: db::Pool) {
     let src = db::sources::insert_source(&pool, "manual", "https://ex.test/p", None, Some("hp"))
         .await
