@@ -9966,6 +9966,17 @@
     "url": "https://democrats.org/where-we-stand/party-platform/"
   },
   {
+    "content_hash": "de-kabinett-2026-10-30",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.184420+00:00",
+    "kind": "manual",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Kabinett Merz, Wikipedia",
+    "url": "https://de.wikipedia.org/wiki/Kabinett_Merz"
+  },
+  {
     "content_hash": "compass-tr-doc",
     "content_sha256": null,
     "fetched_at": "2026-07-21T08:43:02.400765+00:00",
@@ -33110,6 +33121,28 @@
     "url": "https://www.abgeordnetenwatch.de/parties/spd"
   },
   {
+    "content_hash": "de-leader-de-alice-weidel",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.231141+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Bundessprecherin: Alice Weidel",
+    "url": "https://www.afd.de/partei/bundesvorstand/"
+  },
+  {
+    "content_hash": "de-leader-de-tino-chrupalla",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.233705+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Bundessprecher: Tino Chrupalla",
+    "url": "https://www.afd.de/partei/bundesvorstand/"
+  },
+  {
     "content_hash": "compass-tr-doc",
     "content_sha256": null,
     "fetched_at": "2026-07-20T16:58:15.747010+00:00",
@@ -39666,6 +39699,17 @@
     "url": "https://www.bundestag.de"
   },
   {
+    "content_hash": "upcoming-de-bundesversammlung-2027",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:26:28.777898+00:00",
+    "kind": "official_gov",
+    "outlet": "Deutscher Bundestag",
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Bundestagspräsidentin Julia Klöckner beruft die 18. Bundesversammlung zum 30. Januar 2027 ein",
+    "url": "https://www.bundestag.de/presse/pressemitteilungen/2026/pm-260226-bundesversammlung-1150358"
+  },
+  {
     "content_hash": "de-vote-20251204_2",
     "content_sha256": "c3bd4e882b0aea2c21d536f625f4aa73d030d62d9b5f222479555c1a99356842",
     "fetched_at": "2026-07-21T10:26:19.698997+00:00",
@@ -39765,6 +39809,17 @@
     "url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf"
   },
   {
+    "content_hash": "de-leader-de-friedrich-merz",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.221057+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Parteivorsitzender der CDU: Friedrich Merz",
+    "url": "https://www.cdu.de/personen/friedrich-merz/"
+  },
+  {
     "content_hash": "upcoming-fr-const-7",
     "content_sha256": null,
     "fetched_at": "2026-07-21T10:04:11.819726+00:00",
@@ -39776,6 +39831,17 @@
     "url": "https://www.conseil-constitutionnel.fr/le-bloc-de-constitutionnalite/texte-integral-de-la-constitution-du-4-octobre-1958-en-vigueur"
   },
   {
+    "content_hash": "de-leader-de-markus-soeder",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.223978+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Parteivorsitzender der CSU: Markus Söder",
+    "url": "https://www.csu.de/partei/vorstand/"
+  },
+  {
     "content_hash": "compass-tr-doc",
     "content_sha256": null,
     "fetched_at": "2026-07-20T16:58:15.753982+00:00",
@@ -39785,6 +39851,28 @@
     "snapshot_url": null,
     "title": "Die Linke Wahlprogramm zur Bundestagswahl 2025",
     "url": "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf"
+  },
+  {
+    "content_hash": "de-leader-de-ines-schwerdtner",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.240411+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Parteivorsitzende: Ines Schwerdtner",
+    "url": "https://www.die-linke.de/partei/parteidemokratie/parteivorstand/parteivorstand-2026-2028/"
+  },
+  {
+    "content_hash": "de-leader-de-luigi-pantisano",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.242445+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Parteivorsitzender: Luigi Pantisano",
+    "url": "https://www.die-linke.de/partei/parteidemokratie/parteivorstand/parteivorstand-2026-2028/"
   },
   {
     "content_hash": "fr-president",
@@ -39840,6 +39928,28 @@
     "snapshot_url": null,
     "title": "2 U.S.C. § 7, Time of election",
     "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title2/html/USCODE-2023-title2-chap1-sec7.htm"
+  },
+  {
+    "content_hash": "de-leader-de-felix-banaszak",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.238313+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Bundesvorsitzender: Felix Banaszak",
+    "url": "https://www.gruene.de/"
+  },
+  {
+    "content_hash": "de-leader-de-franziska-brantner",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.236161+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Bundesvorsitzende: Franziska Brantner",
+    "url": "https://www.gruene.de/"
   },
   {
     "content_hash": "compass-tr-doc",
@@ -42744,6 +42854,17 @@
     "snapshot_url": null,
     "title": "SPD Regierungsprogramm zur Bundestagswahl 2025",
     "url": "https://www.spd.de/fileadmin/Dokumente/Beschluesse/Programm/SPD_Programm_bf.pdf"
+  },
+  {
+    "content_hash": "de-leader-de-lars-klingbeil",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T14:18:57.228398+00:00",
+    "kind": "party_site",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Parteivorsitzender: Lars Klingbeil",
+    "url": "https://www.spd.de/partei/"
   },
   {
     "content_hash": "28",

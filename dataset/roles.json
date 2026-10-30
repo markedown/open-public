@@ -2818,6 +2818,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-alexander-dobrindt",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister des Innern"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-alexander-dobrindt",
     "role_type": "mp",
@@ -2884,6 +2895,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-alexander-schweitzer",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2026-10-13",
+    "title": "Bundesminister für Arbeit und Soziales"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-alexander-throm",
     "role_type": "mp",
@@ -2924,6 +2946,28 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/108379",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-afd",
+    "person": "de-alice-weidel",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-alice-weidel",
+    "source_url": "https://www.afd.de/partei/bundesvorstand/",
+    "start_date": null,
+    "title": "Bundessprecherin"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-alois-rainer",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister für Landwirtschaft, Ernährung und Heimat"
   },
   {
     "district": null,
@@ -3345,6 +3389,17 @@
   },
   {
     "district": null,
+    "end_date": "2026-10-13",
+    "org": "Bundesregierung",
+    "person": "de-baerbel-bas",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Arbeit und Soziales"
+  },
+  {
+    "district": null,
     "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-baerbel-bas",
@@ -3577,6 +3632,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-boris-pistorius",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister der Verteidigung"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-boris-pistorius",
     "role_type": "mp",
@@ -3731,6 +3797,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-carsten-linnemann",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2026-07-29",
+    "title": "Bundesminister für Gesundheit"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-carsten-linnemann",
     "role_type": "mp",
@@ -3749,6 +3826,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79116",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-carsten-schneider",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister für Umwelt, Klimaschutz, Naturschutz und nukleare Sicherheit"
   },
   {
     "district": null,
@@ -4468,6 +4556,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-dorothee-baer",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Forschung, Technologie und Raumfahrt"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-dorothee-baer",
     "role_type": "mp",
@@ -4655,6 +4754,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "de-buendnis-90",
+    "person": "de-felix-banaszak",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-felix-banaszak",
+    "source_url": "https://www.gruene.de/",
+    "start_date": null,
+    "title": "Bundesvorsitzender"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-felix-doering",
     "role_type": "mp",
@@ -4809,6 +4919,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "de-buendnis-90",
+    "person": "de-franziska-brantner",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-franziska-brantner",
+    "source_url": "https://www.gruene.de/",
+    "start_date": null,
+    "title": "Bundesvorsitzende"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-franziska-hoppermann",
     "role_type": "mp",
@@ -4871,6 +4992,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/118559",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-cdu-csu",
+    "person": "de-friedrich-merz",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-friedrich-merz",
+    "source_url": "https://www.cdu.de/personen/friedrich-merz/",
+    "start_date": null,
+    "title": "Parteivorsitzender der CDU"
   },
   {
     "district": null,
@@ -5366,6 +5498,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/180854",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-linke",
+    "person": "de-ines-schwerdtner",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-ines-schwerdtner",
+    "source_url": "https://www.die-linke.de/partei/parteidemokratie/parteivorstand/parteivorstand-2026-2028/",
+    "start_date": null,
+    "title": "Parteivorsitzende"
   },
   {
     "district": null,
@@ -5876,6 +6019,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-johann-wadephul",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister des Auswärtigen"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-johann-wadephul",
     "role_type": "mp",
@@ -6041,6 +6195,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-karin-prien",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Bildung, Familie, Senioren, Frauen und Jugend"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-karl-baer",
     "role_type": "mp",
@@ -6085,6 +6250,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-karsten-wildberger",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister für Digitales und Staatsmodernisierung"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-kassem-taher-saleh",
     "role_type": "mp",
@@ -6125,6 +6301,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79403",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-katherina-reiche",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Wirtschaft und Energie"
   },
   {
     "district": null,
@@ -6426,6 +6613,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-lars-klingbeil",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister der Finanzen"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-lars-klingbeil",
     "role_type": "mp",
@@ -6433,6 +6631,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79241",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-spd",
+    "person": "de-lars-klingbeil",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-lars-klingbeil",
+    "source_url": "https://www.spd.de/partei/",
+    "start_date": null,
+    "title": "Parteivorsitzender"
   },
   {
     "district": null,
@@ -6598,6 +6807,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/175374",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-linke",
+    "person": "de-luigi-pantisano",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-luigi-pantisano",
+    "source_url": "https://www.die-linke.de/partei/parteidemokratie/parteivorstand/parteivorstand-2026-2028/",
+    "start_date": null,
+    "title": "Parteivorsitzender"
   },
   {
     "district": null,
@@ -6939,6 +7159,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/175869",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-cdu-csu",
+    "person": "de-markus-soeder",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-markus-soeder",
+    "source_url": "https://www.csu.de/partei/vorstand/",
+    "start_date": null,
+    "title": "Parteivorsitzender der CSU"
   },
   {
     "district": null,
@@ -7635,6 +7866,28 @@
   },
   {
     "district": null,
+    "end_date": "2026-07-29",
+    "org": "Bundesregierung",
+    "person": "de-nina-warken",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Gesundheit"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-nina-warken",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2026-07-29",
+    "title": "Bundesministerin für besondere Aufgaben, Chefin des Bundeskanzleramtes"
+  },
+  {
+    "district": null,
     "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-nina-warken",
@@ -7874,6 +8127,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79150",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": "2026-07-29",
+    "org": "Bundesregierung",
+    "person": "de-patrick-schnieder",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister für Verkehr"
   },
   {
     "district": null,
@@ -8127,6 +8391,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/183114",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-reem-alabali-radovan",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für wirtschaftliche Zusammenarbeit und Entwicklung"
   },
   {
     "district": null,
@@ -8857,6 +9132,17 @@
   {
     "district": null,
     "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-stefanie-hubig",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin der Justiz und für Verbraucherschutz"
+  },
+  {
+    "district": null,
+    "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-stefan-keuter",
     "role_type": "mp",
@@ -8963,6 +9249,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/78902",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-steffen-bilger",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2026-07-29",
+    "title": "Bundesminister für Verkehr"
   },
   {
     "district": null,
@@ -9340,6 +9637,17 @@
   },
   {
     "district": null,
+    "end_date": "2026-07-29",
+    "org": "Bundesregierung",
+    "person": "de-thorsten-frei",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesminister für besondere Aufgaben, Chef des Bundeskanzleramtes"
+  },
+  {
+    "district": null,
     "end_date": null,
     "org": "Deutscher Bundestag",
     "person": "de-thorsten-frei",
@@ -9436,6 +9744,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/145755",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "de-afd",
+    "person": "de-tino-chrupalla",
+    "role_type": "party_leader",
+    "source_hash": "de-leader-de-tino-chrupalla",
+    "source_url": "https://www.afd.de/partei/bundesvorstand/",
+    "start_date": null,
+    "title": "Bundessprecher"
   },
   {
     "district": null,
@@ -9623,6 +9942,17 @@
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/182827",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": null,
+    "end_date": null,
+    "org": "Bundesregierung",
+    "person": "de-verena-hubertz",
+    "role_type": "minister",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06",
+    "title": "Bundesministerin für Wohnen, Stadtentwicklung und Bauwesen"
   },
   {
     "district": null,

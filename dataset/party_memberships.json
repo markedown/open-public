@@ -5137,6 +5137,14 @@
   },
   {
     "end_date": null,
+    "party": "de-cdu-csu",
+    "person": "de-markus-soeder",
+    "source_hash": "de-leader-de-markus-soeder",
+    "source_url": "https://www.csu.de/partei/vorstand/",
+    "start_date": null
+  },
+  {
+    "end_date": null,
     "party": "de-spd",
     "person": "de-markus-toens",
     "source_hash": "de-pol-136824",

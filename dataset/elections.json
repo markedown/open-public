@@ -85,6 +85,20 @@
   },
   {
     "country": "germany",
+    "description": "Wahl des Staatsoberhaupts durch die 18. Bundesversammlung. Sie besteht aus den Mitgliedern des Bundestages und ebenso vielen Mitgliedern, die von den Landesparlamenten gewählt werden; das Volk stimmt nicht direkt ab.",
+    "electorate": null,
+    "expected_note": "Deutscher Bundestag, 26. Februar 2026: \"Die Bundesversammlung tritt an diesem Tag im Deutschen Bundestag zusammen und wählt die zukünftige Bundespräsidentin oder den zukünftigen Bundespräsidenten.\"",
+    "held_on": "2027-01-30",
+    "kind": "presidential",
+    "name": "Bundespräsidentenwahl 2027",
+    "slug": "2027-bundesversammlung",
+    "source_hash": "upcoming-de-bundesversammlung-2027",
+    "source_url": "https://www.bundestag.de/presse/pressemitteilungen/2026/pm-260226-bundesversammlung-1150358",
+    "valid_votes": null,
+    "votes_cast": null
+  },
+  {
+    "country": "germany",
     "description": "Wahl des 22. Deutschen Bundestages.",
     "electorate": null,
     "expected_note": "Artikel 39 Absatz 1 des Grundgesetzes: \"Die Neuwahl findet frühestens sechsundvierzig, spätestens achtundvierzig Monate nach Beginn der Wahlperiode statt.\" Die Wahlperiode begann mit dem Zusammentritt des Bundestages, der nach Artikel 39 Absatz 2 spätestens am dreißigsten Tag nach der Wahl vom 23. Februar 2025 erfolgte. Der Termin wird später bestimmt und liegt danach 2029.",
