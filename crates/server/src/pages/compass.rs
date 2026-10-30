@@ -180,7 +180,7 @@ async fn form_scoped(
             ]))
             (ui::page_header(
                 i18n::t("Compass"),
-                Some(html! { span class="" { (theses.len()) } " " (i18n::t("positions")) }),
+                Some(html! { (theses.len()) " " (i18n::t("positions")) }),
                 None,
             ))
 
@@ -203,6 +203,11 @@ async fn form_scoped(
                 }
             } @else {
                 div class="mb-8" {
+                    @if scope != db::compass::SCOPE_PERSON {
+                        p class="mb-2 text-[21px] font-semibold text-ink" {
+                            (i18n::t("Which party is closest to your views?"))
+                        }
+                    }
                     p class="max-w-prose text-[16px] text-ink-muted" {
                         (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
                     }
@@ -216,7 +221,7 @@ async fn form_scoped(
                     }
                     div class="sticky bottom-0 -mx-4 border-t border-hairline bg-paper/90 px-4 py-4 backdrop-blur-sm" {
                         button type="submit"
-                          class="rounded-[10px] bg-accent px-5 py-2.5 text-[16px] font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong" {
+                          class="min-h-12 rounded-[10px] bg-ink px-6 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                             (i18n::t("See my match"))
                         }
                     }
@@ -248,36 +253,37 @@ fn thesis_field(number: usize, total: usize, t: &db::compass::Thesis) -> Markup 
     let name = format!("a{}", t.id);
     html! {
         li id={"q" (number)} class="compass-step list-none" {
-        fieldset class="op-card px-4 py-4 sm:px-5" {
+        fieldset class="op-card px-5 py-5 sm:px-7 sm:py-6" {
             legend class="sr-only" { (t.text) }
-            div class="mb-3 flex items-start gap-3" {
-                span class="mt-0.5 shrink-0 text-[14px] font-semibold text-ink-muted" {
-                    (number) "/" (total)
-                }
-                div class="min-w-0" {
-                    p class="text-[15px] font-medium leading-snug text-ink sm:text-sm" { (t.text) }
-                    @if let Some(topic) = &t.topic {
-                        span class="mt-1 inline-block text-[15px] text-ink-muted" { (topic) }
-                    }
+            div class="flex items-center gap-3 text-[15px] text-ink-muted" {
+                span class="shrink-0 font-semibold" { (number) "/" (total) }
+                span aria-hidden="true" class="h-1.5 grow rounded-full bg-hairline-light" {
+                    span class="block h-1.5 rounded-full bg-ink"
+                        style={"width:" (number * 100 / total) "%"} {}
                 }
             }
-            div class="flex flex-wrap gap-2" {
-                // Skip is the default so an unanswered position is simply left
-                // out of the score.
-                label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-[14px] text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:text-link" {
-                    input type="radio" name=(name) value="skip" checked class="sr-only";
-                    (i18n::t("Skip"))
-                }
+            p class="mt-4 text-[24px] font-bold leading-snug tracking-tight text-ink sm:text-[28px]" { (t.text) }
+            @if let Some(topic) = &t.topic {
+                span class="mt-1 inline-block text-[15px] text-ink-muted" { (topic) }
+            }
+            div class="mt-5 grid gap-2 sm:grid-cols-5" {
                 @for (value, label) in scale() {
-                    label class="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-hairline px-2.5 py-1.5 text-[14px] text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:border-accent has-[:checked]:bg-accent-tint has-[:checked]:font-semibold has-[:checked]:text-link" {
+                    label class="flex min-h-12 cursor-pointer items-center justify-center rounded-[10px] border border-hairline-strong px-3 py-2 text-center text-[16px] font-medium leading-tight text-ink transition-colors hover:border-ink has-[:focus-visible]:bg-focus has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-ink has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-paper" {
                         input type="radio" name=(name) value=(value) class="sr-only";
                         (label)
                     }
                 }
-                label class="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[14px] text-ink-muted has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:checked]:text-link" {
-                    input type="checkbox" name={"w" (t.id)} value="1"
-                      class="h-3.5 w-3.5 rounded border-hairline text-link";
+            }
+            div class="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2" {
+                label class="inline-flex min-h-11 cursor-pointer items-center gap-2 text-[16px] text-ink" {
+                    input type="checkbox" name={"w" (t.id)} value="1" class="size-5 rounded accent-ink";
                     (i18n::t("Important"))
+                }
+                // Skip is the default so an unanswered position is simply left
+                // out of the score.
+                label class="inline-flex min-h-11 cursor-pointer items-center rounded-[10px] px-3 text-[16px] text-ink-muted hover:text-ink has-[:focus-visible]:bg-focus has-[:focus-visible]:text-ink has-[:checked]:font-semibold has-[:checked]:text-ink" {
+                    input type="radio" name=(name) value="skip" checked class="sr-only";
+                    (i18n::t("Skip"))
                 }
             }
             div class="compass-nav mt-4 items-center justify-between gap-3 border-t border-hairline-light pt-3" {
