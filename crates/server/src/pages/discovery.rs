@@ -72,6 +72,7 @@ pub async fn sitemap(State(state): State<AppState>) -> Result<Response, PageErro
                 "parties",
                 "alliances",
                 "elections",
+                "votes",
                 "polls",
                 "news",
                 "outlets",
@@ -88,6 +89,9 @@ pub async fn sitemap(State(state): State<AppState>) -> Result<Response, PageErro
             }
             for e in db::elections::list_for_country(&state.pool, c.id, "en").await? {
                 urls.push(format!("{base}/election/{}", e.slug));
+            }
+            for v in db::roll_calls::list(&state.pool, c.id, "", MAX_URLS as i64, 0).await? {
+                urls.push(format!("{base}/vote/{}", v.slug));
             }
             for a in db::alliances::list_for_country(&state.pool, c.id, "en").await? {
                 urls.push(format!("{base}/alliance/{}", a.slug));

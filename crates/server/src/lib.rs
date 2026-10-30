@@ -129,6 +129,12 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/{country}", get(pages::country::detail))
         .route("/{country}/people", get(pages::people::list))
         .route("/{country}/people/{slug}", get(pages::person::detail))
+        .route(
+            "/{country}/people/{slug}/votes",
+            get(pages::votes::for_person),
+        )
+        .route("/{country}/votes", get(pages::votes::list))
+        .route("/{country}/vote/{slug}", get(pages::votes::detail))
         .route("/{country}/parties", get(pages::parties::list))
         .route("/{country}/parties/{slug}", get(pages::party::detail))
         .route("/{country}/alliances", get(pages::alliances::list))

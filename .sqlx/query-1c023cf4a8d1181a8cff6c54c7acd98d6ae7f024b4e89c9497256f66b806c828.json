@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select pe.full_name as person_name, pe.slug as person_slug,\n               p.slug as \"party_slug?\", v.choice\n        from roll_call_votes v\n        join roll_calls rc on rc.id = v.roll_call_id\n        join people pe on pe.id = v.person_id\n        left join lateral (\n            select m.party_id from party_memberships m\n            where m.person_id = v.person_id\n              and (m.start_date is null or m.start_date <= rc.held_on)\n              and (m.end_date is null or m.end_date >= rc.held_on)\n            order by m.start_date desc nulls last\n            limit 1\n        ) m on true\n        left join parties p on p.id = m.party_id\n        where v.roll_call_id = $1\n        order by pe.full_name collate \"name_sort\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "person_name",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "full_name"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "person_slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "people",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "party_slug?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "choice",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_call_votes",
+            "name": "choice"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "1c023cf4a8d1181a8cff6c54c7acd98d6ae7f024b4e89c9497256f66b806c828"
+}

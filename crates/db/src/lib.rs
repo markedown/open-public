@@ -21,6 +21,7 @@ pub mod parties;
 pub mod password_resets;
 pub mod people;
 pub mod polls;
+pub mod roll_calls;
 pub mod search;
 pub mod service;
 pub mod sessions;

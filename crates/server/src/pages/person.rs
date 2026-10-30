@@ -30,6 +30,8 @@ pub async fn detail(
     let mut polls = db::polls::full_for_person(&pool, person.id).await?;
     crate::content::localize_polls(&pool, &mut polls).await?;
     let news = db::news::for_person(&pool, person.id).await?;
+    let vote_record = db::roll_calls::record(&pool, person.id).await?;
+    let latest_votes = db::roll_calls::for_person(&pool, person.id, 6, 0).await?;
     let mut statements = db::statements::for_person(&pool, person.id).await?;
     crate::content::localize_statements(&pool, &mut statements).await?;
     let loc = crate::content::Localized::load(&pool, "person", person.id).await?;
@@ -171,6 +173,8 @@ pub async fn detail(
                             ))
                         }
                     }
+
+                    (ui::roll_call::person_section(&country.slug, &person.slug, vote_record, &latest_votes))
 
                     section class="mb-12" { (approval) }
 

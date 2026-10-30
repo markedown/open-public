@@ -1330,3 +1330,59 @@ msgstr "Kako ovo funkcioniše"
 msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
 msgstr "Navedite gde stojite u vezi sa svakim stavom. Označite one do kojih vam je stalo kao važne, da bi se više računali."
 
+msgid "Votes"
+msgstr "Glasanja"
+
+
+msgid "Abstained"
+msgstr "Uzdržan"
+
+
+msgid "Did not vote"
+msgstr "Nije glasao/la"
+
+
+msgid "Differs from most of their party"
+msgstr "Drugačije od većine svoje stranke"
+
+
+msgid "How did they vote?"
+msgstr "Kako je glasao/la?"
+
+
+msgid "recorded votes"
+msgstr "evidentiranih glasanja"
+
+
+msgid "differing from most of their party"
+msgstr "drugačije od većine svoje stranke"
+
+
+msgid "The record says that a member did not vote, not why. Illness, official travel and agreements between groups all look the same here."
+msgstr "Zapisnik kaže da član nije glasao, ali ne i zašto. Bolest, službena putovanja i dogovori između grupa ovde izgledaju isto."
+
+
+msgid "Votes in which the chamber recorded how each member voted. Most decisions are taken without such a record, so this is not everything a parliament decided."
+msgstr "Glasanja u kojima je dom zabeležio kako je glasao svaki član. Većina odluka donosi se bez takvog zapisa, pa ovo nije sve što je parlament odlučio."
+
+
+msgid "No votes found."
+msgstr "Nema pronađenih glasanja."
+
+
+msgid "How the parties voted"
+msgstr "Kako su stranke glasale"
+
+
+msgid "How each member voted"
+msgstr "Kako je glasao svaki član"
+
+
+msgid "This shows how members voted. Whether the motion passed can depend on rules this count does not show, so see the official record."
+msgstr "Ovo pokazuje kako su članovi glasali. Da li je predlog usvojen može zavisiti od pravila koja ovaj zbir ne prikazuje, pa pogledajte zvanični zapisnik."
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "No"
+msgstr "Ne"

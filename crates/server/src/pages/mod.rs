@@ -24,3 +24,4 @@ pub mod polls;
 pub mod privacy;
 pub mod search;
 pub mod submit;
+pub mod votes;

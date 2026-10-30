@@ -710,7 +710,7 @@ msgid "Automated note"
 msgstr "Automatischer Hinweis"
 
 msgid "Approve"
-msgstr "Genehmigen"
+msgstr "Zustimmen"
 
 msgid "Reason (optional)"
 msgstr "Grund (optional)"
@@ -1330,3 +1330,59 @@ msgstr "So funktioniert es"
 msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
 msgstr "Geben Sie an, wo Sie zu jeder These stehen. Markieren Sie die Ihnen wichtigen Thesen, damit sie stärker zählen."
 
+msgid "Votes"
+msgstr "Abstimmungen"
+
+
+msgid "Abstained"
+msgstr "Enthaltung"
+
+
+msgid "Did not vote"
+msgstr "Nicht abgestimmt"
+
+
+msgid "Differs from most of their party"
+msgstr "Anders als die Mehrheit der eigenen Partei"
+
+
+msgid "How did they vote?"
+msgstr "Wie wurde abgestimmt?"
+
+
+msgid "recorded votes"
+msgstr "namentliche Abstimmungen"
+
+
+msgid "differing from most of their party"
+msgstr "anders als die Mehrheit der eigenen Partei"
+
+
+msgid "The record says that a member did not vote, not why. Illness, official travel and agreements between groups all look the same here."
+msgstr "Das Protokoll sagt nur, dass jemand nicht abgestimmt hat, nicht warum. Krankheit, Dienstreisen und Absprachen zwischen Fraktionen sehen hier gleich aus."
+
+
+msgid "Votes in which the chamber recorded how each member voted. Most decisions are taken without such a record, so this is not everything a parliament decided."
+msgstr "Abstimmungen, bei denen das Parlament festgehalten hat, wie jedes Mitglied gestimmt hat. Die meisten Entscheidungen fallen ohne eine solche Aufzeichnung, das hier ist also nicht alles, was ein Parlament beschlossen hat."
+
+
+msgid "No votes found."
+msgstr "Keine Abstimmungen gefunden."
+
+
+msgid "How the parties voted"
+msgstr "Wie die Parteien abgestimmt haben"
+
+
+msgid "How each member voted"
+msgstr "Wie jedes Mitglied abgestimmt hat"
+
+
+msgid "This shows how members voted. Whether the motion passed can depend on rules this count does not show, so see the official record."
+msgstr "Das zeigt, wie die Mitglieder abgestimmt haben. Ob der Antrag angenommen wurde, kann von Regeln abhängen, die diese Zählung nicht zeigt. Maßgeblich ist das amtliche Protokoll."
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"

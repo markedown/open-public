@@ -1342,3 +1342,59 @@ msgstr "Nasıl çalışır"
 msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
 msgstr "Her konumda nerede durduğunuzu belirtin. Önemsediklerinizi önemli olarak işaretleyin, böylece daha çok sayılsınlar."
 
+msgid "Votes"
+msgstr "Oylamalar"
+
+
+msgid "Abstained"
+msgstr "Çekimser"
+
+
+msgid "Did not vote"
+msgstr "Oy kullanmadı"
+
+
+msgid "Differs from most of their party"
+msgstr "Partisinin çoğunluğundan farklı"
+
+
+msgid "How did they vote?"
+msgstr "Nasıl oy kullandı?"
+
+
+msgid "recorded votes"
+msgstr "kayıtlı oylama"
+
+
+msgid "differing from most of their party"
+msgstr "partisinin çoğunluğundan farklı"
+
+
+msgid "The record says that a member did not vote, not why. Illness, official travel and agreements between groups all look the same here."
+msgstr "Kayıt, bir üyenin oy kullanmadığını gösterir, nedenini değil. Hastalık, resmî görev ve gruplar arası anlaşmalar burada aynı görünür."
+
+
+msgid "Votes in which the chamber recorded how each member voted. Most decisions are taken without such a record, so this is not everything a parliament decided."
+msgstr "Meclisin her üyenin nasıl oy kullandığını kaydettiği oylamalar. Çoğu karar böyle bir kayıt olmadan alınır; bu nedenle burada meclisin aldığı tüm kararlar yer almaz."
+
+
+msgid "No votes found."
+msgstr "Oylama bulunamadı."
+
+
+msgid "How the parties voted"
+msgstr "Partiler nasıl oy kullandı"
+
+
+msgid "How each member voted"
+msgstr "Her üye nasıl oy kullandı"
+
+
+msgid "This shows how members voted. Whether the motion passed can depend on rules this count does not show, so see the official record."
+msgstr "Bu, üyelerin nasıl oy kullandığını gösterir. Önergenin kabul edilip edilmediği bu sayımın göstermediği kurallara bağlı olabilir; resmî kayda bakın."
+
+msgid "Yes"
+msgstr "Evet"
+
+msgid "No"
+msgstr "Hayır"

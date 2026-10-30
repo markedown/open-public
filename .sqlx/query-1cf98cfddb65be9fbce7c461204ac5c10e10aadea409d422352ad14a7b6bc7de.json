@@ -1,0 +1,117 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select rc.id, rc.slug, rc.chamber, rc.held_on, rc.title, s.url as source_url,\n               count(*) filter (where v.choice = 'yes') as \"yes!\",\n               count(*) filter (where v.choice = 'no') as \"no!\",\n               count(*) filter (where v.choice = 'abstain') as \"abstain!\",\n               count(*) filter (where v.choice = 'absent') as \"absent!\"\n        from roll_calls rc\n        join sources s on s.id = rc.source_id\n        left join roll_call_votes v on v.roll_call_id = rc.id\n        where rc.country_id = $1 and rc.slug = $2\n        group by rc.id, s.url\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "chamber",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "chamber"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "held_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "held_on"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "yes!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "no!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 8,
+        "name": "abstain!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 9,
+        "name": "absent!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "1cf98cfddb65be9fbce7c461204ac5c10e10aadea409d422352ad14a7b6bc7de"
+}

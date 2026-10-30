@@ -71,6 +71,7 @@ pub struct SectionCounts {
     pub news: i64,
     pub polls: i64,
     pub events: i64,
+    pub votes: i64,
 }
 
 /// Count the content a country holds in each section. News is counted through
@@ -92,7 +93,8 @@ pub async fn section_counts(pool: &Pool, country_id: i64) -> Result<SectionCount
           (select count(*) from polls p where p.country_id = $1
              or exists (select 1 from parties pt where pt.id = p.party_id and pt.country_id = $1)
              or exists (select 1 from people pe where pe.id = p.person_id and pe.country_id = $1)) as "polls!",
-          (select count(*) from events where country_id = $1) as "events!"
+          (select count(*) from events where country_id = $1) as "events!",
+          (select count(*) from roll_calls where country_id = $1) as "votes!"
         "#,
         country_id,
     )
@@ -106,6 +108,7 @@ pub async fn section_counts(pool: &Pool, country_id: i64) -> Result<SectionCount
         news: r.news,
         polls: r.polls,
         events: r.events,
+        votes: r.votes,
     })
 }
 

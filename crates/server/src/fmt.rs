@@ -27,7 +27,9 @@ pub fn date_range(start: Option<NaiveDate>, end: Option<NaiveDate>) -> String {
         (Some(s), Some(e)) => format!("{s} - {e}"),
         (Some(s), None) => format!("{s} - {present}"),
         (None, Some(e)) => format!("? - {e}"),
-        (None, None) => "?".to_string(),
+        // Held now, with no start date we could source. A question mark would say
+        // something is wrong; the honest statement is only that it is current.
+        (None, None) => present.to_string(),
     }
 }
 
@@ -54,6 +56,6 @@ mod tests {
         );
         assert!(date_range(Some(d(2019, 1, 1)), None).ends_with(" - günümüz"));
         assert!(date_range(None, Some(d(2023, 1, 1))).starts_with("? - "));
-        assert_eq!(date_range(None, None), "?");
+        assert_eq!(date_range(None, None), "günümüz");
     }
 }

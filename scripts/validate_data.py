@@ -35,7 +35,7 @@ NEEDS_SOURCE = {
     "countries", "people", "parties", "party_memberships", "roles", "elections",
     "election_results", "alliances", "party_alliances", "events", "statements",
     "news_items", "person_attributes", "person_education", "theses",
-    "position_evidence",
+    "position_evidence", "roll_calls",
 }
 # file -> (field in that file, file the value must exist in, key there)
 REFERENCES = [
@@ -45,6 +45,11 @@ REFERENCES = [
     ("party_memberships", "party", "parties", "slug"),
     ("roles", "person", "people", "slug"),
     ("elections", "country", "countries", "slug"),
+    ("roll_calls", "country", "countries", "slug"),
+    ("roll_calls", "yes", "people", "slug"),
+    ("roll_calls", "no", "people", "slug"),
+    ("roll_calls", "abstain", "people", "slug"),
+    ("roll_calls", "absent", "people", "slug"),
     ("election_results", "election", "elections", "slug"),
     ("election_results", "party", "parties", "slug"),
     ("alliances", "country", "countries", "slug"),
@@ -164,8 +169,15 @@ def main():
         valid = {r[key] for r in files[target]}
         for i, r in enumerate(files[name]):
             v = r.get(field)
-            if v is not None and v not in valid:
-                failures.append(f"{name}[{i}].{field}: no such {target} '{v}'")
+            for one in v if isinstance(v, list) else [v]:
+                if one is not None and one not in valid:
+                    failures.append(f"{name}[{i}].{field}: no such {target} '{one}'")
+
+    # A member has one vote in a roll call, so no name may be on two sides.
+    for i, r in enumerate(files.get("roll_calls", [])):
+        names = r["yes"] + r["no"] + r["abstain"] + r["absent"]
+        if len(names) != len(set(names)):
+            failures.append(f"roll_calls[{i}]: a member is listed more than once")
 
     # 4. Nothing collapsed since the last export.
     if args.baseline and os.path.exists(args.baseline):

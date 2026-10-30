@@ -1330,3 +1330,59 @@ msgstr "Comment ça marche"
 msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
 msgstr "Indiquez votre position sur chaque thèse. Marquez celles qui comptent pour vous comme importantes : elles pèseront davantage."
 
+msgid "Votes"
+msgstr "Votes"
+
+
+msgid "Abstained"
+msgstr "Abstention"
+
+
+msgid "Did not vote"
+msgstr "N'a pas voté"
+
+
+msgid "Differs from most of their party"
+msgstr "Différent de la majorité de son parti"
+
+
+msgid "How did they vote?"
+msgstr "Comment a-t-il voté ?"
+
+
+msgid "recorded votes"
+msgstr "votes enregistrés"
+
+
+msgid "differing from most of their party"
+msgstr "différents de la majorité de son parti"
+
+
+msgid "The record says that a member did not vote, not why. Illness, official travel and agreements between groups all look the same here."
+msgstr "Le relevé indique qu'un membre n'a pas voté, pas pourquoi. Maladie, déplacement officiel et accords entre groupes y apparaissent de la même façon."
+
+
+msgid "Votes in which the chamber recorded how each member voted. Most decisions are taken without such a record, so this is not everything a parliament decided."
+msgstr "Les votes pour lesquels l'assemblée a enregistré le choix de chaque membre. La plupart des décisions sont prises sans un tel relevé : ce n'est donc pas tout ce qu'un parlement a décidé."
+
+
+msgid "No votes found."
+msgstr "Aucun vote trouvé."
+
+
+msgid "How the parties voted"
+msgstr "Comment les partis ont voté"
+
+
+msgid "How each member voted"
+msgstr "Comment chaque membre a voté"
+
+
+msgid "This shows how members voted. Whether the motion passed can depend on rules this count does not show, so see the official record."
+msgstr "Cela montre comment les membres ont voté. L'adoption du texte peut dépendre de règles que ce décompte ne montre pas : reportez-vous au relevé officiel."
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"

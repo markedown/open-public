@@ -184,6 +184,18 @@ row!(ElectionResult {
     votes: Option<i64>,
 });
 
+row!(RollCall {
+    slug: String,
+    country: String,
+    chamber: String,
+    held_on: NaiveDate,
+    title: String,
+    yes: Vec<String>,
+    no: Vec<String>,
+    abstain: Vec<String>,
+    absent: Vec<String>,
+});
+
 row!(Alliance {
     slug: String,
     name: String,
@@ -871,6 +883,57 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
             poll_id,
             o.label,
             o.position,
+        )
+        .execute(pool)
+        .await?;
+        n.other += 1;
+    }
+
+    for r in read::<RollCall>(dir, "roll_calls")? {
+        let source_id = src!(r, format!("roll call {}", r.slug));
+        let Some(&country_id) = countries.get(&r.country) else {
+            anyhow::bail!("roll call {} names a country not in the dataset", r.slug);
+        };
+        let id = sqlx::query_scalar!(
+            "insert into roll_calls (slug, country_id, chamber, held_on, title, source_id)
+             values ($1, $2, $3, $4, $5, $6)
+             on conflict (slug) do update set title = excluded.title
+             returning id",
+            r.slug,
+            country_id,
+            r.chamber,
+            r.held_on,
+            r.title,
+            source_id,
+        )
+        .fetch_one(pool)
+        .await?;
+        let mut member_ids = Vec::new();
+        let mut choices = Vec::new();
+        for (choice, names) in [
+            ("yes", &r.yes),
+            ("no", &r.no),
+            ("abstain", &r.abstain),
+            ("absent", &r.absent),
+        ] {
+            for name in names {
+                let Some(&person_id) = people.get(name) else {
+                    anyhow::bail!(
+                        "roll call {} names a person not in the dataset: {name}",
+                        r.slug
+                    );
+                };
+                member_ids.push(person_id);
+                choices.push(choice.to_string());
+            }
+        }
+        sqlx::query!(
+            "insert into roll_call_votes (roll_call_id, person_id, choice)
+             select $1, * from unnest($2::bigint[], $3::text[])
+             on conflict (roll_call_id, person_id) do update set choice = excluded.choice",
+            id,
+            &member_ids,
+            &choices,
         )
         .execute(pool)
         .await?;

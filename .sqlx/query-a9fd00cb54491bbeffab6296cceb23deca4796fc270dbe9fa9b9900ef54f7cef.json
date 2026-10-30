@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into roll_call_votes (roll_call_id, person_id, choice)\n             select $1, * from unnest($2::bigint[], $3::text[])\n             on conflict (roll_call_id, person_id) do update set choice = excluded.choice",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8Array",
+        "TextArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "a9fd00cb54491bbeffab6296cceb23deca4796fc270dbe9fa9b9900ef54f7cef"
+}

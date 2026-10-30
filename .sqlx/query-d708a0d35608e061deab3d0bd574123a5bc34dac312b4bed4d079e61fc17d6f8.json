@@ -1,0 +1,92 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select p.slug as \"party_slug?\", p.short_name as \"short_name?\", p.name as \"name?\",\n               p.color as \"color?\",\n               count(*) filter (where v.choice = 'yes') as \"yes!\",\n               count(*) filter (where v.choice = 'no') as \"no!\",\n               count(*) filter (where v.choice = 'abstain') as \"abstain!\",\n               count(*) filter (where v.choice = 'absent') as \"absent!\"\n        from roll_call_votes v\n        join roll_calls rc on rc.id = v.roll_call_id\n        left join lateral (\n            select m.party_id from party_memberships m\n            where m.person_id = v.person_id\n              and (m.start_date is null or m.start_date <= rc.held_on)\n              and (m.end_date is null or m.end_date >= rc.held_on)\n            order by m.start_date desc nulls last\n            limit 1\n        ) m on true\n        left join parties p on p.id = m.party_id\n        where v.roll_call_id = $1\n        group by p.id\n        order by p.id is null, count(*) desc, p.slug\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "party_slug?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "short_name?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "short_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "name?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "name"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "color?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "parties",
+            "name": "color"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "yes!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "no!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "abstain!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "absent!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "d708a0d35608e061deab3d0bd574123a5bc34dac312b4bed4d079e61fc17d6f8"
+}

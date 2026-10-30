@@ -1,0 +1,85 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        with mine as (\n            select rc.id, rc.slug, rc.title, rc.held_on, s.url as source_url, v.choice,\n                   (select m.party_id from party_memberships m\n                    where m.person_id = v.person_id\n                      and (m.start_date is null or m.start_date <= rc.held_on)\n                      and (m.end_date is null or m.end_date >= rc.held_on)\n                    order by m.start_date desc nulls last\n                    limit 1) as party_id\n            from roll_call_votes v\n            join roll_calls rc on rc.id = v.roll_call_id\n            join sources s on s.id = rc.source_id\n            where v.person_id = $1\n            order by rc.held_on desc, rc.slug desc\n            limit $2 offset $3\n        )\n        select mine.slug, mine.title, mine.held_on, mine.source_url, mine.choice,\n               (select o.choice from roll_call_votes o\n                join party_memberships om on om.person_id = o.person_id\n                where o.roll_call_id = mine.id and o.choice <> 'absent'\n                  and om.party_id = mine.party_id\n                  and (om.start_date is null or om.start_date <= mine.held_on)\n                  and (om.end_date is null or om.end_date >= mine.held_on)\n                group by o.choice\n                order by count(*) desc, o.choice\n                limit 1) as party_majority\n        from mine\n        order by mine.held_on desc, mine.slug desc\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "slug",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "slug"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "title",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "title"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "held_on",
+        "type_info": "Date",
+        "origin": {
+          "Table": {
+            "table": "roll_calls",
+            "name": "held_on"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "source_url",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "url"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "choice",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "roll_call_votes",
+            "name": "choice"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "party_majority",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "26b9517400adc0a657492373a4373fdfd28c583d620243440ca1592f29c456b1"
+}

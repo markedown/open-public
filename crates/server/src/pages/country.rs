@@ -133,6 +133,7 @@ pub async fn detail(
         (i18n::t("Parties"), "parties", counts.parties),
         (i18n::t("Alliances"), "alliances", counts.alliances),
         (i18n::t("Elections"), "elections", counts.elections),
+        (i18n::t("Votes"), "votes", counts.votes),
         (i18n::t("News"), "news", counts.news),
         (i18n::t("Polls"), "polls", counts.polls),
         (i18n::t("Compass"), compass_path.as_str(), compass_count),

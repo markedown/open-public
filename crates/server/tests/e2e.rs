@@ -8849,3 +8849,149 @@ fn tempfile_dir(name: &str) -> std::path::PathBuf {
     let _ = std::fs::remove_dir_all(&dir);
     dir
 }
+
+/// A vote with the seeded members on different sides, one of them against the
+/// rest of their party.
+async fn seed_roll_call(pool: &db::Pool) {
+    let src: i64 = sqlx::query_scalar(
+        "insert into sources (kind, url, content_hash, fetched_at) \
+         values ('official_gov', 'https://ex.test/vote', 'rc', now()) returning id",
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+    let country: i64 = sqlx::query_scalar("select id from countries where slug='tr'")
+        .fetch_one(pool)
+        .await
+        .unwrap();
+    let party: i64 = sqlx::query_scalar("select id from parties where slug='test-partisi'")
+        .fetch_one(pool)
+        .await
+        .unwrap();
+    let id: i64 = sqlx::query_scalar(
+        "insert into roll_calls (country_id, slug, chamber, held_on, title, source_id) \
+         values ($1, 'test-oylamasi', 'Meclis', '2026-03-05', 'Test Yasasi', $2) returning id",
+    )
+    .bind(country)
+    .bind(src)
+    .fetch_one(pool)
+    .await
+    .unwrap();
+    for (name, slug, choice) in [
+        ("Uye Bir", "uye-bir", "yes"),
+        ("Uye Iki", "uye-iki", "yes"),
+        ("Uye Uc", "uye-uc", "no"),
+        ("Uye Dort", "uye-dort", "absent"),
+    ] {
+        let person: i64 = sqlx::query_scalar(
+            "insert into people (full_name, slug, source_id, country_id) \
+             values ($1, $2, $3, $4) returning id",
+        )
+        .bind(name)
+        .bind(slug)
+        .bind(src)
+        .bind(country)
+        .fetch_one(pool)
+        .await
+        .unwrap();
+        sqlx::query(
+            "insert into party_memberships (person_id, party_id, start_date, source_id) \
+             values ($1, $2, '2020-01-01', $3)",
+        )
+        .bind(person)
+        .bind(party)
+        .bind(src)
+        .execute(pool)
+        .await
+        .unwrap();
+        sqlx::query(
+            "insert into roll_call_votes (roll_call_id, person_id, choice) values ($1, $2, $3)",
+        )
+        .bind(id)
+        .bind(person)
+        .bind(choice)
+        .execute(pool)
+        .await
+        .unwrap();
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_recorded_vote_shows_its_split_and_every_member(pool: db::Pool) {
+    seed(&pool).await;
+    seed_roll_call(&pool).await;
+    let app = router(pool.clone());
+
+    let list = body_string(get(&app, "/tr/votes").await).await;
+    assert!(list.contains("Test Yasasi"));
+    assert!(list.contains("/tr/vote/test-oylamasi"));
+    let none = body_string(get(&app, "/tr/votes?q=gibberish").await).await;
+    assert!(!none.contains("/tr/vote/test-oylamasi"));
+    assert_eq!(
+        get(&app, "/tr/votes?page=99999999999").await.status(),
+        StatusCode::OK
+    );
+
+    let vote = body_string(get(&app, "/tr/vote/test-oylamasi").await).await;
+    assert!(vote.contains("/tr/people/uye-uc"));
+    assert!(vote.contains("https://ex.test/vote"), "it cites the record");
+    assert!(vote.contains("/tr/parties/test-partisi"));
+    assert_eq!(
+        get(&app, "/tr/vote/nope").await.status(),
+        StatusCode::NOT_FOUND
+    );
+    assert_eq!(
+        get(&app, "/usa/vote/test-oylamasi").await.status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // The country page offers the section once there is something in it.
+    let country = body_string(get(&app, "/tr").await).await;
+    assert!(country.contains("/tr/votes"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_person_page_shows_how_they_voted_and_when_they_differed(pool: db::Pool) {
+    seed(&pool).await;
+    seed_roll_call(&pool).await;
+    let id: i64 = sqlx::query_scalar("select id from people where slug='uye-uc'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let record = db::roll_calls::record(&pool, id).await.unwrap();
+    assert_eq!(
+        (record.total, record.absent, record.against_party),
+        (1, 0, 1),
+        "one vote, cast, against the two who voted yes"
+    );
+    let absent: i64 = sqlx::query_scalar("select id from people where slug='uye-dort'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let record = db::roll_calls::record(&pool, absent).await.unwrap();
+    assert_eq!(
+        (record.absent, record.against_party),
+        (1, 0),
+        "not voting is not dissent"
+    );
+
+    let app = router(pool.clone());
+    let page = body_string(get_cookie(&app, "/tr/people/uye-uc", "lang=de").await).await;
+    assert!(page.contains("Test Yasasi"));
+    assert!(page.contains("Anders als die Mehrheit der eigenen Partei"));
+    assert!(
+        page.contains("Krankheit"),
+        "the limit of the record is said"
+    );
+
+    let all = body_string(get(&app, "/tr/people/uye-uc/votes").await).await;
+    assert!(all.contains("/tr/vote/test-oylamasi"));
+    assert_eq!(
+        get(&app, "/usa/people/uye-uc/votes").await.status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // Someone with no recorded votes has no section at all.
+    let plain = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=de").await).await;
+    assert!(!plain.contains("Wie wurde abgestimmt?"));
+}

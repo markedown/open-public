@@ -19,6 +19,7 @@ pub mod outlet;
 pub mod pagination;
 pub mod poll_widget;
 pub mod references;
+pub mod roll_call;
 pub mod search;
 pub mod seat_bar;
 pub mod statement;

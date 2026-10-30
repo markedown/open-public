@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        select count(*) as \"n!\" from roll_calls\n        where country_id = $1\n          and ($2 = '' or unaccent(title) ilike '%' || unaccent($2) || '%')\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "n!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "66d5b80a7672224edd50474b09146208e772e8033d39aeb58ac347c6501a41e2"
+}
