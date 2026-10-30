@@ -350,6 +350,20 @@
     "wikidata_id": null
   },
   {
+    "color": "#003C8F",
+    "country": "germany",
+    "dissolved_date": null,
+    "founded_date": null,
+    "ideology_tags": [],
+    "name": "Südschleswigscher Wählerverband",
+    "short_name": "SSW",
+    "slug": "de-ssw",
+    "source_hash": "wd-Q161545",
+    "source_url": "https://www.wikidata.org/wiki/Q161545",
+    "summary": null,
+    "wikidata_id": "Q161545"
+  },
+  {
     "color": null,
     "country": "serbia",
     "dissolved_date": null,

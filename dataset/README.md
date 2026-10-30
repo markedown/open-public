@@ -30,6 +30,10 @@ database is rebuilt, and that must not read as a change in the data.
 loads with standard tooling without reading this file first. `manifest.json` carries the row
 counts of the export.
 
+`roll_calls.json` holds one row per recorded vote, with the members who voted each way as
+lists of slugs. `absent` means the chamber's record says the member did not vote; it does not
+say why.
+
 ## Provenance
 
 Every fact row carries `source_url` and `source_hash`, and `sources.json` holds the full

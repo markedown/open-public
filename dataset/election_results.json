@@ -433,21 +433,21 @@
   },
   {
     "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-ssw",
+    "seats": 1,
+    "source_hash": "de-elec-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 55578
+  },
+  {
+    "election": "2021-bundestagswahl",
     "label": "FDP",
     "party": null,
     "seats": 91,
     "source_hash": "de-elec-2021-bundestagswahl",
     "source_url": "https://www.bundeswahlleiterin.de",
     "votes": 5291010
-  },
-  {
-    "election": "2021-bundestagswahl",
-    "label": "SSW",
-    "party": null,
-    "seats": 1,
-    "source_hash": "de-elec-2021-bundestagswahl",
-    "source_url": "https://www.bundeswahlleiterin.de",
-    "votes": 55578
   },
   {
     "election": "2022-abd-temsilciler-meclisi-secimleri",
@@ -883,6 +883,15 @@
   },
   {
     "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-ssw",
+    "seats": 1,
+    "source_hash": "de-elec-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de",
+    "votes": 76138
+  },
+  {
+    "election": "2025-bundestagswahl",
     "label": "BSW",
     "party": null,
     "seats": 0,
@@ -898,15 +907,6 @@
     "source_hash": "de-elec-2025-bundestagswahl",
     "source_url": "https://www.bundeswahlleiterin.de",
     "votes": 2148757
-  },
-  {
-    "election": "2025-bundestagswahl",
-    "label": "SSW",
-    "party": null,
-    "seats": 1,
-    "source_hash": "de-elec-2025-bundestagswahl",
-    "source_url": "https://www.bundeswahlleiterin.de",
-    "votes": 76138
   },
   {
     "election": "srbija-parlamentarni-izbori-2023",

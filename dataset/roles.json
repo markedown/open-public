@@ -2950,7 +2950,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-afd",
+    "org": "Alternative für Deutschland",
     "person": "de-alice-weidel",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-alice-weidel",
@@ -3021,6 +3021,17 @@
     "role_type": "mp",
     "source_hash": "de-pol-145789",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/145789",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": "Wahlkreis 287: Konstanz",
+    "end_date": "2026-05-18",
+    "org": "Deutscher Bundestag",
+    "person": "de-andreas-jung",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
   },
@@ -3168,6 +3179,17 @@
     "title": "Mitglied des Bundestages"
   },
   {
+    "district": "Landesliste Brandenburg",
+    "end_date": "2025-06-30",
+    "org": "Deutscher Bundestag",
+    "person": "de-annalena-baerbock",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
     "district": "Landesliste Nordrhein-Westfalen",
     "end_date": null,
     "org": "Deutscher Bundestag",
@@ -3241,6 +3263,17 @@
     "role_type": "mp",
     "source_hash": "de-pol-175401",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/175401",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": "Wahlkreis 109: Krefeld I – Neuss II",
+    "end_date": "2026-05-31",
+    "org": "Deutscher Bundestag",
+    "person": "de-ansgar-heveling",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
   },
@@ -3846,6 +3879,17 @@
     "role_type": "mp",
     "source_hash": "de-pol-79014",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79014",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": "Landesliste Bayern",
+    "end_date": "2026-03-21",
+    "org": "Deutscher Bundestag",
+    "person": "de-carsten-traeger",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
   },
@@ -4754,7 +4798,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-buendnis-90",
+    "org": "Bündnis 90/Die Grünen",
     "person": "de-felix-banaszak",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-felix-banaszak",
@@ -4874,7 +4918,7 @@
   },
   {
     "district": "Landesliste Mecklenburg-Vorpommern",
-    "end_date": null,
+    "end_date": "2026-07-19",
     "org": "Deutscher Bundestag",
     "person": "de-frank-junge",
     "role_type": "mp",
@@ -4919,7 +4963,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-buendnis-90",
+    "org": "Bündnis 90/Die Grünen",
     "person": "de-franziska-brantner",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-franziska-brantner",
@@ -4996,7 +5040,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-cdu",
+    "org": "Christlich Demokratische Union Deutschlands",
     "person": "de-friedrich-merz",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-friedrich-merz",
@@ -5412,6 +5456,17 @@
     "title": "Mitglied des Bundestages"
   },
   {
+    "district": "Wahlkreis 44: Celle – Uelzen",
+    "end_date": "2025-06-05",
+    "org": "Deutscher Bundestag",
+    "person": "de-henning-otte",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
     "district": "Wahlkreis 129: Warendorf",
     "end_date": null,
     "org": "Deutscher Bundestag",
@@ -5502,7 +5557,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-linke",
+    "org": "Die Linke",
     "person": "de-ines-schwerdtner",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-ines-schwerdtner",
@@ -6402,6 +6457,17 @@
     "title": "Mitglied des Bundestages"
   },
   {
+    "district": "Landesliste Mecklenburg-Vorpommern",
+    "end_date": null,
+    "org": "Deutscher Bundestag",
+    "person": "de-katrin-zschau",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2026-07-20",
+    "title": "Mitglied des Bundestages"
+  },
+  {
     "district": "Landesliste Nordrhein-Westfalen",
     "end_date": null,
     "org": "Deutscher Bundestag",
@@ -6635,7 +6701,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-spd",
+    "org": "Sozialdemokratische Partei Deutschlands",
     "person": "de-lars-klingbeil",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-lars-klingbeil",
@@ -6811,7 +6877,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-linke",
+    "org": "Die Linke",
     "person": "de-luigi-pantisano",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-luigi-pantisano",
@@ -7163,7 +7229,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-csu",
+    "org": "Christlich-Soziale Union in Bayern",
     "person": "de-markus-soeder",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-markus-soeder",
@@ -8514,6 +8580,17 @@
     "title": "Mitglied des Bundestages"
   },
   {
+    "district": "Landesliste Schleswig-Holstein",
+    "end_date": "2025-08-31",
+    "org": "Deutscher Bundestag",
+    "person": "de-robert-habeck",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
     "district": "Wahlkreis 195: Suhl – Schmalkalden-Meiningen – Hildburghausen – Sonneberg",
     "end_date": null,
     "org": "Deutscher Bundestag",
@@ -8598,6 +8675,17 @@
     "role_type": "mp",
     "source_hash": "de-pol-123018",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/123018",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": "Wahlkreis 291: Ulm",
+    "end_date": "2026-05-21",
+    "org": "Deutscher Bundestag",
+    "person": "de-ronja-kemmer",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
   },
@@ -9748,7 +9836,7 @@
   {
     "district": null,
     "end_date": null,
-    "org": "de-afd",
+    "org": "Alternative für Deutschland",
     "person": "de-tino-chrupalla",
     "role_type": "party_leader",
     "source_hash": "de-leader-de-tino-chrupalla",
@@ -9907,6 +9995,17 @@
     "role_type": "mp",
     "source_hash": "de-pol-79391",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79391",
+    "start_date": "2025-03-25",
+    "title": "Mitglied des Bundestages"
+  },
+  {
+    "district": "Landesliste Nordrhein-Westfalen",
+    "end_date": "2025-07-31",
+    "org": "Deutscher Bundestag",
+    "person": "de-uwe-foullong",
+    "role_type": "mp",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25",
     "title": "Mitglied des Bundestages"
   },

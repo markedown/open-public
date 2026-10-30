@@ -919,6 +919,73 @@
       "encoding": "utf-8",
       "format": "json",
       "mediatype": "application/json",
+      "name": "roll_calls",
+      "path": "roll_calls.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "absent",
+            "type": "array"
+          },
+          {
+            "name": "abstain",
+            "type": "array"
+          },
+          {
+            "name": "chamber",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "held_on",
+            "type": "date"
+          },
+          {
+            "name": "no",
+            "type": "array"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "yes",
+            "type": "array"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
       "name": "sources",
       "path": "sources.json",
       "schema": {

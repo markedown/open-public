@@ -2272,6 +2272,14 @@
     "start_date": "2025-03-25"
   },
   {
+    "end_date": "2026-05-18",
+    "party": "de-cdu",
+    "person": "de-andreas-jung",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25"
+  },
+  {
     "end_date": null,
     "party": "de-csu",
     "person": "de-andreas-lenz",
@@ -2376,6 +2384,14 @@
     "start_date": "2025-03-25"
   },
   {
+    "end_date": "2025-06-30",
+    "party": "de-buendnis-90",
+    "person": "de-annalena-baerbock",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25"
+  },
+  {
     "end_date": null,
     "party": "de-afd",
     "person": "de-anna-leonore-labitzke-rathert",
@@ -2429,6 +2445,14 @@
     "person": "de-annika-klose",
     "source_hash": "de-pol-175401",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/175401",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": "2026-05-31",
+    "party": "de-cdu",
+    "person": "de-ansgar-heveling",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25"
   },
   {
@@ -2837,6 +2861,14 @@
     "person": "de-carsten-schneider",
     "source_hash": "de-pol-79014",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79014",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": "2026-03-21",
+    "party": "de-spd",
+    "person": "de-carsten-traeger",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25"
   },
   {
@@ -3568,7 +3600,7 @@
     "start_date": "2025-03-25"
   },
   {
-    "end_date": null,
+    "end_date": "2026-07-19",
     "party": "de-spd",
     "person": "de-frank-junge",
     "source_hash": "de-pol-79268",
@@ -3933,6 +3965,14 @@
     "person": "de-hendrik-streeck",
     "source_hash": "de-pol-182851",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/182851",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": "2025-06-05",
+    "party": "de-cdu",
+    "person": "de-henning-otte",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25"
   },
   {
@@ -4606,6 +4646,14 @@
     "source_hash": "de-pol-175599",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/175599",
     "start_date": "2025-03-25"
+  },
+  {
+    "end_date": null,
+    "party": "de-spd",
+    "person": "de-katrin-zschau",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2026-07-20"
   },
   {
     "end_date": null,
@@ -6104,6 +6152,14 @@
     "start_date": "2025-03-25"
   },
   {
+    "end_date": "2025-08-31",
+    "party": "de-buendnis-90",
+    "person": "de-robert-habeck",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
+    "start_date": "2025-03-25"
+  },
+  {
     "end_date": null,
     "party": "de-afd",
     "person": "de-robert-teske",
@@ -6165,6 +6221,14 @@
     "person": "de-ronald-glaeser",
     "source_hash": "de-pol-123018",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/123018",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": "2026-05-21",
+    "party": "de-cdu",
+    "person": "de-ronja-kemmer",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25"
   },
   {
@@ -6605,6 +6669,14 @@
     "person": "de-stefan-schwartze",
     "source_hash": "de-pol-78999",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/78999",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": null,
+    "party": "de-ssw",
+    "person": "de-stefan-seidler",
+    "source_hash": "de-mdb-stammdaten",
+    "source_url": "https://www.bundestag.de/resource/blob/472878/MdB-Stammdaten.zip",
     "start_date": "2025-03-25"
   },
   {
@@ -7069,6 +7141,14 @@
     "person": "de-uwe-feiler",
     "source_hash": "de-pol-79391",
     "source_url": "https://www.abgeordnetenwatch.de/api/v2/politicians/79391",
+    "start_date": "2025-03-25"
+  },
+  {
+    "end_date": "2025-07-31",
+    "party": "de-linke",
+    "person": "de-uwe-foullong",
+    "source_hash": "de-mdb-21-liste",
+    "source_url": "https://de.wikipedia.org/wiki/Liste_der_Mitglieder_des_Deutschen_Bundestages_(21._Wahlperiode)",
     "start_date": "2025-03-25"
   },
   {
