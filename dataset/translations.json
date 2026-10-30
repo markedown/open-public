@@ -54,6 +54,114 @@
     "text": "Une alliance électorale formée en Türkiye en 2018, menée par l'AKP et le MHP ; d'autres partis l'ont rejointe par la suite."
   },
   {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "CDU/CSU parliamentary group"
+  },
+  {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Groupe parlementaire CDU/CSU"
+  },
+  {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "CDU/CSU meclis grubu"
+  },
+  {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "The CDU and the CSU are two parties that form a single parliamentary group in the Bundestag. The CSU stands only in Bavaria, the CDU in every other state."
+  },
+  {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "La CDU et la CSU sont deux partis qui forment un seul groupe parlementaire au Bundestag. La CSU ne se présente qu'en Bavière, la CDU dans tous les autres Länder."
+  },
+  {
+    "entity": "de-cdu-csu-fraktion",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "CDU ve CSU, Federal Meclis'te tek bir meclis grubu oluşturan iki ayrı partidir. CSU yalnızca Bavyera'da, CDU ise diğer tüm eyaletlerde seçime girer."
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Coalition of the CDU, CSU and SPD"
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Coalition CDU, CSU et SPD"
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "name",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "CDU, CSU ve SPD koalisyonu"
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "en",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Since 6 May 2025 the CDU, CSU and SPD have together formed the federal government under Chancellor Friedrich Merz."
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "fr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "Depuis le 6 mai 2025, la CDU, la CSU et le SPD forment ensemble le gouvernement fédéral dirigé par le chancelier Friedrich Merz."
+  },
+  {
+    "entity": "de-koalition-2025",
+    "entity_type": "alliance",
+    "field": "summary",
+    "lang": "tr",
+    "origin": "human",
+    "source_lang": "de",
+    "text": "CDU, CSU ve SPD, 6 Mayıs 2025'ten beri Şansölye Friedrich Merz yönetimindeki federal hükümeti birlikte oluşturuyor."
+  },
+  {
     "entity": "emek-ve-ozgurluk-ittifaki",
     "entity_type": "alliance",
     "field": "name",

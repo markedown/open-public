@@ -9966,6 +9966,17 @@
     "url": "https://democrats.org/where-we-stand/party-platform/"
   },
   {
+    "content_hash": "de-union-group",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T16:06:49.962756+00:00",
+    "kind": "manual",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "CDU/CSU-Bundestagsfraktion, Wikipedia",
+    "url": "https://de.wikipedia.org/wiki/CDU/CSU-Bundestagsfraktion"
+  },
+  {
     "content_hash": "de-kabinett-2026-10-30",
     "content_sha256": null,
     "fetched_at": "2026-10-30T14:18:57.184420+00:00",
@@ -33088,17 +33099,6 @@
     "url": "https://www.abgeordnetenwatch.de/parties/buendnis-90-die-gruenen"
   },
   {
-    "content_hash": "de-party-cdu-csu",
-    "content_sha256": null,
-    "fetched_at": "2026-07-16T19:29:13.618874+00:00",
-    "kind": "official_gov",
-    "outlet": "abgeordnetenwatch.de",
-    "published_at": null,
-    "snapshot_url": null,
-    "title": "CDU/CSU",
-    "url": "https://www.abgeordnetenwatch.de/parties/cdu-csu"
-  },
-  {
     "content_hash": "de-party-die-linke",
     "content_sha256": null,
     "fetched_at": "2026-07-16T19:25:48.408195+00:00",
@@ -39732,6 +39732,17 @@
     "url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx"
   },
   {
+    "content_hash": "de-mdb-stammdaten",
+    "content_sha256": "529598c27b497a356e3ce585a0e92e3dd10e756a51dc8022b35e71638ebc1803",
+    "fetched_at": "2026-10-30T16:06:49.913776+00:00",
+    "kind": "official_gov",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Stammdaten aller Abgeordneten, Deutscher Bundestag",
+    "url": "https://www.bundestag.de/resource/blob/472878/MdB-Stammdaten.zip"
+  },
+  {
     "content_hash": "de-vote-20220603_1",
     "content_sha256": "4378e10ff8b125e1d6a083cc5e2dcfc418aa9df1b0fb37f4af5ffb77a42f6343",
     "fetched_at": "2026-07-21T10:26:19.971732+00:00",
@@ -39796,6 +39807,28 @@
     "snapshot_url": null,
     "title": "Bundestagswahl 2025",
     "url": "https://www.bundeswahlleiterin.de"
+  },
+  {
+    "content_hash": "de-result-2021-bundestagswahl",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T16:06:49.958526+00:00",
+    "kind": "official_election",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Ergebnisse 2021, Bundeswahlleiterin",
+    "url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2021/ergebnisse/bund-99.html"
+  },
+  {
+    "content_hash": "de-result-2025-bundestagswahl",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T16:06:49.954969+00:00",
+    "kind": "official_election",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Ergebnisse 2025, Bundeswahlleiterin",
+    "url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2025/ergebnisse/bund-99.html"
   },
   {
     "content_hash": "compass-tr-doc",
@@ -59882,6 +59915,28 @@
     "snapshot_url": null,
     "title": "Wikidata",
     "url": "https://www.wikidata.org/wiki/Q4960876"
+  },
+  {
+    "content_hash": "wd-Q49762",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T16:06:49.915699+00:00",
+    "kind": "wikidata",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Wikidata Q49762",
+    "url": "https://www.wikidata.org/wiki/Q49762"
+  },
+  {
+    "content_hash": "wd-Q49763",
+    "content_sha256": null,
+    "fetched_at": "2026-10-30T16:06:49.916791+00:00",
+    "kind": "wikidata",
+    "outlet": null,
+    "published_at": null,
+    "snapshot_url": null,
+    "title": "Wikidata Q49763",
+    "url": "https://www.wikidata.org/wiki/Q49763"
   },
   {
     "content_hash": "wd-enrich-Q499449",

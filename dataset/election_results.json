@@ -398,11 +398,20 @@
   {
     "election": "2021-bundestagswahl",
     "label": null,
-    "party": "de-cdu-csu",
-    "seats": 197,
-    "source_hash": "de-elec-2021-bundestagswahl",
-    "source_url": "https://www.bundeswahlleiterin.de",
-    "votes": 11177746
+    "party": "de-cdu",
+    "seats": 152,
+    "source_hash": "de-result-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2021/ergebnisse/bund-99.html",
+    "votes": 8774920
+  },
+  {
+    "election": "2021-bundestagswahl",
+    "label": null,
+    "party": "de-csu",
+    "seats": 45,
+    "source_hash": "de-result-2021-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2021/ergebnisse/bund-99.html",
+    "votes": 2402827
   },
   {
     "election": "2021-bundestagswahl",
@@ -839,11 +848,20 @@
   {
     "election": "2025-bundestagswahl",
     "label": null,
-    "party": "de-cdu-csu",
-    "seats": 208,
-    "source_hash": "de-elec-2025-bundestagswahl",
-    "source_url": "https://www.bundeswahlleiterin.de",
-    "votes": 14160402
+    "party": "de-cdu",
+    "seats": 164,
+    "source_hash": "de-result-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2025/ergebnisse/bund-99.html",
+    "votes": 11196374
+  },
+  {
+    "election": "2025-bundestagswahl",
+    "label": null,
+    "party": "de-csu",
+    "seats": 44,
+    "source_hash": "de-result-2025-bundestagswahl",
+    "source_url": "https://www.bundeswahlleiterin.de/bundestagswahlen/2025/ergebnisse/bund-99.html",
+    "votes": 2964028
   },
   {
     "election": "2025-bundestagswahl",

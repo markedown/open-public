@@ -1,26 +1,26 @@
 {
   "counts": {
-    "alliances": 3,
+    "alliances": 5,
     "countries": 6,
-    "election_results": 215,
+    "election_results": 217,
     "elections": 25,
     "events": 11,
     "outlets": 50,
-    "parties": 94,
-    "party_alliances": 12,
+    "parties": 95,
+    "party_alliances": 17,
     "party_memberships": 4177,
     "people": 4408,
     "person_attributes": 3529,
     "person_education": 2617,
     "poll_options": 17,
     "polls": 5,
-    "position_evidence": 324,
+    "position_evidence": 345,
     "roles": 4436,
-    "sources": 5907,
+    "sources": 5912,
     "statements": 1,
     "theses": 103,
     "topics": 0,
-    "translations": 221
+    "translations": 233
   },
   "note": "Row counts of this export. Generated file; see README for what is included and what is deliberately left out."
 }

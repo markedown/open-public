@@ -32,6 +32,46 @@
     "start_date": "2023-04-01"
   },
   {
+    "alliance": "de-cdu-csu-fraktion",
+    "end_date": null,
+    "party": "de-cdu",
+    "source_hash": "de-union-group",
+    "source_url": "https://de.wikipedia.org/wiki/CDU/CSU-Bundestagsfraktion",
+    "start_date": null
+  },
+  {
+    "alliance": "de-cdu-csu-fraktion",
+    "end_date": null,
+    "party": "de-csu",
+    "source_hash": "de-union-group",
+    "source_url": "https://de.wikipedia.org/wiki/CDU/CSU-Bundestagsfraktion",
+    "start_date": null
+  },
+  {
+    "alliance": "de-koalition-2025",
+    "end_date": null,
+    "party": "de-cdu",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06"
+  },
+  {
+    "alliance": "de-koalition-2025",
+    "end_date": null,
+    "party": "de-csu",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06"
+  },
+  {
+    "alliance": "de-koalition-2025",
+    "end_date": null,
+    "party": "de-spd",
+    "source_hash": "de-kabinett-2026-10-30",
+    "source_url": "https://de.wikipedia.org/wiki/Kabinett_Merz",
+    "start_date": "2025-05-06"
+  },
+  {
     "alliance": "emek-ve-ozgurluk-ittifaki",
     "end_date": null,
     "party": "demokratik-bolgeler-partisi",
