@@ -41,6 +41,12 @@ one file under another licence: Datenlizenz Deutschland Namensnennung 2.0
 (https://www.govdata.de/dl-de/by-2-0), © Die Bundeswahlleiterin, Statistische Ämter des Bundes und der
 Länder, Wiesbaden 2024.
 
+`initiatives.json` and `group_votes.json` are not under CC0. They are read from official parliamentary
+material whose [terms of use](https://dip.bundestag.de/documents/nutzungsbedingungen_dip.pdf) allow any
+reuse on condition of attribution. Pass them on with the source "Deutscher Bundestag/Bundesrat – DIP"
+and the document designation each row carries (BT-Drs., BT-PlPr.). The sides in `group_votes.json` are
+our reading of the record, so they count as processed data; `excerpt` is the record's wording.
+
 `initiatives.json` lists the bills and motions tabled, with the parties behind them.
 `group_votes.json` holds votes by show of hands, each with the record's wording in `excerpt`. `for`,
 `against` and `abstain` are relative to the bill or motion, even where the chamber voted on a
