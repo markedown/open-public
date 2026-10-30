@@ -17,6 +17,8 @@ pub struct GroupVote {
     pub excerpt: String,
     pub locator: Option<String>,
     pub source_url: String,
+    /// Who the source must be credited to, where its terms ask for that.
+    pub source_outlet: Option<String>,
 }
 
 /// One party's side in a group vote.
@@ -39,6 +41,8 @@ pub struct Initiative {
     pub tabled_on: NaiveDate,
     pub status: Option<String>,
     pub source_url: String,
+    /// Who the source must be credited to, where its terms ask for that.
+    pub source_outlet: Option<String>,
 }
 
 /// How many group votes a country has, optionally only those a party took part in.
@@ -72,7 +76,7 @@ pub async fn list(
         GroupVote,
         r#"
         select g.id, g.held_on, g.title, g.document, g.adopted, g.excerpt, g.locator,
-               s.url as source_url
+               s.url as source_url, s.outlet as source_outlet
         from group_votes g
         join sources s on s.id = g.source_id
         where g.country_id = $1
@@ -131,7 +135,8 @@ pub async fn initiatives_for_party(
     let rows = sqlx::query_as!(
         Initiative,
         r#"
-        select i.id, i.kind, i.title, i.document, i.tabled_on, i.status, s.url as source_url
+        select i.id, i.kind, i.title, i.document, i.tabled_on, i.status, s.url as source_url,
+               s.outlet as source_outlet
         from initiatives i
         join initiative_parties ip on ip.initiative_id = i.id
         join sources s on s.id = i.source_id

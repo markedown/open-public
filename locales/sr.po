@@ -1488,3 +1488,6 @@ msgstr "Tekst u zapisniku"
 
 msgid "Bills and motions"
 msgstr "Predlozi zakona i predlozi"
+
+msgid "Source"
+msgstr "Izvor"

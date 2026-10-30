@@ -1488,3 +1488,6 @@ msgstr "Texte du compte rendu"
 
 msgid "Bills and motions"
 msgstr "Projets de loi et motions"
+
+msgid "Source"
+msgstr "Source"

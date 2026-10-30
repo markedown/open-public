@@ -9427,6 +9427,11 @@ async fn parties_on_the_same_evidence_are_one_row(pool: db::Pool) {
 /// votes and initiatives so the lists page.
 async fn seed_group_vote(pool: &db::Pool, extra: i64) {
     let (country, src) = compass_country_and_source(pool).await;
+    sqlx::query("update sources set outlet = 'Resmi Kaynak' where id = $1")
+        .bind(src)
+        .execute(pool)
+        .await
+        .unwrap();
     let (tp, dp) = two_parties(pool, country, src).await;
     for n in 0..=extra {
         let init: i64 = sqlx::query_scalar(
@@ -9498,6 +9503,8 @@ async fn group_votes_and_initiatives_have_their_pages(pool: db::Pool) {
     assert!(body.contains("Test Onergesi 0"));
     assert!(body.contains("Wer stimmt dafuer? Wortlaut."));
     assert!(body.contains("Tutanak 21/9"));
+    // A source whose terms ask to be credited is named on the page.
+    assert!(body.contains("Resmi Kaynak"));
     assert!(body.contains("Rejected"));
     assert!(body.contains(">DP<"));
 

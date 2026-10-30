@@ -121,6 +121,7 @@ pub async fn groups(
                     (group_vote_row(v, &sides))
                 }
             }
+            (credit(rows.iter().filter_map(|r| r.source_outlet.as_deref())))
             @if last > 1 {
                 nav class="mt-8 flex items-center justify-center gap-4 text-[16px]" {
                     @if page > 1 {
@@ -140,6 +141,20 @@ pub async fn groups(
         session.as_ref().is_some_and(|s| s.is_admin),
         content,
     ))
+}
+
+/// Who these rows must be credited to, once per list.
+pub fn credit<'a>(outlets: impl Iterator<Item = &'a str>) -> Markup {
+    let mut names: Vec<&str> = outlets.collect();
+    names.sort_unstable();
+    names.dedup();
+    html! {
+        @if !names.is_empty() {
+            p class="mt-4 text-[15px] text-ink-muted" {
+                (i18n::t("Source")) ": " (names.join(", "))
+            }
+        }
+    }
 }
 
 /// One vote: its subject, who was on which side, and the wording behind it.
@@ -227,6 +242,7 @@ pub async fn initiatives(
             (ui::page_header(title, Some(html! { (party.name) }), None))
             p class="mb-4 text-[14px] font-bold text-ink-muted" { (total) " " (title) }
             (initiative_list(&rows))
+            (credit(rows.iter().filter_map(|r| r.source_outlet.as_deref())))
             (pager(&base, page, last, ""))
         }
     };

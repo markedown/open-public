@@ -1488,3 +1488,6 @@ msgstr "Wortlaut im Protokoll"
 
 msgid "Bills and motions"
 msgstr "Gesetzentwürfe und Anträge"
+
+msgid "Source"
+msgstr "Quelle"

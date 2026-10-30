@@ -234,6 +234,7 @@ pub async fn detail(
                         Some(ui::see_all_link(&format!("/{}/parties/{}/initiatives", country_model.slug, party.slug))),
                     ))
                     (crate::pages::votes::initiative_list(&initiatives))
+                    (crate::pages::votes::credit(initiatives.iter().filter_map(|r| r.source_outlet.as_deref())))
                     p class="mt-3 text-[16px]" {
                         a href={"/" (country_model.slug) "/votes/groups?party=" (party.slug)} class="op-link" {
                             (i18n::t("Votes by show of hands"))

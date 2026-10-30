@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        select g.id, g.held_on, g.title, g.document, g.adopted, g.excerpt, g.locator,\n               s.url as source_url\n        from group_votes g\n        join sources s on s.id = g.source_id\n        where g.country_id = $1\n          and ($2::text is null or exists (\n              select 1 from group_vote_parties gp join parties p on p.id = gp.party_id\n              where gp.group_vote_id = g.id and p.slug = $2))\n        order by g.held_on desc, g.id desc\n        limit $3 offset $4\n        ",
+  "query": "\n        select g.id, g.held_on, g.title, g.document, g.adopted, g.excerpt, g.locator,\n               s.url as source_url, s.outlet as source_outlet\n        from group_votes g\n        join sources s on s.id = g.source_id\n        where g.country_id = $1\n          and ($2::text is null or exists (\n              select 1 from group_vote_parties gp join parties p on p.id = gp.party_id\n              where gp.group_vote_id = g.id and p.slug = $2))\n        order by g.held_on desc, g.id desc\n        limit $3 offset $4\n        ",
   "describe": {
     "columns": [
       {
@@ -90,6 +90,17 @@
             "name": "url"
           }
         }
+      },
+      {
+        "ordinal": 8,
+        "name": "source_outlet",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "sources",
+            "name": "outlet"
+          }
+        }
       }
     ],
     "parameters": {
@@ -108,8 +119,9 @@
       true,
       false,
       true,
-      false
+      false,
+      true
     ]
   },
-  "hash": "b186077038c1eb2d8d0a49ebb0cb1040c17afb268796594b4911fc4136b40534"
+  "hash": "bdad3ca1b9816b383a25f9b8cd7034eed00c9041685ed26a860517bbd3585e4a"
 }

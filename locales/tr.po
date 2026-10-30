@@ -1500,3 +1500,6 @@ msgstr "Tutanaktaki ifade"
 
 msgid "Bills and motions"
 msgstr "Yasa teklifleri ve önergeler"
+
+msgid "Source"
+msgstr "Kaynak"
