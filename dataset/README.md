@@ -41,6 +41,11 @@ one file under another licence: Datenlizenz Deutschland Namensnennung 2.0
 (https://www.govdata.de/dl-de/by-2-0), © Die Bundeswahlleiterin, Statistische Ämter des Bundes und der
 Länder, Wiesbaden 2024.
 
+`initiatives.json` lists the bills and motions tabled, with the parties behind them.
+`group_votes.json` holds votes by show of hands, each with the record's wording in `excerpt`. `for`,
+`against` and `abstain` are relative to the bill or motion, even where the chamber voted on a
+recommendation to reject it.
+
 `compass_reviewed.txt` lists the countries whose theses have been reviewed for balance.
 `scripts/check_compass.py` holds those to its limits and only reports on the others.
 

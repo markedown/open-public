@@ -348,6 +348,167 @@
       "encoding": "utf-8",
       "format": "json",
       "mediatype": "application/json",
+      "name": "group_votes",
+      "path": "group_votes.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "abstain",
+            "type": "array"
+          },
+          {
+            "name": "adopted",
+            "type": "boolean"
+          },
+          {
+            "name": "against",
+            "type": "array"
+          },
+          {
+            "name": "chamber",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "document",
+            "type": "string"
+          },
+          {
+            "name": "excerpt",
+            "type": "string"
+          },
+          {
+            "name": "for",
+            "type": "array"
+          },
+          {
+            "name": "held_on",
+            "type": "date"
+          },
+          {
+            "name": "initiative",
+            "type": "string"
+          },
+          {
+            "name": "locator",
+            "type": "string"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          },
+          {
+            "fields": "initiative",
+            "reference": {
+              "fields": "slug",
+              "resource": "initiatives"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
+      "name": "initiatives",
+      "path": "initiatives.json",
+      "schema": {
+        "fields": [
+          {
+            "name": "by_government",
+            "type": "boolean"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "document",
+            "type": "string"
+          },
+          {
+            "name": "kind",
+            "type": "string"
+          },
+          {
+            "name": "parties",
+            "type": "array"
+          },
+          {
+            "name": "slug",
+            "type": "string"
+          },
+          {
+            "name": "source_hash",
+            "type": "string"
+          },
+          {
+            "name": "source_url",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "tabled_on",
+            "type": "date"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "topics",
+            "type": "array"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "fields": "country",
+            "reference": {
+              "fields": "slug",
+              "resource": "countries"
+            }
+          }
+        ],
+        "primaryKey": [
+          "slug"
+        ]
+      }
+    },
+    {
+      "encoding": "utf-8",
+      "format": "json",
+      "mediatype": "application/json",
       "name": "outlets",
       "path": "outlets.json",
       "schema": {
