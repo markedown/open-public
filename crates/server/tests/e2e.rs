@@ -8745,6 +8745,7 @@ async fn image_host() -> String {
                 async move { png }
             }),
         )
+        .route("/text.png", axum::routing::get(|| async { "not an image" }))
         .route(
             "/busy.png",
             axum::routing::get(|| async { axum::http::StatusCode::TOO_MANY_REQUESTS }),
@@ -8994,4 +8995,71 @@ async fn a_person_page_shows_how_they_voted_and_when_they_differed(pool: db::Poo
     // Someone with no recorded votes has no section at all.
     let plain = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=de").await).await;
     assert!(!plain.contains("Wie wurde abgestimmt?"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn an_image_that_cannot_be_used_is_counted_and_not_stored(pool: db::Pool) {
+    seed(&pool).await;
+    let host = image_host().await;
+    for clear in [
+        "update people set photo_url = null",
+        "update countries set flag_url = null",
+    ] {
+        sqlx::query(clear).execute(&pool).await.unwrap();
+    }
+    for (slug, path) in [("ayse-yilmaz", "text.png"), ("mehmet-demir", "missing.png")] {
+        sqlx::query("update people set photo_url = $1 where slug = $2")
+            .bind(format!("{host}/{path}"))
+            .bind(slug)
+            .execute(&pool)
+            .await
+            .unwrap();
+    }
+    let dir = tempfile_dir("op-mirror-bad");
+    let http = server::mirror::client("https://example.test").unwrap();
+    let pass = server::mirror::mirror_pending(&pool, &dir, &http, std::time::Duration::ZERO)
+        .await
+        .unwrap();
+    assert_eq!((pass.copied, pass.failed), (0, 2));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn long_lists_of_votes_are_paged(pool: db::Pool) {
+    seed(&pool).await;
+    seed_roll_call(&pool).await;
+    // Forty more votes, so both lists run past one page.
+    sqlx::query(
+        "insert into roll_calls (country_id, slug, chamber, held_on, title, source_id) \
+         select rc.country_id, 'yasa-' || n, rc.chamber, rc.held_on + n, 'Yasa ' || n, rc.source_id \
+         from roll_calls rc, generate_series(1, 40) n",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    sqlx::query(
+        "insert into roll_call_votes (roll_call_id, person_id, choice) \
+         select rc.id, p.id, 'abstain' from roll_calls rc, people p \
+         where p.slug = 'uye-uc' and rc.slug like 'yasa-%'",
+    )
+    .execute(&pool)
+    .await
+    .unwrap();
+    let app = router(pool.clone());
+
+    let first = body_string(get(&app, "/tr/votes").await).await;
+    assert!(first.contains("/tr/votes?page=2"));
+    let second = body_string(get(&app, "/tr/votes?page=2").await).await;
+    assert!(second.contains("/tr/votes?page=1"));
+
+    // A search survives the pager, encoded, so a space does not end the link.
+    let found = body_string(get(&app, "/tr/votes?q=Yasa%20").await).await;
+    assert!(found.contains("q=Yasa%20"));
+
+    let person = body_string(get(&app, "/tr/people/uye-uc").await).await;
+    assert!(
+        person.contains("/tr/people/uye-uc/votes"),
+        "the page links to the rest"
+    );
+    let all = body_string(get(&app, "/tr/people/uye-uc/votes").await).await;
+    assert!(all.contains("/tr/people/uye-uc/votes?page=2"));
 }
