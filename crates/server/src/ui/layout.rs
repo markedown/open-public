@@ -154,7 +154,7 @@ pub fn document_described(
                             } @else {
                                 a href="/login" class=(link) { (i18n::t("Log in")) }
                                 a href="/register"
-                                   class="inline-flex min-h-10 items-center rounded-lg bg-ink px-4 font-semibold text-paper transition-colors hover:bg-accent-strong" {
+                                   class="hidden sm:inline-flex min-h-10 items-center rounded-lg bg-ink px-4 font-semibold text-paper transition-colors hover:bg-accent-strong" {
                                     (i18n::t("Register"))
                                 }
                             }

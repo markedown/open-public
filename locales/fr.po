@@ -274,9 +274,6 @@ msgstr "Sans étiquette"
 msgid "seats"
 msgstr "sièges"
 
-msgid "Coalitions"
-msgstr "Coalitions"
-
 msgid "People, parties, roles and polls."
 msgstr "Personnes, partis, fonctions et sondages."
 
@@ -820,9 +817,6 @@ msgstr "propositions"
 msgid "No positions have been recorded for this country yet."
 msgstr "Aucune proposition n'a encore été enregistrée pour ce pays."
 
-msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
-msgstr "Indiquez votre position sur chaque proposition. Marquez comme importantes celles qui comptent pour vous afin qu'elles pèsent davantage. Rien de ce que vous saisissez n'est conservé : votre correspondance est calculée sur le moment et jamais enregistrée."
-
 msgid "See my match"
 msgstr "Voir ma correspondance"
 
@@ -1324,3 +1318,15 @@ msgstr "Répondez à quelques affirmations et voyez comment les partis se compar
 
 msgid "Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."
 msgstr "Les photos, drapeaux et logos sont copiés sur ce serveur et servis depuis celui-ci : votre navigateur ne contacte donc ni Wikimedia, ni un parlement, ni personne d'autre pour les afficher. Les polices et les scripts sont eux aussi servis d'ici. Un autre site n'a connaissance de votre visite que si vous suivez un lien vers lui, par exemple vers une source."
+
+msgid "Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Rien de ce que vous saisissez n'est conservé : votre résultat est calculé sur le moment et jamais enregistré."
+
+
+msgid "How this works"
+msgstr "Comment ça marche"
+
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
+msgstr "Indiquez votre position sur chaque thèse. Marquez celles qui comptent pour vous comme importantes : elles pèseront davantage."
+

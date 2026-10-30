@@ -274,9 +274,6 @@ msgstr "Nestranački"
 msgid "seats"
 msgstr "mesta"
 
-msgid "Coalitions"
-msgstr "Koalicije"
-
 msgid "People, parties, roles and polls."
 msgstr "Osobe, stranke, funkcije i ankete."
 
@@ -820,9 +817,6 @@ msgstr "teze"
 msgid "No positions have been recorded for this country yet."
 msgstr "Za ovu zemlju još nisu zabeležene teze."
 
-msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
-msgstr "Recite gde stojite po svakoj tezi. Označite one do kojih Vam je stalo kao važne, da bi se više računale. Ništa što unesete ne čuva se: Vaše poklapanje izračunava se odmah i nikada se ne beleži."
-
 msgid "See my match"
 msgstr "Prikaži moje poklapanje"
 
@@ -1324,3 +1318,15 @@ msgstr "Odgovorite na nekoliko teza i pogledajte kako se stranke porede. Nalog n
 
 msgid "Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."
 msgstr "Fotografije, zastave i logotipi kopiraju se na ovaj server i odavde se prikazuju, tako da vaš pregledač zbog njih ne kontaktira Vikimediju, neki parlament ni bilo koga drugog. I fontovi i skripte dolaze odavde. Drugi sajt saznaje za vas samo ako pratite link ka njemu, na primer ka izvoru."
+
+msgid "Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Ništa od onoga što unesete ne čuva se: vaše poklapanje se računa odmah i nikada se ne snima."
+
+
+msgid "How this works"
+msgstr "Kako ovo funkcioniše"
+
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
+msgstr "Navedite gde stojite u vezi sa svakim stavom. Označite one do kojih vam je stalo kao važne, da bi se više računali."
+

@@ -324,7 +324,7 @@ pub async fn detail(
             @if !alliances.is_empty() {
                 section class="mb-12" {
                     (ui::section_header(
-                        i18n::t("Coalitions"),
+                        i18n::t("Alliances"),
                         Some(ui::see_all_link(&format!("/{}/alliances", country.slug))),
                     ))
                     div class="grid gap-4 sm:grid-cols-3" {

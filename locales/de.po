@@ -271,9 +271,6 @@ msgstr "Parteilos"
 msgid "seats"
 msgstr "Sitze"
 
-msgid "Coalitions"
-msgstr "Koalitionen"
-
 msgid "People, parties, roles and polls."
 msgstr "Personen, Parteien, Ämter und Umfragen."
 
@@ -820,9 +817,6 @@ msgstr "Thesen"
 msgid "No positions have been recorded for this country yet."
 msgstr "Für dieses Land wurden noch keine Thesen erfasst."
 
-msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
-msgstr "Geben Sie an, wo Sie zu jeder These stehen. Markieren Sie die Ihnen wichtigen Thesen, damit sie stärker zählen. Nichts, was Sie eingeben, wird gespeichert: Ihre Übereinstimmung wird sofort berechnet und nie gespeichert."
-
 msgid "See my match"
 msgstr "Meine Übereinstimmung anzeigen"
 
@@ -1324,3 +1318,15 @@ msgstr "Beantworten Sie ein paar Thesen und sehen Sie, wie die Parteien im Vergl
 
 msgid "Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."
 msgstr "Fotos, Flaggen und Logos werden auf diesen Server kopiert und von hier ausgeliefert. Ihr Browser nimmt dafür also keinen Kontakt zu Wikimedia, einem Parlament oder sonst jemandem auf. Auch Schriften und Skripte kommen von hier. Eine andere Website erfährt nur dann von Ihnen, wenn Sie einem Link dorthin folgen, etwa zu einer Quelle."
+
+msgid "Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Nichts, was Sie eingeben, wird gespeichert: Ihre Übereinstimmung wird sofort berechnet und nie gespeichert."
+
+
+msgid "How this works"
+msgstr "So funktioniert es"
+
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
+msgstr "Geben Sie an, wo Sie zu jeder These stehen. Markieren Sie die Ihnen wichtigen Thesen, damit sie stärker zählen."
+

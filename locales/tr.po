@@ -286,9 +286,6 @@ msgstr "Bağımsız"
 msgid "seats"
 msgstr "sandalye"
 
-msgid "Coalitions"
-msgstr "İttifaklar"
-
 msgid "People, parties, roles and polls."
 msgstr "Kişiler, partiler, roller ve anketler."
 
@@ -832,9 +829,6 @@ msgstr "önerme"
 msgid "No positions have been recorded for this country yet."
 msgstr "Bu ülke için henüz önerme kaydedilmedi."
 
-msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."
-msgstr "Her önerme için nerede durduğunuzu belirtin. Önemsediklerinizi önemli olarak işaretleyin, böylece daha fazla ağırlık taşısınlar. Girdikleriniz saklanmaz: eşleşmeniz anında hesaplanır ve hiçbir zaman kaydedilmez."
-
 msgid "See my match"
 msgstr "Eşleşmemi gör"
 
@@ -1336,3 +1330,15 @@ msgstr "Birkaç görüşü yanıtlayın, partilerin nasıl karşılaştığını
 
 msgid "Photos, flags and logos are copied to this server and served from here, so your browser does not contact Wikimedia, a parliament or anyone else to show them. The fonts and scripts are served from here too. Another site only hears from you if you follow a link to it, such as a source."
 msgstr "Fotoğraflar, bayraklar ve logolar bu sunucuya kopyalanır ve buradan sunulur; bu nedenle tarayıcınız bunları göstermek için Wikimedia'ya, bir parlamentoya ya da başka birine bağlanmaz. Yazı tipleri ve betikler de buradan sunulur. Başka bir site, ancak ona giden bir bağlantıyı (örneğin bir kaynağı) izlerseniz sizden haberdar olur."
+
+msgid "Nothing you enter is stored: your match is worked out on the spot and never saved."
+msgstr "Girdiğiniz hiçbir şey saklanmaz: eşleşmeniz o anda hesaplanır ve asla kaydedilmez."
+
+
+msgid "How this works"
+msgstr "Nasıl çalışır"
+
+
+msgid "Say where you stand on each position. Mark the ones you care about as important so they count for more."
+msgstr "Her konumda nerede durduğunuzu belirtin. Önemsediklerinizi önemli olarak işaretleyin, böylece daha çok sayılsınlar."
+

@@ -209,9 +209,17 @@ async fn form_scoped(
                         }
                     }
                     p class="max-w-prose text-[16px] text-ink-muted" {
-                        (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more. Nothing you enter is stored: your match is worked out on the spot and never saved."))
+                        (i18n::t("Nothing you enter is stored: your match is worked out on the spot and never saved."))
                     }
-                    (methodology_note(&scope))
+                    details class="mt-2 max-w-prose text-[15px] text-ink-muted" {
+                        summary class="cursor-pointer font-semibold text-link" {
+                            (i18n::t("How this works"))
+                        }
+                        p class="mt-2" {
+                            (i18n::t("Say where you stand on each position. Mark the ones you care about as important so they count for more."))
+                        }
+                        (methodology_note(&scope))
+                    }
                 }
                 form method="post" action=(action) class="space-y-8" {
                     ol class="compass-steps space-y-8" {
@@ -219,7 +227,7 @@ async fn form_scoped(
                             (thesis_field(i + 1, theses.len(), t))
                         }
                     }
-                    div class="sticky bottom-0 -mx-4 border-t border-hairline bg-paper/90 px-4 py-4 backdrop-blur-sm" {
+                    div {
                         button type="submit"
                           class="min-h-12 rounded-[10px] bg-ink px-6 text-[17px] font-semibold text-paper transition-colors hover:bg-accent-strong" {
                             (i18n::t("See my match"))
