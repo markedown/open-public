@@ -50,4 +50,35 @@ mod tests {
         assert_eq!(breadcrumbs(&[]).into_string(), "");
         assert_eq!(trail(&[]).into_string(), "");
     }
+
+    #[test]
+    fn the_trail_links_every_step_but_the_one_the_visitor_is_on() {
+        let crumbs = [
+            Crumb {
+                label: "Test Ulke".to_string(),
+                href: Some("/tr".to_string()),
+            },
+            Crumb {
+                label: "Test Partisi".to_string(),
+                href: None,
+            },
+        ];
+        let body = trail(&crumbs).into_string();
+        assert!(body.contains(r#"href="/tr""#));
+        // The current page is text, not a link back to itself.
+        assert!(!body.contains(r#"href="Test Partisi""#));
+        assert!(body.contains("Test Partisi"));
+        // One separator between the two steps, hidden from a screen reader.
+        assert_eq!(
+            body.matches(r#"<span aria-hidden="true">›</span>"#).count(),
+            1
+        );
+
+        // The machine-readable twin belongs to `breadcrumbs`, so a page rendering
+        // both cannot hand a crawler the same list twice.
+        assert!(!body.contains("BreadcrumbList"));
+        assert!(breadcrumbs(&crumbs)
+            .into_string()
+            .starts_with(r#"<div class="mb-6">"#));
+    }
 }

@@ -5430,6 +5430,40 @@ async fn the_compass_opens_home_and_country_and_polls_invite_a_question(pool: db
     }
 }
 
+/// A country whose positions are asked about people rather than parties is
+/// offered the compass that answers them, so a presidential race is not offered
+/// a party match it has no positions to score.
+#[sqlx::test(migrations = "../../migrations")]
+async fn home_offers_the_person_compass_when_only_that_scope_has_positions(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Cumhurbaskani kim olmali?",
+        None,
+        1,
+        db::compass::SCOPE_PERSON,
+        src,
+    )
+    .await
+    .unwrap();
+
+    let home = body_string(get_cookie(&app, "/", "lang=en").await).await;
+    // The link names the scope, and the badge counts the questions to answer.
+    assert!(home.contains(r#"href="/tr/compass/person""#));
+    assert!(!home.contains(r#"href="/tr/compass""#));
+    assert!(home.contains(r#"opacity-80">1<"#));
+    // The offered link is a page that answers.
+    assert_eq!(
+        get_cookie(&app, "/tr/compass/person", "lang=en")
+            .await
+            .status(),
+        StatusCode::OK
+    );
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn compass_form_lists_positions_and_country_links_to_it(pool: db::Pool) {
     seed(&pool).await;
@@ -7601,6 +7635,50 @@ async fn crawlers_are_told_what_is_here(pool: db::Pool) {
     assert!(!sitemap.contains("/admin"));
 }
 
+/// A recorded vote is a page a visitor can read, so it is in the map a crawler
+/// is handed.
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_sitemap_lists_recorded_votes(pool: db::Pool) {
+    seed(&pool).await;
+    seed_roll_call(&pool).await;
+    let app = router(pool.clone());
+    let sitemap = body_string(get(&app, "/sitemap.xml").await).await;
+    assert!(sitemap.contains("https://open-public.test/tr/vote/test-oylamasi"));
+}
+
+/// A sitemap over 50,000 URLs is rejected whole by a crawler, so the handler
+/// publishes a truncated one rather than a file nobody reads.
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_sitemap_stops_at_the_protocol_url_limit(pool: db::Pool) {
+    seed(&pool).await;
+    let src: i64 =
+        sqlx::query_scalar("select id from sources where url = 'https://example.test/s'")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar("select id from countries where slug = $1")
+        .bind(COUNTRY)
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    // More people in one country than the whole map is allowed to carry.
+    sqlx::query(
+        "insert into people (full_name, slug, source_id, country_id) \
+         select 'Test Uye ' || n, 'test-uye-' || n, $1, $2 from generate_series(1, 50001) as n",
+    )
+    .bind(src)
+    .bind(country_id)
+    .execute(&pool)
+    .await
+    .unwrap();
+
+    let app = router(pool.clone());
+    let sitemap = body_string(get(&app, "/sitemap.xml").await).await;
+    assert_eq!(sitemap.matches("<loc>").count(), 50000);
+    // Truncation still leaves a well-formed document.
+    assert!(sitemap.ends_with("</urlset>\n"));
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn a_gated_site_asks_not_to_be_indexed(pool: db::Pool) {
     seed(&pool).await;
@@ -8312,6 +8390,121 @@ async fn approval_counts_are_open_and_voting_needs_a_verified_account(pool: db::
         .status(),
         StatusCode::NOT_FOUND
     );
+}
+
+/// An approval is registered against the entity it was cast for: a party and a
+/// coalition each get their own month's poll, and no other entity's count moves.
+#[sqlx::test(migrations = "../../migrations")]
+async fn approval_of_a_party_or_a_coalition_lands_on_that_entity(pool: db::Pool) {
+    use db::approvals::{self, Entity};
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_uid, cookie) = verified_user(&pool, "party@x.test", "tok-party").await;
+
+    let party_id: i64 = sqlx::query_scalar("select id from parties where slug = 'test-partisi'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let alliance_id: i64 =
+        sqlx::query_scalar("select id from alliances where slug = 'test-ittifaki'")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+
+    let resp = post_form(
+        &app,
+        &format!("/approve/party/{party_id}"),
+        "choice=approve&next=/tr/parties/test-partisi",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let period = approvals::current_period();
+    let t = approvals::tally(&pool, Entity::Party(party_id), period)
+        .await
+        .unwrap();
+    assert_eq!((t.approve, t.disapprove, t.no_opinion), (1, 0, 0));
+
+    // A coalition answers with no opinion, which is a choice of its own rather
+    // than an absence of one.
+    let resp = post_form(
+        &app,
+        &format!("/approve/coalition/{alliance_id}"),
+        "choice=no_opinion&next=/",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let t = approvals::tally(&pool, Entity::Coalition(alliance_id), period)
+        .await
+        .unwrap();
+    assert_eq!((t.approve, t.disapprove, t.no_opinion), (0, 0, 1));
+
+    // The person on the same page was never the target of either cast.
+    let t = approvals::tally(&pool, Entity::Person(person_id), period)
+        .await
+        .unwrap();
+    assert_eq!(t.total(), 0);
+}
+
+/// A submit that carries no choice the platform recognises registers nothing, and
+/// the panel comes back over HTMX still offering the three buttons: the click was
+/// lost, and the page says so instead of showing a recorded opinion.
+#[sqlx::test(migrations = "../../migrations")]
+async fn an_approval_submit_with_an_unrecognised_choice_registers_nothing(pool: db::Pool) {
+    use db::approvals::{self, Entity};
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (_uid, cookie) = verified_user(&pool, "blank@x.test", "tok-blank").await;
+    let person_id: i64 = sqlx::query_scalar("select id from people where slug = 'ayse-yilmaz'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    let period = approvals::current_period();
+
+    // An empty choice and no `next`: the panel is returned with the home page as
+    // its return path.
+    let req = Request::builder()
+        .method("POST")
+        .uri(format!("/approve/person/{person_id}"))
+        .header("content-type", "application/x-www-form-urlencoded")
+        .header("cookie", &cookie)
+        .header("hx-request", "true")
+        .body(Body::from("choice="))
+        .unwrap();
+    let frag = app.clone().oneshot(req).await.unwrap();
+    assert_eq!(frag.status(), StatusCode::OK);
+    let body = body_string(frag).await;
+    assert!(
+        body.contains(r#"name="choice""#),
+        "the panel must still offer the vote"
+    );
+    assert!(!body.contains("You said"));
+    assert!(body.contains(r#"name="next" value="/""#));
+
+    // A choice outside the three is refused the same way, and the
+    // no-JavaScript path still returns the visitor to where they came from.
+    let resp = post_form(
+        &app,
+        &format!("/approve/person/{person_id}"),
+        "choice=banana&next=/tr/people/ayse-yilmaz",
+        Some(&cookie),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(
+        resp.headers().get("location").unwrap(),
+        "/tr/people/ayse-yilmaz"
+    );
+
+    let t = approvals::tally(&pool, Entity::Person(person_id), period)
+        .await
+        .unwrap();
+    assert_eq!(t.total(), 0, "an unrecognised choice must not be counted");
 }
 
 /// The captcha verify path end to end against a real database: a solved

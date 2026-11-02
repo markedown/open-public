@@ -140,10 +140,81 @@ pub fn related_coverage(items: &[db::news::RelatedNews], country: &str) -> Marku
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::{TimeZone, Utc};
 
     #[test]
     fn empty_news_and_coverage_renders_nothing() {
         assert_eq!(news_section(&[], "tr", None).into_string(), "");
         assert_eq!(related_coverage(&[], "tr").into_string(), "");
+    }
+
+    #[test]
+    fn an_empty_section_stays_open_for_an_admin_who_can_add_news() {
+        // A visitor sees no section at all; an admin sees the emptiness and the
+        // way to fix it.
+        let body = news_section(&[], "tr", Some("/tr/admin/news/add")).into_string();
+        assert!(body.contains(r#"href="/tr/admin/news/add""#));
+        assert!(body.contains("Add news"));
+        assert!(body.contains("No news yet."));
+    }
+
+    #[test]
+    fn related_coverage_names_the_outlet_and_when_it_published() {
+        let items = [db::news::RelatedNews {
+            id: 7,
+            headline: "Test Partisi yeni tasari sundu".to_string(),
+            outlet: Some("Test Gazetesi".to_string()),
+            published_at: Some(Utc.with_ymd_and_hms(2024, 3, 5, 12, 0, 0).unwrap()),
+        }];
+        let body = related_coverage(&items, "tr").into_string();
+        assert!(body.contains("Also reported by"));
+        assert!(body.contains(r#"href="/tr/news/7""#));
+        assert!(body.contains("Test Gazetesi"));
+        assert!(body.contains("5 Mar 2024"));
+    }
+
+    #[test]
+    fn related_coverage_omits_a_publication_date_the_source_does_not_carry() {
+        let items = [db::news::RelatedNews {
+            id: 8,
+            headline: "Test Partisi yeni tasari sundu".to_string(),
+            outlet: Some("Test Gazetesi".to_string()),
+            published_at: None,
+        }];
+        let body = related_coverage(&items, "tr").into_string();
+        assert!(body.contains("Test Gazetesi"));
+        // A missing date is left out, not rendered as a placeholder.
+        assert!(!body.contains('?'));
+    }
+
+    #[test]
+    fn the_news_index_links_a_headline_and_offers_an_edit_to_admins_only() {
+        let card = db::news::NewsCard {
+            id: 9,
+            headline: "Test Partisi toplandi".to_string(),
+            our_summary: None,
+            url: "https://example.test/haber".to_string(),
+            outlet: Some("Test Gazetesi".to_string()),
+            published_at: None,
+            people: vec![db::news::PersonRef {
+                slug: "ayse-yilmaz".to_string(),
+                name: "Ayse Yilmaz".to_string(),
+            }],
+            parties: vec![db::news::PartyRef {
+                slug: "test-partisi".to_string(),
+                short: "TP".to_string(),
+                color: Some("#0055aa".to_string()),
+            }],
+        };
+        let cards = [card];
+        let body = index(&cards, "tr", true).into_string();
+        assert!(body.contains(r#"href="/tr/news/9""#));
+        assert!(body.contains(r#"href="/tr/people/ayse-yilmaz""#));
+        assert!(body.contains(r#"href="/tr/parties/test-partisi""#));
+        assert!(body.contains(r#"href="/admin/news/9/edit""#));
+
+        // A visitor is not shown the edit affordance.
+        let plain = index(&cards, "tr", false).into_string();
+        assert!(!plain.contains("/edit"));
     }
 }
