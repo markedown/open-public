@@ -37,8 +37,8 @@ import random
 import sys
 
 RECORDED = {"bill", "motion", "court", "vote", "law", "decree", "alliance"}
-MAX_MEAN = 0.5
-MAX_SPREAD = 25
+MAX_MEAN = 0.3
+MAX_SPREAD = 10
 MIN_COVERAGE = 0.5
 VOTERS = 20000
 
