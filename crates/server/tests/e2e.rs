@@ -2054,6 +2054,184 @@ async fn login_rejects_an_unknown_email(pool: db::Pool) {
     assert!(resp.headers().get("set-cookie").is_none());
 }
 
+/// Make one kind of write to a table fail on an otherwise healthy database, so a
+/// handler's "the database itself failed" branch is reachable. A statement-level
+/// trigger is used rather than a row-level one because the failing statement may
+/// match no rows at all, and the branch has to be taken either way.
+async fn fail_writes(pool: &db::Pool, trigger_ddl: &'static str) {
+    sqlx::query(concat!(
+        "create or replace function e2e_fail_writes() returns trigger language plpgsql ",
+        "as $$ begin raise exception 'simulated database failure'; end $$",
+    ))
+    .execute(pool)
+    .await
+    .expect("the trigger function");
+    sqlx::query(trigger_ddl)
+        .execute(pool)
+        .await
+        .expect("the trigger");
+}
+
+const FAIL_USERS_INSERT: &str = concat!(
+    "create trigger e2e_fail_users_insert before insert on users ",
+    "for each statement execute function e2e_fail_writes()",
+);
+const FAIL_VERIFICATION_UPDATE: &str = concat!(
+    "create trigger e2e_fail_verifications_update before update on email_verifications ",
+    "for each statement execute function e2e_fail_writes()",
+);
+const FAIL_SESSION_DELETE: &str = concat!(
+    "create trigger e2e_fail_sessions_delete before delete on sessions ",
+    "for each statement execute function e2e_fail_writes()",
+);
+
+/// The router pointed at a database that is not there. The pool is lazy, so it
+/// builds without connecting and every query fails afterwards, which is the only
+/// way to reach the branches that answer a database outage rather than bad input.
+fn router_unreachable_db() -> Router {
+    let mailer = Mailer::new(
+        &MailTransport::Console,
+        "noreply@test.invalid".to_string(),
+        "http://test.invalid".to_string(),
+    )
+    .expect("console mailer");
+    let pool = sqlx::postgres::PgPoolOptions::new()
+        .acquire_timeout(std::time::Duration::from_millis(250))
+        .connect_lazy("postgres://open_public:open_public@127.0.0.1:1/op-no-database")
+        .expect("a lazy pool needs no live database");
+    let state = AppState {
+        pool,
+        secret: Arc::new(SECRET.to_vec()),
+        mailer,
+        cookie_secure: false,
+        asset_dir: Arc::new(std::env::temp_dir().join("op-e2e-assets")),
+        site_notice: None,
+        construction: false,
+        base_url: "https://open-public.test".into(),
+        admin_api_key: None,
+        email_deliverability: server::email_mx::EmailDeliverability::AllowAll,
+    };
+    server::app(state, Path::new("static"))
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn register_answers_a_server_error_when_the_database_refuses_the_account(pool: db::Pool) {
+    let app = router(pool.clone());
+    fail_writes(&pool, FAIL_USERS_INSERT).await;
+
+    let resp = post_form_captcha(
+        &app,
+        "/register",
+        "email=outage@example.com&password=a-long-password",
+        Some("lang=en"),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    let body = body_string(resp).await;
+    assert!(body.contains("Something went wrong. Please try again."));
+    assert!(
+        !body.contains("Check your email"),
+        "the failure is not hidden behind the success page"
+    );
+
+    let created: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(created, 0, "no account was created");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn verify_answers_a_server_error_when_the_token_cannot_be_consumed(pool: db::Pool) {
+    let app = router(pool.clone());
+    // Consuming a token writes, so an outage is distinguishable from a link that
+    // was never issued: only the second one is a visitor error.
+    fail_writes(&pool, FAIL_VERIFICATION_UPDATE).await;
+
+    let body =
+        body_string(get_cookie(&app, "/verify?token=a-token-seen-nowhere", "lang=en").await).await;
+    assert!(body.contains("Something went wrong. Please try again."));
+    assert!(
+        !body.contains("invalid or has expired"),
+        "an outage is not reported as a bad link"
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn logout_answers_a_server_error_when_the_session_cannot_be_closed(pool: db::Pool) {
+    let app = router(pool.clone());
+    let (_, cookie) = user_cookie(&pool, "stuck@test.invalid").await;
+    fail_writes(&pool, FAIL_SESSION_DELETE).await;
+
+    let resp = post_form(&app, "/logout", "", Some(&format!("{cookie}; lang=en"))).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert!(
+        resp.headers().get("set-cookie").is_none(),
+        "the session cookie is not cleared when closing the session failed"
+    );
+    let body = body_string(resp).await;
+    assert!(body.contains("Something went wrong. Please try again."));
+
+    let open: i64 = sqlx::query_scalar("select count(*) from sessions")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(open, 1, "the session is still there to be closed later");
+}
+
+#[tokio::test]
+async fn forgot_password_answers_the_same_page_when_the_database_is_down() {
+    let app = router_unreachable_db();
+    let body = body_string(
+        post_form(
+            &app,
+            "/forgot",
+            "email=someone@test.invalid",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    // The lookup failed, and the answer stays the one this form always gives: it
+    // must not become a way to ask whether the address is registered, even when
+    // the reason it cannot be checked is an outage.
+    assert!(body.contains("If that address has an account"));
+}
+
+#[tokio::test]
+async fn the_reset_form_answers_a_server_error_when_the_link_cannot_be_checked() {
+    let app = router_unreachable_db();
+    let body = body_string(get_cookie(&app, "/reset?token=a-live-link", "lang=en").await).await;
+    assert!(body.contains("Something went wrong. Please try again."));
+    assert!(
+        !body.contains("New password"),
+        "no password form is offered for a link that was never checked"
+    );
+    assert!(
+        !body.contains("invalid or has expired"),
+        "an outage is not reported as a dead link"
+    );
+}
+
+#[tokio::test]
+async fn the_reset_post_answers_a_server_error_and_keeps_the_link() {
+    let app = router_unreachable_db();
+    let body = body_string(
+        post_form(
+            &app,
+            "/reset",
+            "token=a-live-link&password=a-long-password",
+            Some("lang=en"),
+        )
+        .await,
+    )
+    .await;
+    assert!(body.contains("Something went wrong. Please try again."));
+    // The form is redisplayed with its token, so a retry after an outage does not
+    // need a fresh mail.
+    assert!(body.contains(r#"value="a-live-link""#), "the link is kept");
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn people_pages_render_seeded_data(pool: db::Pool) {
     seed(&pool).await;
