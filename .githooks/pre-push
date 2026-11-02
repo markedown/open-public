@@ -4,6 +4,47 @@
 # Enable with: git config core.hooksPath .githooks
 set -euo pipefail
 
+fail() {
+  echo "pre-push: $1" >&2
+  exit 1
+}
+
+# 1. Identity. Pushing under the wrong GitHub account or with the wrong commit
+#    author would tie the project to someone it must not be tied to, so check
+#    both before anything leaves the machine. The remote owner is the account
+#    that must be used; the credential helper is pinned per clone, this proves
+#    it resolved to that account.
+remote_name=${1:-origin}
+remote_url=$(git remote get-url --push "$remote_name")
+owner=$(printf '%s' "$remote_url" | sed -E 's#^(https://github\.com/|git@github\.com:)([^/]+)/.*$#\2#')
+# The username field of a credential is not proof of who the token belongs to
+# (gh falls back to a shared keychain entry), so ask GitHub who the token is.
+token=$(printf 'protocol=https\nhost=github.com\n\n' | GIT_TERMINAL_PROMPT=0 git credential fill 2>/dev/null | sed -n 's/^password=//p')
+if [ -z "$token" ]; then
+  fail "no GitHub credential resolved for the remote; log in with the project account first"
+fi
+account=$(curl -fsS --max-time 15 -H "Authorization: Bearer $token" https://api.github.com/user 2>/dev/null \
+  | sed -n 's/^  "login": "\(.*\)",$/\1/p')
+unset token
+if [ "$account" != "$owner" ]; then
+  fail "the credential in use is not the remote owner's account ($owner); nothing was pushed"
+fi
+
+zero=0000000000000000000000000000000000000000
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue
+  if [ "$remote_sha" = "$zero" ]; then
+    range="$local_sha --not --remotes=$remote_name"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  # shellcheck disable=SC2086
+  bad=$(git log --format='%ae%n%ce' $range | sort -u | grep -v '@users\.noreply\.github\.com$' || true)
+  if [ -n "$bad" ]; then
+    fail "commits to push carry a non-noreply author or committer address"
+  fi
+done
+
 command -v cargo >/dev/null 2>&1 || { [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"; }
 command -v cargo >/dev/null 2>&1 || { echo "pre-push: cargo not found on PATH" >&2; exit 1; }
 

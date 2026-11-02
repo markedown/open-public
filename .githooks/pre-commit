@@ -53,6 +53,10 @@ if [ -n "$staged" ]; then
   if printf '%s' "$everywhere" | grep -EqiI 'Co-Authored-By:[^$]*Claude|Generated with[^$]*Claude|AI-generated'; then
     fail "AI attribution found in staged changes"
   fi
+  # A home directory path in a committed file names the machine and its user.
+  if printf '%s' "$everywhere" | grep -E '/(Users|home)/[A-Za-z0-9._-]+/' | grep -vqE '/home/(runner|appuser)/'; then
+    fail "a local home directory path was found in the staged changes"
+  fi
   added=$(git diff --cached -U0 -- . ':(exclude).githooks' ':(exclude)dataset' | grep '^+' || true)
   if printf '%s' "$added" | grep -EqiI 'erdo[ğg]an|imamo[ğg]lu|lecornu|steinmeier|friedrich merz|\bTBMM\b|\bYSK\b|abgeordnetenwatch|bundeswahlleiter|congress-legislators|bioguide|\bODSEN\b|assemblee-nationale|data\.senat|secim[_ ]?id'; then
     fail "country-specific data or a real name found outside data/"
