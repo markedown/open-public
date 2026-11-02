@@ -81,7 +81,7 @@ pub async fn list(
     };
 
     Ok(ui::layout::document(
-        Some("Parties"),
+        Some(i18n::t("Parties")),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

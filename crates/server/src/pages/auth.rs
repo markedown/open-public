@@ -205,7 +205,7 @@ pub async fn logout(
         .await
         .map_err(|_| {
             ui::layout::document(
-                Some("Error"),
+                Some(i18n::t("Error")),
                 false,
                 false,
                 html! { p { (i18n::t("Something went wrong. Please try again.")) } },
@@ -303,7 +303,7 @@ fn check_email_page() -> Markup {
 
 fn verified_page() -> Markup {
     ui::layout::document(
-        Some("Verify your email"),
+        Some(i18n::t("Verify your email")),
         false,
         false,
         html! {
@@ -467,7 +467,7 @@ pub async fn reset_submit(
 
 fn forgot_page(message: Option<&str>) -> Markup {
     ui::layout::document(
-        Some("Set a new password"),
+        Some(i18n::t("Set a new password")),
         false,
         false,
         html! {
@@ -501,7 +501,7 @@ fn forgot_page(message: Option<&str>) -> Markup {
 
 fn reset_page(token: &str, message: Option<&str>) -> Markup {
     ui::layout::document(
-        Some("Set a new password"),
+        Some(i18n::t("Set a new password")),
         false,
         false,
         html! {

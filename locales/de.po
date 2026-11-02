@@ -1491,3 +1491,9 @@ msgstr "Gesetzentwürfe und Anträge"
 
 msgid "Source"
 msgstr "Quelle"
+
+msgid "Not found"
+msgstr "Nicht gefunden"
+
+msgid "Error"
+msgstr "Fehler"

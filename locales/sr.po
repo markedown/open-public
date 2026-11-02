@@ -1491,3 +1491,9 @@ msgstr "Predlozi zakona i predlozi"
 
 msgid "Source"
 msgstr "Izvor"
+
+msgid "Not found"
+msgstr "Nije pronađeno"
+
+msgid "Error"
+msgstr "Greška"

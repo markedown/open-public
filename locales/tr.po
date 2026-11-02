@@ -1503,3 +1503,9 @@ msgstr "Yasa teklifleri ve önergeler"
 
 msgid "Source"
 msgstr "Kaynak"
+
+msgid "Not found"
+msgstr "Bulunamadı"
+
+msgid "Error"
+msgstr "Hata"

@@ -123,7 +123,7 @@ pub async fn page(
     };
 
     Ok(ui::layout::document(
-        Some("Search"),
+        Some(i18n::t("Search")),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

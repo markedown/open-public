@@ -46,7 +46,7 @@ impl IntoResponse for PageError {
 /// The 404 page, also reused where a handler wants to render "not found" inline.
 pub fn not_found() -> Markup {
     ui::layout::document(
-        Some("Not found"),
+        Some(i18n::t("Not found")),
         false,
         false,
         html! {
@@ -71,7 +71,7 @@ pub fn not_found() -> Markup {
 /// link across two lines produces exactly this.
 pub fn malformed_request(status: StatusCode) -> Markup {
     ui::layout::document(
-        Some("Error"),
+        Some(i18n::t("Error")),
         false,
         false,
         html! {
@@ -90,7 +90,7 @@ pub fn malformed_request(status: StatusCode) -> Markup {
 
 fn server_error() -> Markup {
     ui::layout::document(
-        Some("Error"),
+        Some(i18n::t("Error")),
         false,
         false,
         html! {
