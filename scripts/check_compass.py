@@ -27,7 +27,13 @@ The share of random voters each party attracts is reported and never enforced. A
 party in the middle is closer to a moderate voter because it is in the middle, and
 evening that out would be falsifying the result.
 
-Exits non-zero if a reviewed country fails. Usage: check_compass.py [dir]
+Alongside it, recall measures whether the compass works rather than where a party
+sits: how often a voter who holds a party's positions finds that party first, and
+which party the compass puts second, for exact positions and for positions moved
+one step by noise.
+
+Exits non-zero if a reviewed country fails. Usage: check_compass.py [dir], or
+check_compass.py --selftest to check the measurement on invented theses.
 """
 import argparse
 import collections
@@ -90,13 +96,45 @@ def top_shares(stances, theses, choices):
     rng = random.Random(1)
     wins = collections.Counter()
     for _ in range(VOTERS):
-        answers = {t: rng.choice(choices) for t in theses}
+        answers = {t: rng.choice(choices) for t in sorted(theses)}
         scores = {p: score(answers, s) for p, s in stances.items()}
         best = max(v for v in scores.values() if v is not None)
         leaders = [p for p, v in scores.items() if v == best]
         for p in leaders:
             wins[p] += 1 / len(leaders)
     return {p: round(100 * wins[p] / VOTERS) for p in stances}
+
+
+def recall(stances, theses, noise, voters=2000):
+    """For each party, how often a voter who holds that party's positions ranks it
+    first, and which party most often ranks second for those voters. The voter
+    answers the party's stance, `noise` of the answers shifted one step in a random
+    direction, and a random value where the party holds no stance."""
+    out = {}
+    for party, held in sorted(stances.items()):
+        rng = random.Random(2)
+        first, second = collections.Counter(), collections.Counter()
+        for _ in range(voters):
+            answers = {}
+            # sorted so the draws land on the same theses in every run
+            for text in sorted(theses):
+                if text in held:
+                    value = held[text]
+                    if rng.random() < noise:
+                        value = max(-2, min(2, value + rng.choice((-1, 1))))
+                else:
+                    value = rng.choice([-2, -1, 0, 1, 2])
+                answers[text] = value
+            scores = {p: score(answers, s) for p, s in stances.items()}
+            tiers = sorted({v for v in scores.values() if v is not None}, reverse=True)
+            for rank, tier in enumerate(tiers[:2]):
+                tied = [p for p, v in scores.items() if v == tier]
+                tally = first if rank == 0 else second
+                for p in tied:
+                    tally[p] += 1 / len(tied)
+        runner = min(second, key=lambda p: (-second[p], p)) if second else None
+        out[party] = {"first": round(100 * first[party] / voters), "runner_up": runner}
+    return out
 
 
 def check(country, theses, evidence):
@@ -136,13 +174,39 @@ def check(country, theses, evidence):
             failures.append(f"no topic: {t['text']}")
     report["top_share_any_answer"] = top_shares(stances, texts, [-2, -1, 0, 1, 2])
     report["top_share_moderate"] = top_shares(stances, texts, [-1, 0, 1])
+    report["recall"] = {
+        "exact": recall(stances, texts, 0.0),
+        "noisy": recall(stances, texts, 0.3),
+    }
     return failures, report
+
+
+def selftest():
+    """recall on three parties whose stances are far apart, without the dataset."""
+    texts = [f"invented thesis {i}" for i in range(5)]
+    stances = {
+        "A": {t: 2 for t in texts},
+        "B": {t: -2 for t in texts},
+        "C": {t: 0 for t in texts},
+    }
+    exact = recall(stances, texts, 0.0)
+    for party in ("A", "B", "C"):
+        assert exact[party]["first"] == 100, exact
+    assert exact["A"]["runner_up"] == "C", exact
+    assert exact["B"]["runner_up"] == "C", exact
+    # A and B are equally far from a voter holding C's positions, so the label decides
+    assert exact["C"]["runner_up"] == "A", exact
+    print("selftest ok")
+    return 0
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dir", nargs="?", default="dataset")
+    ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args()
+    if args.selftest:
+        return selftest()
     with open(os.path.join(args.dir, "compass_reviewed.txt"), encoding="utf-8") as fh:
         reviewed = set(fh.read().split())
     theses = [t for t in load(args.dir, "theses") if t.get("scope", "party") == "party"]
@@ -161,6 +225,12 @@ def main():
         if report:
             print(f"  first place, any answers: {report['top_share_any_answer']}")
             print(f"  first place, moderate answers: {report['top_share_moderate']}")
+            exact = {p: r["first"] for p, r in report["recall"]["exact"].items()}
+            noisy = {p: r["first"] for p, r in report["recall"]["noisy"].items()}
+            runners = {p: r["runner_up"] for p, r in report["recall"]["noisy"].items()}
+            print(f"  recall, exact positions: {exact}")
+            print(f"  recall, noisy positions: {noisy}")
+            print(f"  runner-up of a voter holding the party's positions: {runners}")
         for f in failures:
             print(f"  {'FAIL' if strict else 'note'}: {f}")
         failed = failed or (strict and bool(failures))
