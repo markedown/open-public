@@ -5011,6 +5011,51 @@ async fn published_translations_localize_content(pool: db::Pool) {
     assert!(body.contains("INGENIEUR"), "attribute localized");
 }
 
+/// A poll carrying no options still gets its question overlaid, and the option
+/// lookup is skipped rather than run over an empty id list.
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_poll_without_options_localizes_only_its_question(pool: db::Pool) {
+    seed(&pool).await;
+    sqlx::query("insert into polls (question, slug) values ('Tek soru', 'optionless-poll')")
+        .execute(&pool)
+        .await
+        .unwrap();
+    let poll_id: i64 = sqlx::query_scalar("select id from polls where slug='optionless-poll'")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    db::translations::upsert(
+        &pool,
+        &db::translations::NewTranslation {
+            entity_type: "poll",
+            entity_id: poll_id,
+            field: "question",
+            lang: "en",
+            text: "The one question",
+            origin: "machine",
+            status: "published",
+            source_lang: Some("tr"),
+        },
+    )
+    .await
+    .unwrap();
+
+    let mut poll = db::polls::get_by_slug(&pool, "optionless-poll")
+        .await
+        .unwrap()
+        .expect("the poll is readable");
+    assert!(poll.options.is_empty(), "the poll has no options");
+
+    server::i18n::with_lang(server::i18n::Lang::from_code("en"), async {
+        server::content::localize_poll(&pool, &mut poll)
+            .await
+            .unwrap();
+    })
+    .await;
+
+    assert_eq!(poll.question, "The one question");
+}
+
 #[sqlx::test(migrations = "../../migrations")]
 async fn an_election_with_many_results_shows_an_others_row(pool: db::Pool) {
     seed(&pool).await;
@@ -8354,6 +8399,134 @@ async fn altcha_challenge_endpoint_serves_a_solvable_challenge(pool: db::Pool) {
         solved,
         "the served challenge must be solvable within maxnumber"
     );
+}
+
+/// The ALTCHA challenge string: SHA-256 over the salt and the number, hex.
+fn altcha_hash(salt: &str, number: u64) -> String {
+    use sha2::{Digest, Sha256};
+    let mut h = Sha256::new();
+    h.update(salt.as_bytes());
+    h.update(number.to_string().as_bytes());
+    h.finalize().iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// The signature a solution must carry: the HMAC of its challenge with the secret.
+fn altcha_signature(secret: &[u8], challenge: &str) -> String {
+    use hmac::{Hmac, Mac};
+    use sha2::Sha256;
+    let mut mac = Hmac::<Sha256>::new_from_slice(secret).unwrap();
+    mac.update(challenge.as_bytes());
+    mac.finalize()
+        .into_bytes()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect()
+}
+
+/// A salt carrying an expiry in the future, as a freshly served one does.
+fn live_salt() -> String {
+    format!(
+        "0a1b2c3d4e5f60718293a4b5?expires={}",
+        chrono::Utc::now().timestamp() + 600
+    )
+}
+
+/// An `altcha` form field written out by hand, for the solutions a widget would
+/// never submit.
+fn altcha_payload(
+    algorithm: &str,
+    challenge: &str,
+    number: u64,
+    salt: &str,
+    signature: &str,
+) -> String {
+    use base64::Engine;
+    let sol = serde_json::json!({
+        "algorithm": algorithm,
+        "challenge": challenge,
+        "number": number,
+        "salt": salt,
+        "signature": signature,
+    });
+    base64::engine::general_purpose::STANDARD.encode(serde_json::to_vec(&sol).unwrap())
+}
+
+/// A solution naming an algorithm we never issue is refused, even though its
+/// signature and number are otherwise correct.
+#[sqlx::test(migrations = "../../migrations")]
+async fn captcha_refuses_a_solution_for_another_algorithm(pool: db::Pool) {
+    let secret = b"a-server-secret-of-some-length!!";
+    let salt = live_salt();
+    let challenge = altcha_hash(&salt, 0);
+    let payload = altcha_payload(
+        "SHA-512",
+        &challenge,
+        0,
+        &salt,
+        &altcha_signature(secret, &challenge),
+    );
+    assert!(!server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
+}
+
+/// A signed challenge is only worth its solution: a number that does not hash to
+/// it is refused.
+#[sqlx::test(migrations = "../../migrations")]
+async fn captcha_refuses_a_number_that_does_not_solve_the_challenge(pool: db::Pool) {
+    let secret = b"a-server-secret-of-some-length!!";
+    let salt = live_salt();
+    let challenge = altcha_hash(&salt, 7);
+    let payload = altcha_payload(
+        "SHA-256",
+        &challenge,
+        8,
+        &salt,
+        &altcha_signature(secret, &challenge),
+    );
+    assert!(!server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
+}
+
+/// A solution submitted after the deadline carried by its salt is refused.
+#[sqlx::test(migrations = "../../migrations")]
+async fn captcha_refuses_an_expired_challenge(pool: db::Pool) {
+    let secret = b"a-server-secret-of-some-length!!";
+    let salt = format!(
+        "0a1b2c3d4e5f60718293a4b5?expires={}",
+        chrono::Utc::now().timestamp() - 1
+    );
+    let challenge = altcha_hash(&salt, 0);
+    let payload = altcha_payload(
+        "SHA-256",
+        &challenge,
+        0,
+        &salt,
+        &altcha_signature(secret, &challenge),
+    );
+    assert!(!server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
+}
+
+/// A salt that carries no expiry is refused: the deadline is part of what the
+/// signature commits to, so a solution without one cannot be trusted to be fresh.
+#[sqlx::test(migrations = "../../migrations")]
+async fn captcha_refuses_a_salt_that_carries_no_expiry(pool: db::Pool) {
+    let secret = b"a-server-secret-of-some-length!!";
+    let salt = "0a1b2c3d4e5f60718293a4b5".to_string();
+    let challenge = altcha_hash(&salt, 0);
+    let payload = altcha_payload(
+        "SHA-256",
+        &challenge,
+        0,
+        &salt,
+        &altcha_signature(secret, &challenge),
+    );
+    assert!(!server::captcha::verify(&pool, secret, &payload)
+        .await
+        .unwrap());
 }
 
 /// A multipart POST that deliberately carries NO captcha, for the failure path.

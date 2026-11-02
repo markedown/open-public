@@ -143,3 +143,27 @@ pub async fn localize_education(pool: &db::Pool, education: &mut [Education]) ->
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// An overlay with nothing loaded reads as the originals it was given.
+    #[test]
+    fn an_empty_overlay_shows_the_original_and_calls_nothing_translated() {
+        let loc = Localized::empty();
+        assert_eq!(
+            loc.get("summary", Some("Test Partisi oz gecmisi")),
+            Some("Test Partisi oz gecmisi")
+        );
+        assert!(!loc.is_translated("summary"));
+    }
+
+    /// A field that has neither a translation nor an original resolves to nothing,
+    /// rather than to an empty string.
+    #[test]
+    fn a_field_with_no_translation_and_no_original_resolves_to_nothing() {
+        let loc = Localized::empty();
+        assert_eq!(loc.get("summary", None), None);
+    }
+}

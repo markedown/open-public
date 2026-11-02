@@ -182,6 +182,67 @@ fn classify_error(err: &NetError) -> DnsOutcome {
 mod tests {
     use super::*;
 
+    use std::net::{IpAddr, Ipv4Addr};
+
+    use hickory_resolver::config::NameServerConfig;
+    use hickory_resolver::proto::op::Message;
+    use hickory_resolver::proto::rr::rdata::mx::MX;
+    use hickory_resolver::proto::rr::rdata::txt::TXT;
+    use hickory_resolver::proto::rr::rdata::A;
+    use hickory_resolver::proto::rr::{Name, Record, RecordType};
+    use tokio::net::UdpSocket;
+
+    /// A UDP name server on loopback that answers every query through `reply`,
+    /// and the resolver configured to ask only it. A `reply` of `None` models a
+    /// server that accepts a query and then goes silent. Because this is the only
+    /// server the resolver knows, the branches keyed on a DNS outcome run without
+    /// depending on real DNS.
+    async fn loopback_resolver(
+        reply: impl Fn(&Message) -> Option<Message> + Send + Sync + 'static,
+    ) -> TokioResolver {
+        let socket = UdpSocket::bind((Ipv4Addr::LOCALHOST, 0)).await.unwrap();
+        let port = socket.local_addr().unwrap().port();
+        tokio::spawn(async move {
+            let mut buf = [0u8; 512];
+            loop {
+                let (len, peer) = socket.recv_from(&mut buf).await.unwrap();
+                let request = Message::from_vec(&buf[..len]).expect("a query arrives decodable");
+                let Some(response) = reply(&request) else {
+                    continue;
+                };
+                let bytes = response.to_vec().expect("a canned response encodes");
+                let _ = socket.send_to(&bytes, peer).await;
+            }
+        });
+
+        let mut server = NameServerConfig::udp(IpAddr::V4(Ipv4Addr::LOCALHOST));
+        server.connections[0].port = port;
+        Resolver::builder_with_config(
+            ResolverConfig::from_name_servers(vec![server]),
+            TokioRuntimeProvider::default(),
+        )
+        .build()
+        .unwrap()
+    }
+
+    /// A response carrying the request's id and question, with `code` as its rcode.
+    fn respond_to(request: &Message, code: ResponseCode) -> Message {
+        let mut response = Message::response(request.metadata.id, request.metadata.op_code);
+        response.metadata.response_code = code;
+        response.queries = request.queries.clone();
+        response
+    }
+
+    /// The queried name, so a canned answer is filed under the right owner.
+    fn queried_name(request: &Message) -> Name {
+        request
+            .queries
+            .first()
+            .expect("a query has one question")
+            .name()
+            .clone()
+    }
+
     #[test]
     fn domain_extraction() {
         assert_eq!(extract_domain("alice@example.com"), Some("example.com"));
@@ -285,5 +346,79 @@ mod tests {
             "reset",
         )));
         assert_eq!(classify_error(&io_err), DnsOutcome::Transient);
+    }
+
+    /// A reply to the MX query whose answers are records of another kind: nothing
+    /// in them shows the domain accepts mail, so the address records decide. The
+    /// MX record is filed under the authority section because a reply only counts
+    /// as answering the query when the requested type appears somewhere in it;
+    /// without it the resolver reports "no records" instead of showing us the
+    /// answer we sent.
+    #[tokio::test]
+    async fn a_non_mx_answer_falls_back_to_address_records() {
+        let resolver = loopback_resolver(|request| {
+            let name = queried_name(request);
+            let mut response = respond_to(request, ResponseCode::NoError);
+            match request.queries.first().unwrap().query_type() {
+                RecordType::MX => {
+                    let text = TXT::new(vec!["not an mx record".to_string()]);
+                    response.add_answer(Record::from_rdata(name.clone(), 60, RData::TXT(text)));
+                    let exchange = Name::from_ascii("mail.non-mx.test").unwrap();
+                    response.add_authority(Record::from_rdata(
+                        name,
+                        60,
+                        RData::MX(MX::new(10, exchange)),
+                    ));
+                }
+                RecordType::A => {
+                    let address = A::new(192, 0, 2, 1);
+                    response.add_answer(Record::from_rdata(name, 60, RData::A(address)));
+                }
+                _ => {}
+            }
+            Some(response)
+        })
+        .await;
+
+        let checker = EmailDeliverability::Live(Arc::new(resolver));
+        assert!(checker.is_deliverable("user@non-mx.test").await);
+    }
+
+    /// A SERVFAIL on the MX query says nothing about whether the domain accepts
+    /// mail, so the check fails open rather than refusing the address.
+    #[tokio::test]
+    async fn a_transient_mx_failure_fails_open() {
+        let resolver =
+            loopback_resolver(|request| Some(respond_to(request, ResponseCode::ServFail))).await;
+
+        let checker = EmailDeliverability::Live(Arc::new(resolver));
+        assert!(checker.is_deliverable("user@servfail.test").await);
+    }
+
+    /// A domain with no MX records whose address lookup also hits a SERVFAIL is
+    /// still an unresolved question, not evidence against the domain.
+    #[tokio::test]
+    async fn a_transient_address_fallback_failure_fails_open() {
+        let resolver = loopback_resolver(|request| {
+            let code = match request.queries.first().unwrap().query_type() {
+                RecordType::MX => ResponseCode::NoError,
+                _ => ResponseCode::ServFail,
+            };
+            Some(respond_to(request, code))
+        })
+        .await;
+
+        let checker = EmailDeliverability::Live(Arc::new(resolver));
+        assert!(checker.is_deliverable("user@broken-address.test").await);
+    }
+
+    /// A name server that accepts the query and never answers cannot decide the
+    /// question: the check gives up at its own deadline and fails open.
+    #[tokio::test]
+    async fn a_silent_name_server_times_out_and_fails_open() {
+        let resolver = loopback_resolver(|_request| None).await;
+
+        let checker = EmailDeliverability::Live(Arc::new(resolver));
+        assert!(checker.is_deliverable("user@silent.test").await);
     }
 }
