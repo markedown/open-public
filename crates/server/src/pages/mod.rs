@@ -4,6 +4,7 @@ pub mod alliances;
 pub mod approve;
 pub mod auth;
 pub mod compass;
+pub mod compass_share;
 pub mod country;
 pub mod data;
 pub mod discovery;

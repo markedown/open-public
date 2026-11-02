@@ -157,6 +157,13 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
             "/{country}/compass/{scope}",
             get(pages::compass::form_for_scope).post(pages::compass::result_for_scope),
         )
+        // A shareable result-only link for the party compass. The signed
+        // ranking travels in the URL and nothing is stored; it sits below
+        // `shared` so it cannot collide with the one-segment `{scope}` route.
+        .route(
+            "/{country}/compass/shared/{token}",
+            get(pages::compass_share::shared),
+        )
         .route("/{country}/news", get(pages::news::list))
         .route("/{country}/news/{id}", get(pages::news::detail))
         .route("/{country}/outlets", get(pages::outlets::list))

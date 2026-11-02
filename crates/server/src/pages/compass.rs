@@ -16,31 +16,48 @@ use maud::{html, Markup};
 use crate::auth::AuthSession;
 use crate::error::PageError;
 use crate::i18n;
+use crate::state::AppState;
 use crate::ui::{self, breadcrumb::Crumb};
 
+use super::compass_share;
 use domain::compass::{self, Answer, Stance};
 use domain::models::Party;
 
 /// A contestant in the compass: a party in a parliamentary thesis set, a person
 /// in a presidential one. The page renders both the same way, so the scoring and
 /// the breakdown do not care which kind an election has.
-struct Contestant {
+pub(crate) struct Contestant {
     name: String,
     short: String,
     colour: Option<String>,
     href: String,
+    /// The slug this row is scored under. A share token names the row by it,
+    /// and a shared page finds the row again with it.
+    slug: String,
+    /// The slugs of the parties folded into this row, so a shared link can
+    /// name the whole row and not only its representative.
+    merged: Vec<String>,
     /// Others that rest on exactly the same evidence, shown with this one as a
     /// single row: their name and colour.
     also: Vec<(String, Option<String>)>,
 }
 
 impl Contestant {
-    fn from_party(p: &Party, country: &str) -> Self {
+    /// Fold another contestant that rests on the same evidence into this row.
+    pub(crate) fn absorb(&mut self, gone: Contestant) {
+        self.name = format!("{} / {}", self.name, gone.name);
+        self.merged.push(gone.slug);
+        self.also.push((gone.short, gone.colour));
+    }
+
+    pub(crate) fn from_party(p: &Party, country: &str) -> Self {
         Self {
             name: p.name.clone(),
             short: p.short_name.clone().unwrap_or_else(|| p.name.clone()),
             colour: p.color.clone(),
             href: format!("/{}/parties/{}", country, p.slug),
+            slug: p.slug.clone(),
+            merged: Vec::new(),
             also: Vec::new(),
         }
     }
@@ -52,6 +69,8 @@ impl Contestant {
             // make colour stop meaning "this party's colour".
             colour: None,
             href: format!("/{}/people/{}", country, p.slug),
+            slug: p.slug.clone(),
+            merged: Vec::new(),
             also: Vec::new(),
         }
     }
@@ -94,7 +113,7 @@ fn scale() -> [(i8, &'static str); 5] {
 /// statements by the parties, and every one links to its source so a reader can
 /// check it. If a party states its own position, that becomes the stance's
 /// source instead, so this claim never overstates what is behind the data.
-fn methodology_note(scope: &str) -> Markup {
+pub(crate) fn methodology_note(scope: &str) -> Markup {
     html! {
         p class="mt-4 max-w-prose text-[14px] text-ink-muted" {
             @if scope == db::compass::SCOPE_PERSON {
@@ -340,29 +359,40 @@ fn kind_label(kind: &str) -> &'static str {
 /// The body is read as raw key/value pairs because the field set is dynamic (one
 /// group per position). Answers are used only to compute the result here.
 pub async fn result(
-    State(pool): State<db::Pool>,
+    State(state): State<AppState>,
     session: Option<AuthSession>,
     Path(country): Path<String>,
     Form(pairs): Form<Vec<(String, String)>>,
 ) -> Result<Markup, PageError> {
     result_scoped(
-        pool,
+        state.pool,
         session,
         country,
         db::compass::SCOPE_PARTY.to_string(),
         pairs,
+        &state.secret,
+        &state.base_url,
     )
     .await
 }
 
 /// POST `/{country}/compass/{scope}`: score a non-default scope.
 pub async fn result_for_scope(
-    State(pool): State<db::Pool>,
+    State(state): State<AppState>,
     session: Option<AuthSession>,
     Path((country, scope)): Path<(String, String)>,
     Form(pairs): Form<Vec<(String, String)>>,
 ) -> Result<Markup, PageError> {
-    result_scoped(pool, session, country, scope, pairs).await
+    result_scoped(
+        state.pool,
+        session,
+        country,
+        scope,
+        pairs,
+        &state.secret,
+        &state.base_url,
+    )
+    .await
 }
 
 async fn result_scoped(
@@ -371,6 +401,8 @@ async fn result_scoped(
     country: String,
     scope: String,
     pairs: Vec<(String, String)>,
+    secret: &[u8],
+    base_url: &str,
 ) -> Result<Markup, PageError> {
     if scope != db::compass::SCOPE_PARTY && scope != db::compass::SCOPE_PERSON {
         return Err(PageError::NotFound);
@@ -397,8 +429,7 @@ async fn result_scoped(
         if id != rep {
             if let Some(gone) = by_id.remove(&id) {
                 if let Some(kept) = by_id.get_mut(&rep) {
-                    kept.name = format!("{} / {}", kept.name, gone.name);
-                    kept.also.push((gone.short, gone.colour));
+                    kept.absorb(gone);
                 }
             }
         }
@@ -457,6 +488,33 @@ async fn result_scoped(
         format!("/{}/compass/{}", country.slug, scope)
     };
 
+    // A shareable link for the party compass, and only when there is a ranking
+    // to share. The token holds the rows exactly as displayed: the slug the row
+    // is scored under (for merged parties, the representative's), and the same
+    // rounded percentage the page shows. Nothing of the answers goes into it.
+    let share_url = if scope == db::compass::SCOPE_PARTY && !scores.is_empty() {
+        let rows: Vec<(String, u32, u32)> = scores
+            .iter()
+            .filter_map(|s| {
+                let c = by_id.get(&s.contestant_id)?;
+                let percent = format!("{:.0}", s.percent).parse().unwrap_or_default();
+                let row = std::iter::once(c.slug.as_str())
+                    .chain(c.merged.iter().map(String::as_str))
+                    .collect::<Vec<_>>()
+                    .join("+");
+                Some((row, percent, s.matched))
+            })
+            .collect();
+        let token = compass_share::encode(secret, &country.slug, &rows);
+        Some(if base_url.is_empty() {
+            format!("/{}/compass/shared/{token}", country.slug)
+        } else {
+            format!("{base_url}/{}/compass/shared/{token}", country.slug)
+        })
+    } else {
+        None
+    };
+
     let content = html! {
         section class="mx-auto max-w-3xl" {
             (ui::breadcrumb::breadcrumbs(&[
@@ -501,6 +559,10 @@ async fn result_scoped(
                         }
                     }
                     (methodology_note(&scope))
+
+                    @if let Some(url) = &share_url {
+                        (share_block(url))
+                    }
 
                     (topic_section(&by_topic, &by_id))
 
@@ -830,7 +892,7 @@ fn member_row(
 
 /// One ranked party row: rank, chip, name, a match bar filled with the party's
 /// colour (colour only ever appears inside data), and the percentage.
-fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Markup {
+pub(crate) fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Markup {
     let pct = format!("{:.0}%", s.percent);
     let width = format!("width:{:.1}%", s.percent);
     html! {
@@ -854,6 +916,22 @@ fn score_row(rank: usize, s: &compass::ContestantScore, c: &Contestant) -> Marku
                     (s.matched) " " (i18n::t("positions"))
                 }
             }
+        }
+    }
+}
+
+/// The share block: the signed link in a read-only input, so a visitor can
+/// select and copy it with no JavaScript. The link carries the ranking above
+/// and nothing of the answers that produced it.
+fn share_block(url: &str) -> Markup {
+    html! {
+        section class="mt-10" {
+            (ui::section_header(i18n::t("Share this result"), None))
+            p class="mb-3 max-w-prose text-[16px] text-ink-muted" {
+                (i18n::t("The link contains only the ranking above, never your answers."))
+            }
+            input type="text" readonly value=(url) aria-label=(i18n::t("Share this result"))
+              class="block min-h-12 w-full rounded-[10px] border border-hairline-strong bg-paper-sunken px-3 text-[15px] text-ink";
         }
     }
 }

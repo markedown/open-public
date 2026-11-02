@@ -5258,6 +5258,215 @@ async fn compass_reports_when_no_party_has_a_stance(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn compass_result_offers_a_signed_share_link(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, other) = two_parties(&pool, country_id, src).await;
+
+    let t1 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    let t2 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Kamu harcamalari artmali.",
+        None,
+        2,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    for (thesis, stance) in [(t1, 2i16), (t2, 2)] {
+        db::compass::add_evidence(
+            &pool,
+            thesis,
+            db::compass::SCOPE_PARTY,
+            tp,
+            "manifesto",
+            stance,
+            None,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+    for (thesis, stance) in [(t1, -2i16), (t2, -2)] {
+        db::compass::add_evidence(
+            &pool,
+            thesis,
+            db::compass::SCOPE_PARTY,
+            other,
+            "manifesto",
+            stance,
+            None,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+
+    let form = format!("a{t1}=2&w{t1}=1&a{t2}=2");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(body.contains("Share this result"));
+    assert!(body.contains("The link contains only the ranking above, never your answers."));
+
+    // The share link carries a signed token; read it back out of the input.
+    let marker = "https://open-public.test/tr/compass/shared/";
+    let at = body.find(marker).expect("result page offers a share link");
+    let token_start = at + marker.len();
+    let token_end = token_start + body[token_start..].find('"').expect("the link is quoted");
+    let token = &body[token_start..token_end];
+    let shared_path = format!("/tr/compass/shared/{token}");
+
+    // The URL holds no answer: no field name from the form, and no form value
+    // (a token has no `=`, so no name=value pair can survive in it).
+    for field in [
+        format!("a{t1}"),
+        format!("a{t2}"),
+        format!("w{t1}"),
+        format!("w{t2}"),
+    ] {
+        assert!(!token.contains(&field), "the token leaks {field}");
+    }
+    assert!(!token.contains('='), "the token carries no form values");
+
+    let resp = get_cookie(&app, &shared_path, "lang=en").await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(
+        resp.headers()
+            .get("x-robots-tag")
+            .and_then(|v| v.to_str().ok()),
+        Some("noindex, nofollow"),
+        "a shared result stays out of the index"
+    );
+    let shared = body_string(resp).await;
+    assert!(shared.contains("A shared compass result"));
+    assert!(shared.contains("It shows percentages only, not the answers behind them"));
+    assert!(shared.contains(r#"href="/tr/compass""#));
+    assert!(shared.contains("Take the compass yourself"));
+    // The same ranking as the result page: test-partisi fully matched,
+    // diger-parti not at all, each figure stating its evidence base.
+    assert!(shared.contains("Test Partisi") && shared.contains("Diger Parti"));
+    assert!(shared.contains("100%") && shared.contains("0%"));
+    assert!(shared.contains("2 positions"));
+    assert!(shared.contains("not statements by the parties themselves"));
+
+    // A tampered token (a changed payload byte) is a not-found that says
+    // nothing about why.
+    let mut tampered: Vec<char> = token.chars().collect();
+    tampered[0] = if tampered[0] == 'B' { 'C' } else { 'B' };
+    let tampered: String = tampered.into_iter().collect();
+    assert_eq!(
+        get_cookie(&app, &format!("/tr/compass/shared/{tampered}"), "lang=en")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // A token signed for one country does not render under another.
+    sqlx::query_scalar::<_, i64>(
+        "insert into countries (name, slug, source_id) values ('Baska Ulke', 'baska', $1) returning id",
+    )
+    .bind(src)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(
+        get_cookie(&app, &format!("/baska/compass/shared/{token}"), "lang=en")
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // With no configured origin, the share block falls back to a relative
+    // path rather than inventing one.
+    let bare = router_no_origin(pool.clone());
+    let body = body_string(post_form(&bare, "/tr/compass", &form, Some("lang=en")).await).await;
+    assert!(
+        body.contains("value=\"/tr/compass/shared/"),
+        "no origin, no invented host"
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_shared_result_keeps_parties_that_share_one_row_together(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (country_id, src) = compass_country_and_source(&pool).await;
+    let (tp, other) = two_parties(&pool, country_id, src).await;
+    let t1 = db::compass::add_thesis(
+        &pool,
+        country_id,
+        "Vergiler dusurulmeli.",
+        None,
+        1,
+        db::compass::SCOPE_PARTY,
+        src,
+    )
+    .await
+    .unwrap();
+    // Two parties resting on exactly the same evidence are one measurement and
+    // one row, on the result page and on the page a shared link opens.
+    for party in [tp, other] {
+        db::compass::add_evidence(
+            &pool,
+            t1,
+            db::compass::SCOPE_PARTY,
+            party,
+            "manifesto",
+            2,
+            None,
+            None,
+            None,
+            src,
+        )
+        .await
+        .unwrap();
+    }
+
+    let form = format!("a{t1}=2");
+    let body = body_string(post_form(&app, "/tr/compass", &form, Some("lang=en")).await).await;
+    let marker = "https://open-public.test/tr/compass/shared/";
+    let at = body.find(marker).expect("result page offers a share link");
+    let start = at + marker.len();
+    let token = &body[start..start + body[start..].find('"').unwrap()];
+
+    let shared =
+        body_string(get_cookie(&app, &format!("/tr/compass/shared/{token}"), "lang=en").await)
+            .await;
+    assert!(
+        shared.contains("Test Partisi / Diger Parti"),
+        "both parties of the row are named"
+    );
+
+    // One of them dissolved since: the row stays, with the one that is left.
+    for statement in [
+        "delete from position_evidence where party_id = (select id from parties where slug = 'diger-parti')",
+        "delete from parties where slug = 'diger-parti'",
+    ] {
+        sqlx::query(statement).execute(&pool).await.unwrap();
+    }
+    let shared =
+        body_string(get_cookie(&app, &format!("/tr/compass/shared/{token}"), "lang=en").await)
+            .await;
+    assert!(shared.contains("Test Partisi") && !shared.contains("Diger Parti"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn compass_admin_authors_positions_and_stances(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());

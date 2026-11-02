@@ -118,6 +118,12 @@ The questionnaire itself is stateless and anonymous: answers arrive in the POST 
 in memory, and are gone when the response is rendered. A place typed to find one's members is handled
 the same way. Nothing a visitor enters is stored or logged.
 
+A shared compass link keeps that promise past the session. The link is a signed token carrying only
+the finished ranking: per party its slug, its percentage and its matched-position count, keyed with the
+application secret so a forged or altered result is refused as a plain not-found. Making and reading a
+link write nothing to the database, and the visitor's answers, the marks of which positions were
+important, and anything that could reconstruct them are never in the token.
+
 ## The published dataset
 
 `dataset/` holds everything the platform knows, one JSON file per entity type, released under CC0. It

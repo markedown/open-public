@@ -1497,3 +1497,18 @@ msgstr "Nije pronađeno"
 
 msgid "Error"
 msgstr "Greška"
+
+msgid "Share this result"
+msgstr "Podeli ovaj rezultat"
+
+msgid "The link contains only the ranking above, never your answers."
+msgstr "Link sadrži samo gornji poredak, nikada vaše odgovore."
+
+msgid "A shared compass result"
+msgstr "Podeljeni rezultat kompasa"
+
+msgid "This is a shared result. It shows percentages only, not the answers behind them."
+msgstr "Ovo je podeljeni rezultat. Prikazuje samo procente, ne i odgovore iza njih."
+
+msgid "Take the compass yourself"
+msgstr "Isprobajte kompas sami"

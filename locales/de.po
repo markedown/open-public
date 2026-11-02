@@ -1497,3 +1497,18 @@ msgstr "Nicht gefunden"
 
 msgid "Error"
 msgstr "Fehler"
+
+msgid "Share this result"
+msgstr "Dieses Ergebnis teilen"
+
+msgid "The link contains only the ranking above, never your answers."
+msgstr "Der Link enthält nur die Rangfolge oben, niemals Ihre Antworten."
+
+msgid "A shared compass result"
+msgstr "Ein geteiltes Kompass-Ergebnis"
+
+msgid "This is a shared result. It shows percentages only, not the answers behind them."
+msgstr "Dies ist ein geteiltes Ergebnis. Es zeigt nur Prozentwerte, nicht die Antworten dahinter."
+
+msgid "Take the compass yourself"
+msgstr "Den Kompass selbst ausprobieren"

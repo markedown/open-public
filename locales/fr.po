@@ -1497,3 +1497,18 @@ msgstr "Introuvable"
 
 msgid "Error"
 msgstr "Erreur"
+
+msgid "Share this result"
+msgstr "Partager ce résultat"
+
+msgid "The link contains only the ranking above, never your answers."
+msgstr "Le lien ne contient que le classement ci-dessus, jamais vos réponses."
+
+msgid "A shared compass result"
+msgstr "Un résultat de boussole partagé"
+
+msgid "This is a shared result. It shows percentages only, not the answers behind them."
+msgstr "Ceci est un résultat partagé. Il n'affiche que des pourcentages, pas les réponses qui les ont produits."
+
+msgid "Take the compass yourself"
+msgstr "Essayez la boussole vous-même"

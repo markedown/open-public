@@ -1509,3 +1509,18 @@ msgstr "Bulunamadı"
 
 msgid "Error"
 msgstr "Hata"
+
+msgid "Share this result"
+msgstr "Bu sonucu paylaş"
+
+msgid "The link contains only the ranking above, never your answers."
+msgstr "Bağlantı yalnızca yukarıdaki sıralamayı içerir, yanıtlarınızı asla içermez."
+
+msgid "A shared compass result"
+msgstr "Paylaşılan pusula sonucu"
+
+msgid "This is a shared result. It shows percentages only, not the answers behind them."
+msgstr "Bu paylaşılan bir sonuçtur. Yalnızca yüzdeleri gösterir, arkasındaki yanıtları göstermez."
+
+msgid "Take the compass yourself"
+msgstr "Pusulayı kendiniz deneyin"
