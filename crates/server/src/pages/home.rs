@@ -41,6 +41,10 @@ pub async fn page(
 
     let content = html! {
         section {
+            // What the site is and how to search it, for the engine that
+            // reaches the home page first.
+            (ui::jsonld::web_site_script())
+
             @if let Some(ref notice) = state.site_notice {
                 div class="mb-8 flex items-start gap-3 border border-ink bg-paper-raised px-4 py-3" {
                     span class="op-block mt-0.5 h-3.5 w-3.5 shrink-0" {}

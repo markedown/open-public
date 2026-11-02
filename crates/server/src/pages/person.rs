@@ -79,6 +79,11 @@ pub async fn detail(
         .filter(|r| r.end_date.is_none())
         .max_by_key(|r| r.start_date);
 
+    // The addresses the structured data repeats from the page: the photo at the
+    // address the page itself loads it from, and the party page link.
+    let photo_src = person.photo_url.as_deref().map(crate::mirror::local_src);
+    let party_href = current_party.map(|m| format!("/{}/parties/{}", country.slug, m.party_slug));
+
     let content = html! {
         article {
             (ui::hero_band(html! {
@@ -228,6 +233,18 @@ pub async fn detail(
                     }
                 }
             }
+
+            // The same facts the page shows, in the form a search engine reads.
+            (ui::jsonld::person_script(&ui::jsonld::PersonData {
+                name: &person.full_name,
+                image: photo_src.as_deref(),
+                birth_date: person.birth_date,
+                job_title: current_role.map(|r| r.title.as_deref().unwrap_or(&r.role_type)),
+                affiliation: current_party
+                    .zip(party_href.as_deref())
+                    .map(|(m, href)| (m.party_name.as_str(), href)),
+                wikidata_id: person.wikidata_id.as_deref(),
+            }))
         }
     };
 

@@ -602,6 +602,16 @@ async fn body_string(resp: Response) -> String {
     String::from_utf8_lossy(&bytes).into_owned()
 }
 
+/// The first `application/ld+json` script of a page, parsed back. The content
+/// escapes `<` and `&` as JSON unicode escapes, so the first literal closing
+/// tag after the opening one is the element's own.
+fn ld_json(body: &str) -> serde_json::Value {
+    let open = r#"<script type="application/ld+json">"#;
+    let start = body.find(open).expect("a jsonld script element") + open.len();
+    let end = body[start..].find("</script>").expect("the closing tag");
+    serde_json::from_str(&body[start..start + end]).expect("the jsonld parses")
+}
+
 /// Create a verified admin user with a session and return its cookie header.
 async fn admin_cookie(pool: &db::Pool) -> String {
     let email_hash = server::auth::hash_email("admin@x.test", SECRET).unwrap();
@@ -2116,6 +2126,99 @@ async fn party_pages_render_members(pool: db::Pool) {
         "electoral history links to the election"
     );
     assert!(body.contains("Parti kuruldu")); // party timeline event
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn home_page_carries_website_jsonld(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+    let body = body_string(get(&app, "/").await).await;
+    let ld = ld_json(&body);
+    assert_eq!(ld["@type"], "WebSite");
+    assert_eq!(ld["name"], "open-public");
+    assert_eq!(ld["url"], "https://open-public.test");
+    let action = &ld["potentialAction"];
+    assert_eq!(action["@type"], "SearchAction");
+    assert_eq!(
+        action["target"],
+        "https://open-public.test/search?q={search_term_string}"
+    );
+    assert_eq!(action["query-input"], "required name=search_term_string");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn breadcrumb_pages_carry_breadcrumb_jsonld(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+    let body = body_string(get(&app, "/tr/people").await).await;
+    let ld = ld_json(&body);
+    assert_eq!(ld["@type"], "BreadcrumbList");
+    let items = ld["itemListElement"].as_array().expect("a list");
+    assert_eq!(items.len(), 2);
+    assert_eq!(items[0]["position"], 1);
+    assert_eq!(items[0]["name"], "Test Ulke");
+    assert_eq!(items[0]["item"], "https://open-public.test/tr");
+    // The last crumb is not a link on the page; its address is the page itself.
+    assert_eq!(items[1]["position"], 2);
+    assert_eq!(items[1]["item"], "https://open-public.test/tr/people");
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn person_pages_carry_person_jsonld(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+
+    // The full profile: photo, birth date, current office, current party.
+    let body = body_string(get(&app, "/tr/people/ayse-yilmaz").await).await;
+    let ld = ld_json(&body);
+    assert_eq!(ld["@type"], "Person");
+    assert_eq!(ld["name"], "Ayse Yilmaz");
+    assert_eq!(ld["url"], "https://open-public.test/tr/people/ayse-yilmaz");
+    assert_eq!(ld["birthDate"], "1970-05-03");
+    assert_eq!(ld["jobTitle"], "Milletvekili");
+    // The image is the address the page itself loads, made absolute.
+    assert_eq!(
+        ld["image"],
+        format!(
+            "https://open-public.test{}",
+            server::mirror::local_src("https://example.test/p.jpg")
+        )
+    );
+    assert_eq!(ld["affiliation"]["name"], "Test Partisi");
+    assert_eq!(
+        ld["affiliation"]["url"],
+        "https://open-public.test/tr/parties/test-partisi"
+    );
+    assert_eq!(
+        ld["sameAs"],
+        serde_json::json!(["https://www.wikidata.org/wiki/Q100"])
+    );
+
+    // The minimal profile shows no photo, no office and no current party, so
+    // the object carries none of those keys.
+    let body = body_string(get(&app, "/tr/people/mehmet-demir").await).await;
+    let ld = ld_json(&body);
+    assert_eq!(ld["name"], "Mehmet Demir");
+    for key in ["image", "birthDate", "jobTitle", "affiliation"] {
+        assert!(ld.get(key).is_none(), "{key} should be absent");
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn party_page_carries_political_party_jsonld(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+    let body = body_string(get(&app, "/tr/parties/test-partisi").await).await;
+    let ld = ld_json(&body);
+    assert_eq!(ld["@type"], "PoliticalParty");
+    assert_eq!(ld["name"], "Test Partisi");
+    assert_eq!(
+        ld["url"],
+        "https://open-public.test/tr/parties/test-partisi"
+    );
+    assert_eq!(ld["foundingDate"], "2010-01-01");
+    // The seeded party has no Wikidata id, so there is nothing to say `sameAs`.
+    assert!(ld.get("sameAs").is_none());
 }
 
 #[sqlx::test(migrations = "../../migrations")]

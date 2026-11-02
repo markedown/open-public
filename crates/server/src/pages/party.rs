@@ -256,6 +256,13 @@ pub async fn detail(
             (ui::poll_widget::poll_previews(&polls, &country_model.slug, None, None, None))
 
             (ui::references::references(party.wikidata_id.as_deref(), None))
+
+            // The same facts the page shows, in the form a search engine reads.
+            (ui::jsonld::political_party_script(
+                &party.name,
+                party.wikidata_id.as_deref(),
+                party.founded_date,
+            ))
         }
     };
 

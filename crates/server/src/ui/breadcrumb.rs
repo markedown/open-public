@@ -13,6 +13,10 @@ pub fn breadcrumbs(items: &[Crumb]) -> Markup {
     }
     html! {
         div class="mb-6" { (trail(items)) }
+        // The machine-readable twin of the trail hangs off `breadcrumbs` and
+        // not off `trail`: a page that rendered both would otherwise carry the
+        // same list twice, and search engines read both.
+        (crate::ui::jsonld::breadcrumb_script(items))
     }
 }
 

@@ -13,6 +13,7 @@ pub mod election;
 pub mod event;
 pub mod follow;
 pub mod hemicycle;
+pub mod jsonld;
 pub mod layout;
 pub mod news;
 pub mod outlet;
