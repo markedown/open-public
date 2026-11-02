@@ -482,9 +482,15 @@ fn router_construction(pool: db::Pool) -> Router {
     server::app(state, Path::new("static"))
 }
 
+// The deployment default is English, but most of these tests were written against
+// Turkish copy. The browser preference outranks the default, so the helpers ask
+// for Turkish unless a test pins a language with a cookie, which outranks both.
+const TEST_LANGUAGE: &str = "tr";
+
 async fn get(app: &Router, uri: &str) -> Response {
     let req = Request::builder()
         .uri(uri)
+        .header("accept-language", TEST_LANGUAGE)
         .body(Body::empty())
         .expect("request");
     app.clone().oneshot(req).await.expect("response")
@@ -493,6 +499,7 @@ async fn get(app: &Router, uri: &str) -> Response {
 async fn get_cookie(app: &Router, uri: &str, cookie: &str) -> Response {
     let req = Request::builder()
         .uri(uri)
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", cookie)
         .body(Body::empty())
         .expect("request");
@@ -520,6 +527,7 @@ async fn post_form(app: &Router, uri: &str, form: &str, cookie: Option<&str>) ->
     let mut builder = Request::builder()
         .method("POST")
         .uri(uri)
+        .header("accept-language", TEST_LANGUAGE)
         .header("content-type", "application/x-www-form-urlencoded");
     if let Some(c) = cookie {
         builder = builder.header("cookie", c);
@@ -651,6 +659,7 @@ async fn admin_forms_render(pool: db::Pool) {
         // Admins get the form.
         let req = Request::builder()
             .uri(&url)
+            .header("accept-language", TEST_LANGUAGE)
             .header("cookie", &cookie)
             .body(Body::empty())
             .unwrap();
@@ -673,6 +682,7 @@ async fn admin_index_is_a_gated_hub(pool: db::Pool) {
     // Admins get the hub, with routes into the editing workflow.
     let req = Request::builder()
         .uri("/admin")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -698,6 +708,7 @@ async fn admin_sees_add_controls_on_entity_pages(pool: db::Pool) {
         async move {
             let req = Request::builder()
                 .uri(&uri)
+                .header("accept-language", TEST_LANGUAGE)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap();
@@ -757,6 +768,7 @@ async fn admin_sees_add_controls_on_entity_pages(pool: db::Pool) {
     ] {
         let req = Request::builder()
             .uri(&uri)
+            .header("accept-language", TEST_LANGUAGE)
             .header("cookie", &cookie)
             .body(Body::empty())
             .unwrap();
@@ -777,6 +789,7 @@ async fn admin_reviews_and_resolves_conflicts(pool: db::Pool) {
         async move {
             let req = Request::builder()
                 .uri(&uri)
+                .header("accept-language", TEST_LANGUAGE)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap();
@@ -858,6 +871,7 @@ async fn admin_edits_news_and_manages_relations(pool: db::Pool) {
         async move {
             let req = Request::builder()
                 .uri(&uri)
+                .header("accept-language", TEST_LANGUAGE)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap();
@@ -913,6 +927,7 @@ async fn admin_edits_news_and_manages_relations(pool: db::Pool) {
     // The relation search returns an HTMX fragment with an attach form.
     let req = Request::builder()
         .uri(format!("/admin/news/{id}/search?q=ayse"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .header("hx-request", "true")
         .body(Body::empty())
@@ -968,6 +983,7 @@ async fn admin_creates_and_edits_outlet(pool: db::Pool) {
         async move {
             let req = Request::builder()
                 .uri(&uri)
+                .header("accept-language", TEST_LANGUAGE)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap();
@@ -1040,6 +1056,7 @@ async fn admin_reviews_and_publishes_summaries(pool: db::Pool) {
         async move {
             let req = Request::builder()
                 .uri(&uri)
+                .header("accept-language", TEST_LANGUAGE)
                 .header("cookie", &cookie)
                 .body(Body::empty())
                 .unwrap();
@@ -1800,6 +1817,7 @@ async fn admin_can_add_news_and_poll(pool: db::Pool) {
     // The HTMX add-option endpoint returns one more option row for admins.
     let req = Request::builder()
         .uri("/admin/poll/option-row")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -2895,6 +2913,7 @@ async fn published_translation_shows_with_original_disclosed(pool: db::Pool) {
     // Viewed in English, the translation is shown and the original is disclosed.
     let req = Request::builder()
         .uri("/tr/people/ayse-yilmaz")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -2940,6 +2959,7 @@ async fn admin_reviews_and_publishes_a_translation(pool: db::Pool) {
     // The review queue shows the draft and the original for comparison.
     let req = Request::builder()
         .uri("/admin/translations")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -2961,6 +2981,7 @@ async fn admin_reviews_and_publishes_a_translation(pool: db::Pool) {
     // Readers in English now see the edited translation.
     let req = Request::builder()
         .uri("/tr/people/ayse-yilmaz")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3026,6 +3047,7 @@ async fn news_detail_shows_translated_headline_and_summary(pool: db::Pool) {
 
     let req = Request::builder()
         .uri(format!("/tr/news/{news_id}"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3038,6 +3060,7 @@ async fn news_detail_shows_translated_headline_and_summary(pool: db::Pool) {
     // The news index also shows the translated headline in English.
     let req = Request::builder()
         .uri("/tr/news")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3088,6 +3111,7 @@ async fn person_statement_shows_translated(pool: db::Pool) {
     // In English the statement is translated; in the source language it is not.
     let req = Request::builder()
         .uri("/tr/people/ayse-yilmaz")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3238,6 +3262,7 @@ async fn person_attribute_value_is_translated(pool: db::Pool) {
     // English has no translation for it, so it shows the original.
     let req = Request::builder()
         .uri("/tr/people/ayse-yilmaz")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3272,6 +3297,7 @@ async fn poll_shows_translated_question(pool: db::Pool) {
 
     let req = Request::builder()
         .uri("/tr/poll/party-poll")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3315,6 +3341,7 @@ async fn alliance_shows_translated_name_and_summary(pool: db::Pool) {
 
     let req = Request::builder()
         .uri("/tr/alliance/test-ittifaki")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", "lang=en")
         .body(Body::empty())
         .unwrap();
@@ -3397,6 +3424,7 @@ async fn nav_reflects_session(pool: db::Pool) {
 
     let req = Request::builder()
         .uri("/")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", format!("op_session={token}"))
         .body(Body::empty())
         .unwrap();
@@ -3510,6 +3538,7 @@ async fn submission_lands_pending_and_shows_for_the_author(pool: db::Pool) {
     // The form is available to a signed-in user.
     let req = Request::builder()
         .uri(format!("/{COUNTRY}/polls/submit"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -3549,6 +3578,7 @@ async fn submission_lands_pending_and_shows_for_the_author(pool: db::Pool) {
     // The author sees it on their submissions page.
     let req = Request::builder()
         .uri("/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -3605,6 +3635,7 @@ async fn admin_approval_creates_a_community_poll(pool: db::Pool) {
     );
     let req = Request::builder()
         .uri("/admin/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -3615,6 +3646,7 @@ async fn admin_approval_creates_a_community_poll(pool: db::Pool) {
     let req = Request::builder()
         .method("POST")
         .uri(format!("/admin/submissions/{sid}/approve"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -3647,6 +3679,7 @@ async fn a_ban_invalidates_the_session_and_blocks_relogin(pool: db::Pool) {
     // Works before the ban.
     let req = Request::builder()
         .uri("/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -3664,6 +3697,7 @@ async fn a_ban_invalidates_the_session_and_blocks_relogin(pool: db::Pool) {
     // The live session no longer resolves.
     let req = Request::builder()
         .uri("/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -3722,6 +3756,7 @@ async fn uploaded_images_are_hidden_until_approved_and_hardened(pool: db::Pool) 
     );
     let req = Request::builder()
         .uri(format!("/media/{sha}"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -3960,6 +3995,7 @@ async fn admin_can_reject_as_a_violation(pool: db::Pool) {
     let req = Request::builder()
         .method("POST")
         .uri(format!("/admin/submissions/{sid}/reject"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .header("content-type", "application/x-www-form-urlencoded")
         .body(Body::from("note=off+topic&violation=on"))
@@ -4176,6 +4212,7 @@ async fn my_submissions_shows_each_state(pool: db::Pool) {
     // An option row fragment is available for the form (HTMX add-option).
     let req = Request::builder()
         .uri(format!("/{COUNTRY}/polls/submit/row"))
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -4209,6 +4246,7 @@ async fn my_submissions_shows_each_state(pool: db::Pool) {
 
     let req = Request::builder()
         .uri("/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -4329,6 +4367,7 @@ async fn admin_person_enrichment_and_submissions_queue(pool: db::Pool) {
     // The submissions queue renders empty first.
     let req = Request::builder()
         .uri("/admin/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -4364,6 +4403,7 @@ async fn admin_person_enrichment_and_submissions_queue(pool: db::Pool) {
     // The manage page now renders the education and attribute rows.
     let req = Request::builder()
         .uri("/admin/person/ayse-yilmaz?country=tr")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -4396,6 +4436,7 @@ async fn admin_person_enrichment_and_submissions_queue(pool: db::Pool) {
         .unwrap();
     let req = Request::builder()
         .uri("/admin/submissions")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -4446,6 +4487,7 @@ async fn empty_states_admin_views_and_search(pool: db::Pool) {
     for uri in ["/tr/people/ayse-yilmaz", "/tr/parties/test-partisi"] {
         let req = Request::builder()
             .uri(uri)
+            .header("accept-language", TEST_LANGUAGE)
             .header("cookie", &admin)
             .body(Body::empty())
             .unwrap();
@@ -4737,6 +4779,7 @@ async fn admin_news_statement_and_review_crud(pool: db::Pool) {
     .unwrap();
     let hub = Request::builder()
         .uri("/admin")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &admin)
         .body(Body::empty())
         .unwrap();
@@ -4747,6 +4790,7 @@ async fn admin_news_statement_and_review_crud(pool: db::Pool) {
     for uri in ["/admin/summaries", "/admin/translations"] {
         let req = Request::builder()
             .uri(uri)
+            .header("accept-language", TEST_LANGUAGE)
             .header("cookie", &admin)
             .body(Body::empty())
             .unwrap();
@@ -4781,6 +4825,7 @@ async fn admin_news_statement_and_review_crud(pool: db::Pool) {
     ] {
         let req = Request::builder()
             .uri(&uri)
+            .header("accept-language", TEST_LANGUAGE)
             .header("cookie", &admin)
             .body(Body::empty())
             .unwrap();
@@ -5037,6 +5082,7 @@ async fn assorted_render_branches(pool: db::Pool) {
     let (_uid, cookie) = user_cookie(&pool, "voter@x.test").await;
     let req = Request::builder()
         .uri("/tr/poll/party-poll")
+        .header("accept-language", TEST_LANGUAGE)
         .header("cookie", &cookie)
         .body(Body::empty())
         .unwrap();
@@ -7426,6 +7472,21 @@ async fn every_response_carries_the_security_headers(pool: db::Pool) {
         let body = body_string(resp).await;
         assert!(body.contains("<html"), "{uri} has a page");
     }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_visitor_with_no_preference_gets_english(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // No cookie and no Accept-Language, as a crawler arrives: the deployment
+    // default decides, and it is English.
+    let req = Request::builder()
+        .uri("/")
+        .body(Body::empty())
+        .expect("request");
+    let body = body_string(app.clone().oneshot(req).await.expect("response")).await;
+    assert!(body.contains(r#"html lang="en""#));
+    assert!(body.contains("People, parties, elections"));
 }
 
 #[sqlx::test(migrations = "../../migrations")]

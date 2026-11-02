@@ -41,21 +41,21 @@ mod tests {
         NaiveDate::from_ymd_opt(y, m, day).unwrap()
     }
 
-    // The active locale defaults to Turkish, so months and "present" are Turkish.
+    // The active locale defaults to English, so months and "present" are English.
     #[test]
     fn date_formats_or_question_mark() {
         assert_eq!(date(None), "?");
-        assert_eq!(date(Some(d(2020, 6, 12))), "12 Haz 2020");
+        assert_eq!(date(Some(d(2020, 6, 12))), "12 Jun 2020");
     }
 
     #[test]
     fn date_range_covers_every_case() {
         assert_eq!(
             date_range(Some(d(2019, 1, 1)), Some(d(2023, 3, 4))),
-            "1 Oca 2019 - 4 Mar 2023"
+            "1 Jan 2019 - 4 Mar 2023"
         );
-        assert!(date_range(Some(d(2019, 1, 1)), None).ends_with(" - günümüz"));
+        assert!(date_range(Some(d(2019, 1, 1)), None).ends_with(" - present"));
         assert!(date_range(None, Some(d(2023, 1, 1))).starts_with("? - "));
-        assert_eq!(date_range(None, None), "günümüz");
+        assert_eq!(date_range(None, None), "present");
     }
 }

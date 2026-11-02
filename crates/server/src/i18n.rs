@@ -28,7 +28,7 @@ static SR: LazyLock<Catalog> =
 /// variable. Used as the final fallback when a request neither carries a
 /// language cookie nor a matching `Accept-Language`.
 static ACTIVE: LazyLock<Lang> =
-    LazyLock::new(|| Lang::from_code(std::env::var("LOCALE").as_deref().unwrap_or("tr")));
+    LazyLock::new(|| Lang::from_code(std::env::var("LOCALE").as_deref().unwrap_or("en")));
 
 tokio::task_local! {
     /// The locale chosen for the current request. Set by the locale middleware
