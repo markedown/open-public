@@ -1512,3 +1512,78 @@ msgstr "Dies ist ein geteiltes Ergebnis. Es zeigt nur Prozentwerte, nicht die An
 
 msgid "Take the compass yourself"
 msgstr "Den Kompass selbst ausprobieren"
+
+msgid "Report an error"
+msgstr "Fehler melden"
+
+msgid "Report sent"
+msgstr "Meldung gesendet"
+
+msgid "Every claim here rests on a source. Say what reads wrong and on which page, and an editor checks it against that source."
+msgstr "Jede Angabe hier stützt sich auf eine Quelle. Schreiben Sie, was falsch dargestellt ist und auf welcher Seite, und eine Redaktion prüft es anhand dieser Quelle."
+
+msgid "What is wrong?"
+msgstr "Was ist falsch?"
+
+msgid "Source URL (optional)"
+msgstr "Quell-URL (optional)"
+
+msgid "Where you read something that says otherwise."
+msgstr "Wo Sie etwas gelesen haben, das etwas anderes sagt."
+
+msgid "Contact email (optional)"
+msgstr "Kontakt-E-Mail (optional)"
+
+msgid "Only used if an editor needs to ask a question about your report."
+msgstr "Wird nur verwendet, wenn eine Redaktion eine Rückfrage zu Ihrer Meldung hat."
+
+msgid "Send report"
+msgstr "Meldung senden"
+
+msgid "The page must be an address on this site, starting with \"/\"."
+msgstr "Die Seite muss eine Adresse auf dieser Website sein und mit „/“ beginnen."
+
+msgid "Please say what is wrong, in at least 10 characters."
+msgstr "Bitte schreiben Sie, was falsch ist, mit mindestens 10 Zeichen."
+
+msgid "Please keep the description under 2000 characters."
+msgstr "Bitte halten Sie die Beschreibung unter 2000 Zeichen."
+
+msgid "A source link must start with http:// or https://."
+msgstr "Ein Quell-Link muss mit http:// oder https:// beginnen."
+
+msgid "That contact address does not look right."
+msgstr "Diese Kontaktadresse sieht nicht richtig aus."
+
+msgid "Every report is read against the source of the page it points to."
+msgstr "Jede Meldung wird mit der Quelle der Seite abgeglichen, auf die sie sich bezieht."
+
+msgid "A confirmed error is corrected on the page, and the correction is recorded with its source."
+msgstr "Ein bestätigter Fehler wird auf der Seite korrigiert, und die Korrektur wird mit ihrer Quelle festgehalten."
+
+msgid "If you left a contact address, it is deleted once the report is closed."
+msgstr "Wenn Sie eine Kontaktadresse angegeben haben, wird sie gelöscht, sobald die Meldung abgeschlossen ist."
+
+msgid "Review corrections"
+msgstr "Korrekturen prüfen"
+
+msgid "A visitor says something on a page reads wrong. Check the page against its source, correct it through the normal editing flow if it does, then close the report. Closing deletes any contact address it carried."
+msgstr "Eine Person meldet, dass etwas auf einer Seite falsch dargestellt ist. Prüfen Sie die Seite anhand ihrer Quelle, korrigieren Sie sie bei Bedarf über den normalen Bearbeitungsweg und schließen Sie dann die Meldung. Beim Schließen wird eine angegebene Kontaktadresse gelöscht."
+
+msgid "No open corrections."
+msgstr "Keine offenen Korrekturen."
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Note (optional)"
+msgstr "Notiz (optional)"
+
+msgid "Resolve"
+msgstr "Erledigen"
+
+msgid "If you report an error"
+msgstr "Wenn Sie einen Fehler melden"
+
+msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
+msgstr "Eine Meldung enthält die betroffene Seite, Ihre Beschreibung und, falls Sie einen angeben, einen Quell-Link. Sie wird nur von der Redaktion gelesen. Eine Kontaktadresse ist freiwillig und die einzige Adresse, die diese Plattform so speichert, wie Sie sie geschrieben haben, weil die Redaktion Ihnen vielleicht eine Rückfrage stellen muss: Sie wird gelöscht, sobald die Meldung abgeschlossen ist, und der Rest der Meldung bleibt als Nachweis dessen, was gefragt und was entschieden wurde."

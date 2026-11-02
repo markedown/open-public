@@ -2410,3 +2410,174 @@ async fn db_connect_and_follows_count(pool: db::Pool) {
         0
     );
 }
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn corrections_insert_list_and_close(pool: sqlx::PgPool) {
+    let first = db::corrections::create(
+        &pool,
+        &db::corrections::NewCorrection {
+            page: "/tr/people/ayse-yilmaz",
+            description: "The birth date on this page is wrong.",
+            source_url: Some("https://example.test/registry"),
+            contact_email: Some("reporter@example.test"),
+        },
+    )
+    .await
+    .unwrap();
+    let second = db::corrections::create(
+        &pool,
+        &db::corrections::NewCorrection {
+            page: "/tr/parties",
+            description: "One party is listed twice in the index.",
+            source_url: None,
+            contact_email: None,
+        },
+    )
+    .await
+    .unwrap();
+
+    // The queue is the open reports, oldest first.
+    let open = db::corrections::list_open(&pool).await.unwrap();
+    assert_eq!(
+        open.iter().map(|c| c.id).collect::<Vec<_>>(),
+        [first, second]
+    );
+    assert_eq!(
+        open[0].contact_email.as_deref(),
+        Some("reporter@example.test")
+    );
+    assert_eq!(open[0].resolved_at, None);
+    assert_eq!(db::corrections::open_count(&pool).await.unwrap(), 2);
+
+    db::corrections::close(
+        &pool,
+        first,
+        "resolved",
+        Some("Corrected from the registry."),
+    )
+    .await
+    .unwrap();
+
+    // One statement decides, notes, dates, and drops the personal address.
+    let row = sqlx::query_as::<_, (String, Option<String>, Option<String>)>(
+        "select status, resolution_note, contact_email from corrections where id = $1",
+    )
+    .bind(first)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(row.0, "resolved");
+    assert_eq!(row.1.as_deref(), Some("Corrected from the registry."));
+    assert_eq!(row.2, None);
+    let resolved_at: Option<chrono::DateTime<chrono::Utc>> =
+        sqlx::query_scalar("select resolved_at from corrections where id = $1")
+            .bind(first)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert!(resolved_at.is_some());
+
+    // Only the other report is still open, and a second close on a closed
+    // report changes nothing, so a stale queue page cannot rewrite a decision.
+    assert_eq!(db::corrections::open_count(&pool).await.unwrap(), 1);
+    assert_eq!(
+        db::corrections::list_open(&pool).await.unwrap()[0].id,
+        second
+    );
+    db::corrections::close(&pool, first, "rejected", Some("rewritten"))
+        .await
+        .unwrap();
+    let note: Option<String> =
+        sqlx::query_scalar("select resolution_note from corrections where id = $1")
+            .bind(first)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(note.as_deref(), Some("Corrected from the registry."));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn correction_constraints_reject_bad_input(pool: sqlx::PgPool) {
+    async fn refused(
+        pool: &sqlx::PgPool,
+        page: &str,
+        description: &str,
+        source_url: Option<&str>,
+        contact_email: Option<&str>,
+    ) -> bool {
+        db::corrections::create(
+            pool,
+            &db::corrections::NewCorrection {
+                page,
+                description,
+                source_url,
+                contact_email,
+            },
+        )
+        .await
+        .is_err()
+    }
+
+    let ok = "The birth date on this page is wrong.";
+    // The page is a path on this site and no longer than the form allows.
+    assert!(refused(&pool, "http://elsewhere.test/x", ok, None, None).await);
+    assert!(refused(&pool, &"/a".repeat(151), ok, None, None).await);
+    // The description has a floor and a ceiling.
+    assert!(refused(&pool, "/tr/people", "wrong", None, None).await);
+    assert!(refused(&pool, "/tr/people", &"x".repeat(2001), None, None).await);
+    // A source link is a web address of an ordinary length.
+    assert!(
+        refused(&pool, "/tr/people", ok, Some("ftp://example.test/x"), None).await,
+        "a link we cannot render as a link"
+    );
+    assert!(
+        refused(
+            &pool,
+            "/tr/people",
+            ok,
+            Some(&format!("https://e.test/{}", "a".repeat(500))),
+            None
+        )
+        .await
+    );
+    // A contact address is bounded.
+    assert!(
+        refused(
+            &pool,
+            "/tr/people",
+            ok,
+            None,
+            Some(&format!("{}@e.test", "a".repeat(248)))
+        )
+        .await
+    );
+
+    let id = db::corrections::create(
+        &pool,
+        &db::corrections::NewCorrection {
+            page: "/tr/people",
+            description: ok,
+            source_url: None,
+            contact_email: None,
+        },
+    )
+    .await
+    .unwrap();
+    // A decision note is bounded too, and the status vocabulary is closed.
+    assert!(
+        sqlx::query("update corrections set resolution_note = $1 where id = $2")
+            .bind("x".repeat(1001))
+            .bind(id)
+            .execute(&pool)
+            .await
+            .is_err()
+    );
+    assert!(
+        sqlx::query("update corrections set status = $1 where id = $2")
+            .bind("closed")
+            .bind(id)
+            .execute(&pool)
+            .await
+            .is_err()
+    );
+}

@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        update corrections\n        set status = $2, resolution_note = $3, resolved_at = now(), contact_email = null\n        where id = $1 and status = 'open'\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6532b88e74db1f2c685d45c0af8a38e60bb830645fa793fd633c579adadb4eb9"
+}

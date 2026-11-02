@@ -1524,3 +1524,78 @@ msgstr "Bu paylaşılan bir sonuçtur. Yalnızca yüzdeleri gösterir, arkasınd
 
 msgid "Take the compass yourself"
 msgstr "Pusulayı kendiniz deneyin"
+
+msgid "Report an error"
+msgstr "Hata bildir"
+
+msgid "Report sent"
+msgstr "Bildirim gönderildi"
+
+msgid "Every claim here rests on a source. Say what reads wrong and on which page, and an editor checks it against that source."
+msgstr "Buradaki her bilgi bir kaynağa dayanır. Neyin yanlış göründüğünü ve hangi sayfada olduğunu yazın; bir editör bunu o kaynakla karşılaştırarak kontrol eder."
+
+msgid "What is wrong?"
+msgstr "Ne yanlış?"
+
+msgid "Source URL (optional)"
+msgstr "Kaynak URL'si (isteğe bağlı)"
+
+msgid "Where you read something that says otherwise."
+msgstr "Aksini söyleyen bir şeyi nerede okuduğunuz."
+
+msgid "Contact email (optional)"
+msgstr "İletişim e-postası (isteğe bağlı)"
+
+msgid "Only used if an editor needs to ask a question about your report."
+msgstr "Yalnızca bir editörün bildiriminizle ilgili soru sorması gerekirse kullanılır."
+
+msgid "Send report"
+msgstr "Bildirimi gönder"
+
+msgid "The page must be an address on this site, starting with \"/\"."
+msgstr "Sayfa, bu sitedeki bir adres olmalı ve \"/\" ile başlamalıdır."
+
+msgid "Please say what is wrong, in at least 10 characters."
+msgstr "Lütfen neyin yanlış olduğunu en az 10 karakterle yazın."
+
+msgid "Please keep the description under 2000 characters."
+msgstr "Lütfen açıklamayı 2000 karakterin altında tutun."
+
+msgid "A source link must start with http:// or https://."
+msgstr "Kaynak bağlantısı http:// veya https:// ile başlamalıdır."
+
+msgid "That contact address does not look right."
+msgstr "Bu iletişim adresi doğru görünmüyor."
+
+msgid "Every report is read against the source of the page it points to."
+msgstr "Her bildirim, ilgili olduğu sayfanın kaynağıyla karşılaştırılarak okunur."
+
+msgid "A confirmed error is corrected on the page, and the correction is recorded with its source."
+msgstr "Doğrulanan bir hata sayfada düzeltilir ve düzeltme kaynağıyla birlikte kaydedilir."
+
+msgid "If you left a contact address, it is deleted once the report is closed."
+msgstr "Bir iletişim adresi bıraktıysanız, bildirim kapatıldığında silinir."
+
+msgid "Review corrections"
+msgstr "Düzeltmeleri incele"
+
+msgid "A visitor says something on a page reads wrong. Check the page against its source, correct it through the normal editing flow if it does, then close the report. Closing deletes any contact address it carried."
+msgstr "Bir ziyaretçi bir sayfada bir şeyin yanlış göründüğünü bildiriyor. Sayfayı kaynağıyla karşılaştırarak kontrol edin, gerekirse olağan düzenleme akışıyla düzeltin, ardından bildirimi kapatın. Kapatma, varsa iletişim adresini siler."
+
+msgid "No open corrections."
+msgstr "Açık düzeltme yok."
+
+msgid "Contact"
+msgstr "İletişim"
+
+msgid "Note (optional)"
+msgstr "Not (isteğe bağlı)"
+
+msgid "Resolve"
+msgstr "Çöz"
+
+msgid "If you report an error"
+msgstr "Bir hata bildirirseniz"
+
+msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
+msgstr "Bir bildirim, ilgili olduğu sayfayı, açıklamanızı ve eklerseniz bir kaynak bağlantısını içerir. Yalnızca editörler okur. İletişim adresi isteğe bağlıdır ve bu platformun yazdığınız haliyle sakladığı tek adrestir; çünkü bir editörün size soru sorması gerekebilir: bildirim kapatıldığında silinir, bildirimin geri kalanı ise neyin istendiğinin ve neye karar verildiğinin kaydı olarak kalır."

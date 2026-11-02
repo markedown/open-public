@@ -57,6 +57,13 @@ pub async fn page(session: Option<AuthSession>) -> Markup {
             ))
 
             (section(
+                i18n::t("If you report an error"),
+                &[
+                    i18n::t("A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."),
+                ],
+            ))
+
+            (section(
                 i18n::t("What the platform cannot tell you"),
                 &[
                     i18n::t("Poll results are not a survey. Verifying an address stops one person voting repeatedly from one account; it does not draw a sample of any population, and no result here is representative of anyone but the people who answered."),

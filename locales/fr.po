@@ -1512,3 +1512,78 @@ msgstr "Ceci est un résultat partagé. Il n'affiche que des pourcentages, pas l
 
 msgid "Take the compass yourself"
 msgstr "Essayez la boussole vous-même"
+
+msgid "Report an error"
+msgstr "Signaler une erreur"
+
+msgid "Report sent"
+msgstr "Signalement envoyé"
+
+msgid "Every claim here rests on a source. Say what reads wrong and on which page, and an editor checks it against that source."
+msgstr "Chaque affirmation ici repose sur une source. Dites ce qui semble faux et sur quelle page, et la rédaction le vérifie à l'aide de cette source."
+
+msgid "What is wrong?"
+msgstr "Qu'est-ce qui est faux ?"
+
+msgid "Source URL (optional)"
+msgstr "URL de la source (facultatif)"
+
+msgid "Where you read something that says otherwise."
+msgstr "Où vous avez lu quelque chose qui dit le contraire."
+
+msgid "Contact email (optional)"
+msgstr "E-mail de contact (facultatif)"
+
+msgid "Only used if an editor needs to ask a question about your report."
+msgstr "Utilisée uniquement si la rédaction a une question sur votre signalement."
+
+msgid "Send report"
+msgstr "Envoyer le signalement"
+
+msgid "The page must be an address on this site, starting with \"/\"."
+msgstr "La page doit être une adresse de ce site, commençant par « / »."
+
+msgid "Please say what is wrong, in at least 10 characters."
+msgstr "Dites ce qui est faux, en au moins 10 caractères."
+
+msgid "Please keep the description under 2000 characters."
+msgstr "Gardez la description sous 2000 caractères."
+
+msgid "A source link must start with http:// or https://."
+msgstr "Un lien vers la source doit commencer par http:// ou https://."
+
+msgid "That contact address does not look right."
+msgstr "Cette adresse de contact ne semble pas correcte."
+
+msgid "Every report is read against the source of the page it points to."
+msgstr "Chaque signalement est comparé à la source de la page qu'il concerne."
+
+msgid "A confirmed error is corrected on the page, and the correction is recorded with its source."
+msgstr "Une erreur confirmée est corrigée sur la page, et la correction est enregistrée avec sa source."
+
+msgid "If you left a contact address, it is deleted once the report is closed."
+msgstr "Si vous avez laissé une adresse de contact, elle est supprimée dès que le signalement est clos."
+
+msgid "Review corrections"
+msgstr "Examiner les corrections"
+
+msgid "A visitor says something on a page reads wrong. Check the page against its source, correct it through the normal editing flow if it does, then close the report. Closing deletes any contact address it carried."
+msgstr "Une personne signale que quelque chose sur une page semble faux. Vérifiez la page à l'aide de sa source, corrigez-la si nécessaire par le circuit d'édition habituel, puis clôturez le signalement. La clôture supprime l'adresse de contact éventuelle."
+
+msgid "No open corrections."
+msgstr "Aucune correction ouverte."
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Note (optional)"
+msgstr "Note (facultatif)"
+
+msgid "Resolve"
+msgstr "Résoudre"
+
+msgid "If you report an error"
+msgstr "Si vous signalez une erreur"
+
+msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
+msgstr "Un signalement contient la page concernée, votre description et, si vous en ajoutez un, un lien vers la source. Seule la rédaction le lit. Une adresse de contact est facultative et c'est la seule adresse que cette plateforme conserve telle que vous l'avez écrite, car la rédaction peut avoir besoin de vous poser une question : elle est supprimée dès que le signalement est clos, et le reste du signalement demeure comme trace de ce qui a été demandé et décidé."

@@ -9,6 +9,7 @@ pub mod assets;
 pub mod captcha;
 pub mod compass;
 pub mod conflicts;
+pub mod corrections;
 pub mod country;
 pub mod elections;
 pub mod email_verifications;

@@ -1512,3 +1512,78 @@ msgstr "Ovo je podeljeni rezultat. Prikazuje samo procente, ne i odgovore iza nj
 
 msgid "Take the compass yourself"
 msgstr "Isprobajte kompas sami"
+
+msgid "Report an error"
+msgstr "Prijavi grešku"
+
+msgid "Report sent"
+msgstr "Prijava je poslata"
+
+msgid "Every claim here rests on a source. Say what reads wrong and on which page, and an editor checks it against that source."
+msgstr "Svaka tvrdnja ovde počiva na izvoru. Napišite šta je pogrešno i na kojoj stranici, a urednik će to proveriti prema tom izvoru."
+
+msgid "What is wrong?"
+msgstr "Šta je pogrešno?"
+
+msgid "Source URL (optional)"
+msgstr "Adresa izvora (opciono)"
+
+msgid "Where you read something that says otherwise."
+msgstr "Gde ste pročitali nešto što kaže drugačije."
+
+msgid "Contact email (optional)"
+msgstr "E-pošta za kontakt (opciono)"
+
+msgid "Only used if an editor needs to ask a question about your report."
+msgstr "Koristi se samo ako urednik treba da vam postavi pitanje o vašoj prijavi."
+
+msgid "Send report"
+msgstr "Pošalji prijavu"
+
+msgid "The page must be an address on this site, starting with \"/\"."
+msgstr "Stranica mora biti adresa na ovom sajtu i počinjati sa „/“."
+
+msgid "Please say what is wrong, in at least 10 characters."
+msgstr "Napišite šta je pogrešno, sa najmanje 10 znakova."
+
+msgid "Please keep the description under 2000 characters."
+msgstr "Opis neka bude kraći od 2000 znakova."
+
+msgid "A source link must start with http:// or https://."
+msgstr "Link ka izvoru mora počinjati sa http:// ili https://."
+
+msgid "That contact address does not look right."
+msgstr "Ta adresa za kontakt ne izgleda ispravno."
+
+msgid "Every report is read against the source of the page it points to."
+msgstr "Svaka prijava se čita u odnosu na izvor stranice na koju se odnosi."
+
+msgid "A confirmed error is corrected on the page, and the correction is recorded with its source."
+msgstr "Potvrđena greška se ispravlja na stranici, a ispravka se beleži zajedno sa izvorom."
+
+msgid "If you left a contact address, it is deleted once the report is closed."
+msgstr "Ako ste ostavili adresu za kontakt, briše se čim se prijava zatvori."
+
+msgid "Review corrections"
+msgstr "Pregled ispravki"
+
+msgid "A visitor says something on a page reads wrong. Check the page against its source, correct it through the normal editing flow if it does, then close the report. Closing deletes any contact address it carried."
+msgstr "Posetilac javlja da je nešto na stranici pogrešno. Proverite stranicu prema njenom izvoru, ispravite je uobičajenim tokom uređivanja ako je potrebno, pa zatvorite prijavu. Zatvaranjem se briše adresa za kontakt, ako postoji."
+
+msgid "No open corrections."
+msgstr "Nema otvorenih ispravki."
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Note (optional)"
+msgstr "Beleška (opciono)"
+
+msgid "Resolve"
+msgstr "Reši"
+
+msgid "If you report an error"
+msgstr "Ako prijavite grešku"
+
+msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
+msgstr "Prijava sadrži stranicu na koju se odnosi, vaš opis i, ako ga dodate, link ka izvoru. Čitaju je samo urednici. Adresa za kontakt je opciona i jedina je adresa koju ova platforma čuva onako kako ste je napisali, jer urednik možda treba da vam postavi pitanje: briše se čim se prijava zatvori, a ostatak prijave ostaje kao zapis o tome šta je traženo i šta je odlučeno."

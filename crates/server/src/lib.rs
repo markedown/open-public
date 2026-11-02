@@ -191,6 +191,13 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         )
         .route("/{country}/poll/{slug}/cast", post(pages::poll::cast))
         .route("/submissions", get(pages::submit::mine))
+        // The correction channel: open to anyone, and deliberately absent from
+        // the sitemap (a form and a receipt are not content to index).
+        .route(
+            "/corrections/new",
+            get(pages::corrections::form).post(pages::corrections::create),
+        )
+        .route("/corrections/thanks", get(pages::corrections::thanks))
         .route("/feed", get(pages::feed::page))
         .route(
             "/follow/{entity_type}/{entity_id}",
@@ -215,6 +222,15 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route(
             "/admin/submissions/{id}/reject",
             post(pages::admin::submission_reject),
+        )
+        .route("/admin/corrections", get(pages::admin::corrections))
+        .route(
+            "/admin/corrections/{id}/resolve",
+            post(pages::admin::correction_resolve),
+        )
+        .route(
+            "/admin/corrections/{id}/reject",
+            post(pages::admin::correction_reject),
         )
         .route("/admin/summaries", get(pages::admin::summaries))
         .route(

@@ -39,6 +39,7 @@ pub async fn index(
     let pending_drafts = db::news::pending_draft_count(&pool).await?;
     let pending_translations = db::translations::pending_count(&pool).await?;
     let pending_submissions = db::submissions::pending_admin_count(&pool).await?;
+    let open_corrections = db::corrections::open_count(&pool).await?;
     let pending_bios = db::parties::count_pending_summary_drafts(&pool).await?
         + db::people::count_pending_summary_drafts(&pool).await?;
 
@@ -55,6 +56,7 @@ pub async fn index(
             div class="mt-6 space-y-2" {
                 @for (label, href, count) in [
                     (i18n::t("Review poll submissions"), "/admin/submissions", pending_submissions),
+                    (i18n::t("Review corrections"), "/admin/corrections", open_corrections),
                     (i18n::t("Review summaries"), "/admin/summaries", pending_drafts),
                     (i18n::t("Review biographies"), "/admin/bios", pending_bios),
                     (i18n::t("Review translations"), "/admin/translations", pending_translations),
@@ -1872,6 +1874,137 @@ pub async fn submission_reject(
         .filter(|s| !s.is_empty());
     db::submissions::reject(&pool, id, admin_id, note, form.violation.is_some()).await?;
     Ok(Redirect::to("/admin/submissions"))
+}
+
+// ---------------------------------------------------------------------------
+// Corrections: reports from visitors that something on a page reads wrong.
+// The report is not a fact row, so it carries no source; the fix it asks for is
+// made through the normal editing flow, where the correction gets one.
+// ---------------------------------------------------------------------------
+
+/// The correction queue: open reports, oldest first. Either closing action also
+/// deletes the contact address the report carried, since that is the moment it
+/// stops being needed.
+pub async fn corrections(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+) -> Result<Markup, PageError> {
+    require_admin(&session)?;
+    let items = db::corrections::list_open(&pool).await?;
+
+    let content = html! {
+        section class="mx-auto max-w-3xl" {
+            a href="/admin" class="text-[14px] text-ink-muted transition-colors hover:text-link" {
+                "← " (i18n::t("Admin panel"))
+            }
+            h1 class="mt-2 text-3xl font-bold tracking-tight text-ink" {
+                (i18n::t("Review corrections"))
+            }
+            p class="mt-2 max-w-prose text-[16px] text-ink-muted" {
+                (i18n::t("A visitor says something on a page reads wrong. Check the page against its source, correct it through the normal editing flow if it does, then close the report. Closing deletes any contact address it carried."))
+            }
+
+            @if items.is_empty() {
+                p class="mt-8 py-10 text-center text-[16px] text-ink-muted" {
+                    (i18n::t("No open corrections."))
+                }
+            } @else {
+                ul class="mt-6 space-y-4" {
+                    @for c in &items {
+                        li class="border border-hairline p-4" {
+                            div class="flex flex-wrap items-baseline gap-x-3 text-[14px] text-ink-muted" {
+                                span { (crate::fmt::date(Some(c.created_at.date_naive()))) }
+                                @if crate::pages::corrections::is_site_path(&c.page) {
+                                    a href=(c.page) class="font-medium text-ink transition-colors hover:text-link" {
+                                        (c.page)
+                                    }
+                                } @else {
+                                    // Not a path on this site, so not a link: a report
+                                    // arrives from outside and the text stays text.
+                                    span class="font-medium text-ink" { (c.page) }
+                                }
+                            }
+                            p class="mt-2 max-w-prose text-[16px] text-ink" { (c.description) }
+                            @if let Some(ref url) = c.source_url {
+                                @if url.starts_with("http://") || url.starts_with("https://") {
+                                    p class="mt-2 text-[14px] text-ink-muted" {
+                                        (i18n::t("Source")) ": "
+                                        a href=(url) rel="noopener noreferrer" target="_blank"
+                                          class="break-all text-link hover:underline" { (url) }
+                                    }
+                                }
+                            }
+                            @if let Some(ref email) = c.contact_email {
+                                p class="mt-2 text-[14px] text-ink-muted" {
+                                    (i18n::t("Contact")) ": " (email)
+                                }
+                            }
+                            div class="mt-4 flex flex-wrap items-start gap-3 border-t border-hairline-light pt-3" {
+                                (close_form(c.id, "resolve", i18n::t("Resolve")))
+                                (close_form(c.id, "reject", i18n::t("Reject")))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    Ok(ui::layout::document(
+        Some(i18n::t("Review corrections")),
+        true,
+        true,
+        content,
+    ))
+}
+
+/// One closing action: an optional note for the record, then the decision.
+fn close_form(id: i64, action: &str, label: &str) -> Markup {
+    html! {
+        form method="post" action={"/admin/corrections/" (id) "/" (action)}
+             class="flex flex-1 flex-col gap-2" {
+            input type="text" name="note" placeholder=(i18n::t("Note (optional)"))
+                class="w-full rounded-[10px] border border-hairline bg-paper px-2 py-1.5 text-[16px] text-ink";
+            button type="submit"
+                class="self-start rounded-[10px] border border-hairline px-4 py-1.5 text-[14px] font-bold text-ink-muted transition-colors hover:border-ink hover:text-ink" {
+                (label)
+            }
+        }
+    }
+}
+
+/// The closing form: an optional note on the decision.
+#[derive(Deserialize)]
+pub struct CorrectionNoteForm {
+    note: Option<String>,
+}
+
+/// Resolve a correction report and return to the queue.
+pub async fn correction_resolve(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+    Form(form): Form<CorrectionNoteForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    // The schema bounds a note at 1000 characters; cut rather than fail.
+    let note = trimmed(form.note).map(|n| n.chars().take(1000).collect::<String>());
+    db::corrections::close(&pool, id, "resolved", note.as_deref()).await?;
+    Ok(Redirect::to("/admin/corrections"))
+}
+
+/// Reject a correction report, the page standing as written, and return to the
+/// queue.
+pub async fn correction_reject(
+    State(pool): State<db::Pool>,
+    session: Option<AuthSession>,
+    Path(id): Path<i64>,
+    Form(form): Form<CorrectionNoteForm>,
+) -> Result<Redirect, PageError> {
+    require_admin(&session)?;
+    // The schema bounds a note at 1000 characters; cut rather than fail.
+    let note = trimmed(form.note).map(|n| n.chars().take(1000).collect::<String>());
+    db::corrections::close(&pool, id, "rejected", note.as_deref()).await?;
+    Ok(Redirect::to("/admin/corrections"))
 }
 
 #[cfg(test)]

@@ -185,6 +185,7 @@ pub fn document_described(
                         nav class="flex flex-wrap gap-x-5 gap-y-1" aria-label=(i18n::t("Site")) {
                             a href="/participation" class="op-link" { (i18n::t("Participation")) }
                             a href="/privacy" class="op-link" { (i18n::t("Privacy")) }
+                            (report_link())
                             a href="https://github.com/markedown/open-public" class="op-link" { (i18n::t("Source code")) }
                         }
                         span class="sm:ml-auto" { (i18n::t("Data free to reuse (CC0)")) }
@@ -193,6 +194,27 @@ pub fn document_described(
             }
         }
     }
+}
+
+/// The footer's way to report a mistake. It carries the path of the page it is
+/// written on, so the report names itself without the visitor having to type it;
+/// a deployment that has not been told its own origin has no address to read a
+/// path off, and links to the bare form instead.
+fn report_link() -> Markup {
+    let href = match request_path() {
+        Some(path) => format!("/corrections/new?page={path}"),
+        None => "/corrections/new".to_string(),
+    };
+    html! {
+        a href=(href) class="op-link" { (i18n::t("Report an error")) }
+    }
+}
+
+/// The path of the page being rendered, taken off the request's own address.
+fn request_path() -> Option<String> {
+    let url = i18n::request_url()?;
+    let origin = i18n::site_origin()?;
+    url.strip_prefix(&origin).map(str::to_string)
 }
 
 /// The logo mark: six seats in two rows, three filled. It reads as a small

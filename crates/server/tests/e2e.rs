@@ -9857,3 +9857,280 @@ async fn long_lists_of_votes_are_paged(pool: db::Pool) {
     let all = body_string(get(&app, "/tr/people/uye-uc/votes").await).await;
     assert!(all.contains("/tr/people/uye-uc/votes?page=2"));
 }
+
+// --- Corrections: the public report form and the admin review queue ---
+
+/// A report stored straight in the database, for the tests that read the queue
+/// rather than fill the form.
+async fn report(
+    pool: &db::Pool,
+    page: &str,
+    description: &str,
+    source_url: Option<&str>,
+    contact_email: Option<&str>,
+) -> i64 {
+    db::corrections::create(
+        pool,
+        &db::corrections::NewCorrection {
+            page,
+            description,
+            source_url,
+            contact_email,
+        },
+    )
+    .await
+    .unwrap()
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn correction_form_renders_and_prefills_only_site_paths(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // The form is open to anyone, and says what it is for.
+    let resp = get_cookie(
+        &app,
+        "/corrections/new?page=/tr/people/ayse-yilmaz",
+        "lang=en",
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(resp.headers()["x-robots-tag"], "noindex");
+    let body = body_string(resp).await;
+    assert!(body.contains("Report an error"));
+    assert!(body.contains(r#"value="/tr/people/ayse-yilmaz""#));
+    // The footer link names the page it is written on, so a report arrives
+    // already pointing at the page the visitor was reading.
+    let body = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(body.contains("/corrections/new?page=/tr/people/ayse-yilmaz"));
+
+    // An address that is not a path on this site leaves the field empty: the
+    // form is not a way to point a report at somewhere else.
+    let body =
+        body_string(get_cookie(&app, "/corrections/new?page=http://evil.test/x", "lang=en").await)
+            .await;
+    assert!(body.contains(r#"name="page" id="page" required maxlength="300" value="""#));
+
+    // The receipt explains the process and keeps out of the index too.
+    let resp = get_cookie(&app, "/corrections/thanks", "lang=en").await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert_eq!(resp.headers()["x-robots-tag"], "noindex");
+    let body = body_string(resp).await;
+    assert!(body.contains("Every report is read against the source of the page it points to."));
+    assert!(body.contains("A confirmed error is corrected on the page"));
+    assert!(body.contains("it is deleted once the report is closed"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn correction_posts_validate_before_storing(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let stored = |pool: db::Pool| async move {
+        sqlx::query_scalar::<_, i64>("select count(*) from corrections")
+            .fetch_one(&pool)
+            .await
+            .unwrap()
+    };
+    let good = "page=/tr%2Fpeople%2Fayse-yilmaz&description=The+birth+date+is+wrong";
+
+    // A description that says nothing: the form comes back with one sentence
+    // about the field, and nothing is stored.
+    let resp =
+        post_form_captcha(&app, "/corrections/new", "page=/tr/people", Some("lang=en")).await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    let body = body_string(resp).await;
+    assert!(body.contains("Please say what is wrong, in at least 10 characters."));
+    assert_eq!(stored(pool.clone()).await, 0);
+
+    // A page that is not a path on this site.
+    let resp = post_form_captcha(
+        &app,
+        "/corrections/new",
+        "page=http%3A%2F%2Fevil.test%2Fx&description=The+birth+date+is+wrong",
+        Some("lang=en"),
+    )
+    .await;
+    assert!(body_string(resp)
+        .await
+        .contains("The page must be an address on this site"));
+    assert_eq!(stored(pool.clone()).await, 0);
+
+    // A source link that is not a web address.
+    let resp = post_form_captcha(
+        &app,
+        "/corrections/new",
+        &format!("{good}&source_url=ftp%3A%2F%2Fexample.test%2Fx"),
+        Some("lang=en"),
+    )
+    .await;
+    assert!(body_string(resp)
+        .await
+        .contains("A source link must start with http:// or https://."));
+    assert_eq!(stored(pool.clone()).await, 0);
+
+    // A contact address that is not an address.
+    let resp = post_form_captcha(
+        &app,
+        "/corrections/new",
+        &format!("{good}&contact_email=nowhere"),
+        Some("lang=en"),
+    )
+    .await;
+    assert!(body_string(resp)
+        .await
+        .contains("That contact address does not look right."));
+    assert_eq!(stored(pool.clone()).await, 0);
+
+    // A captcha that was not solved: refused, and nothing stored.
+    let resp = post_form(
+        &app,
+        "/corrections/new",
+        &format!("{good}&altcha=not-a-solution"),
+        Some("lang=en"),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::OK);
+    assert!(body_string(resp)
+        .await
+        .contains("Please complete the verification and try again."));
+    assert_eq!(stored(pool.clone()).await, 0);
+
+    // A complete report is stored and sends the visitor to the receipt.
+    let resp = post_form_captcha(
+        &app,
+        "/corrections/new",
+        &format!(
+            "{good}&source_url=https%3A%2F%2Fexample.test%2Fproof&contact_email=reporter%40x.test"
+        ),
+        Some("lang=en"),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(resp.headers()["location"], "/corrections/thanks");
+    let row = sqlx::query_as::<_, (String, String, Option<String>, Option<String>)>(
+        "select status, description, source_url, contact_email from corrections",
+    )
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(row.0, "open");
+    assert_eq!(row.1, "The birth date is wrong");
+    assert_eq!(row.2.as_deref(), Some("https://example.test/proof"));
+    assert_eq!(row.3.as_deref(), Some("reporter@x.test"));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn admin_resolves_a_correction_and_the_address_goes(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let id = report(
+        &pool,
+        "/tr/people/ayse-yilmaz",
+        "The birth date on this page is wrong.",
+        Some("https://example.test/registry"),
+        Some("reporter@x.test"),
+    )
+    .await;
+
+    // The queue is invisible to everyone but an admin.
+    assert_eq!(
+        get(&app, "/admin/corrections").await.status(),
+        StatusCode::NOT_FOUND
+    );
+    let (_uid, visitor) = user_cookie(&pool, "visitor@x.test").await;
+    assert_eq!(
+        get_cookie(&app, "/admin/corrections", &visitor)
+            .await
+            .status(),
+        StatusCode::NOT_FOUND
+    );
+
+    // The language is pinned so the assertions read the English source text.
+    let admin = format!("{}; lang=en", admin_cookie(&pool).await);
+    let body = body_string(get_cookie(&app, "/admin/corrections", &admin).await).await;
+    assert!(body.contains("The birth date on this page is wrong."));
+    assert!(body.contains(r#"href="/tr/people/ayse-yilmaz""#));
+    assert!(body.contains("https://example.test/registry"));
+    assert!(body.contains("reporter@x.test"));
+    // The hub counts the queue next to the others.
+    let hub = body_string(get_cookie(&app, "/admin", &admin).await).await;
+    assert!(hub.contains("/admin/corrections"));
+
+    let resp = post_form(
+        &app,
+        &format!("/admin/corrections/{id}/resolve"),
+        "note=Fixed+from+the+registry",
+        Some(&admin),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    assert_eq!(resp.headers()["location"], "/admin/corrections");
+
+    // Decided, noted, dated, and the personal address is gone.
+    let row = sqlx::query_as::<
+        _,
+        (
+            String,
+            Option<String>,
+            Option<String>,
+            Option<chrono::DateTime<chrono::Utc>>,
+        ),
+    >(
+        "select status, resolution_note, contact_email, resolved_at from corrections where id = $1",
+    )
+    .bind(id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(row.0, "resolved");
+    assert_eq!(row.1.as_deref(), Some("Fixed from the registry"));
+    assert_eq!(row.2, None);
+    assert!(row.3.is_some());
+
+    // Gone from the queue, and the hub count is back to zero.
+    let body = body_string(get_cookie(&app, "/admin/corrections", &admin).await).await;
+    assert!(!body.contains("The birth date on this page is wrong."));
+    assert!(body.contains("No open corrections."));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_rejected_correction_is_closed_and_its_text_stays_text(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    // A page that is not a path on this site: the schema allows it, the queue
+    // must not turn it into a link.
+    let id = report(
+        &pool,
+        "//evil.test/x",
+        "<script>alert(1)</script> does not run here.",
+        Some("https://example.test/said-otherwise"),
+        Some("reporter@x.test"),
+    )
+    .await;
+
+    let admin = admin_cookie(&pool).await;
+    let body = body_string(get_cookie(&app, "/admin/corrections", &admin).await).await;
+    assert!(body.contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
+    assert!(!body.contains("<script>alert(1)"));
+    assert!(!body.contains(r#"href="//evil.test/x""#));
+    assert!(body.contains("//evil.test/x"));
+
+    let resp = post_form(
+        &app,
+        &format!("/admin/corrections/{id}/reject"),
+        "note=",
+        Some(&admin),
+    )
+    .await;
+    assert_eq!(resp.status(), StatusCode::SEE_OTHER);
+    let row = sqlx::query_as::<_, (String, Option<String>, Option<String>)>(
+        "select status, resolution_note, contact_email from corrections where id = $1",
+    )
+    .bind(id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    assert_eq!(row.0, "rejected");
+    assert_eq!(row.1, None);
+    assert_eq!(row.2, None);
+}
