@@ -102,13 +102,18 @@ async fn construction_gate(
     coming_soon().await
 }
 
-/// The policy sent with every page. Images and fonts load from this origin only,
-/// so a stray foreign address in the data fails visibly instead of quietly
-/// sending visitors' IP addresses to another host. The rest closes doors the
+/// The policy sent with every page. Nothing is loaded from another origin, so a
+/// stray foreign address in the data fails visibly instead of quietly sending
+/// visitors' IP addresses to another host, and no script runs unless it is one of
+/// our own files: the pages carry no inline script and no event-handler
+/// attribute. Styles may be inline (the match bars set their width that way).
+/// The captcha solves its challenge in a worker made from a `data:` or `blob:`
+/// address, which is the one place those are allowed. The rest closes doors the
 /// pages never use: no plugins, no other base address, forms post only to this
 /// site, and no page may be framed by another.
-const POLICY: &str = "img-src 'self' data:; font-src 'self'; object-src 'none'; \
-base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+const POLICY: &str = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; \
+img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob: data:; \
+object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
 /// Headers every response carries unless the handler set its own. A response that
 /// set its own policy (the served images do) keeps it.

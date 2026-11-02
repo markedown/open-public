@@ -7237,6 +7237,7 @@ async fn every_response_carries_the_security_headers(pool: db::Pool) {
         );
         let csp = h["content-security-policy"].to_str().unwrap();
         assert!(csp.contains("frame-ancestors 'none'"), "{uri}");
+        assert!(csp.contains("script-src 'self';"), "{uri}");
         assert!(csp.contains("form-action 'self'"), "{uri}");
     }
 
@@ -9278,7 +9279,9 @@ async fn images_are_copied_here_and_never_loaded_from_elsewhere(pool: db::Pool) 
             .unwrap()
             .to_str()
             .unwrap(),
-        "img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; \
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; \
+         img-src 'self' data:; font-src 'self'; connect-src 'self'; \
+         worker-src 'self' blob: data:; object-src 'none'; base-uri 'self'; \
          form-action 'self'; frame-ancestors 'none'"
     );
     let body = body_string(resp).await;
