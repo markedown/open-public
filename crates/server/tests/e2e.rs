@@ -7147,6 +7147,63 @@ async fn pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn list_pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // A list page says what kind of record it holds, so search results and
+    // shared links read differently per page instead of all repeating the site
+    // blurb. The header asks for English, so each assertion reads the source
+    // text exactly as written in the code.
+    let pages: [(&str, &str); 8] = [
+        (
+            "/tr/parties",
+            "Every party in this country with its seats, its leaders and the sources behind each fact.",
+        ),
+        (
+            "/tr/people",
+            "The members of parliament and office holders in this country, with their party, their roles and the sources behind each fact.",
+        ),
+        (
+            "/tr/elections",
+            "Past and upcoming elections with the results of each party, as published by the election authority.",
+        ),
+        (
+            "/tr/votes",
+            "Recorded parliamentary votes with how each party and each member voted, taken from the official record.",
+        ),
+        (
+            "/tr/polls",
+            "Polls on political questions among verified participants. Results show the votes cast and are not a representative survey.",
+        ),
+        (
+            "/tr/news",
+            "Reports about parties and politicians, with the outlet and a link to the original. We store only headlines and short summaries.",
+        ),
+        (
+            "/tr/alliances",
+            "Coalitions and parliamentary groups, and which parties belong to them.",
+        ),
+        (
+            "/tr/compass",
+            "Answer questions about political positions and see which parties' recorded positions are closest to yours. Nothing you answer is stored.",
+        ),
+    ];
+    for (uri, text) in pages {
+        let req = Request::builder()
+            .uri(uri)
+            .header("accept-language", "en")
+            .body(Body::empty())
+            .expect("request");
+        let body = body_string(app.clone().oneshot(req).await.expect("response")).await;
+        assert!(
+            body.contains(&format!(r#"<meta name="description" content="{text}""#)),
+            "the description meta for {uri} should read exactly: {text}"
+        );
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn every_language_has_an_address_of_its_own(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());

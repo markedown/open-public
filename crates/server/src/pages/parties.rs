@@ -80,8 +80,11 @@ pub async fn list(
         }
     };
 
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("Parties")),
+        Some(i18n::t(
+            "Every party in this country with its seats, its leaders and the sources behind each fact.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

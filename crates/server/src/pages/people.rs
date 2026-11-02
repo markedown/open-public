@@ -95,8 +95,11 @@ pub async fn list(
         }
     };
 
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("People")),
+        Some(i18n::t(
+            "The members of parliament and office holders in this country, with their party, their roles and the sources behind each fact.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

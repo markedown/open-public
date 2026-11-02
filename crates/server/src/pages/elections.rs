@@ -111,8 +111,11 @@ pub async fn list(
         }
     };
 
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("Elections")),
+        Some(i18n::t(
+            "Past and upcoming elections with the results of each party, as published by the election authority.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

@@ -80,8 +80,11 @@ pub async fn list(
         }
     };
 
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("Alliances")),
+        Some(i18n::t(
+            "Coalitions and parliamentary groups, and which parties belong to them.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

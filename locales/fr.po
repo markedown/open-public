@@ -1587,3 +1587,27 @@ msgstr "Si vous signalez une erreur"
 
 msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
 msgstr "Un signalement contient la page concernée, votre description et, si vous en ajoutez un, un lien vers la source. Seule la rédaction le lit. Une adresse de contact est facultative et c'est la seule adresse que cette plateforme conserve telle que vous l'avez écrite, car la rédaction peut avoir besoin de vous poser une question : elle est supprimée dès que le signalement est clos, et le reste du signalement demeure comme trace de ce qui a été demandé et décidé."
+
+msgid "Every party in this country with its seats, its leaders and the sources behind each fact."
+msgstr "Tous les partis de ce pays, avec leurs sièges, leurs dirigeants et les sources de chaque information."
+
+msgid "The members of parliament and office holders in this country, with their party, their roles and the sources behind each fact."
+msgstr "Les parlementaires et titulaires de fonctions de ce pays, avec leur parti, leurs fonctions et les sources de chaque information."
+
+msgid "Past and upcoming elections with the results of each party, as published by the election authority."
+msgstr "Élections passées et à venir, avec les résultats de chaque parti tels que publiés par l'autorité électorale."
+
+msgid "Recorded parliamentary votes with how each party and each member voted, taken from the official record."
+msgstr "Votes parlementaires enregistrés, avec le vote de chaque parti et de chaque membre, d'après le compte rendu officiel."
+
+msgid "Polls on political questions among verified participants. Results show the votes cast and are not a representative survey."
+msgstr "Sondages sur des questions politiques auprès de participants vérifiés. Les résultats montrent les votes exprimés et ne constituent pas une enquête représentative."
+
+msgid "Reports about parties and politicians, with the outlet and a link to the original. We store only headlines and short summaries."
+msgstr "Articles sur les partis et les responsables politiques, avec le média et un lien vers l'original. Nous ne conservons que les titres et de courts résumés."
+
+msgid "Coalitions and parliamentary groups, and which parties belong to them."
+msgstr "Coalitions et groupes parlementaires, et les partis qui en font partie."
+
+msgid "Answer questions about political positions and see which parties' recorded positions are closest to yours. Nothing you answer is stored."
+msgstr "Répondez à des questions sur des positions politiques et voyez quels partis ont, selon leurs positions enregistrées, les positions les plus proches des vôtres. Rien de ce que vous répondez n'est conservé."

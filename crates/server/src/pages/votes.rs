@@ -333,8 +333,11 @@ pub async fn list(
             }
         }
     };
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("Votes")),
+        Some(i18n::t(
+            "Recorded parliamentary votes with how each party and each member voted, taken from the official record.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

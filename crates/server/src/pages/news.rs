@@ -46,8 +46,11 @@ pub async fn list(
         }
     };
 
-    Ok(ui::layout::document(
+    Ok(ui::layout::document_described(
         Some(i18n::t("News")),
+        Some(i18n::t(
+            "Reports about parties and politicians, with the outlet and a link to the original. We store only headlines and short summaries.",
+        )),
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

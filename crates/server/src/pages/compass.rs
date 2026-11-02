@@ -262,8 +262,18 @@ async fn form_scoped(
         }
     };
 
-    Ok(ui::layout::document(
+    // The description promises a party match, so it belongs to the
+    // parliamentary questionnaire only; the candidate set keeps the generic one.
+    let description = (scope == db::compass::SCOPE_PARTY)
+        .then(|| {
+            i18n::t(
+                "Answer questions about political positions and see which parties' recorded positions are closest to yours. Nothing you answer is stored.",
+            )
+        });
+
+    Ok(ui::layout::document_described(
         Some(i18n::t("Compass")),
+        description,
         session.is_some(),
         session.as_ref().is_some_and(|s| s.is_admin),
         content,

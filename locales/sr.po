@@ -1587,3 +1587,27 @@ msgstr "Ako prijavite grešku"
 
 msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
 msgstr "Prijava sadrži stranicu na koju se odnosi, vaš opis i, ako ga dodate, link ka izvoru. Čitaju je samo urednici. Adresa za kontakt je opciona i jedina je adresa koju ova platforma čuva onako kako ste je napisali, jer urednik možda treba da vam postavi pitanje: briše se čim se prijava zatvori, a ostatak prijave ostaje kao zapis o tome šta je traženo i šta je odlučeno."
+
+msgid "Every party in this country with its seats, its leaders and the sources behind each fact."
+msgstr "Sve stranke ove zemlje sa njihovim mestima, rukovodstvom i izvorima iza svake tvrdnje."
+
+msgid "The members of parliament and office holders in this country, with their party, their roles and the sources behind each fact."
+msgstr "Poslanici i nosioci funkcija u ovoj zemlji, sa njihovom strankom, funkcijama i izvorima iza svake tvrdnje."
+
+msgid "Past and upcoming elections with the results of each party, as published by the election authority."
+msgstr "Prošli i predstojeći izbori sa rezultatima svake stranke, onako kako ih objavljuje izborni organ."
+
+msgid "Recorded parliamentary votes with how each party and each member voted, taken from the official record."
+msgstr "Zabeleženi parlamentarni glasovi sa tim kako je glasala svaka stranka i svaki poslanik, prema službenom zapisniku."
+
+msgid "Polls on political questions among verified participants. Results show the votes cast and are not a representative survey."
+msgstr "Ankete o političkim pitanjima među verifikovanim učesnicima. Rezultati prikazuju date glasove i nisu reprezentativno istraživanje."
+
+msgid "Reports about parties and politicians, with the outlet and a link to the original. We store only headlines and short summaries."
+msgstr "Izveštaji o strankama i političarima, sa medijem i vezom ka originalu. Čuvamo samo naslove i kratke sažetke."
+
+msgid "Coalitions and parliamentary groups, and which parties belong to them."
+msgstr "Koalicije i poslaničke grupe i stranke koje im pripadaju."
+
+msgid "Answer questions about political positions and see which parties' recorded positions are closest to yours. Nothing you answer is stored."
+msgstr "Odgovorite na pitanja o političkim stavovima i vidite čiji su zabeleženi stavovi stranaka najbliži vašim. Ništa što odgovorite se ne čuva."

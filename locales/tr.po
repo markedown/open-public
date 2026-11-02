@@ -1599,3 +1599,27 @@ msgstr "Bir hata bildirirseniz"
 
 msgid "A report holds the page it is about, your description and, if you add one, a source link. Only editors read it. A contact address is optional and is the one address this platform keeps as you wrote it, because an editor may need to ask you something: it is deleted when the report is closed, and the rest of the report stays as a record of what was asked and what was decided."
 msgstr "Bir bildirim, ilgili olduğu sayfayı, açıklamanızı ve eklerseniz bir kaynak bağlantısını içerir. Yalnızca editörler okur. İletişim adresi isteğe bağlıdır ve bu platformun yazdığınız haliyle sakladığı tek adrestir; çünkü bir editörün size soru sorması gerekebilir: bildirim kapatıldığında silinir, bildirimin geri kalanı ise neyin istendiğinin ve neye karar verildiğinin kaydı olarak kalır."
+
+msgid "Every party in this country with its seats, its leaders and the sources behind each fact."
+msgstr "Bu ülkedeki tüm partiler: sandalyeleri, liderleri ve her bilginin arkasındaki kaynaklar."
+
+msgid "The members of parliament and office holders in this country, with their party, their roles and the sources behind each fact."
+msgstr "Bu ülkedeki milletvekilleri ve görev sahipleri: partileri, görevleri ve her bilginin arkasındaki kaynaklar."
+
+msgid "Past and upcoming elections with the results of each party, as published by the election authority."
+msgstr "Geçmiş ve yaklaşan seçimler ile her partinin sonuçları, seçim makamının yayımladığı biçimde."
+
+msgid "Recorded parliamentary votes with how each party and each member voted, taken from the official record."
+msgstr "Kayıt altına alınmış meclis oylamaları; her partinin ve her üyenin nasıl oy kullandığı, resmî tutanaktan alınmıştır."
+
+msgid "Polls on political questions among verified participants. Results show the votes cast and are not a representative survey."
+msgstr "Doğrulanmış katılımcılar arasında siyasi sorulara dair anketler. Sonuçlar verilen oyları gösterir ve temsil edici bir araştırma değildir."
+
+msgid "Reports about parties and politicians, with the outlet and a link to the original. We store only headlines and short summaries."
+msgstr "Partiler ve siyasetçiler hakkındaki haberler; yayın organı ve orijinaline bağlantıyla birlikte. Yalnızca başlıkları ve kısa özetleri saklarız."
+
+msgid "Coalitions and parliamentary groups, and which parties belong to them."
+msgstr "Koalisyonlar ve meclis grupları ile bunlara ait partiler."
+
+msgid "Answer questions about political positions and see which parties' recorded positions are closest to yours. Nothing you answer is stored."
+msgstr "Siyasi görüşlere dair soruları yanıtlayın ve hangi partilerin kayıtlı görüşlerinin sizinkilere en yakın olduğunu görün. Verdiğiniz yanıtların hiçbiri saklanmaz."
