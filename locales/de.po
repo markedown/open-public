@@ -122,7 +122,7 @@ msgid "Internal error. Please try again."
 msgstr "Interner Fehler. Bitte versuchen Sie es erneut."
 
 msgid "This address is not complete. A link may have been broken on the way here."
-msgstr "Diese Adresse ist unvollständig. Möglicherweise wurde ein Link auf dem Weg hierher zerteilt."
+msgstr "Diese Adresse ist unvollständig. Möglicherweise wurde ein Link auf dem Weg hierher abgeschnitten."
 
 msgid "Constitutional monarchy"
 msgstr "Konstitutionelle Monarchie"
@@ -773,7 +773,7 @@ msgid "the leading answer"
 msgstr "die führende Antwort"
 
 msgid "Nothing new from what you follow yet."
-msgstr "Noch nichts Neues von dem, dem Sie folgen."
+msgstr "Noch nichts Neues von den Seiten, denen Sie folgen."
 
 msgid "Follow people, parties and countries to see new polls, news and elections here."
 msgstr "Folgen Sie Personen, Parteien und Ländern, um hier neue Umfragen, Nachrichten und Wahlen zu sehen."
@@ -1166,7 +1166,7 @@ msgid "Cast can never exceed requested, and requested can never exceed eligible.
 msgstr "Abgegeben kann angefragt nie übersteigen, und angefragt kann berechtigt nie übersteigen. Ausgeschrieben: abgegeben ist höchstens angefragt, und das ist höchstens berechtigt. Die veröffentlichten Daten unter /data/polls.json enthalten alle drei, sodass jede und jeder bestätigen kann, dass die Beziehung für jede Umfrage gilt."
 
 msgid "This is what makes manufactured participation visible rather than preventable. A poll whose requested count jumped far beyond the usual, with cast sitting right against it, is the honest tell, without anyone having to assert that it happened."
-msgstr "Das macht erfundene Teilnahme sichtbar statt verhinderbar. Eine Umfrage, deren Anfragezahl weit über das Übliche gesprungen ist, mit abgegeben dicht dahinter, ist das ehrliche Anzeichen, ohne dass jemand behaupten müsste, dass es geschehen ist."
+msgstr "Das macht erfundene Teilnahme sichtbar statt verhinderbar. Eine Umfrage, deren Anfragezahl weit über das Übliche gesprungen ist, mit abgegeben dicht dahinter, ist das verräterische Anzeichen, ohne dass jemand behaupten müsste, dass es geschehen ist."
 
 msgid "What these numbers do not show"
 msgstr "Was diese Zahlen nicht zeigen"
