@@ -23,6 +23,13 @@ vote in. Every fact links to the source it came from, so it can be checked, and 
 over time is kept as dated history instead of being overwritten. The code is open source, the
 [dataset](#the-dataset) is public domain, and the platform is country-agnostic.
 
+**Status: early alpha.** The code, the schema and the dataset change often, and coverage differs
+from country to country: some have a full parliament, elections and a sourced compass, others only
+a roster. The harvesters that gather the data are not part of this repository, so the way to
+contribute data is a pull request against [`dataset/`](./dataset/README.md#contributing-a-correction-or-a-country)
+with a source for every fact. For code, see [`CONTRIBUTING.md`](./.github/CONTRIBUTING.md); for a
+single wrong fact, open a data-correction issue.
+
 Three rules shape the whole codebase and are enforced in review:
 
 1. **No fact without a source.** Every record in the database references a `sources` row, seed data

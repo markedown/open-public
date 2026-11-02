@@ -88,6 +88,27 @@ This is the same check CI runs on every change here. It verifies that no persona
 unreviewed field is present, that every fact cites a source that is in the export, that every
 reference resolves, and that no file has collapsed since the previous export.
 
+## Contributing a correction or a country
+
+Open a pull request that changes the JSON files here. The rules are the ones the checker
+enforces:
+
+- Every fact row cites a source. Add the source to `sources.json` first (its `url`, what it
+  is, when you read it) and reference it from the row with `source_url` and `source_hash`.
+- Reference other rows by slug, never by a number. Keep two-space indent, sorted keys and the
+  existing row order, so the diff shows only what changed.
+- A stance on a compass thesis is a `position_evidence` row with the page, article or number
+  in `locator` and the quotation exactly as the document words it. Do not paraphrase inside
+  the quotation marks.
+- Run `python3 scripts/validate_data.py dataset` and `python3 scripts/check_compass.py dataset`,
+  and load the result into a scratch database with `cargo run -p ingest -- import dataset`
+  to see that it imports.
+
+The harvesters that gather the data are not part of this repository, so a change to this
+directory is the way to contribute data. A merged change is loaded into the maintainers'
+database through the same importer, so the next export keeps it. For a single wrong fact
+on the site, a data-correction issue with the source is enough.
+
 ## What this dataset is not
 
 It is a record of what documents say, not a judgement of who is right. Coverage is uneven by
