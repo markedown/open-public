@@ -11,13 +11,12 @@ By contributing you agree that your contributions are dual licensed under
 ## Local setup
 
 Prerequisites: a stable Rust toolchain (pinned in [`rust-toolchain.toml`](../rust-toolchain.toml)),
-`sqlx-cli`, the standalone Tailwind CLI, and Docker.
+`sqlx-cli`, and Docker. No Tailwind install is needed: `scripts/tailwind.sh` downloads a pinned
+standalone CLI on first run.
 
 ```bash
 # install the build tools (one-time)
 cargo install sqlx-cli --no-default-features --features rustls,postgres
-# Tailwind: download the standalone CLI for your platform from
-# https://github.com/tailwindlabs/tailwindcss/releases
 
 # enable the project git hooks (fmt + secret guard on commit, lint on push)
 git config core.hooksPath .githooks
@@ -27,8 +26,12 @@ docker compose up -d
 cp .env.example .env
 sqlx database create && sqlx migrate run
 ./scripts/tailwind.sh         # build the CSS (add --watch while developing)
+cargo run -p ingest -- import dataset   # load the published dataset (optional; an empty database works too)
 cargo run -p server           # http://127.0.0.1:3000
 ```
+
+If host port 5432 is already taken, set `POSTGRES_PORT` in `.env` to a free port and match it in
+`DATABASE_URL` (`docker-compose.yml` reads `POSTGRES_PORT`), then re-run `docker compose up -d`.
 
 Run the full local check suite before pushing. These are exactly what CI runs:
 
@@ -75,8 +78,10 @@ These are product rules. A PR that violates one will not be merged.
   Partisi*, never real politicians.
 - **No full article text, ever.** News items store headline, URL, outlet, date and a short summary in
   our own words. Full article bodies are never stored or displayed.
-- **Polls are informal.** Poll results carry the "informal, not a representative survey" label as
-  long as `is_informal` is true. Do not add features that imply representativeness.
+- **Polls are participatory, not statistical.** Every poll result is labelled as a count among
+  verified participants, never a representative survey; there is no formal/informal flag (the
+  `is_informal` column was dropped in migration 0007). Do not add features that imply
+  representativeness.
 - **Respectful ingestion.** Rate-limit at least 1s per host, send a descriptive User-Agent with
   contact info, respect `robots.txt`, and never fetch paywalled content. On conflicts between
   sources, log to `data_conflicts` instead of overwriting.

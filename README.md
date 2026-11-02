@@ -188,7 +188,8 @@ recording the attested digest, so every version is traceable to exactly what was
 
 Prerequisites: a stable Rust toolchain (see [`rust-toolchain.toml`](./rust-toolchain.toml)),
 [`sqlx-cli`](https://crates.io/crates/sqlx-cli) (`--no-default-features --features rustls,postgres`),
-the [standalone Tailwind CLI](https://github.com/tailwindlabs/tailwindcss/releases), and Docker.
+and Docker. No Tailwind install is needed: [`scripts/tailwind.sh`](./scripts/tailwind.sh) downloads
+a pinned [standalone CLI](https://github.com/tailwindlabs/tailwindcss/releases) on first run.
 
 ```bash
 # 1. Start PostgreSQL
@@ -218,6 +219,10 @@ A fresh instance has no accounts, and every route that could create one sits
 behind sign-in or behind the construction gate, so the first administrator is
 appointed from the server. The command is idempotent and never overwrites an
 existing password.
+
+If host port 5432 is already taken, set `POSTGRES_PORT` in `.env` to a free port
+and match it in `DATABASE_URL` (`docker-compose.yml` reads `POSTGRES_PORT`),
+then re-run `docker compose up -d`.
 
 ## Development
 
