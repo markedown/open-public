@@ -77,7 +77,8 @@ Full detail is in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 The database schema lives in [`migrations/`](./migrations), the working brief for the whole codebase
 in [`AGENTS.md`](./AGENTS.md), the design system in [`DESIGN.md`](./DESIGN.md), architecture and
 request flow in [`ARCHITECTURE.md`](./ARCHITECTURE.md), and contribution conventions in
-[`CONTRIBUTING.md`](./.github/CONTRIBUTING.md).
+[`CONTRIBUTING.md`](./.github/CONTRIBUTING.md). How the compass scores a visitor and how its
+question set is checked for balance is in [`docs/compass-method.md`](./docs/compass-method.md).
 
 ## Verifiable deployment
 
