@@ -701,7 +701,15 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         let source_id = src!(e, format!("event {}", e.title));
         sqlx::query!(
             "insert into events (country_id, party_id, person_id, kind, title, happened_on, source_id)
-             values ($1, $2, $3, $4, $5, $6, $7) on conflict do nothing",
+             select $1::bigint, $2::bigint, $3::bigint, $4::text, $5::text, $6::date, $7::bigint
+             where not exists (
+               select 1 from events
+               where country_id is not distinct from $1::bigint
+                 and party_id is not distinct from $2::bigint
+                 and person_id is not distinct from $3::bigint
+                 and kind = $4::text and title = $5::text
+                 and happened_on is not distinct from $6::date
+                 and source_id = $7::bigint)",
             e.country.as_ref().and_then(|c| countries.get(c)).copied(),
             e.party.as_ref().and_then(|p| parties.get(p)).copied(),
             e.person.as_ref().and_then(|p| people.get(p)).copied(),
@@ -734,7 +742,14 @@ pub async fn run(pool: &PgPool, dir: &Path) -> Result<Loaded> {
         sqlx::query!(
             "insert into statements
                (person_id, party_id, topic_id, text_original, is_paraphrase, stated_at, source_id)
-             values ($1, $2, $3, $4, $5, $6, $7) on conflict do nothing",
+             select $1::bigint, $2::bigint, $3::bigint, $4::text, $5::boolean, $6::date, $7::bigint
+             where not exists (
+               select 1 from statements
+               where person_id is not distinct from $1::bigint
+                 and party_id is not distinct from $2::bigint
+                 and text_original = $4::text
+                 and stated_at is not distinct from $6::date
+                 and source_id = $7::bigint)",
             s.person.as_ref().and_then(|p| people.get(p)).copied(),
             s.party.as_ref().and_then(|p| parties.get(p)).copied(),
             s.topic.as_ref().and_then(|t| topics.get(t)).copied(),

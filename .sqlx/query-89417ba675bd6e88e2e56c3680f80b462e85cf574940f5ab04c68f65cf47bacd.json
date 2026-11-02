@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into events (country_id, party_id, person_id, kind, title, happened_on, source_id)\n             select $1::bigint, $2::bigint, $3::bigint, $4::text, $5::text, $6::date, $7::bigint\n             where not exists (\n               select 1 from events\n               where country_id is not distinct from $1::bigint\n                 and party_id is not distinct from $2::bigint\n                 and person_id is not distinct from $3::bigint\n                 and kind = $4::text and title = $5::text\n                 and happened_on is not distinct from $6::date\n                 and source_id = $7::bigint)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Text",
+        "Text",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "89417ba675bd6e88e2e56c3680f80b462e85cf574940f5ab04c68f65cf47bacd"
+}

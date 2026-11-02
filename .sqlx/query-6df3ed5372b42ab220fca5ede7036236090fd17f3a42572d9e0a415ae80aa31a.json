@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into statements\n               (person_id, party_id, topic_id, text_original, is_paraphrase, stated_at, source_id)\n             select $1::bigint, $2::bigint, $3::bigint, $4::text, $5::boolean, $6::date, $7::bigint\n             where not exists (\n               select 1 from statements\n               where person_id is not distinct from $1::bigint\n                 and party_id is not distinct from $2::bigint\n                 and text_original = $4::text\n                 and stated_at is not distinct from $6::date\n                 and source_id = $7::bigint)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Text",
+        "Bool",
+        "Date",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6df3ed5372b42ab220fca5ede7036236090fd17f3a42572d9e0a415ae80aa31a"
+}

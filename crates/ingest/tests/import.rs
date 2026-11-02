@@ -23,6 +23,8 @@ async fn counts(pool: &sqlx::PgPool) -> Vec<(String, i64)> {
          union all select 'position_evidence', count(*) from position_evidence
          union all select 'person_attributes', count(*) from person_attributes
          union all select 'person_education', count(*) from person_education
+         union all select 'events', count(*) from events
+         union all select 'statements', count(*) from statements
          order by 1",
     )
     .fetch_all(pool)
@@ -646,9 +648,8 @@ const FIXTURE: &[(&str, &str)] = &[
     ),
 ];
 
-/// Row counts of the tables the fixture writes, limited to those the schema gives
-/// a natural key. statements and events have none, so their conflict clause can
-/// never fire and a rerun appends them rather than leaving them be.
+/// Row counts of the tables the fixture writes. A rerun must leave every one of
+/// them as it was.
 async fn fixture_counts(pool: &sqlx::PgPool) -> Vec<(String, i64)> {
     sqlx::query_as::<_, (String, i64)>(
         "select 'alliances', count(*) from alliances
@@ -656,6 +657,7 @@ async fn fixture_counts(pool: &sqlx::PgPool) -> Vec<(String, i64)> {
          union all select 'countries', count(*) from countries
          union all select 'election_results', count(*) from election_results
          union all select 'elections', count(*) from elections
+         union all select 'events', count(*) from events
          union all select 'group_vote_parties', count(*) from group_vote_parties
          union all select 'group_votes', count(*) from group_votes
          union all select 'initiative_parties', count(*) from initiative_parties
@@ -674,6 +676,7 @@ async fn fixture_counts(pool: &sqlx::PgPool) -> Vec<(String, i64)> {
          union all select 'roll_calls', count(*) from roll_calls
          union all select 'roles', count(*) from roles
          union all select 'sources', count(*) from sources
+         union all select 'statements', count(*) from statements
          union all select 'theses', count(*) from theses
          union all select 'thesis_roll_calls', count(*) from thesis_roll_calls
          union all select 'topics', count(*) from topics
