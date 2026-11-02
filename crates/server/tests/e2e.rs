@@ -7204,6 +7204,52 @@ async fn list_pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn every_response_carries_the_security_headers(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    for uri in [
+        "/",
+        "/tr/people",
+        "/health",
+        "/static/app.css",
+        "/no/such/page",
+    ] {
+        let resp = get(&app, uri).await;
+        let h = resp.headers();
+        assert!(
+            h.contains_key("x-content-type-options"),
+            "{uri} has no headers: {:?} {}",
+            h,
+            resp.status()
+        );
+        assert_eq!(h["x-content-type-options"], "nosniff", "{uri}");
+        assert_eq!(h["x-frame-options"], "DENY", "{uri}");
+        assert_eq!(
+            h["referrer-policy"], "strict-origin-when-cross-origin",
+            "{uri}"
+        );
+        assert!(
+            h["permissions-policy"]
+                .to_str()
+                .unwrap()
+                .contains("camera=()"),
+            "{uri}"
+        );
+        let csp = h["content-security-policy"].to_str().unwrap();
+        assert!(csp.contains("frame-ancestors 'none'"), "{uri}");
+        assert!(csp.contains("form-action 'self'"), "{uri}");
+    }
+
+    // An address no route knows gets the site's own page, not an empty reply.
+    for uri in ["/no/such/page", "/tr/nonsense"] {
+        let resp = get(&app, uri).await;
+        assert_eq!(resp.status(), StatusCode::NOT_FOUND, "{uri}");
+        let body = body_string(resp).await;
+        assert!(body.contains("<html"), "{uri} has a page");
+    }
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn every_language_has_an_address_of_its_own(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
@@ -9232,7 +9278,8 @@ async fn images_are_copied_here_and_never_loaded_from_elsewhere(pool: db::Pool) 
             .unwrap()
             .to_str()
             .unwrap(),
-        "img-src 'self' data:; font-src 'self'"
+        "img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; \
+         form-action 'self'; frame-ancestors 'none'"
     );
     let body = body_string(resp).await;
     assert!(

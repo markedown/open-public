@@ -25,7 +25,7 @@ pub mod voting;
 use std::path::Path;
 
 use axum::extract::{DefaultBodyLimit, Path as UrlPath, Request, State};
-use axum::http::{header, HeaderMap, HeaderValue, Method, StatusCode};
+use axum::http::{header, HeaderMap, HeaderName, HeaderValue, Method, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
@@ -102,16 +102,41 @@ async fn construction_gate(
     coming_soon().await
 }
 
-/// Tell the browser to load images and fonts from this origin only, so a stray
-/// foreign address in the data fails visibly instead of quietly sending visitors'
-/// IP addresses to another host. A response that set its own policy keeps it.
-async fn only_our_images(request: Request, next: Next) -> Response {
+/// The policy sent with every page. Images and fonts load from this origin only,
+/// so a stray foreign address in the data fails visibly instead of quietly
+/// sending visitors' IP addresses to another host. The rest closes doors the
+/// pages never use: no plugins, no other base address, forms post only to this
+/// site, and no page may be framed by another.
+const POLICY: &str = "img-src 'self' data:; font-src 'self'; object-src 'none'; \
+base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+
+/// Headers every response carries unless the handler set its own. A response that
+/// set its own policy (the served images do) keeps it.
+async fn security_headers(request: Request, next: Next) -> Response {
     let mut response = next.run(request).await;
-    response
-        .headers_mut()
+    let headers = response.headers_mut();
+    headers
         .entry(header::CONTENT_SECURITY_POLICY)
+        .or_insert(HeaderValue::from_static(POLICY));
+    // The browser must not guess a type for a response and run it as a script.
+    headers
+        .entry(header::X_CONTENT_TYPE_OPTIONS)
+        .or_insert(HeaderValue::from_static("nosniff"));
+    // A link to a source tells that site our origin and nothing more; the
+    // language switcher still gets the full address on this site.
+    headers
+        .entry(header::REFERRER_POLICY)
+        .or_insert(HeaderValue::from_static("strict-origin-when-cross-origin"));
+    // Older browsers read this instead of frame-ancestors.
+    headers
+        .entry(header::X_FRAME_OPTIONS)
+        .or_insert(HeaderValue::from_static("DENY"));
+    // Nothing here asks for the camera, the microphone or a location, or joins a
+    // cohort for ad targeting.
+    headers
+        .entry(HeaderName::from_static("permissions-policy"))
         .or_insert(HeaderValue::from_static(
-            "img-src 'self' data:; font-src 'self'",
+            "camera=(), microphone=(), geolocation=(), interest-cohort=()",
         ));
     response
 }
@@ -339,15 +364,24 @@ fn routes(state: AppState, static_dir: &Path) -> Router {
         .route("/logout", post(pages::auth::logout))
         .route("/lang/{code}", get(set_language))
         .nest_service("/static", ServeDir::new(static_dir))
+        // An address no route knows. Merging the admin API's router, which has no
+        // fallback of its own, would otherwise leave this one as axum's default:
+        // an empty page, outside every layer below, with no headers.
+        .fallback(unknown_address)
         // Inside the locale layer, so the page it renders is in the visitor's
         // language rather than the framework's.
         .layer(middleware::from_fn(own_the_refusals))
-        .layer(middleware::from_fn(only_our_images))
+        .layer(middleware::from_fn(security_headers))
         // The locale layer runs before every handler, so `i18n::t` in the
         // templates reads the request's chosen language.
         .layer(middleware::from_fn_with_state(state.clone(), locale))
         .layer(TraceLayer::new_for_http())
         .with_state(state)
+}
+
+/// The site's own 404 page for an address that matches no route.
+async fn unknown_address() -> (StatusCode, maud::Markup) {
+    (StatusCode::NOT_FOUND, error::not_found())
 }
 
 /// Answer a refused request with our own page instead of the framework's.
