@@ -4127,6 +4127,79 @@ async fn serving_handles_missing_files_and_jpeg(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn a_media_hash_with_no_row_behind_it_is_not_found(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool);
+
+    // A well-formed hash that was never uploaded answers exactly like an image
+    // that exists but is being kept private, so nothing leaks what is on disk.
+    let missing = "a".repeat(64);
+    assert_eq!(
+        get(&app, &format!("/media/{missing}")).await.status(),
+        StatusCode::NOT_FOUND
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn a_media_lookup_that_cannot_answer_is_a_server_error(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+    let (uid, _cookie) = user_cookie(&pool, "unreachable@x.test").await;
+
+    let sha = "c".repeat(64);
+    let asset = db::assets::insert(
+        &pool,
+        &db::assets::NewAsset {
+            sha256: &sha,
+            mime: "image/png",
+            width: 1,
+            height: 1,
+            byte_size: 1,
+            uploaded_by: uid,
+        },
+    )
+    .await
+    .unwrap();
+    db::assets::mark_published(&pool, asset.id).await.unwrap();
+
+    // A published row, so the lookup is the only thing standing between the
+    // visitor and the bytes. Closing the pool takes the answer away, and that
+    // has to stay a failure: an unreachable store must not be reported as an
+    // image that does not exist, or a broken deployment looks like deleted
+    // content.
+    pool.close().await;
+    assert_eq!(
+        get(&app, &format!("/media/{sha}")).await.status(),
+        StatusCode::INTERNAL_SERVER_ERROR
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn an_asset_directory_that_cannot_be_written_is_an_internal_error(pool: db::Pool) {
+    seed(&pool).await;
+    let (uid, _cookie) = user_cookie(&pool, "nowrite@x.test").await;
+
+    // A regular file where the shard directory would go. The image itself is
+    // valid, so the upload is not the caller's to fix and the failure is
+    // reported as ours rather than as a rejected image.
+    let blocker = std::env::temp_dir().join(format!("op-blocked-{uid}"));
+    let _ = std::fs::remove_file(&blocker);
+    std::fs::write(&blocker, b"not a directory").unwrap();
+
+    assert!(matches!(
+        server::media::store_upload(&pool, &blocker, uid, tiny_png()).await,
+        Err(server::media::AssetError::Io(_))
+    ));
+    // Nothing was recorded for an image that never reached the disk.
+    let rows: i64 = sqlx::query_scalar("select count(*) from assets")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(rows, 0);
+    let _ = std::fs::remove_file(&blocker);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn the_review_loop_runs_a_pass(pool: db::Pool) {
     use std::time::Duration;
     seed(&pool).await;
@@ -6708,6 +6781,49 @@ async fn the_first_administrator_is_appointed_from_the_server(pool: db::Pool) {
         .await
         .unwrap();
     assert_eq!(still_one, 1);
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn the_admin_command_refuses_addresses_that_look_mistyped(pool: db::Pool) {
+    use server::admin_account::{ensure_admin, Outcome};
+
+    // Each of these is an address no mail could ever reach. Appointing an
+    // administrator there would leave an account that cannot be signed into and
+    // nothing to explain why, so the command stops short of making one.
+    for address in [
+        "@test.invalid",
+        "founder@.test.invalid",
+        "founder@test.invalid.",
+        "founder@testinvalid",
+        "founder@test@invalid",
+        "founder@@test.invalid",
+        "no-at-sign",
+    ] {
+        assert!(
+            ensure_admin(&pool, SECRET, address, "a-long-password")
+                .await
+                .is_err(),
+            "{address} must not become an account"
+        );
+    }
+    let none: i64 = sqlx::query_scalar("select count(*) from users")
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(none, 0, "a refused address creates nothing");
+
+    // Blanks from the command line are trimmed, not part of the address, so a
+    // padded argument still appoints the person who typed it.
+    let out = ensure_admin(&pool, SECRET, "  founder@test.invalid  ", "a-long-password")
+        .await
+        .unwrap();
+    assert_eq!(out, Outcome::Created);
+    let hashed: i64 = sqlx::query_scalar("select count(*) from users where email_hash = $1")
+        .bind(server::auth::hash_email("founder@test.invalid", SECRET).unwrap())
+        .fetch_one(&pool)
+        .await
+        .unwrap();
+    assert_eq!(hashed, 1, "the trimmed address is what gets hashed");
 }
 
 #[sqlx::test(migrations = "../../migrations")]

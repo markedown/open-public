@@ -2581,3 +2581,192 @@ async fn correction_constraints_reject_bad_input(pool: sqlx::PgPool) {
             .is_err()
     );
 }
+
+/// A news item about a followed person enters the feed, dated by its source and
+/// linked through that person's country.
+#[sqlx::test(migrations = "../../migrations")]
+async fn feed_carries_news_about_a_followed_person(pool: db::Pool) {
+    let source_id =
+        db::sources::insert_source(&pool, "manual", "https://example.test/fp", None, Some("h"))
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland', 'testland', $1) returning id",
+    )
+    .bind(source_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let mut person = sample_person(source_id);
+    person.country_id = Some(country_id);
+    let person_id = db::people::upsert_person(&pool, &person).await.unwrap();
+
+    let news_source =
+        db::sources::insert_source(&pool, "news_rss", "https://n.test/person", None, Some("h1"))
+            .await
+            .unwrap();
+    sqlx::query(
+        "update sources set published_at = '2024-05-14T12:00:00Z'::timestamptz where id = $1",
+    )
+    .bind(news_source)
+    .execute(&pool)
+    .await
+    .unwrap();
+    let news_id: i64 = sqlx::query_scalar(
+        "insert into news_items (source_id, headline) values ($1, 'Ayşe Yılmaz opens a school') returning id",
+    )
+    .bind(news_source)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    sqlx::query("insert into news_item_people (news_item_id, person_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(person_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let user_id = db::users::insert(&pool, "feed-person-hash", "pw")
+        .await
+        .unwrap();
+    db::follows::follow(&pool, user_id, "person", person_id)
+        .await
+        .unwrap();
+
+    let items = db::follows::feed(&pool, user_id, 10).await.unwrap();
+    assert_eq!(items.len(), 1);
+    assert_eq!(items[0].kind, "news");
+    assert_eq!(items[0].title, "Ayşe Yılmaz opens a school");
+    // The item's own source carries no country, so the link is built from the
+    // country of the entity that led to it.
+    assert_eq!(items[0].href, format!("/testland/news/{news_id}"));
+    assert_eq!(
+        items[0].occurred_at,
+        Some(
+            chrono::DateTime::parse_from_rfc3339("2024-05-14T12:00:00Z")
+                .unwrap()
+                .with_timezone(&chrono::Utc)
+        )
+    );
+}
+
+#[sqlx::test(migrations = "../../migrations")]
+async fn feed_carries_news_about_a_followed_party(pool: db::Pool) {
+    let source_id =
+        db::sources::insert_source(&pool, "manual", "https://example.test/fq", None, Some("h"))
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland', 'testland', $1) returning id",
+    )
+    .bind(source_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let party_id: i64 = sqlx::query_scalar(
+        "insert into parties (name, slug, source_id, country_id) values ('Test Partisi', 'test-partisi', $1, $2) returning id",
+    )
+    .bind(source_id)
+    .bind(country_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    let news_source =
+        db::sources::insert_source(&pool, "news_rss", "https://n.test/party", None, Some("h1"))
+            .await
+            .unwrap();
+    let news_id: i64 = sqlx::query_scalar(
+        "insert into news_items (source_id, headline) values ($1, 'Test Partisi tables a bill') returning id",
+    )
+    .bind(news_source)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    sqlx::query("insert into news_item_parties (news_item_id, party_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(party_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let user_id = db::users::insert(&pool, "feed-party-hash", "pw")
+        .await
+        .unwrap();
+    db::follows::follow(&pool, user_id, "party", party_id)
+        .await
+        .unwrap();
+
+    let items = db::follows::feed(&pool, user_id, 10).await.unwrap();
+    assert_eq!(items.len(), 1);
+    assert_eq!(items[0].kind, "news");
+    assert_eq!(items[0].href, format!("/testland/news/{news_id}"));
+    // An undated source is not dropped; it simply sorts after the dated ones.
+    assert_eq!(items[0].occurred_at, None);
+}
+
+/// One item can be reached through several follows at once. It is the same news,
+/// so the feed shows it once.
+#[sqlx::test(migrations = "../../migrations")]
+async fn feed_shows_one_entry_for_news_reached_through_two_follows(pool: db::Pool) {
+    let source_id =
+        db::sources::insert_source(&pool, "manual", "https://example.test/ft", None, Some("h"))
+            .await
+            .unwrap();
+    let country_id: i64 = sqlx::query_scalar(
+        "insert into countries (name, slug, source_id) values ('Testland', 'testland', $1) returning id",
+    )
+    .bind(source_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    let mut person = sample_person(source_id);
+    person.country_id = Some(country_id);
+    let person_id = db::people::upsert_person(&pool, &person).await.unwrap();
+    let party_id: i64 = sqlx::query_scalar(
+        "insert into parties (name, slug, source_id, country_id) values ('Test Partisi', 'test-partisi', $1, $2) returning id",
+    )
+    .bind(source_id)
+    .bind(country_id)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+
+    let news_source =
+        db::sources::insert_source(&pool, "news_rss", "https://n.test/both", None, Some("h1"))
+            .await
+            .unwrap();
+    let news_id: i64 = sqlx::query_scalar(
+        "insert into news_items (source_id, headline) values ($1, 'Test Partisi and Ayşe Yılmaz agree') returning id",
+    )
+    .bind(news_source)
+    .fetch_one(&pool)
+    .await
+    .unwrap();
+    sqlx::query("insert into news_item_people (news_item_id, person_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(person_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    sqlx::query("insert into news_item_parties (news_item_id, party_id) values ($1, $2)")
+        .bind(news_id)
+        .bind(party_id)
+        .execute(&pool)
+        .await
+        .unwrap();
+
+    let user_id = db::users::insert(&pool, "feed-both-hash", "pw")
+        .await
+        .unwrap();
+    db::follows::follow(&pool, user_id, "person", person_id)
+        .await
+        .unwrap();
+    db::follows::follow(&pool, user_id, "party", party_id)
+        .await
+        .unwrap();
+
+    let items = db::follows::feed(&pool, user_id, 10).await.unwrap();
+    assert_eq!(items.len(), 1, "one news item, however many leads reach it");
+    assert_eq!(items[0].href, format!("/testland/news/{news_id}"));
+}

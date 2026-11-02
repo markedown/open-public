@@ -140,4 +140,28 @@ mod tests {
     fn blind_sign_rejects_a_bad_key() {
         assert!(blind_sign(b"not-a-key", &[0u8; 256]).is_err());
     }
+
+    /// The variant we use randomizes the message, so the randomizer the client
+    /// blinded with is part of what a signature is checked against. A spend that
+    /// withholds it cannot be checked at all, and is invalid rather than an
+    /// error the caller has to reason about.
+    #[test]
+    fn a_spent_token_without_its_randomizer_does_not_verify() {
+        let (pk_der, sk_der) = generate_issuer_keypair().unwrap();
+        let pk = BrsaPk::<Sha384, PSS, Randomized>::from_der(&pk_der).unwrap();
+
+        let token: [u8; 32] = [3u8; 32];
+        let blinding = pk.blind(&mut DefaultRng, token).unwrap();
+        let blind_sig = blind_rsa_signatures::BlindSignature(
+            blind_sign(&sk_der, AsRef::<[u8]>::as_ref(&blinding.blind_message)).unwrap(),
+        );
+        let sig = pk.finalize(&blind_sig, &blinding, token).unwrap();
+        let rnd = blinding
+            .msg_randomizer
+            .map(|r| r.0.to_vec())
+            .expect("a randomized blinding carries its randomizer");
+
+        assert!(verify_token(&pk_der, &token, &sig.0, Some(&rnd)));
+        assert!(!verify_token(&pk_der, &token, &sig.0, None));
+    }
 }
