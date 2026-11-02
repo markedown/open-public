@@ -140,7 +140,7 @@
     "scope": "party",
     "source_hash": "compass-tr",
     "source_url": "https://github.com/markedown/open-public",
-    "text": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden.",
+    "text": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden.",
     "topic": "social"
   },
   {
@@ -275,7 +275,7 @@
     "scope": "party",
     "source_hash": "compass-tr",
     "source_url": "https://github.com/markedown/open-public",
-    "text": "Deutschland soll die Ukraine weiterhin militärisch unterstützen.",
+    "text": "Deutschland soll die militärische Unterstützung der Ukraine einstellen.",
     "topic": "foreign"
   },
   {
@@ -284,7 +284,7 @@
     "scope": "party",
     "source_hash": "compass-tr",
     "source_url": "https://github.com/markedown/open-public",
-    "text": "Die Sanktionen gegen Russland sollen aufrechterhalten werden.",
+    "text": "Die Sanktionen gegen Russland sollen aufgehoben werden.",
     "topic": "foreign"
   },
   {

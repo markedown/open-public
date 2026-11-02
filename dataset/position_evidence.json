@@ -1536,8 +1536,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.afd.de/wp-content/uploads/2025/02/AfD_Bundestagswahlprogramm2025_web.pdf",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1550,8 +1550,8 @@
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_hash": "de-rollcall-de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx",
-    "stance": -2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": 2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1564,8 +1564,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1578,8 +1578,8 @@
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_hash": "de-rollcall-de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1592,8 +1592,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1606,8 +1606,8 @@
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_hash": "de-rollcall-de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1620,8 +1620,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf",
-    "stance": -2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": 2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1634,8 +1634,8 @@
     "roll_call": null,
     "source_hash": "de-btd-21/3604",
     "source_url": "https://dserver.bundestag.de/btd/21/036/2103604.pdf",
-    "stance": -2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": 2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1648,8 +1648,8 @@
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_hash": "de-rollcall-de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx",
-    "stance": -2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": 2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -1662,8 +1662,8 @@
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_hash": "de-rollcall-de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
     "source_url": "https://www.bundestag.de/resource/blob/1151676/20260305_1_xls.xlsx",
-    "stance": 2,
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden."
+    "stance": -2,
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden."
   },
   {
     "country": "germany",
@@ -3230,8 +3230,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.afd.de/wp-content/uploads/2025/02/AfD_Bundestagswahlprogramm2025_web.pdf",
-    "stance": -1,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": 1,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3244,8 +3244,8 @@
     "roll_call": "de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_hash": "de-rollcall-de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_url": "https://www.bundestag.de/resource/blob/1194160/20260708_1_xls.xlsx",
-    "stance": -2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": 2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3258,8 +3258,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://cms.gruene.de/uploads/assets/20250318_Regierungsprogramm_DIGITAL_DINA5.pdf",
-    "stance": 2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": -2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3272,8 +3272,8 @@
     "roll_call": "de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_hash": "de-rollcall-de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_url": "https://www.bundestag.de/resource/blob/1194160/20260708_1_xls.xlsx",
-    "stance": 2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": -2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3286,8 +3286,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": -2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3300,8 +3300,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": -2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3314,8 +3314,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf",
-    "stance": -2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": 2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3328,8 +3328,8 @@
     "roll_call": "de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_hash": "de-rollcall-de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
     "source_url": "https://www.bundestag.de/resource/blob/1194160/20260708_1_xls.xlsx",
-    "stance": -2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": 2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3342,8 +3342,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.spd.de/fileadmin/Dokumente/Beschluesse/Programm/SPD_Programm_bf.pdf",
-    "stance": 2,
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen."
+    "stance": -2,
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen."
   },
   {
     "country": "germany",
@@ -3356,8 +3356,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.afd.de/wp-content/uploads/2025/02/AfD_Bundestagswahlprogramm2025_web.pdf",
-    "stance": -2,
-    "thesis": "Die Sanktionen gegen Russland sollen aufrechterhalten werden."
+    "stance": 2,
+    "thesis": "Die Sanktionen gegen Russland sollen aufgehoben werden."
   },
   {
     "country": "germany",
@@ -3370,8 +3370,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://cms.gruene.de/uploads/assets/20250318_Regierungsprogramm_DIGITAL_DINA5.pdf",
-    "stance": 2,
-    "thesis": "Die Sanktionen gegen Russland sollen aufrechterhalten werden."
+    "stance": -2,
+    "thesis": "Die Sanktionen gegen Russland sollen aufgehoben werden."
   },
   {
     "country": "germany",
@@ -3384,8 +3384,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Die Sanktionen gegen Russland sollen aufrechterhalten werden."
+    "stance": -2,
+    "thesis": "Die Sanktionen gegen Russland sollen aufgehoben werden."
   },
   {
     "country": "germany",
@@ -3398,8 +3398,8 @@
     "roll_call": null,
     "source_hash": "compass-tr-doc",
     "source_url": "https://www.cdu.de/app/uploads/2025/01/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf",
-    "stance": 2,
-    "thesis": "Die Sanktionen gegen Russland sollen aufrechterhalten werden."
+    "stance": -2,
+    "thesis": "Die Sanktionen gegen Russland sollen aufgehoben werden."
   },
   {
     "country": "germany",

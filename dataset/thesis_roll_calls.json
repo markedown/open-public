@@ -1,11 +1,11 @@
 [
   {
     "country": "germany",
-    "no_stance": -2,
+    "no_stance": 2,
     "note": "Gesetz der Bundesregierung, das das Bürgergeld durch eine strengere Grundsicherung ersetzt. Das Nein der AfD bleibt ungelesen: Ihr Programm verlangt ebenfalls eine strengere Regelung.",
     "roll_call": "de-2026-03-05-1-umgestaltung-des-burgergelds-zu-neuer-grundsiche",
-    "thesis": "Das Bürgergeld soll durch eine strengere Grundsicherung ersetzt werden.",
-    "yes_stance": 2
+    "thesis": "Das Bürgergeld soll nicht durch eine strengere Grundsicherung ersetzt werden.",
+    "yes_stance": -2
   },
   {
     "country": "germany",
@@ -81,11 +81,11 @@
   },
   {
     "country": "germany",
-    "no_stance": -2,
+    "no_stance": 2,
     "note": "Grünen-Antrag, die Ukraine zusätzlich militärisch und humanitär zu stärken. Das Nein der Koalition zu einem Oppositionsantrag bleibt ungelesen.",
     "roll_call": "de-2026-07-08-1-zusatzliche-militarische-und-humanitare-starkung",
-    "thesis": "Deutschland soll die Ukraine weiterhin militärisch unterstützen.",
-    "yes_stance": 2
+    "thesis": "Deutschland soll die militärische Unterstützung der Ukraine einstellen.",
+    "yes_stance": -2
   },
   {
     "country": "germany",
