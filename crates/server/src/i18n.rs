@@ -39,6 +39,10 @@ tokio::task_local! {
     /// layout uses it as the page's canonical address without every handler
     /// having to pass its own down.
     static REQUEST_URL: String;
+    /// The language the request's own address asked for (`?lang=de`), as
+    /// opposed to one negotiated from the cookie or `Accept-Language`. Only an
+    /// explicit address can be linked to, so only it gets its own canonical.
+    static REQUEST_EXPLICIT: Option<Lang>;
 }
 
 fn active() -> Lang {
@@ -53,6 +57,26 @@ pub async fn with_lang<F: std::future::Future>(lang: Lang, f: F) -> F::Output {
 /// Run a request handler with `url` recorded as the request's own address.
 pub async fn with_url<F: std::future::Future>(url: String, f: F) -> F::Output {
     REQUEST_URL.scope(url, f).await
+}
+
+/// Run a request handler knowing whether the address itself named a language.
+pub async fn with_explicit<F: std::future::Future>(explicit: Option<Lang>, f: F) -> F::Output {
+    REQUEST_EXPLICIT.scope(explicit, f).await
+}
+
+/// The language the current address asked for with `?lang=`, if it did.
+pub fn explicit_lang() -> Option<Lang> {
+    REQUEST_EXPLICIT.try_with(|l| *l).ok().flatten()
+}
+
+/// The language named by a `lang=` pair in a raw query string. An unknown code
+/// is ignored rather than falling back to English, so a mistyped link still
+/// shows the page in the visitor's own language.
+pub fn lang_from_query(query: Option<&str>) -> Option<Lang> {
+    query?
+        .split('&')
+        .filter_map(|pair| pair.strip_prefix("lang="))
+        .find_map(Lang::known)
 }
 
 /// The absolute URL of the current request, when one is known. `None` outside a
@@ -368,6 +392,19 @@ fn unquote(s: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{resolve, Catalog, Lang};
+
+    #[test]
+    fn a_language_in_the_query_is_read_and_unknown_ones_are_ignored() {
+        assert_eq!(super::lang_from_query(Some("lang=de")), Some(Lang::De));
+        assert_eq!(
+            super::lang_from_query(Some("a=1&lang=sr&b=2")),
+            Some(Lang::Sr)
+        );
+        assert_eq!(super::lang_from_query(Some("lang=xx")), None);
+        assert_eq!(super::lang_from_query(Some("language=de")), None);
+        assert_eq!(super::lang_from_query(Some("")), None);
+        assert_eq!(super::lang_from_query(None), None);
+    }
 
     #[test]
     fn resolve_prefers_cookie_then_accept_language() {

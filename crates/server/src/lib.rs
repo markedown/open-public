@@ -25,7 +25,7 @@ pub mod voting;
 use std::path::Path;
 
 use axum::extract::{DefaultBodyLimit, Path as UrlPath, Request, State};
-use axum::http::{header, HeaderMap, HeaderValue, StatusCode};
+use axum::http::{header, HeaderMap, HeaderValue, Method, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Redirect, Response};
 use axum::{
@@ -378,7 +378,15 @@ async fn locale(
         .get(header::ACCEPT_LANGUAGE)
         .and_then(|v| v.to_str().ok())
         .map(str::to_string);
-    let lang = i18n::resolve(cookie_lang.as_deref(), accept.as_deref());
+    // An address that names its language wins over everything else: it is what a
+    // search engine is told to index for that language, so it must not depend
+    // on who is asking.
+    let explicit = if matches!(*req.method(), Method::GET | Method::HEAD) {
+        i18n::lang_from_query(req.uri().query())
+    } else {
+        None
+    };
+    let lang = explicit.unwrap_or_else(|| i18n::resolve(cookie_lang.as_deref(), accept.as_deref()));
     // The page's own address travels with the request, so a page can name its
     // canonical URL without every handler passing it down. Empty when the
     // deployment has not been told its origin, which the layout reads as
@@ -388,7 +396,11 @@ async fn locale(
     } else {
         format!("{}{}", state.base_url, req.uri().path())
     };
-    i18n::with_lang(lang, i18n::with_url(url, next.run(req))).await
+    i18n::with_lang(
+        lang,
+        i18n::with_explicit(explicit, i18n::with_url(url, next.run(req))),
+    )
+    .await
 }
 
 /// Set the visitor's language cookie and return to the page they were on.

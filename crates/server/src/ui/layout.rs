@@ -33,7 +33,13 @@ pub fn document_described(
     ));
     // The page's own address, so a search engine is told which URL is the one
     // to index and a shared link resolves to the same place it was copied from.
-    let canonical = i18n::request_url();
+    let page_url = i18n::request_url();
+    // A page that was asked for in a given language is canonical in that
+    // language; the address without `?lang=` stays the negotiated one.
+    let canonical = page_url.as_ref().map(|u| match i18n::explicit_lang() {
+        Some(l) => format!("{u}?lang={}", l.code()),
+        None => u.clone(),
+    });
     // The card image, absolute because a platform rendering the preview has no
     // page to resolve a relative path against. Omitted, like the canonical URL,
     // when the deployment has not been told its own origin.
@@ -51,6 +57,14 @@ pub fn document_described(
                 meta name="description" content=(description);
                 @if let Some(ref url) = canonical {
                     link rel="canonical" href=(url);
+                }
+                // Every language of the page, so a search engine can send each
+                // visitor to the one they read. The bare address is the default.
+                @if let Some(ref url) = page_url {
+                    @for l in i18n::Lang::ALL {
+                        link rel="alternate" hreflang=(l.html_tag()) href={(url) "?lang=" (l.code())};
+                    }
+                    link rel="alternate" hreflang="x-default" href=(url);
                 }
                 // What a shared link shows: a title, a description, a card
                 // image and the site it came from. The image is our own file on

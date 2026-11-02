@@ -6835,6 +6835,46 @@ async fn pages_describe_themselves_for_search_and_sharing(pool: db::Pool) {
 }
 
 #[sqlx::test(migrations = "../../migrations")]
+async fn every_language_has_an_address_of_its_own(pool: db::Pool) {
+    seed(&pool).await;
+    let app = router(pool.clone());
+
+    // The address names the language, whatever the cookie says, and is its own
+    // canonical, so a search engine can index each language separately.
+    let de = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz?lang=de", "lang=en").await).await;
+    assert!(de.contains(r#"html lang="de""#));
+    assert!(de.contains(
+        r#"<link rel="canonical" href="https://open-public.test/tr/people/ayse-yilmaz?lang=de""#
+    ));
+
+    // Every language is offered as an alternate, and the bare address is the default.
+    for tag in ["en", "tr", "de", "fr", "sr-Latn"] {
+        assert!(
+            de.contains(&format!(r#"hreflang="{tag}""#)),
+            "alternate for {tag}"
+        );
+    }
+    assert!(de.contains(
+        r#"hreflang="sr-Latn" href="https://open-public.test/tr/people/ayse-yilmaz?lang=sr""#
+    ));
+    assert!(de
+        .contains(r#"hreflang="x-default" href="https://open-public.test/tr/people/ayse-yilmaz""#));
+
+    // Without the parameter the visitor's own preference decides, and the
+    // canonical is the bare address.
+    let plain = body_string(get_cookie(&app, "/tr/people/ayse-yilmaz", "lang=en").await).await;
+    assert!(plain.contains(r#"html lang="en""#));
+    assert!(plain.contains(
+        r#"<link rel="canonical" href="https://open-public.test/tr/people/ayse-yilmaz""#
+    ));
+
+    // An unknown code is ignored instead of switching the page to English.
+    let odd =
+        body_string(get_cookie(&app, "/tr/people/ayse-yilmaz?lang=xx", "lang=fr").await).await;
+    assert!(odd.contains(r#"html lang="fr""#));
+}
+
+#[sqlx::test(migrations = "../../migrations")]
 async fn crawlers_are_told_what_is_here(pool: db::Pool) {
     seed(&pool).await;
     let app = router(pool.clone());
